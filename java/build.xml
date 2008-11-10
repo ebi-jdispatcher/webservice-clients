@@ -19,12 +19,12 @@
   <!-- Get dependencies archive, includes Axis 1.4, Axis 2 and JAX-RPC libraries -->
   <target name="get-dependencies">
     <get src="http://www.ebi.ac.uk/Tools/webservices/downloads/java/lib-1.4.zip"
-	 dest="lib2.zip" />
+	 dest="lib-1.4.zip" />
   </target>
 
   <!-- Unpack dependencies archive -->
   <target name="unpack-dependencies">
-    <unzip src="lib2.zip" dest="." />
+    <unzip src="lib-1.4.zip" dest="." />
   </target>
 
   <!-- Generate stubs from a WSDL -->

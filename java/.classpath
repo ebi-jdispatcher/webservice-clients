@@ -2,5 +2,26 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/activation.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/axis.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/commons-discovery.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/freefluo.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/htmlhelper-2.0.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/log4j-1.2.4.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/mail.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/ols-client-1.1.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/oracle_soap.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/qbmarsdf.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/saaj.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/soap.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/wsdl4j.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/xmlParserAPIs.jar"/>
+	<classpathentry kind="lib" path="/automount/bluearc3_vol006/local_work/hpm/eclipse/EBIWS/lib/xmlrpc-2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
