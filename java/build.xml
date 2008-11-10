@@ -1,0 +1,81 @@
+<!-- Build Java clients for EBI web services. -->
+<project name="EBIWS2-Java" basedir="." default="jar">
+  <property name="src.dir" value="src" />
+  <property name="build.dir" value="bin" />
+  <property name="lib.dir" value="lib"/>
+
+  <!-- Add all jars in lib/ to classpath -->
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="**/*.jar"/>
+  </path>
+
+  <!-- Clean-up build directory -->
+  <target name="clean">
+    <delete includeemptydirs="true">
+      <fileset dir="${build.dir}" includes="**/*"/>
+    </delete>
+  </target>
+
+  <!-- Get dependencies archive, includes Axis 1.4, Axis 2 and JAX-RPC libraries -->
+  <target name="get-dependencies">
+    <get src="http://www.ebi.ac.uk/Tools/webservices/downloads/java/lib-1.4.zip"
+	 dest="lib2.zip" />
+  </target>
+
+  <!-- Unpack dependencies archive -->
+  <target name="unpack-dependencies">
+    <unzip src="lib2.zip" dest="." />
+  </target>
+
+  <!-- Generate stubs from a WSDL -->
+  <target name="genStubs">
+    <echo message="${stubPkg}" />
+    <echo message="${wsdlUrl}" />
+    <java classname="org.apache.axis.wsdl.WSDL2Java"
+	  classpathref="classpath"
+	  fork="yes"
+	  dir="${src.dir}">
+      <arg value="-p" />
+      <arg value="${stubPkg}" />
+      <arg value="${wsdlUrl}" />
+    </java>
+  </target>
+
+  <!-- Generate stubs for all services -->
+  <target name="stubs-all" depends="unpack-dependencies">
+    <antcall target="stubs-ncbiblast" />
+  </target>
+
+  <!-- Generate stubs for each service -->
+  <target name="stubs-ncbiblast">
+    <antcall target="genStubs">
+      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.ncbiblast" />
+      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl" />
+    </antcall>
+  </target>
+
+  <!-- Compile code into classes -->
+  <target name="compile">
+    <javac
+      srcdir="${src.dir}"
+      destdir="${build.dir}"
+      classpathref="classpath"
+    />
+  </target>
+
+  <!-- Package jars -->
+  <target name="jar" depends="compile">
+     <jar destfile="${build.dir}/NCBIBlast.jar"
+	 basedir="${build.dir}"
+	 includes="uk/ac/ebi/webservices/jdispatcher/NCBIBlastClient.** uk/ac/ebi/webservices/jdispatcher/ncbiblast/**">
+      <manifest>
+        <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.NCBIBlastClient"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<!-- Test clients -->
+	<target name="test" depends="jar">
+	    <ant dir="test" inheritAll="false" />
+	</target>
+</project>
