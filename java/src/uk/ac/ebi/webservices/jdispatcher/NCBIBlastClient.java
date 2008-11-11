@@ -320,18 +320,13 @@ public class NCBIBlastClient extends AbstractWsClient {
 						}
 					}
 					if (resultContainContent == false) {
-						System.out.println("Error: requested result type not available!");
+						System.err.println("Error: requested result type " + cli.getOptionValue("outformat") + " not available!");
 					}
 				}
 				// Get entry Ids from result
-				/* else if(cli.hasOption("ids")) {                
-					String[] entryIds = client.getIds(jobid);
-					for(int i = 0; i < entryIds.length; i++) {
-						if(entryIds[i] != null) {
-							System.out.println(entryIds[i]);
-						}
-					}
-				} */
+				else if(cli.hasOption("ids")) {
+					client.getResults(jobid, "-", "ids");
+				}
 				// Get status of job
 				else if(cli.hasOption("status")) {
 					System.out.println(client.checkStatus(jobid));
