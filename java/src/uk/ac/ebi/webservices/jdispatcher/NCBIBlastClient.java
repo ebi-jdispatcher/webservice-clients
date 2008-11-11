@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * jDispatcher NCBI BLAST SOAP web service Java client.
+ * jDispatcher NCBI BLAST SOAP web service Java client using Axis 1.4.
  * ====================================================================== */
 package uk.ac.ebi.webservices.jdispatcher;
 

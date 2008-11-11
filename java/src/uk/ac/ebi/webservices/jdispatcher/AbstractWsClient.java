@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * Abstract jDispatcher SOAP web services Java client.
+ * Abstract jDispatcher web services Java client.
  * ====================================================================== */
 package uk.ac.ebi.webservices.jdispatcher;
 
