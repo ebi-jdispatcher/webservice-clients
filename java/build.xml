@@ -43,16 +43,30 @@
 
   <!-- Generate stubs for all services -->
   <target name="stubs-all" depends="unpack-dependencies">
+    <antcall target="stubs-clustalw2" />
+    <antcall target="stubs-fasta" />
     <antcall target="stubs-ncbiblast" />
   </target>
 
   <!-- Generate stubs for each service -->
-  <target name="stubs-ncbiblast">
-    <antcall target="genStubs">
-      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.ncbiblast" />
-      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl" />
-    </antcall>
-  </target>
+	  <target name="stubs-clustalw2">
+	    <antcall target="genStubs">
+	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2?wsdl" />
+	    </antcall>
+	  </target>
+	  <target name="stubs-fasta">
+	    <antcall target="genStubs">
+	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.fasta" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/fasta?wsdl" />
+	    </antcall>
+	  </target>
+	  <target name="stubs-ncbiblast">
+	    <antcall target="genStubs">
+	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.ncbiblast" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl" />
+	    </antcall>
+	  </target>
 
   <!-- Compile code into classes -->
   <target name="compile">
@@ -65,13 +79,27 @@
 
   <!-- Package jars -->
   <target name="jar" depends="compile">
-     <jar destfile="${build.dir}/NCBIBlast.jar"
+    <jar destfile="${build.dir}/ClustalW2.jar"
+	 basedir="${build.dir}"
+	 includes="uk/ac/ebi/webservices/jdispatcher/ClustalW2Client.** uk/ac/ebi/webservices/jdispatcher/clustalw2/**">
+     <manifest>
+       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.ClustalW2Client"/>
+     </manifest>
+   </jar>
+    <jar destfile="${build.dir}/Fasta.jar"
+	 basedir="${build.dir}"
+	 includes="uk/ac/ebi/webservices/jdispatcher/FastaClient.** uk/ac/ebi/webservices/jdispatcher/fasta/**">
+     <manifest>
+       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.FastaClient"/>
+     </manifest>
+   </jar>
+    <jar destfile="${build.dir}/NCBIBlast.jar"
 	 basedir="${build.dir}"
 	 includes="uk/ac/ebi/webservices/jdispatcher/NCBIBlastClient.** uk/ac/ebi/webservices/jdispatcher/ncbiblast/**">
-      <manifest>
-        <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.NCBIBlastClient"/>
-      </manifest>
-    </jar>
+     <manifest>
+       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.NCBIBlastClient"/>
+     </manifest>
+   </jar>
   </target>
 
 	<!-- Test clients -->
