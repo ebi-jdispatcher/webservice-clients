@@ -3,7 +3,6 @@
 # Example jDispatcher NCBI BLAST client using XML::Compile::SOAP
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # Service WSDL
