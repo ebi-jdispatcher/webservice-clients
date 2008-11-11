@@ -15,11 +15,9 @@ import uk.ac.ebi.webservices.jdispatcher.ncbiblast.*;
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast">http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class NCBIBlastClient {
+public class NCBIBlastClient extends AbstractWsClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
-	/** Verbosity level */
-	private int outputLevel = 1;
 	/** Usage message */
 	private static final String usageMsg = "NCBI BLAST\n"
 		+ "==========\n"
@@ -43,47 +41,18 @@ public class NCBIBlastClient {
 		+ "  -A, --align      : int  : number of alignments to be reported\n"
 		+ "  -s, --scores     : int  : number of scores to be reported\n"
 		+ "  -n, --numal      : int  : Number of alignments\n"
-                + "  -u, --match      : int  : Match score\n"
-                + "  -v, --mismatch   : int  : Mismatch score\n"
+		+ "  -u, --match      : int  : Match score\n"
+		+ "  -v, --mismatch   : int  : Mismatch score\n"
 		+ "  -o, --opengap    : int  : Gap open penalty\n"
 		+ "  -x, --extendgap  : int  : Gap extension penalty\n"
 		+ "  -d, --dropoff    : int  : Drop-off\n"
 		+ "  -g, --gapalign   :      : Optimise gapped alignments\n"
-		+ "\n"
-		+ "[General]\n"
-		+ "\n"
-		+ "      --help       :      : prints this help text\n"
-		+ "      --outfile    : str  : name of the file results should be written to \n"
-		+ "                            (default is based on the jobid; \"-\" for STDOUT)\n"
-		+ "      --async      :      : forces to make an asynchronous query\n"
-		+ "      --email      : str  : e-mail address \n"
-		+ "      --polljob    :      : Poll for the status of a job\n"
-		+ "      --jobid      : str  : jobid that was returned when an asynchronous job \n"
-		+ "                            was submitted.\n"
-		+ "   \n"
-		+ "Synchronous job:\n"
-		+ "\n"
-		+ "  The results/errors are returned as soon as the job is finished.\n"
-		+ "  Usage: java -jar WSNCBIBlast.jar --email <your@email> [options...] seqFile\n"
-		+ "  Returns: results as an attachment\n"
-		+ "\n"
-		+ "Asynchronous job:\n"
-		+ "\n"
-		+ "  Use this if you want to retrieve the results at a later time. The results \n"
-		+ "  are stored for up to 24 hours. \n"
-		+ "  Usage: java -jar WSNCBIBlast.jar --async --email <your@email> [options...] seqFile\n"
-		+ "  Returns: jobid\n"
-		+ "\n"
-		+ "  Use the jobid to query for the status of the job. If the job is finished, \n"
-		+ "  it also returns the results/errors.\n"
-		+ "  Usage: java -jar WSNCBIBlast.jar --polljob --jobid <jobId> [--outfile string]\n"
-		+ "  Returns: string indicating the status of the job and if applicable, results \n"
-		+ "  as an attachment.\n";
+		+ "\n";
 
-	/** Print the usage message to STDOUT.
-	 */
-	private static void printUsage()  {
+	/** Print usage message */
+	private static void printUsage() {
 		System.out.println(usageMsg);
+		printGenericOptsUsage();
 	}
 	
 	/** Get an instance of the service proxy to use with other methods.
@@ -149,22 +118,21 @@ public class NCBIBlastClient {
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
-		String[] results = this.srvProxy.getResultTypes(jobid);
+		String[] resultTypes = this.srvProxy.getResultTypes(jobid);
 		if(outformat == null) {
-			retVal = new String[results.length];
+			retVal = new String[resultTypes.length];
 		} else {
-			retVal = new String[2];
+			retVal = new String[1];
 		}
-		for(int i = 0; i < results.length; i++) {
-			WSFile file = results[i];
+		for(int i = 0; i < resultTypes.length; i++) {
 			if(outputLevel > 2) { // Verbose output
-				System.err.println("File type: " + file.getType());
+				System.err.println("File type: " + resultTypes[i]);
 			}
 			// Get the results
-			if(outformat == null || outformat.equals(file.getType())) {
-				byte[] resultbytes = this.srvProxy.poll(jobid, file.getType());
+			if(outformat == null || outformat.equals(resultTypes[i])) {
+				byte[] resultbytes = this.srvProxy.getRawResultOutput(jobid, resultTypes[i]);
 				if(resultbytes == null) {
-					System.err.println("Null result for " + file.getType() + "!");
+					System.err.println("Null result for " + resultTypes[i] + "!");
 				} else {
 					if(outputLevel > 2) { // Verbose output
 						System.err.println("Result bytes length: " + resultbytes.length);
@@ -172,11 +140,11 @@ public class NCBIBlastClient {
 					// Write the results to a file
 					String result = new String(resultbytes);
 					if(basename.equals("-")) { // STDOUT
-						System.out.print(results);
+						System.out.print(result);
 					}
 					else { // File
-						String filename = basename + "." + file.getExt();
-						FileUtil.writeFile(new File(filename), result);
+						String filename = basename + "." + resultTypes[i];
+						writeFile(new File(filename), result);
 						retVal[i] = filename;
 					}
 				}
@@ -193,10 +161,10 @@ public class NCBIBlastClient {
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public String runApp(InputParameters params, Data[] content) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+	public String runApp(String email, String title, InputParameters params) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		String retVal = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
-		retVal = srvProxy.runNCBIBlast(params, content);
+		retVal = srvProxy.run(email, title, params);
 		return retVal;
 	}
 
@@ -241,24 +209,21 @@ public class NCBIBlastClient {
 	 * @return Data structure for use with runApp().
 	 * @throws IOException
 	 */
-	public static Data[] loadData(String fileOptionStr) throws IOException {
-		Data[] inputs = new Data[1];
+	public static String loadData(String fileOptionStr) throws IOException {
+		String retVal = null;
 		if(fileOptionStr != null) {
-			Data input= new Data();
-			input.setType("sequence");
 			if(fileOptionStr.equals("-")) { // STDIN
-				String fileContent = FileUtil.readStream(System.in);
-				input.setContent(fileContent);
+				String fileContent = readStream(System.in);
+				retVal = fileContent;
 			}
 			else if(new File(fileOptionStr).exists()) { // File
-				String fileContent = FileUtil.readFile(new File(fileOptionStr));
-				input.setContent(fileContent);
+				String fileContent = readFile(new File(fileOptionStr));
+				retVal = fileContent;
 			} else { // Entry Id
-				input.setContent(fileOptionStr);
+				retVal = fileOptionStr;
 			}
-			inputs[0]=input;
 		}
-		return inputs;
+		return retVal;
 	}
 
 	/** Build input parameters structure from command-line options
@@ -269,26 +234,24 @@ public class NCBIBlastClient {
 	 */
 	public static InputParameters loadParams(CommandLine line) throws IOException {
 		InputParameters params = new InputParameters();
-		// Standard options
-		if (line.hasOption("email")) params.setEmail(line.getOptionValue("email")); 
-		params.setAsync(true); // Always perform an async submission
 		// Tool specific options
 		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p")); 	
 		if (line.hasOption("D")) params.setDatabase(line.getOptionValue("D"));
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
-		if (line.hasOption("e")) params.setExp(Float.parseFloat(line.getOptionValue("e")));
-		else params.setExp(1.0F);
-                if (line.hasOption("u")) params.setMatch(Integer.parseInt(line.getOptionValue("u")));
-                if (line.hasOption("v")) params.setMismatch(Integer.parseInt(line.getOptionValue("v")));
-		if (line.hasOption("o")) params.setOpengap(Integer.parseInt(line.getOptionValue("o"))); 
-		if (line.hasOption("x")) params.setExtendgap(Integer.parseInt(line.getOptionValue("x"))); 
-		if (line.hasOption("d")) params.setDropoff(Integer.parseInt(line.getOptionValue("d"))); 
-		if (line.hasOption("A")) params.setAlign(Integer.parseInt(line.getOptionValue("A"))); 
-		if (line.hasOption("s")) params.setScores(Integer.parseInt(line.getOptionValue("s"))); 
-		if (line.hasOption("n")) params.setNumal(Integer.parseInt(line.getOptionValue("n"))); 
-		if (line.hasOption("g")) params.setGapalign(true); 
+		if (line.hasOption("e")) params.setExp(line.getOptionValue("e"));
+		else params.setExp("1.0");
+		//if (line.hasOption("u")) params.setMatch(Integer.parseInt(line.getOptionValue("u")));
+		//if (line.hasOption("v")) params.setMismatch(Integer.parseInt(line.getOptionValue("v")));
+		if (line.hasOption("o")) params.setOpengap(new Integer(line.getOptionValue("o"))); 
+		if (line.hasOption("x")) params.setExtendgap(new Integer(line.getOptionValue("x"))); 
+		if (line.hasOption("d")) params.setDropoff(new Integer(line.getOptionValue("d"))); 
+		if (line.hasOption("A")) params.setAlign(new Integer(line.getOptionValue("A"))); 
+		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s"))); 
+		if (line.hasOption("n")) params.setNumal(new Integer(line.getOptionValue("n"))); 
+		if (line.hasOption("g")) params.setGapalign(new Boolean(true)); 
 		if (line.hasOption("f")) params.setFilter(line.getOptionValue("f"));
-
+		if (line.hasOption("F")) params.setFormat(new Boolean(true));
+		if (line.hasOption("S")) params.setSeqrange(line.getOptionValue("S"));
 		return params;
 	}
 
@@ -297,8 +260,130 @@ public class NCBIBlastClient {
 	 * @param args list of command-line options
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		int retVal = 0; // Exit value
+		int argsLength = args.length; // Number of command-line arguments
 
+		// Configure the command-line options
+		Options options = new Options();
+		// Common options for EBI clients 
+		options.addOption("help", "help", false, "help on using this client");
+		options.addOption("async", "async", false, "perform an asynchronous job");
+		options.addOption("polljob", "polljob", false, "poll for the status of an asynchronous job and get the results");
+		options.addOption("status", "status", false, "poll for the status of an asynchronous job");        
+		options.addOption("email", "email", true, "Your email address");
+		options.addOption("jobid", "jobid", true, "Job identifier of an asynchronous job");
+		options.addOption("stdout", "stdout", false, "print to standard output");
+		options.addOption("outfile", "outfile", true, "file name to save the results");
+		options.addOption("outformat", "outformat", true, "Output format (txt or xml)");
+		options.addOption("quiet", "quiet", false, "Decrease output messages");
+		options.addOption("verbose", "verbose", false, "Increase output messages");
+		options.addOption("ids", "ids", false, "retrieve only identifiers"); // TBI
+		// Application specific options
+		options.addOption("p", "program", true, "Program to use");
+		options.addOption("D", "database", true, "Database to search");
+		options.addOption("m", "matrix", true, "Scoring matrix");
+		options.addOption("e", "exp", true, "Expectation value threshold");
+		options.addOption("f", "filter", true, "Low complexity sequence filter");
+		options.addOption("g", "gapalign", true, "Perform gapped alignments");
+		options.addOption("A", "align", true, "Alignment format");
+		options.addOption("s", "scores", true, "Maximum number of scores to display");
+		options.addOption("n", "numal", true, "Maximum number of alignments to display");
+		options.addOption("u", "match", true, "Match score");
+		options.addOption("v", "mismatch", true, "Mismatch score");
+		options.addOption("o", "opengap", true, "Gap creation penalty");
+		options.addOption("x", "extendgap", true, "Gap extension penalty");
+		options.addOption("d", "dropoff", true, "Drop off score");
+		options.addOption("sequence", "sequence", true, "Query sequence");
+
+		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
+		try {
+			// Parse the command-line
+			CommandLine cli = cliParser.parse(options, args);
+			// User asked for usage info
+			if(argsLength == 0 || cli.hasOption("help")) {
+				printUsage();
+				System.exit(0);
+			}
+			// Create an instance of the client
+			NCBIBlastClient client = new NCBIBlastClient();
+			// Modify output level accoring to the quiet and verbose options
+			if(cli.hasOption("quiet")) {
+				client.outputLevel--;
+			}
+			if(cli.hasOption("verbose")) {
+				client.outputLevel++;
+			}
+			if(cli.hasOption("jobid")) {
+				String jobid = cli.getOptionValue("jobid");
+				// Get results for job
+				if(cli.hasOption("polljob")) {                
+					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
+					boolean resultContainContent = false;
+					for(int i = 0; i < resultFilenames.length; i++) {
+						if(resultFilenames[i] != null) {
+							System.out.println("Wrote file: " + resultFilenames[i]);
+							resultContainContent = true;
+						}
+					}
+					if (resultContainContent == false) {
+						System.out.println("Error: requested result type not available!");
+					}
+				}
+				// Get entry Ids from result
+				/* else if(cli.hasOption("ids")) {                
+					String[] entryIds = client.getIds(jobid);
+					for(int i = 0; i < entryIds.length; i++) {
+						if(entryIds[i] != null) {
+							System.out.println(entryIds[i]);
+						}
+					}
+				} */
+				// Get status of job
+				else if(cli.hasOption("status")) {
+					System.out.println(client.checkStatus(jobid));
+				}
+				else {
+					System.err.println("Error: jobid specified without releated action option");
+					printUsage();
+					retVal = 2;
+				}
+			}
+			// Submit a job
+			else {
+				// Create job submission parameters from command-line
+				InputParameters params = loadParams(cli);
+				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
+				params.setSequence(loadData(dataOption));
+				// Submit the job
+				String email = null, title = null;
+				if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
+				if (cli.hasOption("title")) title = cli.getOptionValue("title"); 
+				String jobid = client.runApp(email, title, params);
+				// For asynchronous mode
+				if (cli.hasOption("async")) {
+					System.out.println(jobid); // Output the job id.
+					System.err.println("To get status: java -jar WSNCBIBlast.jar --status --jobid " + jobid);
+				} else {
+					// In synchronous mode try to get the results
+					if(client.outputLevel > 0) {
+						System.err.println(jobid);
+					}
+					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
+					for(int i = 0; i < resultFilenames.length; i++) {
+						if(resultFilenames[i] != null) {
+							System.out.println("Wrote file: " + resultFilenames[i]);
+						}
+					}
+				}	
+			}
+		}
+		// Catch all exceptions
+		catch(Exception e) {
+			System.err.println ("ERROR: " + e.getMessage());
+			printUsage();
+			retVal = 3;
+		}
+		System.exit(retVal);
 	}
 
 }
