@@ -25,7 +25,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 		+ "Rapid sequence database search programs utilizing the BLAST algorithm\n"
 		+ "    \n"
 		+ "For more detailed help information refer to \n"
-		+ "http://www.ebi.ac.uk/blastall/blastall_help_frame.html\n"
+		+ "http://www.ebi.ac.uk/Tools/blastall/help.html\n"
 		+ "\n"
 		+ "[Required]\n"
 		+ "\n"
@@ -125,18 +125,14 @@ public class NCBIBlastClient extends AbstractWsClient {
 			retVal = new String[1];
 		}
 		for(int i = 0; i < resultTypes.length; i++) {
-			if(outputLevel > 2) { // Verbose output
-				System.err.println("File type: " + resultTypes[i]);
-			}
+			printProgressMessage("File type: " + resultTypes[i], 2);
 			// Get the results
 			if(outformat == null || outformat.equals(resultTypes[i])) {
 				byte[] resultbytes = this.srvProxy.getRawResultOutput(jobid, resultTypes[i]);
 				if(resultbytes == null) {
 					System.err.println("Null result for " + resultTypes[i] + "!");
 				} else {
-					if(outputLevel > 2) { // Verbose output
-						System.err.println("Result bytes length: " + resultbytes.length);
-					}
+					printProgressMessage("Result bytes length: " + resultbytes.length, 2);
 					// Write the results to a file
 					String result = new String(resultbytes);
 					if(basename.equals("-")) { // STDOUT
@@ -157,7 +153,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 	 * 
 	 * @param params Input parameters for the job.
 	 * @param content Data to run the job on.
-	 * @return The job identifer.
+	 * @return The job identifier.
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
@@ -170,7 +166,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 
 	/** Poll the job status until the job completes.
 	 * 
-	 * @param jobid The job identifer.
+	 * @param jobid The job identifier.
 	 * @throws javax.xml.rpc.ServiceException
 	 */
 	public void clientPoll(String jobId) throws javax.xml.rpc.ServiceException {
@@ -179,9 +175,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 		while(status.equals("RUNNING") || status.equals("PENDING")) {
 			try {
 				status = this.checkStatus(jobId);
-				if(this.outputLevel > 0) {
-					System.err.println(status);
-				}
+				printProgressMessage(status, 1);
 				if(status.equals("RUNNING") || status.equals("PENDING")) {
 					// Wait before polling again.
 					Thread.sleep(15000);
@@ -306,7 +300,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 			}
 			// Create an instance of the client
 			NCBIBlastClient client = new NCBIBlastClient();
-			// Modify output level accoring to the quiet and verbose options
+			// Modify output level according to the quiet and verbose options
 			if(cli.hasOption("quiet")) {
 				client.outputLevel--;
 			}
@@ -365,9 +359,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 					System.err.println("To get status: java -jar WSNCBIBlast.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
-					if(client.outputLevel > 0) {
-						System.err.println(jobid);
-					}
+					client.printProgressMessage(jobid, 1);
 					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
 					for(int i = 0; i < resultFilenames.length; i++) {
 						if(resultFilenames[i] != null) {

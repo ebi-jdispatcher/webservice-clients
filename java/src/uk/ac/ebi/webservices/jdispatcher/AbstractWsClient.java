@@ -22,7 +22,7 @@ import java.io.PrintStream;
  * <a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/java</a>
  */
 public abstract class AbstractWsClient {
-	/** Verbosity level */
+	/** Output level. Controlled by the --verbose and --quiet options. */
 	protected int outputLevel = 1;
 	/** Generic options message */
 	private static final String genericOptsStr = "[General]\n"
@@ -55,10 +55,21 @@ public abstract class AbstractWsClient {
 	+ "  Returns: string indicating the status of the job and if applicable, results \n"
 	+ "  as an attachment.\n";
  
-	/** Print the usage message to STDOUT.
+	/** Print the generic options usage message to STDOUT.
 	 */
 	protected static void printGenericOptsUsage()  {
 		System.out.println(genericOptsStr);
+	}
+	
+	/** Print a progress message.
+	 * 
+	 * @param msg The message to print.
+	 * @param level The output level at or above which this message should be displayed.
+	 */
+	protected void printProgressMessage(String msg, int level) {
+		if(outputLevel >= level) {
+			System.err.println(msg);
+		}
 	}
 
 	/** Read the contents of a file into a string.
