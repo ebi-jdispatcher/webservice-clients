@@ -35,12 +35,25 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 my (
-	$sequence, $outfile, $outformat, $help,  $polljob, $status,
+	$email, $sequence, $outfile, $outformat, $help,  $polljob, $status,
 	$jobid,    $async,   $trace,     $quiet, $verbose
 );
+my $title = 'Sequence';
+# Default parameter values
 my %params = (
-	'exp'   => 1.0,    # Default value
-	'async' => '1',    # Use async mode and simulate sync mode in client
+	#'program' => 'blastp',
+	#'database' => 'uniprot',
+	#'matrix' => 'blosum62',
+	#'exp'   => '10.0',
+	#'filter' => 'F',
+	#'numal' => 50,
+	#'scores' => 50,
+	#'dropoff' => '',
+	#'match' => '',
+	#'mismatch' => '',
+	#'opengap' => '',
+	#'extendgap' => '',
+	#'gapalign' => '',
 );
 GetOptions(
 	"program|p=s"   => \$params{'program'},      # blastp, blastn, blastx, etc.
@@ -65,7 +78,7 @@ GetOptions(
 	"polljob"       => \$polljob,                # Get results
 	"status"        => \$status,                 # Get status
 	"jobid|j=s"     => \$jobid,                  # JobId
-	"email|S=s"     => \$params{'email'},        # E-mail address
+	"email|S=s"     => \$email,                  # E-mail address
 	'quiet'         => \$quiet,                  # Decrease output level
 	'verbose'       => \$verbose,                # Increase output level
 	'trace'         => \$trace,                  # SOAP message debug
@@ -164,18 +177,7 @@ else {
 	}
 	$params{'sequence'} = $content;
 
-	my $paramsData = SOAP::Data->name('params')->type( map => \%params );
-
-	# For SOAP::Lite 0.60 and earlier parameters are passed directly
-	if ( $SOAP::Lite::VERSION eq '0.60' || $SOAP::Lite::VERSION =~ /0\.[1-5]/ ) {
-		$jobid = $soap->run(%params);
-	}
-
-	# For SOAP::Lite 0.69 and later parameter handling is different, so pass
-	# undef's for templated params, and then pass the formatted args.
-	else {
-		$jobid = $soap->run( undef, undef, $paramsData );
-	}
+	$jobid = &soap_run($email, $title, \%params);
 
 	if ( defined($async) ) {
 		print STDOUT $jobid, "\n";
@@ -193,15 +195,73 @@ else {
 	}
 }
 
+# Submit a job
+sub soap_run($$$) {
+	my $email = shift;
+	my $title = shift;
+	my $params = shift;
+	
+	my (@paramsList) = ();
+	foreach my $key (keys(%$params)) {
+		if(defined($params->{$key}) && $params->{$key} ne '') {
+			push @paramsList, SOAP::Data->name($key => $params->{$key});
+		}
+	}
+	my $ret = $soap->run(
+		SOAP::Data->name('email' => $email ),
+		SOAP::Data->name('title' => $title ),
+		SOAP::Data->name('parameters' => \SOAP::Data->value(@paramsList))
+	);
+	return $ret->valueof('//jobId');
+}
+
 # Status check
-sub getStatus($) {
+sub soap_get_status($) {
 	my $jobid  = shift;
-	my $result =
-	  $soap->getStatus( SOAP::Data->name('jobId')->type( string => $jobid ) );
+	my $res =
+	  $soap->getStatus( SOAP::Data->name('jobId' => $jobid ) );
+	return $res->valueof('//status');
+}
+
+# Get list of result types for finished job
+sub soap_get_result_types($) {
+	my $jobid = shift;
+	my $resultTypesXml =
+	  $soap->getResultTypes(
+		SOAP::Data->name('jobId' => $jobid ) );
+	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
+	return (@resultTypes);
+}
+
+# Get result data of a specified type for a finished job
+sub soap_get_raw_result_output($$) {
+	my $jobid = shift;
+	my $type = shift;
+	my $res = $soap->getRawResultOutput(
+		SOAP::Data->name('jobId' => $jobid ),
+		SOAP::Data->name('type' => $type )
+	);
+	my $result = decode_base64($res->valueof('//output'));
 	return $result;
 }
 
-# Client-side poll
+# Get parameter list
+sub soap_get_parameters($) {
+	my $tool = shift;
+	$soap->getParameters(SOAP::Data->name('tool' => $tool ));
+}
+
+# Get detailed parameter information
+sub soap_get_parameter_details($$) {
+	my $tool = shift;
+	my $parameterId = shift;
+	$soap->getParameterDetails(
+		SOAP::Data->name('tool' => $tool ),
+		SOAP::Data->name('parameterId' => $parameterId )
+	);
+}
+
+# Client-side job polling
 sub clientPoll($) {
 	my $jobid  = shift;
 	my $result = 'PENDING';
@@ -209,7 +269,7 @@ sub clientPoll($) {
 	# Check status and wait if not finished
 	#print STDERR "Checking status: $jobid\n";
 	while ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
-		$result = &getStatus($jobid);
+		$result = soap_get_status($jobid);
 		if ( $outputLevel > 0 ) {
 			print STDERR "$result\n";
 		}
@@ -234,10 +294,7 @@ sub getResults($) {
 	}
 
 	# Get list of data types
-	my $resultTypesXml =
-	  $soap->getResultTypes(
-		SOAP::Data->name('jobId')->type( string => $jobid ) );
-	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
+	my (@resultTypes) = soap_get_result_types($jobid);
 
 	# Get the data and write it to a file
 	if ( defined($outformat) ) {    # Specified data type
@@ -248,8 +305,7 @@ sub getResults($) {
 			}
 		}
 		if ( defined($selResultType) ) {
-			my $res = $soap->getRawResultOutput( SOAP::Data->name('jobId')->type( string => $jobid ), SOAP::Data->name('type')->type( string => $selResultType ));
-			my $result = decode_base64($res->valueof('//output'));
+			my $result = soap_get_raw_result_output($jobid, $selResultType);
 			if ( $outfile eq '-' ) {
 				write_file( $outfile, $result );
 			}
@@ -267,8 +323,7 @@ sub getResults($) {
 			if ( $outputLevel > 1 ) {
 				print STDERR "Getting $resultType\n";
 			}
-			my $res = $soap->getRawResultOutput( SOAP::Data->name('jobId')->type( string => $jobid ), SOAP::Data->name('type')->type( string => $resultType ) );
-			my $result = decode_base64($res->valueof('//output'));
+			my $result = soap_get_raw_result_output($jobid, $resultType);
 			if ( $outfile eq '-' ) {
 				write_file( $outfile, $result );
 			}
