@@ -26,7 +26,7 @@ use MIME::Base64;
 use Data::Dumper;
 
 # Set interval for checking status
-my $checkInterval = 10;
+my $checkInterval = 5;
 
 # Output level
 my $outputLevel = 1;
