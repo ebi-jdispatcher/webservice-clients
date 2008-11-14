@@ -37,7 +37,13 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 my %params = ('title' => 'Sequence');
-my %tool_params = ();
+my %tool_params = (
+	'match_scores' => 'NIL',
+	'gapalign' => 0,
+	'format' => 0,
+	'seqrange' => 'NIL',
+	'align' => 'NIL',
+);
 GetOptions(
 	# Tool specific options
 	"program|p=s"   => \$tool_params{'program'},      # blastp, blastn, blastx, etc.
@@ -49,7 +55,7 @@ GetOptions(
 	"scores|s=i"    => \$tool_params{'scores'},       # Number of scores
 	"numal|n=i"     => \$tool_params{'numal'},        # Number of alignments
 	"dropoff|d=i"   => \$tool_params{'dropoff'},      # Dropoff score
-	"match_score=s" => \$tool_params{'match_score'},  # Match/missmatch scores
+	"match_score=s" => \$tool_params{'match_scores'},  # Match/missmatch scores
 	"match|u=i"     => \$params{'match'},             # Match score
 	"mismatch|v=i"  => \$params{'mismatch'},          # Mismatch score
 	"opengap|o=i"   => \$tool_params{'opengap'},      # Open gap penalty
@@ -91,8 +97,9 @@ my $soapSrv = XML::Compile::WSDL11->new($wsdlXml);
 # Compile service methods
 my (%soapOps);
 foreach my $soapOp ( $soapSrv->operations ) {
+	# Allow nil elements to be skipped (needed for submission)
 	$soapOps{ $soapOp->{operation} } =
-	  $soapSrv->compileClient( $soapOp->{operation} );
+	  $soapSrv->compileClient( $soapOp->{operation}, interpret_nillable_as_optional=>1 );
 }
 
 # Print usage if bad argument combination
@@ -181,13 +188,12 @@ sub soap_run($$$) {
 	my $title = shift;
 	my $paramsRef = shift;
 	my %params = %{$paramsRef};
-	# Clean parameters hash
+	# Set NIL for empty elements.
 	foreach my $paramName (keys(%params)) {
 		if(!defined($params{$paramName})) {
-			delete $params{$paramName};
+			$params{$paramName} = 'NIL';
 		}
 	}
-	print Dumper \%params;
 	my $response = &soapRequest('run',
 		{
 			'email' => $email,
@@ -195,8 +201,7 @@ sub soap_run($$$) {
 			'parameters' => \%params
 		}
 	);
-	print Dumper($response);
-	return $response->{'jobId'};
+	return $response->{'output'}->{'jobId'};
 }
 
 # Get job status
