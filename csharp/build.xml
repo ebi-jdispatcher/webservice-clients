@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<project basedir='.' default='all' name='EBIWS2_CSharp'>
+  <property name='nant.settings.currentframework' value='mono-2.0'/>
+  <property name='build' value='bin'/>
+  <property name='src' value='src'/>
+  <target name='all'/>
+</project>
