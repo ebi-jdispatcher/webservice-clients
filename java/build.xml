@@ -43,16 +43,23 @@
 
   <!-- Generate stubs for all services -->
   <target name="stubs-all" depends="unpack-dependencies">
-    <antcall target="stubs-clustalw2" />
+    <antcall target="stubs-clustalw2-msa" />
+    <antcall target="stubs-clustalw2-phylotree" />
     <antcall target="stubs-fasta" />
     <antcall target="stubs-ncbiblast" />
   </target>
 
   <!-- Generate stubs for each service -->
-	  <target name="stubs-clustalw2">
+	  <target name="stubs-clustalw2-msa">
 	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2?wsdl" />
+	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.msa" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-msa?wsdl" />
+	    </antcall>
+	  </target>
+	  <target name="stubs-clustalw2-phylotree">
+	    <antcall target="genStubs">
+	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.phylotree" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-phylotree?wsdl" />
 	    </antcall>
 	  </target>
 	  <target name="stubs-fasta">
