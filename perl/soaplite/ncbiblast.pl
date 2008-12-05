@@ -233,7 +233,7 @@ sub soap_get_result_types($) {
 sub soap_get_raw_result_output($$) {
 	my $jobid = shift;
 	my $type = shift;
-	my $res = $soap->getRawResultOutput(
+	my $res = $soap->getResult(
 		SOAP::Data->name('jobId' => $jobid ),
 		SOAP::Data->name('type' => $type )
 	);

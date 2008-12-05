@@ -222,7 +222,7 @@ sub soap_get_result_types($) {
 sub soap_get_raw_result_output($$) {
 	my $jobid = shift;
 	my $type = shift;
-	my $response = &soapRequest('getRawResultOutput', 
+	my $response = &soapRequest('getResult', 
 		{
 			'jobId' => $jobid,
 			'type' => $type
