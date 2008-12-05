@@ -128,7 +128,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 			printProgressMessage("File type: " + resultTypes[i], 2);
 			// Get the results
 			if(outformat == null || outformat.equals(resultTypes[i])) {
-				byte[] resultbytes = this.srvProxy.getRawResultOutput(jobid, resultTypes[i]);
+				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i]);
 				if(resultbytes == null) {
 					System.err.println("Null result for " + resultTypes[i] + "!");
 				} else {
