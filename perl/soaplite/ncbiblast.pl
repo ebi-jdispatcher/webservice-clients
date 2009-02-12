@@ -34,25 +34,32 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 my %params = ();
-# Default parameter values
-my %tool_params = ();
+# Default parameter values (should get these from the service)
+my %tool_params = (
+'program' => 'blastp',
+'stype' => 'protein',
+'exp' => '1.0',
+'database' => (),
+);
 GetOptions(
 	# Tool specific options
 	"program|p=s"   => \$tool_params{'program'},      # blastp, blastn, blastx, etc.
-	"database|D=s"  => \$tool_params{'database'},     # Database to search
+	"database|D=s"  => \$params{'database'},          # Database(s) to search
 	"matrix|m=s"    => \$tool_params{'matrix'},       # Scoring martix to use
 	"exp|E=f"       => \$tool_params{'exp'},          # E-value threshold
 	"filter|f"      => \$tool_params{'filter'},       # Low complexity filter
-	"align|A=i"     => \$tool_params{'numal'},        # Number of alignments
+	"align|A=i"     => \$tool_params{'align'},        # Pairwise alignment format
 	"scores|s=i"    => \$tool_params{'scores'},       # Number of scores
-	"numal|n=i"     => \$tool_params{'numal'},        # Number of alignments
+	"alignments|n=i"     => \$tool_params{'alignments'},        # Number of alignments
 	"dropoff|d=i"   => \$tool_params{'dropoff'},      # Dropoff score
-	"match_score=s" => \$tool_params{'match_score'},  # Match/missmatch scores
+	"match_scores=s" => \$tool_params{'match_scores'},  # Match/missmatch scores
 	"match|u=i"     => \$params{'match'},             # Match score
 	"mismatch|v=i"  => \$params{'mismatch'},          # Mismatch score
-	"opengap|o=i"   => \$tool_params{'opengap'},      # Open gap penalty
-	"extendgap|x=i" => \$tool_params{'extendgap'},    # Gap extension penality
+	"gapopen|o=i"   => \$tool_params{'gapopen'},      # Open gap penalty
+	"gapextend|x=i" => \$tool_params{'gapextend'},    # Gap extension penality
 	"gapalign|g"    => \$tool_params{'gapalign'},     # Optimise gap alignments
+        "stype=s"       => \$tool_params{'stype'},        # Sequence type 'protein' or 'dna'
+	"seqrange=s"    => \$tool_params{'seqrange'},          # Query subsequence to use
 	"sequence=s"    => \$params{'sequence'},          # Query sequence file or DB:ID
 	# Generic options
 	'email=s'       => \$params{'email'},             # User e-mail address
@@ -156,6 +163,7 @@ elsif ( $params{'status'} && defined($params{'jobid'}) ) {
 
 # Submit a job
 else {
+    # Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			$tool_params{'sequence'} = &read_file( $ARGV[0] );
@@ -171,6 +179,16 @@ else {
 		else {                                       # DB:ID or sequence
 			$tool_params{'sequence'} = $params{'sequence'};
 		}
+	}
+	# Database(s) to search
+	my (@dbList) = split /[ ,]/, $params{'database'};
+	for(my $i = 0; $i < scalar(@dbList); $i++) {
+	    print $dbList[$i], "\n";
+	    $tool_params{'database'}[$i] = SOAP::Data->type('string' => $dbList[$i])->name('string');
+	}
+	# Match/missmatch
+	if($params{'match'} && $params{'missmatch'}) {
+	    $tool_params{'match_scores'} = $params{'match'} . ',' . $params{'missmatch'};
 	}
 
 	my $jobid = &soap_run($params{'email'}, $params{'title'}, \%tool_params);
@@ -384,7 +402,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 
   -p, --program	   : str  : BLAST program to use: blastn, blastp, blastx, 
                             tblastn or tblastx
-  -D, --database   : str  : database to search
+  -D, --database   : str  : database(s) to search, space separated
   seqFile          : file : query sequence ("-" for STDIN)
 
 [Optional]
@@ -393,15 +411,16 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
   -e, --exp        : real : 0<E<= 1000. Statistical significance threshold 
                             for reporting database sequence matches.
   -f, --filter	   :      : display the filtered query sequence in the output
-  -A, --align	   : int  : number of alignments to be reported
+  -A, --align	   : int  : pairwise alignment format
   -s, --scores	   : int  : number of scores to be reported
-  -n, --numal	   : int  : Number of alignments
-  -u, --match      : int  : Match score
-  -v, --mismatch   : int  : Mismatch score
-  -o, --opengap	   : int  : Gap open penalty
-  -x, --extendgap  : int  : Gap extension penalty
+  -n, --alignments : int  : number of alignments to report
+  -u, --match      : int  : Match score (BLASTN only)
+  -v, --mismatch   : int  : Mismatch score (BLASTN only)
+  -o, --gapopen	   : int  : Gap open penalty
+  -x, --gapextend  : int  : Gap extension penalty
   -d, --dropoff	   : int  : Drop-off
   -g, --gapalign   :      : Optimise gapped alignments
+      --stype      : str  : Sequence type: protein or dna
       --seqrange   : str  : region within input to use as query
       --format     :      : Return NCBI BLAST XML format
 
