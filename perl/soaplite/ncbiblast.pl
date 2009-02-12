@@ -39,7 +39,7 @@ my %tool_params = (
 'program' => 'blastp',
 'stype' => 'protein',
 'exp' => '1.0',
-'database' => (),
+#'database' => (),
 );
 GetOptions(
 	# Tool specific options
@@ -70,6 +70,7 @@ GetOptions(
 	'help|h'        => \$params{'help'},              # Usage help
 	'async'         => \$params{'async'},             # Asynchronous submission
 	'polljob'       => \$params{'polljob'},           # Get results
+	'getTypes'      => \$params{'getTypes'},          # Get result types
 	'status'        => \$params{'status'},            # Get status
 	'params'        => \$params{'params'},            # List input parameters
 	'paramDetail=s' => \$params{'paramDetail'},       # Get details for parameter
@@ -119,7 +120,7 @@ my $soap = SOAP::Lite
   );
 
 # Print usage if bad argument combination
-if (   !( $params{'polljob'} || $params{'status'} || $params{'params'} || $params{'paramDetail'} )
+if (   !( $params{'polljob'} || $params{'getTypes'} || $params{'status'} || $params{'params'} || $params{'paramDetail'} )
 	&& !( defined( $ARGV[0] ) || defined($params{'sequence'}) ) )
 {
 	print STDERR 'Error: bad option combination', "\n";
@@ -149,6 +150,31 @@ elsif ( $params{'polljob'} && defined($params{'jobid'}) ) {
 	&getResults($params{'jobid'});
 }
 
+# Result types
+elsif ( $params{'getTypes'} && defined($params{'jobid'}) ) {
+	if ( $outputLevel > 0 ) {
+		print STDERR 'Getting result types for job ', $params{'jobid'}, "\n";
+	}
+	my $status = &soap_get_status($params{'jobid'});
+	if($status eq 'PENDING' || $status eq 'RUNNING') {
+	    print STDERR 'Error: Job status is ', $status, '. To get result types the job must be finished.', "\n";
+	}
+	else {
+	    my (@resultTypes) = &soap_get_result_types($params{'jobid'});
+	    if($outputLevel > 0) {
+		print STDOUT 'Available result types:', "\n";
+	    }
+	    foreach my $resultType (@resultTypes) {
+		print STDOUT $resultType, "\n";
+	    }
+	    if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
+		print STDERR "\n", 'To get results:', "\n",
+		"  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+		"  $scriptName --polljob --outformat <type> --jobid " . $params{'jobid'} . "\n";
+	    }
+	}
+}
+
 # Job status
 elsif ( $params{'status'} && defined($params{'jobid'}) ) {
 	if ( $outputLevel > 0 ) {
@@ -156,7 +182,7 @@ elsif ( $params{'status'} && defined($params{'jobid'}) ) {
 	}
 	my $result = &soap_get_status($params{'jobid'});
 	print "$result\n";
-	if ( $result eq 'DONE' && $outputLevel > 0 ) {
+	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
 		print STDERR "To get results: $scriptName --polljob --jobid " . $params{'jobid'} . "\n";
 	}
 }
@@ -183,7 +209,6 @@ else {
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
 	for(my $i = 0; $i < scalar(@dbList); $i++) {
-	    print $dbList[$i], "\n";
 	    $tool_params{'database'}[$i] = SOAP::Data->type('string' => $dbList[$i])->name('string');
 	}
 	# Match/missmatch
@@ -194,7 +219,7 @@ else {
 	my $jobid = &soap_run($params{'email'}, $params{'title'}, \%tool_params);
 
 	if ( defined($params{'async'}) ) {
-		print STDOUT $params{'jobid'}, "\n";
+		print STDOUT $jobid, "\n";
 		if ( $outputLevel > 0 ) {
 			print STDERR
 			  "To check status: $scriptName --status --jobid $jobid\n";
