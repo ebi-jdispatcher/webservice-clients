@@ -5,6 +5,10 @@
 package uk.ac.ebi.webservices.jdispatcher;
 
 import java.io.*;
+import java.rmi.RemoteException;
+
+import javax.xml.rpc.ServiceException;
+
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.jdispatcher.ncbiblast.*;
 
@@ -75,6 +79,32 @@ public class NCBIBlastClient extends AbstractWsClient {
 		this.srvProxyConnect(); // Ensure the service proxy exists
 		return this.srvProxy;
 	}
+	
+	public String[] getParams() throws ServiceException, RemoteException {
+		String[] retVal = null;
+		this.srvProxyConnect(); // Ensure the service proxy exists
+		retVal = this.srvProxy.getParameters();
+		return retVal;
+	}
+	
+	private void printParams() throws RemoteException, ServiceException {
+		String[] paramList = getParams();
+		for(int i = 0; i < paramList.length; i++) {
+			System.out.println(paramList[i]);
+		}
+	}
+
+	public WsParameterDetails getParamDetail(String paramName) throws ServiceException, RemoteException {
+		this.srvProxyConnect(); // Ensure the service proxy exists
+		return this.srvProxy.getParameterDetails(paramName);
+	}
+	
+	private void printParamDetail(String paramName) throws RemoteException, ServiceException {
+		WsParameterDetails paramDetail = getParamDetail(paramName);
+		// Print object...!
+		System.out.println(paramDetail.getName() + "\t" + paramDetail.getType());
+		System.out.println(paramDetail.getDescription());
+	}
 
 	/** Get the status of a submitted job given its job identifier.
 	 * 
@@ -98,11 +128,31 @@ public class NCBIBlastClient extends AbstractWsClient {
 	/* public String[] getIds(String jobid) throws javax.xml.rpc.ServiceException, java.rmi.RemoteException {
 		this.srvProxyConnect(); // Ensure the service proxy exists
 		return this.srvProxy.;	
-	} /*
+	} */
 
+	public WsResultType[] getResultTypes(String jobId) throws ServiceException, RemoteException {
+		WsResultType[] retVal = null;
+		this.srvProxyConnect(); // Ensure the service proxy exists
+		retVal = this.srvProxy.getResultTypes(jobId);
+		return retVal;
+	}
+	
+	private void printResultTypes(String jobId) throws ServiceException, RemoteException {
+		WsResultType[] typeList = getResultTypes(jobId);
+		for(int i = 0; i < typeList.length; i++) {
+			System.out.print(
+					typeList[i].getIdentifier() + "\n\t"
+					+ typeList[i].getLabel() + "\n\t"
+					+ typeList[i].getDescription() + "\n\t"
+					+ typeList[i].getMediaType() + "\n\t"
+					+ typeList[i].getFileSuffix() + "\n"
+					);
+		}
+	}
+	
 	/** Get the results for a job and save them to files.
 	 * 
-	 * @param jobid The job identifer.
+	 * @param jobid The job identifier.
 	 * @param outfile The base name of the file to save the results to. If
 	 * null the jobid will be used.
 	 * @param outformat The name of the data format to save, e.g. toolraw 
@@ -118,19 +168,19 @@ public class NCBIBlastClient extends AbstractWsClient {
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
-		String[] resultTypes = this.srvProxy.getResultTypes(jobid);
+		WsResultType[] resultTypes = getResultTypes(jobid);
 		if(outformat == null) {
 			retVal = new String[resultTypes.length];
 		} else {
 			retVal = new String[1];
 		}
 		for(int i = 0; i < resultTypes.length; i++) {
-			printProgressMessage("File type: " + resultTypes[i], 2);
+			printProgressMessage("File type: " + resultTypes[i].getIdentifier(), 2);
 			// Get the results
-			if(outformat == null || outformat.equals(resultTypes[i])) {
-				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i]);
+			if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
+				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier());
 				if(resultbytes == null) {
-					System.err.println("Null result for " + resultTypes[i] + "!");
+					System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
 				} else {
 					printProgressMessage("Result bytes length: " + resultbytes.length, 2);
 					// Write the results to a file
@@ -139,7 +189,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 						System.out.print(result);
 					}
 					else { // File
-						String filename = basename + "." + resultTypes[i];
+						String filename = basename + "." + resultTypes[i].getIdentifier() + "." + resultTypes[i].getFileSuffix();
 						writeFile(new File(filename), result);
 						retVal[i] = filename;
 					}
@@ -229,22 +279,27 @@ public class NCBIBlastClient extends AbstractWsClient {
 	public static InputParameters loadParams(CommandLine line) throws IOException {
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p")); 	
-		if (line.hasOption("D")) params.setDatabase(line.getOptionValue("D"));
+		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
+		else params.setStype("protein");
+		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p"));
+		if (line.hasOption("D")) params.setDatabase(new String[] {line.getOptionValue("D")});
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("e")) params.setExp(line.getOptionValue("e"));
-		else params.setExp("1.0");
-		//if (line.hasOption("u")) params.setMatch(Integer.parseInt(line.getOptionValue("u")));
-		//if (line.hasOption("v")) params.setMismatch(Integer.parseInt(line.getOptionValue("v")));
-		if (line.hasOption("o")) params.setOpengap(new Integer(line.getOptionValue("o"))); 
-		if (line.hasOption("x")) params.setExtendgap(new Integer(line.getOptionValue("x"))); 
+		else params.setExp("10");
+		if (line.hasOption("u") && line.hasOption("v")) {
+			params.setMatch_scores(line.getOptionValue("u") + "," + line.getOptionValue("v"));
+		}
+		if (line.hasOption("o")) params.setGapopen(new Integer(line.getOptionValue("o"))); 
+		if (line.hasOption("x")) params.setGapext(new Integer(line.getOptionValue("x")));
 		if (line.hasOption("d")) params.setDropoff(new Integer(line.getOptionValue("d"))); 
 		if (line.hasOption("A")) params.setAlign(new Integer(line.getOptionValue("A"))); 
-		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s"))); 
-		if (line.hasOption("n")) params.setNumal(new Integer(line.getOptionValue("n"))); 
+		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s")));
+		else params.setScores(50);
+		if (line.hasOption("n")) params.setAlignments(new Integer(line.getOptionValue("n")));
+		else params.setAlignments(50);
 		if (line.hasOption("g")) params.setGapalign(new Boolean(true)); 
 		if (line.hasOption("f")) params.setFilter(line.getOptionValue("f"));
-		if (line.hasOption("F")) params.setFormat(new Boolean(true));
+		//if (line.hasOption("F")) params.setFormat(new Boolean(true));
 		if (line.hasOption("S")) params.setSeqrange(line.getOptionValue("S"));
 		return params;
 	}
@@ -272,6 +327,9 @@ public class NCBIBlastClient extends AbstractWsClient {
 		options.addOption("quiet", "quiet", false, "Decrease output messages");
 		options.addOption("verbose", "verbose", false, "Increase output messages");
 		options.addOption("ids", "ids", false, "retrieve only identifiers"); // TBI
+		options.addOption("params", "params", false, "List parameters");
+		options.addOption("paramDetail", "paramDetail", true, "List parameter information");
+		options.addOption("resultTypes", "resultTypes", false, "List result types for job");
 		// Application specific options
 		options.addOption("p", "program", true, "Program to use");
 		options.addOption("D", "database", true, "Database to search");
@@ -287,6 +345,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 		options.addOption("o", "opengap", true, "Gap creation penalty");
 		options.addOption("x", "extendgap", true, "Gap extension penalty");
 		options.addOption("d", "dropoff", true, "Drop off score");
+		options.addOption("stype", "stype", true, "Sequence type");
 		options.addOption("sequence", "sequence", true, "Query sequence");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
@@ -307,7 +366,14 @@ public class NCBIBlastClient extends AbstractWsClient {
 			if(cli.hasOption("verbose")) {
 				client.outputLevel++;
 			}
-			if(cli.hasOption("jobid")) {
+			// Tool meta-data
+			if(cli.hasOption("params")) {
+				client.printParams();
+			}
+			else if(cli.hasOption("paramDetail")) {
+				client.printParamDetail(cli.getOptionValue("paramDetail"));
+			}
+			else if(cli.hasOption("jobid")) {
 				String jobid = cli.getOptionValue("jobid");
 				// Get results for job
 				if(cli.hasOption("polljob")) {                
@@ -331,6 +397,11 @@ public class NCBIBlastClient extends AbstractWsClient {
 				else if(cli.hasOption("status")) {
 					System.out.println(client.checkStatus(jobid));
 				}
+				// Get result types for job
+				else if(cli.hasOption("resultTypes")) {
+					client.printResultTypes(jobid);
+				}
+				// Unknown...
 				else {
 					System.err.println("Error: jobid specified without releated action option");
 					printUsage();
@@ -367,7 +438,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 		// Catch all exceptions
 		catch(Exception e) {
 			System.err.println ("ERROR: " + e.getMessage());
-			printUsage();
+			//printUsage();
 			retVal = 3;
 		}
 		System.exit(retVal);
