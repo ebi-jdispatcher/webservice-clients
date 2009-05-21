@@ -3,7 +3,9 @@
 # ======================================================================
 # NCBI BLAST jDispatcher Python client.
 #
-# Tested with: Python 2.5.1 with SOAPpy 0.11.3
+# Tested with:
+#   Python 2.5.1 with SOAPpy 0.11.3
+#   Python 2.6.2 with SOAPpy 0.12.0 (Ubuntu 9.04)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
@@ -36,6 +38,7 @@ parser.add_option('--trace', action="store_true", help='Show SOAP messages')
 # Tool specific options
 parser.add_option('-p', '--program', help='Program to run')
 parser.add_option('-D', '--database', help='Database to search')
+parser.add_option('--stype', default='protein', help='Query sequence type')
 parser.add_option('-m', '--matrix', help='Scoring matrix')
 parser.add_option('-E', '--exp', type='float', help='E-value threshold')
 parser.add_option('-f', '--filter', action="store_true", help='Low complexity sequence filter')
@@ -154,7 +157,9 @@ elif options.email and not options.jobid:
     if options.program:
         params['program'] = options.program
     if options.database:
-        params['database'] = options.database
+        params['database'] = [options.database]
+    if options.stype:
+        params['stype'] = options.stype
     if options.matrix:
         params['matrix'] = options.matrix
     if options.exp:
