@@ -18,14 +18,65 @@
   </target>
 
   <!-- Get back to distributed/repository state -->
-  <target name="distclean" depends="clean">
-    <delete includeemptydirs="true">
-        <fileset dir="${jdispatcher.src.dir}/" includes="ncbiblast"/>
-        <!-- <fileset dir="${jdispatcher.src.dir}/ncbiblast"/> -->
-        <fileset dir="." includes="${lib.dir}"/>
-        <fileset dir="." includes="lib**.zip"/>
-    </delete>
+  <target name="distclean" depends="clean,distclean-lib,distclean-stubs">
   </target>
+
+	<target name="distclean-lib">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="." includes="lib**.zip"/>
+    	    <fileset dir="${lib.dir}/" includes="*/**"/>
+        	<fileset dir="." includes="${lib.dir}"/>
+	    </delete>
+	</target>
+	
+	<target name="distclean-stubs">
+		<antcall target="distclean-stubs-clustalw2" />
+		<antcall target="distclean-stubs-fasta" />
+		<antcall target="distclean-stubs-ncbiblast" />
+		<antcall target="distclean-stubs-wublast" />
+	</target>
+	
+	<target name="distclean-stubs-clustalw2" depends="distclean-stubs-clustalw2-msa,distclean-stubs-clustalw2-phylotree">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+	
+	<target name="distclean-stubs-clustalw2-msa">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/clustalw2/msa" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="msa" />
+	    </delete>
+	</target>
+
+	<target name="distclean-stubs-clustalw2-phylotree">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/clustalw2/phylotree" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="phylotree" />
+	    </delete>
+	</target>
+
+	<target name="distclean-stubs-fasta">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/fasta" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/" includes="fasta" />
+	    </delete>
+	</target>
+
+	<target name="distclean-stubs-ncbiblast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/ncbiblast" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+
+	<target name="distclean-stubs-wublast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jdispatcher.src.dir}/wublast" includes="*/**" />
+	        <fileset dir="${jdispatcher.src.dir}/" includes="wublast" />
+	    </delete>
+	</target>
 
   <!-- Get dependencies archive, includes Axis 1.4, Axis 2 and JAX-RPC libraries -->
   <target name="get-dependencies">
@@ -54,20 +105,23 @@
 
   <!-- Generate stubs for all services -->
   <target name="stubs-all" depends="unpack-dependencies">
-    <!-- <antcall target="stubs-clustalw2-msa" /> -->
-  	<!-- <antcall target="stubs-clustalw2-phylotree" /> -->
+    <!-- <antcall target="stubs-clustalw2" /> -->
     <antcall target="stubs-fasta" />
     <antcall target="stubs-ncbiblast" />
     <antcall target="stubs-wublast" />
   </target>
 
-  <!-- Generate stubs for each service -->
-	  <target name="stubs-clustalw2-msa">
-	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.msa" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-msa?wsdl" />
-	    </antcall>
-	  </target>
+	<!-- Generate stubs for each service -->
+	<target name="stubs-clustalw2">
+		<antcall target="stubs-clustalw2-msa" />
+		<antcall target="stubs-clustalw2-phylotree" />
+	</target>
+	<target name="stubs-clustalw2-msa">
+		<antcall target="genStubs">
+	    	<param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.msa" />
+	    	<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-msa?wsdl" />
+		</antcall>
+	</target>
 	  <target name="stubs-clustalw2-phylotree">
 	    <antcall target="genStubs">
 	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.phylotree" />
