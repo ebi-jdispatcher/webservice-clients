@@ -178,7 +178,7 @@ public class NCBIBlastClient extends AbstractWsClient {
 			printProgressMessage("File type: " + resultTypes[i].getIdentifier(), 2);
 			// Get the results
 			if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
-				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier());
+				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), null);
 				if(resultbytes == null) {
 					System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
 				} else {
@@ -294,9 +294,9 @@ public class NCBIBlastClient extends AbstractWsClient {
 		if (line.hasOption("d")) params.setDropoff(new Integer(line.getOptionValue("d"))); 
 		if (line.hasOption("A")) params.setAlign(new Integer(line.getOptionValue("A"))); 
 		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s")));
-		else params.setScores(50);
+		else params.setScores(new Integer(50));
 		if (line.hasOption("n")) params.setAlignments(new Integer(line.getOptionValue("n")));
-		else params.setAlignments(50);
+		else params.setAlignments(new Integer(50));
 		if (line.hasOption("g")) params.setGapalign(new Boolean(true)); 
 		if (line.hasOption("f")) params.setFilter(line.getOptionValue("f"));
 		//if (line.hasOption("F")) params.setFormat(new Boolean(true));
