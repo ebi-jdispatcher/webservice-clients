@@ -1,6 +1,7 @@
 <!-- Build Java clients for EBI web services. -->
 <project name="EBIWS2-Java" basedir="." default="jar">
   <property name="src.dir" value="src" />
+  <property name="jdispatcher.src.dir" value="${src.dir}/uk/ac/ebi/webservices/jdispatcher" />
   <property name="build.dir" value="bin" />
   <property name="lib.dir" value="lib"/>
 
@@ -13,6 +14,16 @@
   <target name="clean">
     <delete includeemptydirs="true">
       <fileset dir="${build.dir}" includes="**/*"/>
+    </delete>
+  </target>
+
+  <!-- Get back to distributed/repository state -->
+  <target name="distclean" depends="clean">
+    <delete includeemptydirs="true">
+        <fileset dir="${jdispatcher.src.dir}/" includes="ncbiblast"/>
+        <!-- <fileset dir="${jdispatcher.src.dir}/ncbiblast"/> -->
+        <fileset dir="." includes="${lib.dir}"/>
+        <fileset dir="." includes="lib**.zip"/>
     </delete>
   </target>
 
@@ -44,7 +55,7 @@
   <!-- Generate stubs for all services -->
   <target name="stubs-all" depends="unpack-dependencies">
     <!-- <antcall target="stubs-clustalw2-msa" /> -->
-    <!-- <antcall target="stubs-clustalw2-phylotree" /> -->
+  	<!-- <antcall target="stubs-clustalw2-phylotree" /> -->
     <antcall target="stubs-fasta" />
     <antcall target="stubs-ncbiblast" />
     <antcall target="stubs-wublast" />
