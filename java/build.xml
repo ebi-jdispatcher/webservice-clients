@@ -1,9 +1,10 @@
 <!-- Build Java clients for EBI web services. -->
 <project name="EBIWS2-Java" basedir="." default="jar">
-  <property name="src.dir" value="src" />
-  <property name="jdispatcher.src.dir" value="${src.dir}/uk/ac/ebi/webservices/jdispatcher" />
-  <property name="build.dir" value="bin" />
-  <property name="lib.dir" value="lib"/>
+	<property name="src.dir" value="src" />
+	<property name="jdispatcher.src.dir" value="${src.dir}/uk/ac/ebi/webservices/jdispatcher" />
+	<property name="build.dir" value="bin" />
+	<property name="lib.dir" value="lib"/>
+	<property name="jar.dir" value="jar"/>
 
   <!-- Add all jars in lib/ to classpath -->
   <path id="classpath">
@@ -158,28 +159,28 @@
 
   <!-- Package jars -->
   <target name="jar" depends="compile">
-    <!-- <jar destfile="${build.dir}/ClustalW2.jar"
+    <!-- <jar destfile="${jar.dir}/ClustalW2.jar"
 	 basedir="${build.dir}"
 	 includes="uk/ac/ebi/webservices/jdispatcher/ClustalW2Client.** uk/ac/ebi/webservices/jdispatcher/clustalw2/**">
      <manifest>
        <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.ClustalW2Client"/>
      </manifest>
    </jar> -->
-    <jar destfile="${build.dir}/Fasta.jar"
+    <jar destfile="${jar.dir}/Fasta.jar"
 	 basedir="${build.dir}"
 	 includes="uk/ac/ebi/webservices/jdispatcher/FastaClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/fasta/**">
      <manifest>
        <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.FastaClient"/>
      </manifest>
    </jar>
-    <jar destfile="${build.dir}/NCBIBlast.jar"
+    <jar destfile="${jar.dir}/NCBIBlast.jar"
 	 basedir="${build.dir}"
 	 includes="uk/ac/ebi/webservices/jdispatcher/NCBIBlastClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/ncbiblast/**">
      <manifest>
        <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.NCBIBlastClient"/>
      </manifest>
    </jar>
-    <jar destfile="${build.dir}/WUBlast.jar"
+    <jar destfile="${jar.dir}/WUBlast.jar"
 	 basedir="${build.dir}"
 	 includes="uk/ac/ebi/webservices/jdispatcher/WUBlastClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/wublast/**">
      <manifest>
