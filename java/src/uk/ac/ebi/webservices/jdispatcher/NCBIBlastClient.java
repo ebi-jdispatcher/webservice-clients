@@ -39,7 +39,10 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		+ "  -p, --program    : str  : BLAST program to use: blastn, blastp, blastx, \n"
 		+ "                            tblastn or tblastx\n"
 		+ "  -D, --database   : str  : database to search\n"
+		+ "      --stype      : str  : query sequence type\n"
 		+ "  seqFile          : file : query sequence (\"-\" for STDIN)\n"
+		+ "\n"
+		+ "[Optional]\n"
 		+ "\n"
 		+ "  -m, --matrix     : str  : scoring matrix\n"
 		+ "  -e, --exp        : real : 0<E<= 1000. Statistical significance threshold \n"
@@ -53,8 +56,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		+ "  -o, --opengap    : int  : Gap open penalty\n"
 		+ "  -x, --extendgap  : int  : Gap extension penalty\n"
 		+ "  -d, --dropoff    : int  : Drop-off\n"
-		+ "  -g, --gapalign   :      : Optimise gapped alignments\n"
-		+ "\n";
+		+ "  -g, --gapalign   :      : Optimise gapped alignments\n";
 
 	/** Print usage message */
 	private static void printUsage() {
@@ -141,6 +143,23 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		// Print object...!
 		System.out.println(paramDetail.getName() + "\t" + paramDetail.getType());
 		System.out.println(paramDetail.getDescription());
+		WsParameterValue[] valueList = paramDetail.getValues();
+		for(int i = 0; i < valueList.length; i++) {
+			System.out.print(valueList[i].getValue());
+			if(valueList[i].isDefaultValue()) {
+				System.out.println("\tdefault");
+			}
+			else {
+				System.out.println();
+			}
+			System.out.println("\t" + valueList[i].getLabel());
+			WsProperty[] valuePropertiesList = valueList[i].getProperties();
+			if(valuePropertiesList != null) {
+				for(int j = 0; j < valuePropertiesList.length; j++) {
+					System.out.println("\t" + valuePropertiesList[j].getKey() + "\t" + valuePropertiesList[j].getValue());
+				}
+			}
+		}
 		printDebugMessage("printParamDetail", "End", 1);
 	}
 
