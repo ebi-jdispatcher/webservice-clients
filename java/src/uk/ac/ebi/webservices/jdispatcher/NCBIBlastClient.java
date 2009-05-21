@@ -561,7 +561,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		// Catch all exceptions
 		catch(Exception e) {
 			System.err.println ("ERROR: " + e.getMessage());
-			e.printStackTrace();
+			//e.printStackTrace();
 			exitVal = 3;
 		}
 		System.exit(exitVal);
