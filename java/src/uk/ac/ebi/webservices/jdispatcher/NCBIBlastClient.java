@@ -19,7 +19,7 @@ import uk.ac.ebi.webservices.jdispatcher.ncbiblast.*;
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast">http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class NCBIBlastClient extends AbstractWsClient {
+public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Usage message */
