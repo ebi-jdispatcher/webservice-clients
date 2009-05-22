@@ -3,7 +3,8 @@
 # ======================================================================
 # NCBI BLAST jDispatcher SOAP web service Perl client
 #
-# Requires SOAP::Lite. Tested with version 0.60.
+# Tested with:
+#   SOAP::Lite 0.60 and Perl 5.8.3
 #
 # See:
 # http://www.ebi.ac.uk/Tools/Webservices/tutorials/soaplite
