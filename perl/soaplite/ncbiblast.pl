@@ -5,6 +5,8 @@
 #
 # Tested with:
 #   SOAP::Lite 0.60 and Perl 5.8.3
+#   SOAP::Lite 0.69 and Perl 5.8.8
+#   SOAP::Lite 0.71 and Perl 5.8.8
 #   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
