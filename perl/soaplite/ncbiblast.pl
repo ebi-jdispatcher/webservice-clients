@@ -174,11 +174,9 @@ else {
 ### Wrappers for SOAP operations ###
 
 # Get list of tool parameters
-sub soap_get_parameters($) {
+sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $tool = shift;
-	print_debug_message( 'soap_get_parameters', 'tool: ' . $tool, 1 );
-	my $ret = $soap->getParameters( SOAP::Data->name( 'tool' => $tool ) );
+	my $ret = $soap->getParameters();
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return $ret->valueof('//parameters/id');
 }
@@ -186,13 +184,10 @@ sub soap_get_parameters($) {
 # Get details of a tool parameter
 sub soap_get_parameter_details($$) {
 	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
-	my $tool        = shift;
 	my $parameterId = shift;
-	print_debug_message( 'soap_get_parameter_details', 'tool: ' . $tool, 1 );
 	print_debug_message( 'soap_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret = $soap->getParameterDetails( SOAP::Data->name( 'tool' => $tool ),
-		SOAP::Data->name( 'parameterId' => $parameterId ) );
+	my $ret = $soap->getParameterDetails( SOAP::Data->name( 'parameterId' => $parameterId ) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
 	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
 	$paramDetail->{'values'} = \@paramValueList;
@@ -285,7 +280,7 @@ sub print_debug_message($$$) {
 # Print list of tool parameters
 sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
-	my (@paramList) = &soap_get_parameters('ncbiblast');
+	my (@paramList) = &soap_get_parameters();
 	foreach my $param (@paramList) {
 		print $param, "\n";
 	}
@@ -297,7 +292,7 @@ sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &soap_get_parameter_details( 'ncbiblast', $paramName );
+	my $paramDetail = &soap_get_parameter_details($paramName );
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
 	foreach my $value (@{$paramDetail->{'values'}}) {
