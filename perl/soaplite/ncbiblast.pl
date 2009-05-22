@@ -3,7 +3,7 @@
 # ======================================================================
 # NCBI BLAST jDispatcher SOAP web service Perl client
 #
-# Requires SOAP::Lite. Tested with versions 0.60, 0.69 and 0.71.
+# Requires SOAP::Lite. Tested with version 0.60.
 #
 # See:
 # http://www.ebi.ac.uk/Tools/Webservices/tutorials/soaplite
@@ -33,53 +33,57 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ();
+my %params  = ( 'debugLevel' => 0 );
+
 # Default parameter values (should get these from the service)
 my %tool_params = (
-'program' => 'blastp',
-'stype' => 'protein',
-'exp' => '1.0',
-#'database' => (),
+	'program'  => 'blastp',
+	'stype'    => 'protein',
+	'exp'      => '1.0',
+	'database' => undef,
 );
 GetOptions(
+
 	# Tool specific options
-	"program|p=s"   => \$tool_params{'program'},      # blastp, blastn, blastx, etc.
-	"database|D=s"  => \$params{'database'},          # Database(s) to search
-	"matrix|m=s"    => \$tool_params{'matrix'},       # Scoring martix to use
-	"exp|E=f"       => \$tool_params{'exp'},          # E-value threshold
-	"filter|f"      => \$tool_params{'filter'},       # Low complexity filter
-	"align|A=i"     => \$tool_params{'align'},        # Pairwise alignment format
-	"scores|s=i"    => \$tool_params{'scores'},       # Number of scores
-	"alignments|n=i"     => \$tool_params{'alignments'},        # Number of alignments
-	"dropoff|d=i"   => \$tool_params{'dropoff'},      # Dropoff score
-	"match_scores=s" => \$tool_params{'match_scores'},  # Match/missmatch scores
-	"match|u=i"     => \$params{'match'},             # Match score
-	"mismatch|v=i"  => \$params{'mismatch'},          # Mismatch score
-	"gapopen|o=i"   => \$tool_params{'gapopen'},      # Open gap penalty
-	"gapextend|x=i" => \$tool_params{'gapextend'},    # Gap extension penality
-	"gapalign|g"    => \$tool_params{'gapalign'},     # Optimise gap alignments
-        "stype=s"       => \$tool_params{'stype'},        # Sequence type 'protein' or 'dna'
-	"seqrange=s"    => \$tool_params{'seqrange'},          # Query subsequence to use
-	"sequence=s"    => \$params{'sequence'},          # Query sequence file or DB:ID
+	"program|p=s"  => \$tool_params{'program'},   # blastp, blastn, blastx, etc.
+	"database|D=s" => \$params{'database'},       # Database(s) to search
+	"matrix|m=s"   => \$tool_params{'matrix'},    # Scoring martix to use
+	"exp|E=f"      => \$tool_params{'exp'},       # E-value threshold
+	"filter|f"     => \$tool_params{'filter'},    # Low complexity filter
+	"align|A=i"    => \$tool_params{'align'},     # Pairwise alignment format
+	"scores|s=i"   => \$tool_params{'scores'},    # Number of scores
+	"alignments|n=i" => \$tool_params{'alignments'},   # Number of alignments
+	"dropoff|d=i"    => \$tool_params{'dropoff'},      # Dropoff score
+	"match_scores=s" => \$tool_params{'match_scores'}, # Match/missmatch scores
+	"match|u=i"      => \$params{'match'},             # Match score
+	"mismatch|v=i"   => \$params{'mismatch'},          # Mismatch score
+	"gapopen|o=i"    => \$tool_params{'gapopen'},      # Open gap penalty
+	"gapextend|x=i"  => \$tool_params{'gapextend'},    # Gap extension penality
+	"gapalign|g"     => \$tool_params{'gapalign'},     # Optimise gap alignments
+	"stype=s" => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
+	"seqrange=s" => \$tool_params{'seqrange'},    # Query subsequence to use
+	"sequence=s" => \$params{'sequence'},         # Query sequence file or DB:ID
+
 	# Generic options
-	'email=s'       => \$params{'email'},             # User e-mail address
-	'title=s'       => \$params{'title'},             # Job title
-	'outfile=s'     => \$params{'outfile'},           # Output file name
-	'outformat=s'   => \$params{'outformat'},         # Output file type
-	'jobid=s'       => \$params{'jobid'},             # JobId
-	'help|h'        => \$params{'help'},              # Usage help
-	'async'         => \$params{'async'},             # Asynchronous submission
-	'polljob'       => \$params{'polljob'},           # Get results
-	'getTypes'      => \$params{'getTypes'},          # Get result types
-	'status'        => \$params{'status'},            # Get status
-	'params'        => \$params{'params'},            # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},       # Get details for parameter
-	'quiet'         => \$params{'quiet'},             # Decrease output level
-	'verbose'       => \$params{'verbose'},           # Increase output level
-	'trace'         => \$params{'trace'},             # SOAP message debug
+	'email=s'       => \$params{'email'},          # User e-mail address
+	'title=s'       => \$params{'title'},          # Job title
+	'outfile=s'     => \$params{'outfile'},        # Output file name
+	'outformat=s'   => \$params{'outformat'},      # Output file type
+	'jobid=s'       => \$params{'jobid'},          # JobId
+	'help|h'        => \$params{'help'},           # Usage help
+	'async'         => \$params{'async'},          # Asynchronous submission
+	'polljob'       => \$params{'polljob'},        # Get results
+	'resultTypes'   => \$params{'resultTypes'},    # Get result types
+	'status'        => \$params{'status'},         # Get status
+	'params'        => \$params{'params'},         # List input parameters
+	'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
+	'quiet'         => \$params{'quiet'},          # Decrease output level
+	'verbose'       => \$params{'verbose'},        # Increase output level
+	'debugLevel'    => \$params{'debugLevel'},     # Debug output level
+	'trace'         => \$params{'trace'},          # SOAP message debug
 );
-if ($params{'verbose'}) { $outputLevel++ }
-if ($params{'$quiet'})  { $outputLevel-- }
+if ( $params{'verbose'} ) { $outputLevel++ }
+if ( $params{'$quiet'} )  { $outputLevel-- }
 
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
@@ -91,19 +95,18 @@ if ( $params{'help'} || $numOpts == 0 ) {
 }
 
 # If required enable SOAP message trace
-if ($params{'trace'}) {
+if ( $params{'trace'} ) {
 	print STDERR "Tracing active\n";
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
 # Create the service interface, setting the fault handler to throw exceptions
-my $soap = SOAP::Lite
-	->proxy($ENDPOINT,
+my $soap = SOAP::Lite->proxy(
+	$ENDPOINT,
+
 	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
 	timeout => 6000,    # HTTP connection timeout
-	)
-	->uri($NAMESPACE)
-  	->on_fault(
+  )->uri($NAMESPACE)->on_fault(
 	sub {
 		my $soap = shift;
 		my $res  = shift;
@@ -119,10 +122,19 @@ my $soap = SOAP::Lite
 	}
   );
 
-# Print usage if bad argument combination
-if (   !( $params{'polljob'} || $params{'getTypes'} || $params{'status'} || $params{'params'} || $params{'paramDetail'} )
-	&& !( defined( $ARGV[0] ) || defined($params{'sequence'}) ) )
+if (
+	!(
+		   $params{'polljob'}
+		|| $params{'resultTypes'}
+		|| $params{'status'}
+		|| $params{'params'}
+		|| $params{'paramDetail'}
+	)
+	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
+  )
 {
+
+	# Bad argument combination, so print error message and usage
 	print STDERR 'Error: bad option combination', "\n";
 	&usage();
 	exit(1);
@@ -130,66 +142,262 @@ if (   !( $params{'polljob'} || $params{'getTypes'} || $params{'status'} || $par
 
 # Get parameters list
 elsif ( $params{'params'} ) {
-	my (@paramList) = &soap_get_parameters('ncbiblast');
-	foreach my $param (@paramList) {
-		print $param, "\n";
-	}
+	&print_tool_params();
 }
 
-# Get parameters list
+# Get parameter details
 elsif ( $params{'paramDetail'} ) {
-	my $paramDetail = &soap_get_parameter_details('ncbiblast', $params{'paramDetail'});
-	print Dumper($paramDetail->valueof('/'));
-}
-
-# Poll job and get results
-elsif ( $params{'polljob'} && defined($params{'jobid'}) ) {
-	if ( $outputLevel > 1 ) {
-		print 'Getting results for job ', $params{'jobid'}, "\n";
-	}
-	&getResults($params{'jobid'});
-}
-
-# Result types
-elsif ( $params{'getTypes'} && defined($params{'jobid'}) ) {
-	if ( $outputLevel > 0 ) {
-		print STDERR 'Getting result types for job ', $params{'jobid'}, "\n";
-	}
-	my $status = &soap_get_status($params{'jobid'});
-	if($status eq 'PENDING' || $status eq 'RUNNING') {
-	    print STDERR 'Error: Job status is ', $status, '. To get result types the job must be finished.', "\n";
-	}
-	else {
-	    my (@resultTypes) = &soap_get_result_types($params{'jobid'});
-	    if($outputLevel > 0) {
-		print STDOUT 'Available result types:', "\n";
-	    }
-	    foreach my $resultType (@resultTypes) {
-		print STDOUT $resultType, "\n";
-	    }
-	    if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
-		print STDERR "\n", 'To get results:', "\n",
-		"  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-		"  $scriptName --polljob --outformat <type> --jobid " . $params{'jobid'} . "\n";
-	    }
-	}
+	&print_param_details( $params{'paramDetail'} );
 }
 
 # Job status
-elsif ( $params{'status'} && defined($params{'jobid'}) ) {
-	if ( $outputLevel > 0 ) {
-		print STDERR 'Getting status for job ', $params{'jobid'}, "\n";
-	}
-	my $result = &soap_get_status($params{'jobid'});
-	print "$result\n";
-	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
-		print STDERR "To get results: $scriptName --polljob --jobid " . $params{'jobid'} . "\n";
-	}
+elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
+	&job_status( $params{'jobid'} );
+}
+
+# Result types
+elsif ( $params{'resultTypes'} && defined( $params{'jobid'} ) ) {
+	&print_result_types( $params{'jobid'} );
+}
+
+# Poll job and get results
+elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
+	&get_results( $params{'jobid'} );
 }
 
 # Submit a job
 else {
-    # Query sequence
+	&submit_job();
+}
+
+### Wrappers for SOAP operations ###
+
+# Get list of tool parameters
+sub soap_get_parameters($) {
+	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
+	my $tool = shift;
+	print_debug_message( 'soap_get_parameters', 'tool: ' . $tool, 1 );
+	my $ret = $soap->getParameters( SOAP::Data->name( 'tool' => $tool ) );
+	print_debug_message( 'soap_get_parameters', 'End', 1 );
+	return $ret->valueof('//parameters/id');
+}
+
+# Get details of a tool parameter
+sub soap_get_parameter_details($$) {
+	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
+	my $tool        = shift;
+	my $parameterId = shift;
+	print_debug_message( 'soap_get_parameter_details', 'tool: ' . $tool, 1 );
+	print_debug_message( 'soap_get_parameter_details',
+		'parameterId: ' . $parameterId, 1 );
+	my $ret = $soap->getParameterDetails( SOAP::Data->name( 'tool' => $tool ),
+		SOAP::Data->name( 'parameterId' => $parameterId ) );
+	my $paramDetail = $ret->valueof('//parameterDetails');
+	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
+	$paramDetail->{'values'} = \@paramValueList;
+	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
+	return $paramDetail;
+}
+
+# Submit a job
+sub soap_run($$$) {
+	print_debug_message( 'soap_run', 'Begin', 1 );
+	my $email  = shift;
+	my $title  = shift;
+	my $params = shift;
+	print_debug_message( 'soap_run', 'email: ' . $email, 1 );
+	if ( defined($title) ) {
+		print_debug_message( 'soap_run', 'title: ' . $title, 1 );
+	}
+
+	my (@paramsList) = ();
+	foreach my $key ( keys(%$params) ) {
+		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
+			push @paramsList, SOAP::Data->name( $key => $params->{$key} );
+		}
+	}
+	my $ret = $soap->run(
+		SOAP::Data->name( 'email'      => $email ),
+		SOAP::Data->name( 'title'      => $title ),
+		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )
+	);
+	print_debug_message( 'soap_run', 'End', 1 );
+	return $ret->valueof('//jobId');
+}
+
+# Check the status of a job.
+sub soap_get_status($) {
+	print_debug_message( 'soap_get_status', 'Begin', 1 );
+	my $jobid = shift;
+	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
+	my $res = $soap->getStatus( SOAP::Data->name( 'jobId' => $jobid ) );
+	my $status_str = $res->valueof('//status');
+	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
+	print_debug_message( 'soap_get_status', 'End', 1 );
+	return $status_str;
+}
+
+# Get list of result types for finished job
+sub soap_get_result_types($) {
+	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
+	my $jobid = shift;
+	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
+	my $resultTypesXml =
+	  $soap->getResultTypes( SOAP::Data->name( 'jobId' => $jobid ) );
+	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
+	print_debug_message( 'soap_get_result_types',
+		scalar(@resultTypes) . ' result types', 2 );
+	print_debug_message( 'soap_get_result_types', 'End', 1 );
+	return (@resultTypes);
+}
+
+# Get result data of a specified type for a finished job
+sub soap_get_raw_result_output($$) {
+	print_debug_message( 'soap_get_raw_result_output', 'Begin', 1 );
+	my $jobid = shift;
+	my $type  = shift;
+	print_debug_message( 'soap_get_raw_result_output', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'soap_get_raw_result_output', 'type: ' . $type,   1 );
+	my $res = $soap->getResult(
+		SOAP::Data->name( 'jobId' => $jobid ),
+		SOAP::Data->name( 'type'  => $type )
+	);
+	my $result = decode_base64( $res->valueof('//output') );
+	print_debug_message( 'soap_get_raw_result_output',
+		length($result) . ' characters', 1 );
+	print_debug_message( 'soap_get_raw_result_output', 'End', 1 );
+	return $result;
+}
+
+###  ###
+
+# Print debug message
+sub print_debug_message($$$) {
+	my $function_name = shift;
+	my $message       = shift;
+	my $level         = shift;
+	if ( $level <= $params{'debugLevel'} ) {
+		print STDERR '[', $function_name, '()] ', $message, "\n";
+	}
+}
+
+# Print list of tool parameters
+sub print_tool_params() {
+	print_debug_message( 'print_tool_params', 'Begin', 1 );
+	my (@paramList) = &soap_get_parameters('ncbiblast');
+	foreach my $param (@paramList) {
+		print $param, "\n";
+	}
+	print_debug_message( 'print_tool_params', 'End', 1 );
+}
+
+# Print details of a tool parameter
+sub print_param_details($) {
+	print_debug_message( 'print_param_details', 'Begin', 1 );
+	my $paramName = shift;
+	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
+	my $paramDetail = &soap_get_parameter_details( 'ncbiblast', $paramName );
+	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
+	print $paramDetail->{'description'}, "\n";
+	foreach my $value (@{$paramDetail->{'values'}}) {
+		print $value->{'value'};
+		if($value->{'defaultValue'} eq 'true') {
+			print '\tdefault';
+		}
+		print "\n";
+		print "\t", $value->{'label'}, "\n";
+	}
+	print_debug_message( 'print_param_details', 'End', 1 );
+}
+
+# Print status of a job
+sub print_job_status($) {
+	print_debug_message( 'print_job_status', 'Begin', 1 );
+	my $jobid = shift;
+	print_debug_message( 'print_job_status', 'jobid: ' . $jobid, 1 );
+	if ( $outputLevel > 0 ) {
+		print STDERR 'Getting status for job ', $jobid, "\n";
+	}
+	my $result = &soap_get_status($jobid);
+	print "$result\n";
+	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
+		print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+		  . "\n";
+	}
+	print_debug_message( 'print_job_status', 'End', 1 );
+}
+
+# Print available result types for a job
+sub print_result_types($) {
+	print_debug_message( 'result_types', 'Begin', 1 );
+	my $jobid = shift;
+	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
+	if ( $outputLevel > 0 ) {
+		print STDERR 'Getting result types for job ', $jobid, "\n";
+	}
+	my $status = &soap_get_status($jobid);
+	if ( $status eq 'PENDING' || $status eq 'RUNNING' ) {
+		print STDERR 'Error: Job status is ', $status,
+		  '. To get result types the job must be finished.', "\n";
+	}
+	else {
+		my (@resultTypes) = &soap_get_result_types($jobid);
+		if ( $outputLevel > 0 ) {
+			print STDOUT 'Available result types:', "\n";
+		}
+		foreach my $resultType (@resultTypes) {
+			print STDOUT $resultType->{'identifier'}, "\n";
+			print STDOUT "\t", $resultType->{'label'},       "\n";
+			print STDOUT "\t", $resultType->{'description'}, "\n";
+			print STDOUT "\t", $resultType->{'mediaType'},   "\n";
+			print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
+		}
+		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
+			print STDERR "\n", 'To get results:', "\n",
+			  "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+			  "  $scriptName --polljob --outformat <type> --jobid "
+			  . $params{'jobid'} . "\n";
+		}
+	}
+	print_debug_message( 'result_types', 'End', 1 );
+}
+
+# Submit a job
+sub submit_job() {
+	print_debug_message( 'submit_job', 'Begin', 1 );
+
+	# Load the sequence data
+	&load_data();
+
+	# Load parameters
+	&load_params();
+
+	# Submit the job
+	my $jobid = &soap_run( $params{'email'}, $params{'title'}, \%tool_params );
+
+	# Simulate sync/async mode
+	if ( defined( $params{'async'} ) ) {
+		print STDOUT $jobid, "\n";
+		if ( $outputLevel > 0 ) {
+			print STDERR
+			  "To check status: $scriptName --status --jobid $jobid\n";
+		}
+	}
+	else {
+		if ( $outputLevel > 0 ) {
+			print STDERR "JobId: $jobid\n";
+		}
+		sleep 1;
+		&get_results($jobid);
+	}
+	print_debug_message( 'submit_job', 'End', 1 );
+}
+
+# Load sequence data
+sub load_data() {
+	print_debug_message( 'load_data', 'Begin', 1 );
+
+	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			$tool_params{'sequence'} = &read_file( $ARGV[0] );
@@ -198,112 +406,39 @@ else {
 			$tool_params{'sequence'} = $ARGV[0];
 		}
 	}
-	if ($params{'sequence'}) {                               # Via --sequence
+	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file($params{'sequence'});
+			$tool_params{'sequence'} = &read_file( $params{'sequence'} );
 		}
-		else {                                       # DB:ID or sequence
+		else {    # DB:ID or sequence
 			$tool_params{'sequence'} = $params{'sequence'};
 		}
 	}
+	print_debug_message( 'load_data', 'End', 1 );
+}
+
+# Load job parameters
+sub load_params() {
+	print_debug_message( 'load_params', 'Begin', 1 );
+
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
-	for(my $i = 0; $i < scalar(@dbList); $i++) {
-	    $tool_params{'database'}[$i] = SOAP::Data->type('string' => $dbList[$i])->name('string');
+	for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
+		$tool_params{'database'}[$i] =
+		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
 	}
+
 	# Match/missmatch
-	if($params{'match'} && $params{'missmatch'}) {
-	    $tool_params{'match_scores'} = $params{'match'} . ',' . $params{'missmatch'};
+	if ( $params{'match'} && $params{'missmatch'} ) {
+		$tool_params{'match_scores'} =
+		  $params{'match'} . ',' . $params{'missmatch'};
 	}
-
-	my $jobid = &soap_run($params{'email'}, $params{'title'}, \%tool_params);
-
-	if ( defined($params{'async'}) ) {
-		print STDOUT $jobid, "\n";
-		if ( $outputLevel > 0 ) {
-			print STDERR
-			  "To check status: $scriptName --status --jobid $jobid\n";
-		}
-	}
-	else {    # Synchronous mode
-		if ( $outputLevel > 0 ) {
-			print STDERR "JobId: $jobid\n";
-		}
-		sleep 1;
-		&getResults($jobid);
-	}
-}
-
-# Submit a job
-sub soap_run($$$) {
-	my $email = shift;
-	my $title = shift;
-	my $params = shift;
-	
-	my (@paramsList) = ();
-	foreach my $key (keys(%$params)) {
-		if(defined($params->{$key}) && $params->{$key} ne '') {
-			push @paramsList, SOAP::Data->name($key => $params->{$key});
-		}
-	}
-	my $ret = $soap->run(
-		SOAP::Data->name('email' => $email ),
-		SOAP::Data->name('title' => $title ),
-		SOAP::Data->name('parameters' => \SOAP::Data->value(@paramsList))
-	);
-	return $ret->valueof('//jobId');
-}
-
-# Status check
-sub soap_get_status($) {
-	my $jobid  = shift;
-	my $res =
-	  $soap->getStatus( SOAP::Data->name('jobId' => $jobid ) );
-	return $res->valueof('//status');
-}
-
-# Get list of result types for finished job
-sub soap_get_result_types($) {
-	my $jobid = shift;
-	my $resultTypesXml =
-	  $soap->getResultTypes(
-		SOAP::Data->name('jobId' => $jobid ) );
-	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
-	return (@resultTypes);
-}
-
-# Get result data of a specified type for a finished job
-sub soap_get_raw_result_output($$) {
-	my $jobid = shift;
-	my $type = shift;
-	my $res = $soap->getResult(
-		SOAP::Data->name('jobId' => $jobid ),
-		SOAP::Data->name('type' => $type )
-	);
-	my $result = decode_base64($res->valueof('//output'));
-	return $result;
-}
-
-# Get parameter list
-sub soap_get_parameters($) {
-	my $tool = shift;
-	my $ret = $soap->getParameters(SOAP::Data->name('tool' => $tool ));
-	return $ret->valueof('//parameters/id');
-}
-
-# Get detailed parameter information
-sub soap_get_parameter_details($$) {
-	my $tool = shift;
-	my $parameterId = shift;
-	my $ret = $soap->getParameterDetails(
-		SOAP::Data->name('tool' => $tool ),
-		SOAP::Data->name('parameterId' => $parameterId )
-	);
-	return $ret->match('//parameterDetails');
+	print_debug_message( 'load_params', 'End', 1 );
 }
 
 # Client-side job polling
-sub clientPoll($) {
+sub client_poll($) {
+	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
 	my $result = 'PENDING';
 
@@ -320,17 +455,25 @@ sub clientPoll($) {
 			sleep $checkInterval;
 		}
 	}
+	print_debug_message( 'client_poll', 'End', 1 );
 }
 
 # Get the results for a jobid
-sub getResults($) {
+sub get_results($) {
+	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
+	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
+
+	# Verbose
+	if ( $outputLevel > 1 ) {
+		print 'Getting results for job ', $jobid, "\n";
+	}
 
 	# Check status, and wait if not finished
-	clientPoll($jobid);
+	client_poll($jobid);
 
 	# Use JobId if output file name is not defined
-	unless ( defined($params{'outfile'}) ) {
+	unless ( defined( $params{'outfile'} ) ) {
 		$params{'outfile'} = $jobid;
 	}
 
@@ -338,20 +481,27 @@ sub getResults($) {
 	my (@resultTypes) = soap_get_result_types($jobid);
 
 	# Get the data and write it to a file
-	if ( defined($params{'outformat'}) ) {    # Specified data type
+	if ( defined( $params{'outformat'} ) ) {    # Specified data type
 		my $selResultType;
 		foreach my $resultType (@resultTypes) {
-			if ( $resultType eq $params{'outformat'} ) {
+			if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
 				$selResultType = $resultType;
 			}
 		}
 		if ( defined($selResultType) ) {
-			my $result = soap_get_raw_result_output($jobid, $selResultType);
+			my $result =
+			  soap_get_raw_result_output( $jobid,
+				$selResultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
-				write_file( $params{'outfile'} . '.' . $selResultType, $result );
+				write_file(
+					$params{'outfile'} . '.'
+					  . $selResultType->{'identifier'} . '.'
+					  . $selResultType->{'fileSuffix'},
+					$result
+				);
 			}
 		}
 		else {
@@ -362,21 +512,29 @@ sub getResults($) {
 		      # Write a file for each output type
 		for my $resultType (@resultTypes) {
 			if ( $outputLevel > 1 ) {
-				print STDERR "Getting $resultType\n";
+				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
-			my $result = soap_get_raw_result_output($jobid, $resultType);
+			my $result =
+			  soap_get_raw_result_output( $jobid, $resultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
-				write_file( $params{'outfile'} . '.' . $resultType, $result );
+				write_file(
+					$params{'outfile'} . '.'
+					  . $resultType->{'identifier'} . '.'
+					  . $resultType->{'fileSuffix'},
+					$result
+				);
 			}
 		}
 	}
+	print_debug_message( 'get_results', 'End', 1 );
 }
 
 # Read a file
 sub read_file($) {
+	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
@@ -392,11 +550,13 @@ sub read_file($) {
 		}
 		close(FILE);
 	}
+	print_debug_message( 'read_file', 'End', 1 );
 	return $content;
 }
 
 # Write a result file
 sub write_file($$) {
+	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
@@ -410,6 +570,7 @@ sub write_file($$) {
 		syswrite( FILE, $data );
 		close(FILE);
 	}
+	print_debug_message( 'write_file', 'End', 1 );
 }
 
 # Print program usage
@@ -425,29 +586,29 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 
 [Required]
 
-  -p, --program	   : str  : BLAST program to use: blastn, blastp, blastx, 
-                            tblastn or tblastx
-  -D, --database   : str  : database(s) to search, space separated
+  -p, --program	   : str  : BLAST program to use, see --paramDetail program
+  -D, --database   : str  : database(s) to search, space separated. See
+                            --paramDetail database
+      --stype      : str  : query sequence type, see --paramDetail stype
   seqFile          : file : query sequence ("-" for STDIN)
 
 [Optional]
 
-  -m, --matrix     : str  : scoring matrix
+  -m, --matrix     : str  : scoring matrix, see --paramDetail matrix
   -e, --exp        : real : 0<E<= 1000. Statistical significance threshold 
                             for reporting database sequence matches.
-  -f, --filter	   :      : display the filtered query sequence in the output
-  -A, --align	   : int  : pairwise alignment format
+  -f, --filter	   :      : filter the query sequence for low complexity 
+                            regions, see --paramDetail filter
+  -A, --align	   : int  : pairwise alignment format, see --paramDetail align
   -s, --scores	   : int  : number of scores to be reported
   -n, --alignments : int  : number of alignments to report
   -u, --match      : int  : Match score (BLASTN only)
   -v, --mismatch   : int  : Mismatch score (BLASTN only)
   -o, --gapopen	   : int  : Gap open penalty
-  -x, --gapextend  : int  : Gap extension penalty
+  -x, --gapext     : int  : Gap extension penalty
   -d, --dropoff	   : int  : Drop-off
   -g, --gapalign   :      : Optimise gapped alignments
-      --stype      : str  : Sequence type: protein or dna
       --seqrange   : str  : region within input to use as query
-      --format     :      : Return NCBI BLAST XML format
 
 [General]
 
