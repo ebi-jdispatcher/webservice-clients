@@ -39,10 +39,12 @@ my %params  = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = (
-	'program'  => 'blastp',
-	'stype'    => 'protein',
-	'exp'      => '1.0',
-	'database' => undef,
+	'program'    => 'blastp',
+	'stype'      => 'protein',
+	'exp'        => '1.0',
+	'database'   => undef,
+	'scores'     => 50,
+	'alignments' => 50,
 );
 GetOptions(
 
