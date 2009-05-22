@@ -156,7 +156,7 @@ elsif ( $params{'paramDetail'} ) {
 
 # Job status
 elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
-	&job_status( $params{'jobid'} );
+	&print_job_status( $params{'jobid'} );
 }
 
 # Result types
@@ -212,13 +212,13 @@ sub soap_run($$$) {
 	my (@paramsList) = ();
 	foreach my $key ( keys(%$params) ) {
 		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
-			push @paramsList, SOAP::Data->name( $key => $params->{$key} );
+			push @paramsList, SOAP::Data->name( $key => $params->{$key} )->attr({'xmlns' => ''});
 		}
 	}
 	my $ret = $soap->run(
-		SOAP::Data->name( 'email'      => $email ),
-		SOAP::Data->name( 'title'      => $title ),
-		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )
+		SOAP::Data->name( 'email'      => $email )->attr({'xmlns' => ''}),
+		SOAP::Data->name( 'title'      => $title )->attr({'xmlns' => ''}),
+		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )->attr({'xmlns' => ''})
 	);
 	print_debug_message( 'soap_run', 'End', 1 );
 	return $ret->valueof('//jobId');
@@ -229,7 +229,7 @@ sub soap_get_status($) {
 	print_debug_message( 'soap_get_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
-	my $res = $soap->getStatus( SOAP::Data->name( 'jobId' => $jobid ) );
+	my $res = $soap->getStatus( SOAP::Data->name( 'jobId' => $jobid )->attr({'xmlns' => ''}) );
 	my $status_str = $res->valueof('//status');
 	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
 	print_debug_message( 'soap_get_status', 'End', 1 );
@@ -242,7 +242,7 @@ sub soap_get_result_types($) {
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
 	my $resultTypesXml =
-	  $soap->getResultTypes( SOAP::Data->name( 'jobId' => $jobid ) );
+	  $soap->getResultTypes( SOAP::Data->name( 'jobId' => $jobid )->attr({'xmlns' => ''}) );
 	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
 	print_debug_message( 'soap_get_result_types',
 		scalar(@resultTypes) . ' result types', 2 );
@@ -258,8 +258,8 @@ sub soap_get_raw_result_output($$) {
 	print_debug_message( 'soap_get_raw_result_output', 'jobid: ' . $jobid, 1 );
 	print_debug_message( 'soap_get_raw_result_output', 'type: ' . $type,   1 );
 	my $res = $soap->getResult(
-		SOAP::Data->name( 'jobId' => $jobid ),
-		SOAP::Data->name( 'type'  => $type )
+		SOAP::Data->name( 'jobId' => $jobid )->attr({'xmlns' => ''}),
+		SOAP::Data->name( 'type'  => $type )->attr({'xmlns' => ''})
 	);
 	my $result = decode_base64( $res->valueof('//output') );
 	print_debug_message( 'soap_get_raw_result_output',
