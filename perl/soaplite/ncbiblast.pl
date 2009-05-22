@@ -5,6 +5,7 @@
 #
 # Tested with:
 #   SOAP::Lite 0.60 and Perl 5.8.3
+#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/Webservices/tutorials/soaplite
@@ -176,7 +177,7 @@ else {
 # Get list of tool parameters
 sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $ret = $soap->getParameters();
+	my $ret = $soap->getParameters(undef);
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return $ret->valueof('//parameters/id');
 }
@@ -187,7 +188,7 @@ sub soap_get_parameter_details($$) {
 	my $parameterId = shift;
 	print_debug_message( 'soap_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret = $soap->getParameterDetails( SOAP::Data->name( 'parameterId' => $parameterId ) );
+	my $ret = $soap->getParameterDetails(SOAP::Data->name( 'parameterId' => $parameterId )->attr({'xmlns' => ''}) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
 	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
 	$paramDetail->{'values'} = \@paramValueList;
