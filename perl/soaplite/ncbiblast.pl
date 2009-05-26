@@ -30,7 +30,7 @@ use MIME::Base64;
 use Data::Dumper;
 
 # Set interval for checking status
-my $checkInterval = 5;
+my $checkInterval = 3;
 
 # Output level
 my $outputLevel = 1;
