@@ -481,7 +481,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 			}
 			// Set debug level
 			if(cli.hasOption("debugLevel")) {
-				client.setDebugLevel(Integer.valueOf(cli.getOptionValue("debugLevel")));
+				client.setDebugLevel(Integer.parseInt(cli.getOptionValue("debugLevel")));
 			}
 			// Tool meta-data
 			// List parameters
