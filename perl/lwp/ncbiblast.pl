@@ -4,8 +4,8 @@
 # NCBI BLAST jDispatcher REST web service Perl client
 #
 # Tested with:
-#   LWP 5.79 and Perl 5.8.3
-#   LWP 5.805 and Perl 5.8.8
+#   LWP 5.79, XML::Simple 2.12 and Perl 5.8.3
+#   LWP 5.805, XML::Simple 2.14 and Perl 5.8.7
 #   LWP 5.820 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
@@ -23,7 +23,6 @@ use LWP;
 use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-#use MIME::Base64;
 use Data::Dumper;
 
 # Set interval for checking status
