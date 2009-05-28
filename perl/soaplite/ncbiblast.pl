@@ -348,10 +348,18 @@ sub print_result_types($) {
 		}
 		foreach my $resultType (@resultTypes) {
 			print STDOUT $resultType->{'identifier'}, "\n";
-			print STDOUT "\t", $resultType->{'label'},       "\n";
-			print STDOUT "\t", $resultType->{'description'}, "\n";
-			print STDOUT "\t", $resultType->{'mediaType'},   "\n";
-			print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
+			if(defined($resultType->{'label'})) {
+				print STDOUT "\t", $resultType->{'label'},       "\n";
+			}
+			if(defined($resultType->{'description'})) {
+				print STDOUT "\t", $resultType->{'description'}, "\n";
+			}
+			if(defined($resultType->{'mediaType'})) {
+				print STDOUT "\t", $resultType->{'mediaType'},   "\n";
+			}
+			if(defined($resultType->{'fileSuffix'})) {
+				print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
+			}
 		}
 		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
 			print STDERR "\n", 'To get results:', "\n",
