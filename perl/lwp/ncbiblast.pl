@@ -82,6 +82,7 @@ GetOptions(
 	'quiet'         => \$params{'quiet'},          # Decrease output level
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
+	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
