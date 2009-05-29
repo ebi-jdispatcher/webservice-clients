@@ -18,8 +18,12 @@ import os
 import sys
 import base64
 import time
+import warnings
 from SOAPpy import WSDL
 from optparse import OptionParser
+
+# Suppress all deprecation warnings (not recommended for development)
+warnings.simplefilter('ignore', DeprecationWarning)
 
 # Set interval for checking status
 checkInterval = 3
@@ -70,6 +74,14 @@ parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug ou
 
 # Create the service interface
 server = WSDL.Proxy(options.WSDL)
+# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
+if os.environ.has_key('http_proxy'):
+    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
+elif os.environ.has_key('HTTP_PROXY'):
+    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
+else:
+    http_proxy_conf = None
+server.soapproxy.http_proxy = http_proxy_conf
 
 # Increase output level
 if options.verbose:
