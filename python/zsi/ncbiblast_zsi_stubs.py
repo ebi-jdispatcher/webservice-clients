@@ -2,7 +2,8 @@
 # ======================================================================
 # jDispatcher NCBI BLAST Python client.
 #
-# Tested with: Python 2.5.2 with ZSI 2.0
+# Tested with:
+#   Python 2.5.2 with ZSI 2.0
 #
 # See:
 #
@@ -39,6 +40,7 @@ parser.add_option('--paramDetail', help='Get parameter details')
 # Tool specific options
 parser.add_option('-p', '--program', help='Program to run')
 parser.add_option('-D', '--database', help='Database to search')
+parser.add_option('--stype', default='protein', help='Database to search')
 parser.add_option('-m', '--matrix', help='Scoring matrix')
 parser.add_option('-E', '--exp', type='float', help='E-value threshold')
 parser.add_option('-f', '--filter', action="store_true", help='Low complexity sequence filter')
@@ -59,6 +61,12 @@ if options.trace:
 else:
   srvProxy = JDispatcherServiceLocator().getJDispatcherService()
 
+# Get list of parameters
+def getParameters():
+    req = getParametersRequest()
+    msg = srvProxy.getParameters(req)
+    return msg._id
+
 # Client-side job poll
 def clientPoll(jobId):
   statusStr = 'PENDING'
@@ -77,7 +85,9 @@ def run(email, title, params):
     if params.has_key('program'):
         req._parameters._program = params['program']
     if params.has_key('database'):
-        req._parameters._database = params['database']
+        req._parameters._database = {'item':params['database']}
+    if params.has_key('stype'):
+        req._parameters._stype = params['stype']
     if params.has_key('matrix'):
         req._parameters._matrix = params['matrix']
     if params.has_key('exp'):
@@ -153,7 +163,7 @@ def readFile(filename):
     return data
 
 if options.params:
-    srvProxy.getParameters()
+    getParameters()
 # Get results
 elif options.polljob and options.jobid:
     getResults(options.jobid)
@@ -183,6 +193,8 @@ elif options.email and not options.jobid:
         params['program'] = options.program
     if options.database:
         params['database'] = options.database
+    if options.stype:
+        params['stype'] = options.stype
     if options.matrix:
         params['matrix'] = options.matrix
     if options.exp:
