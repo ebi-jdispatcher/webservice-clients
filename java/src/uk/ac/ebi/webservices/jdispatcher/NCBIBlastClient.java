@@ -7,11 +7,10 @@
  * ====================================================================== */
 package uk.ac.ebi.webservices.jdispatcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
-
 import javax.xml.rpc.ServiceException;
-
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.jdispatcher.ncbiblast.*;
 
@@ -45,20 +44,20 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		+ "[Optional]\n"
 		+ "\n"
 		+ "  -m, --matrix         : str  : scoring matrix, see --paramDetail matrix\n"
-		+ "  -e, --exp            : real : 0<E<= 1000. Statistical significance threshold \n"
+		+ "  -e, --exp            : real : 0<E<= 1000. Statistical significance threshold\n"
 		+ "                                for reporting database sequence matches.\n"
-		+ "  -f, --filter         :      : display the filtered query sequence in the output,\n"
-		+ "                                see --paramDetail filter"
+		+ "  -f, --filter         :      : low complexity sequence filter, see\n"
+		+ "                                --paramDetail filter\n"
 		+ "  -A, --align          : int  : alignment format, see --paramDetail align\n"
-		+ "  -s, --scores         : int  : number of scores to be reported\n"
-		+ "  -n, --alignments     : int  : Number of alignments\n"
-		+ "  -u, --match          : int  : Match score\n"
-		+ "  -v, --mismatch       : int  : Mismatch score\n"
-		+ "  -o, --gapopen        : int  : Gap open penalty\n"
-		+ "  -x, --gapext         : int  : Gap extension penalty\n"
-		+ "  -d, --dropoff        : int  : Drop-off\n"
-		+ "  -g, --gapalign       :      : Optimise gapped alignments\n"
-		+ "      --seqrange       : str  : Region of query sequence to use\n";
+		+ "  -s, --scores         : int  : maximum number of scores to report\n"
+		+ "  -n, --alignments     : int  : maximum number of alignments to report\n"
+		+ "  -u, --match          : int  : score for a match (BLASTN only)\n"
+		+ "  -v, --mismatch       : int  : score for a missmatch (BLASTN only)\n"
+		+ "  -o, --gapopen        : int  : gap open penalty\n"
+		+ "  -x, --gapext         : int  : gap extension penalty\n"
+		+ "  -d, --dropoff        : int  : drop-off score\n"
+		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
+		+ "      --seqrange       : str  : region in query sequence to use for search\n";
 
 	/** Print usage message */
 	private static void printUsage() {
@@ -68,9 +67,9 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	
 	/** Get an instance of the service proxy to use with other methods.
 	 * 
-	 * @throws javax.xml.rpc.ServiceException
+	 * @throws ServiceException
 	 */
-	private void srvProxyConnect() throws javax.xml.rpc.ServiceException {
+	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 11);
 		if(this.srvProxy == null) {
 			JDispatcherService_Service service =  new JDispatcherService_ServiceLocator();
@@ -106,20 +105,6 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		return retVal;
 	}
 
-	/** Print list of parameter names for tool.
-	 * 
-	 * @throws RemoteException
-	 * @throws ServiceException
-	 */
-	private void printParams() throws RemoteException, ServiceException {
-		printDebugMessage("printParams", "Begin", 1);
-		String[] paramList = getParams();
-		for(int i = 0; i < paramList.length; i++) {
-			System.out.println(paramList[i]);
-		}
-		printDebugMessage("printParams", "End", 1);
-	}
-
 	/** Get detailed information about the specified tool parameter.
 	 * 
 	 * @param paramName Tool parameter name
@@ -139,10 +124,10 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	 * @throws RemoteException
 	 * @throws ServiceException
 	 */
-	private void printParamDetail(String paramName) throws RemoteException, ServiceException {
+	protected void printParamDetail(String paramName) throws RemoteException, ServiceException {
 		printDebugMessage("printParamDetail", "Begin", 1);
 		WsParameterDetails paramDetail = getParamDetail(paramName);
-		// Print object...!
+		// Print object
 		System.out.println(paramDetail.getName() + "\t" + paramDetail.getType());
 		System.out.println(paramDetail.getDescription());
 		WsParameterValue[] valueList = paramDetail.getValues();
@@ -170,26 +155,13 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	 * @param jobid The job identifier
 	 * @return Job status as a string.
 	 * @throws IOException
-	 * @throws javax.xml.rpc.ServiceException
+	 * @throws ServiceException
 	 */
-	public String checkStatus(String jobid) throws IOException, javax.xml.rpc.ServiceException {
+	public String checkStatus(String jobid) throws IOException, ServiceException {
 		printDebugMessage("checkStatus", jobid, 1);
 		this.srvProxyConnect(); // Ensure the service proxy exists
 		return this.srvProxy.getStatus(jobid);
 	}
-
-	/* Get entry identifiers from tool result
-	 * 
-	 * @param jobid The ID of the tool job.
-	 * @return An array of entry identifiers.
-	 * @throws javax.xml.rpc.ServiceException
-	 * @throws java.rmi.RemoteException
-	 */
-	/* public String[] getIds(String jobid) throws javax.xml.rpc.ServiceException, java.rmi.RemoteException {
-		printDebugMessage("getIds", jobid, 1);
-		this.srvProxyConnect(); // Ensure the service proxy exists
-		return this.srvProxy.;	
-	} */
 
 	/** Get details of the available result types for a job.
 	 * 
@@ -215,7 +187,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	 * @throws ServiceException
 	 * @throws RemoteException
 	 */
-	private void printResultTypes(String jobId) throws ServiceException, RemoteException {
+	protected void printResultTypes(String jobId) throws ServiceException, RemoteException {
 		printDebugMessage("printResultTypes", "Begin", 1);
 		WsResultType[] typeList = getResultTypes(jobId);
 		for(int i = 0; i < typeList.length; i++) {
@@ -306,74 +278,13 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	public String runApp(String email, String title, InputParameters params) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("runApp", "Begin", 1);
 		printDebugMessage("runApp", "email: " + email + " title: " + title, 2);
+		printDebugMessage("runApp", "params:\n" + objectFieldsToString(params), 2);
 		String jobId = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
 		jobId = srvProxy.run(email, title, params);
 		printDebugMessage("runApp", "jobId: " + jobId, 2);
 		printDebugMessage("runApp", "End", 1);
 		return jobId;
-	}
-
-	/** Poll the job status until the job completes.
-	 * 
-	 * @param jobid The job identifier.
-	 * @throws javax.xml.rpc.ServiceException
-	 */
-	public void clientPoll(String jobId) throws javax.xml.rpc.ServiceException {
-		printDebugMessage("clientPoll", "Begin", 1);
-		printDebugMessage("clientPoll", "jobId: " + jobId, 2);
-		String status = "PENDING";
-		// Check status and wait if not finished
-		while(status.equals("RUNNING") || status.equals("PENDING")) {
-			try {
-				status = this.checkStatus(jobId);
-				printProgressMessage(status, 1);
-				if(status.equals("RUNNING") || status.equals("PENDING")) {
-					// Wait before polling again.
-					Thread.sleep(15000);
-				}
-			}
-			catch(InterruptedException ex) {
-				// Ignore
-			}
-			catch(IOException ex) {
-				// Report and continue
-				System.err.println("Warnning: " + ex.getMessage());
-			}
-		}
-		printDebugMessage("clientPoll", "End", 1);
-	}
-
-	/** Create data input structure from the option value.
-	 * 
-	 * The option can be either an entry identifier in the 
-	 * format dbname:id or a filename. If a filename is used
-	 * the contents of the file will be used as the input data. 
-	 * This method makes no attempt to parse the input file to 
-	 * handle it as individual sequences.
-	 * 
-	 * @param fileOptionStr Filename or entry identifier.
-	 * @return Data structure for use with runApp().
-	 * @throws IOException
-	 */
-	public String loadData(String fileOptionStr) throws IOException {
-		printDebugMessage("loadData", "Begin", 1);
-		printDebugMessage("loadData", "fileOptionStr: " + fileOptionStr, 2);
-		String retVal = null;
-		if(fileOptionStr != null) {
-			if(fileOptionStr.equals("-")) { // STDIN
-				String fileContent = readStream(System.in);
-				retVal = fileContent;
-			}
-			else if(new File(fileOptionStr).exists()) { // File
-				String fileContent = readFile(new File(fileOptionStr));
-				retVal = fileContent;
-			} else { // Entry Id
-				retVal = fileOptionStr;
-			}
-		}
-		printDebugMessage("loadData", "End", 1);
-		return retVal;
 	}
 
 	/** Build input parameters structure from command-line options
@@ -425,24 +336,10 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 
 		// Configure the command-line options
 		Options options = new Options();
-		// Common options for EBI clients 
-		options.addOption("help", "help", false, "help on using this client");
-		options.addOption("async", "async", false, "perform an asynchronous job");
-		options.addOption("polljob", "polljob", false, "poll for the status of an asynchronous job and get the results");
-		options.addOption("status", "status", false, "poll for the status of an asynchronous job");        
-		options.addOption("email", "email", true, "Your email address");
-		options.addOption("jobid", "jobid", true, "Job identifier of an asynchronous job");
-		options.addOption("stdout", "stdout", false, "print to standard output");
-		options.addOption("outfile", "outfile", true, "file name to save the results");
-		options.addOption("outformat", "outformat", true, "Output format (txt or xml)");
-		options.addOption("quiet", "quiet", false, "Decrease output messages");
-		options.addOption("verbose", "verbose", false, "Increase output messages");
-		options.addOption("ids", "ids", false, "retrieve only identifiers"); // TBI
-		options.addOption("params", "params", false, "List parameters");
-		options.addOption("paramDetail", "paramDetail", true, "List parameter information");
-		options.addOption("resultTypes", "resultTypes", false, "List result types for job");
-		options.addOption("debugLevel", "debugLevel", true, "Debug output");
+		// Common options for EBI clients
+		addGenericOptions(options);
 		// Application specific options
+		options.addOption("ids", "ids", false, "Get list of identifiers from result");
 		options.addOption("p", "program", true, "Program to use");
 		options.addOption("D", "database", true, "Database to search");
 		options.addOption("m", "matrix", true, "Scoring matrix");
@@ -457,11 +354,13 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		options.addOption("o", "gapopen", true, "Gap creation penalty");
 		options.addOption("x", "gapext", true, "Gap extension penalty");
 		options.addOption("d", "dropoff", true, "Drop off score");
-		options.addOption("seqrange", true, "Region in query sequence to use for search");
+		options.addOption("seqrange", "seqrange", true, "Region in query sequence to use for search");
 		options.addOption("stype", "stype", true, "Sequence type");
 		options.addOption("sequence", "sequence", true, "Query sequence");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
+		// Create an instance of the client
+		NCBIBlastClient client = new NCBIBlastClient();
 		try {
 			// Parse the command-line
 			CommandLine cli = cliParser.parse(options, args);
@@ -470,8 +369,6 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 				printUsage();
 				System.exit(0);
 			}
-			// Create an instance of the client
-			NCBIBlastClient client = new NCBIBlastClient();
 			// Modify output level according to the quiet and verbose options
 			if(cli.hasOption("quiet")) {
 				client.outputLevel--;
@@ -533,7 +430,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 				// Create job submission parameters from command-line
 				InputParameters params = client.loadParams(cli);
 				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
-				params.setSequence(client.loadData(dataOption));
+				params.setSequence(new String(client.loadData(dataOption)));
 				// Submit the job
 				String email = null, title = null;
 				if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
@@ -567,7 +464,9 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		// Catch all exceptions
 		catch(Exception e) {
 			System.err.println ("ERROR: " + e.getMessage());
-			//e.printStackTrace();
+			if(client.getDebugLevel() > 0) {
+				e.printStackTrace();
+			}
 			exitVal = 3;
 		}
 		System.exit(exitVal);
