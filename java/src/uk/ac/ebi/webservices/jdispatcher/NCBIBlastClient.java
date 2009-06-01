@@ -24,7 +24,7 @@ import uk.ac.ebi.webservices.jdispatcher.ncbiblast.*;
 public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
-	/** Usage message */
+	/** Tool specific usage message */
 	private static final String usageMsg = "NCBI BLAST\n"
 		+ "==========\n"
 		+ "   \n"
@@ -59,13 +59,13 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
 		+ "      --seqrange       : str  : region in query sequence to use for search\n";
 
-	/** Print usage message */
+	/** Print usage message. */
 	private static void printUsage() {
 		System.out.println(usageMsg);
 		printGenericOptsUsage();
 	}
 	
-	/** Get an instance of the service proxy to use with other methods.
+	/** Ensure that a service proxy is available to call the web service.
 	 * 
 	 * @throws ServiceException
 	 */
@@ -78,7 +78,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		printDebugMessage("srvProxyConnect", "End", 11);
 	}
 
-	/** Get the web service proxy.
+	/** Get the web service proxy so it can be called directly.
 	 * 
 	 * @return The web service proxy.
 	 * @throws javax.xml.rpc.ServiceException
@@ -118,7 +118,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		return this.srvProxy.getParameterDetails(paramName);
 	}
 
-	/** Print information about a tool parameter
+	/** Print detailed information about a tool parameter.
 	 * 
 	 * @param paramName Name of the tool parameter to get information for.
 	 * @throws RemoteException
@@ -152,7 +152,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 
 	/** Get the status of a submitted job given its job identifier.
 	 * 
-	 * @param jobid The job identifier
+	 * @param jobid The job identifier.
 	 * @return Job status as a string.
 	 * @throws IOException
 	 * @throws ServiceException
@@ -236,7 +236,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), null);
 				if(resultbytes == null) {
 					System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
-				} else {
+				}
+				else {
 					printProgressMessage("Result bytes length: " + resultbytes.length, 2);
 					// Write the results to a file
 					String result = new String(resultbytes);
@@ -272,10 +273,10 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 	 * @param params Input parameters for the job.
 	 * @param content Data to run the job on.
 	 * @return The job identifier.
-	 * @throws java.rmi.RemoteException
-	 * @throws javax.xml.rpc.ServiceException
+	 * @throws RemoteException
+	 * @throws ServiceException
 	 */
-	public String runApp(String email, String title, InputParameters params) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+	public String runApp(String email, String title, InputParameters params) throws RemoteException, ServiceException {
 		printDebugMessage("runApp", "Begin", 1);
 		printDebugMessage("runApp", "email: " + email + " title: " + title, 2);
 		printDebugMessage("runApp", "params:\n" + objectFieldsToString(params), 2);
@@ -287,7 +288,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		return jobId;
 	}
 
-	/** Build input parameters structure from command-line options
+	/** Populate input parameters structure from command-line options.
 	 * 
 	 * @param line Command line options
 	 * @return input Input parameters structure for use with runApp().
@@ -326,7 +327,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 		return params;
 	}
 
-	/** Entry point for running as an application
+	/** Entry point for running as an application.
 	 * 
 	 * @param args list of command-line options
 	 */

@@ -21,6 +21,7 @@ import org.apache.commons.cli.*;
  * service clients.
  * 
  * See:
+ * <a href="http://www.ebi.ac.uk/Tools/webservices/">http://www.ebi.ac.uk/Tools/webservices/</a>
  * <a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/java</a>
  */
 public abstract class AbstractWsClient {
@@ -28,9 +29,9 @@ public abstract class AbstractWsClient {
 	protected int outputLevel = 1;
 	/** Debug level. Controlled by the --debugLevel option. */
 	private int debugLevel = 0;
-	/** Maximum interval between polling events (ms) */
+	/** Maximum interval between polling events (ms). */
 	private int maxCheckInterval = 60000;
-	/** Generic options message */
+	/** Generic options message. */
 	private static final String genericOptsStr = "[General]\n"
 	+ "\n"
 	+ "      --params         :      : list tool parameters\n"
@@ -69,7 +70,10 @@ public abstract class AbstractWsClient {
 	+ "  Returns: string indicating the status of the job and if applicable, results \n"
 	+ "  as an attachment.\n";
 
-	/** Add genetic options to command-line parser. */
+	/** Add genetic option to command-line parser.
+	 * 
+	 * @param options Command-line parser.
+	 */
 	protected static void addGenericOptions(Options options) {
 		options.addOption("help", "help", false, "help on using this client");
 		options.addOption("async", "async", false, "perform an asynchronous job");
@@ -88,15 +92,14 @@ public abstract class AbstractWsClient {
 		options.addOption("debugLevel", "debugLevel", true, "Debug output");
 	}
 
-	/** Print the generic options usage message to STDOUT.
-	 */
+	/** Print the generic options usage message to STDOUT. */
 	protected static void printGenericOptsUsage()  {
 		System.out.println(genericOptsStr);
 	}
 	
 	/** Set debug level. 
 	 * 
-	 * @param level Debug level.
+	 * @param level Debug level. 0 = off.
 	 */
 	public void setDebugLevel(int level) {
 		printDebugMessage("setDebugLevel", "Begin " + level, 1);
@@ -180,7 +183,7 @@ public abstract class AbstractWsClient {
 	
 	/** Set the output level. 
 	 * 
-	 * @param level Output level
+	 * @param level Output level. 0 = quiet, 1 = normal and 2 = verbose.
 	 */
 	public void setOutputLevel(int level) {
 		printDebugMessage("setOutputLevel", "Begin " + level, 1);
@@ -201,7 +204,7 @@ public abstract class AbstractWsClient {
 	
 	/** Set the maximum interval between polling events.
 	 * 
-	 * @param checkInterval Maximum interval in milliseconds
+	 * @param checkInterval Maximum interval in milliseconds. Must be greater than 1000.
 	 */
 	public void setMaxCheckInterval(int checkInterval) {
 		printDebugMessage("setMaxCheckInterval", "Begin " + checkInterval, 1);
@@ -258,7 +261,6 @@ public abstract class AbstractWsClient {
 	 */
 	public byte[] readStream(InputStream inStream) throws IOException {
 		printDebugMessage("readStream", "Begin", 1);
-		printDebugMessage("readStream", "End", 1);
 		long length = inStream.available();
 		byte[] bytes = new byte[(int)length];
 		int offset = 0;
@@ -271,16 +273,17 @@ public abstract class AbstractWsClient {
 			throw new IOException("...");
 		}
 		printDebugMessage("readStream", "read " + bytes.length + " bytes", 2);
+		printDebugMessage("readStream", "End", 1);
 		return bytes;
 	}
 
-	/** Create data input structure from the option value.
-	 * 
-	 * The option can be either an entry identifier in the 
-	 * format dbname:id or a filename. If a filename is used
-	 * the contents of the file will be used as the input data. 
-	 * This method makes no attempt to parse the input file to 
-	 * handle it as individual sequences.
+	/** <p>The input data can be passed as:</p>
+	 * <ul>
+	 * <li>filename</li>
+	 * <li>entry identifier (e.g. UNIPROT:WAP_RAT)</li>
+	 * <li>raw data</li>
+	 * </ul>
+	 * <p>This method gets the data to be passed to the service, checking for a file and loading it if necessary.</p>
 	 * 
 	 * @param fileOptionStr Filename or entry identifier.
 	 * @return Data to use as input as a byte array.
@@ -304,7 +307,7 @@ public abstract class AbstractWsClient {
 		return retVal;
 	}
 
-	/** Write a string to a file
+	/** Write a string to a file.
 	 * 
 	 * @param file the file to create/write to
 	 * @param data the string to write
@@ -323,7 +326,7 @@ public abstract class AbstractWsClient {
 		return 0;
 	}
 	
-	/** Write bytes to a file
+	/** Write an array of bytes to a file.
 	 * 
 	 * @param file the file to create/write to
 	 * @param data the bytes to write
