@@ -230,7 +230,7 @@ elif options.email and not options.jobid:
     if options.program:
         params['program'] = options.program
     if options.database:
-        params['database'] = [options.database]
+        params['database'] = {'string':options.database}
     if options.stype:
         params['stype'] = options.stype
     if options.matrix:
@@ -239,18 +239,18 @@ elif options.email and not options.jobid:
         params['exp'] = options.exp
     if options.filter:
         params['filter'] = options.filter
-    if options.numal:
-        params['numal'] = options.numal
+    if options.alignments:
+        params['alignments'] = options.alignments
     if options.scores:
         params['scores'] = options.scores
     if options.dropoff:
         params['dropoff'] = options.dropoff
     if options.match_score:
         params['match_score'] = options.match_score
-    if options.opengap:
-        params['opengap'] = options.opengap
-    if options.extendgap:
-        params['extendgap'] = options.extendgap
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    if options.gapext:
+        params['gapext'] = options.gapext
     
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
