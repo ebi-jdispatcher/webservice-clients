@@ -108,14 +108,15 @@ if ( $params{'help'} || $numOpts == 0 ) {
 }
 
 # Create service proxy for web service
+&print_debug_message( 'main', 'Create service proxy', 11 );
 my $wsdlXml = XML::LibXML->new->parse_file($WSDL);
 my $soapSrv = XML::Compile::WSDL11->new($wsdlXml);
 
 # Compile service methods
-&print_debug_message( 'main', 'Compile operations from WSDL', 1 );
+&print_debug_message( 'main', 'Compile operations from WSDL', 11 );
 my (%soapOps);
 foreach my $soapOp ( $soapSrv->operations ) {
-	&print_debug_message( 'main', 'Operation: ' . $soapOp->name, 1 );
+	&print_debug_message( 'main', 'Operation: ' . $soapOp->name, 12 );
 	# Allow nil elements to be skipped (needed for submission)
 	$soapOps{ $soapOp->name } =
 	  $soapSrv->compileClient( $soapOp->name, interpret_nillable_as_optional=>1, elements_qualified=>'TOP' );
@@ -169,6 +170,16 @@ else {
 	&submit_job();
 }
 
+# Print debug message
+sub print_debug_message($$$) {
+	my $function_name = shift;
+	my $message       = shift;
+	my $level         = shift;
+	if ( $level <= $params{'debugLevel'} ) {
+		print STDERR '[', $function_name, '()] ', $message, "\n";
+	}
+}
+
 ### Wrappers for SOAP operations ###
 
 # Generic wrapper for SOAP requests
@@ -205,6 +216,7 @@ sub print_soap_trace($) {
 sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $response = &soap_request( 'getParameters', {} );
+	#print Dumper($response);
 	my $retVal = $response->{'output'}->{'parameters'}->{'id'};
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return @$retVal;
@@ -301,16 +313,6 @@ sub soap_get_raw_result_output($$) {
 
 ###  ###
 
-# Print debug message
-sub print_debug_message($$$) {
-	my $function_name = shift;
-	my $message       = shift;
-	my $level         = shift;
-	if ( $level <= $params{'debugLevel'} ) {
-		print STDERR '[', $function_name, '()] ', $message, "\n";
-	}
-}
-
 # Print list of tool parameters
 sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
@@ -327,11 +329,12 @@ sub print_param_details($) {
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
 	my $paramDetail = &soap_get_parameter_details($paramName );
+	print_debug_message( 'print_param_details', "paramDetail:\n" . Dumper($paramDetail), 3 );
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value (@{$paramDetail->{'values'}}) {
+	foreach my $value (@{$paramDetail->{'values'}->{'value'}}) {
 		print $value->{'value'};
-		if($value->{'defaultValue'} eq 'true') {
+		if($value->{'defaultValue'} eq 'true' || $value->{'defaultValue'} == 1) {
 			print "\t", 'default';
 		}
 		print "\n";
@@ -359,9 +362,9 @@ sub print_job_status($) {
 
 # Print available result types for a job
 sub print_result_types($) {
-	print_debug_message( 'result_types', 'Begin', 1 );
+	print_debug_message( 'print_result_types', 'Begin', 1 );
 	my $jobid = shift;
-	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'print_result_types', 'jobid: ' . $jobid, 1 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting result types for job ', $jobid, "\n";
 	}
@@ -397,7 +400,7 @@ sub print_result_types($) {
 			  . $params{'jobid'} . "\n";
 		}
 	}
-	print_debug_message( 'result_types', 'End', 1 );
+	print_debug_message( 'print_result_types', 'End', 1 );
 }
 
 # Submit a job
@@ -461,10 +464,7 @@ sub load_params() {
 
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
-	for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
-		$tool_params{'database'}[$i] =
-		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
-	}
+	$tool_params{'database'}{'string'} = \@dbList;
 
 	# Match/missmatch
 	if ( $params{'match'} && $params{'missmatch'} ) {
