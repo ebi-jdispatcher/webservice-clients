@@ -116,10 +116,19 @@ my $soapSrv = XML::Compile::WSDL11->new($wsdlXml);
 &print_debug_message( 'main', 'Compile operations from WSDL', 11 );
 my (%soapOps);
 foreach my $soapOp ( $soapSrv->operations ) {
+    # XML::Compile::SOAP 2.x
+    if ( $XML::Compile::SOAP::VERSION > 1.99 ) {
 	&print_debug_message( 'main', 'Operation: ' . $soapOp->name, 12 );
 	# Allow nil elements to be skipped (needed for submission)
 	$soapOps{ $soapOp->name } =
 	  $soapSrv->compileClient( $soapOp->name, interpret_nillable_as_optional=>1, elements_qualified=>'TOP' );
+    }
+    # XML::Compile::SOAP 0.7x
+    else {
+	&print_debug_message( 'main', 'Operation: ' . $soapOp->{operation}, 12 );
+	$soapOps{ $soapOp->{operation} } =
+	  $soapSrv->compileClient( $soapOp->{operation}, interpret_nillable_as_optional=>1 );
+    }
 }
 
 if (
