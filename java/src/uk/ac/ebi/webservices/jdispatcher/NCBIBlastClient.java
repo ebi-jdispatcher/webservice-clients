@@ -427,7 +427,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 				}
 			}
 			// Submit a job
-			else if(cli.hasOption("email")) {
+			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
 				// Create job submission parameters from command-line
 				InputParameters params = client.loadParams(cli);
 				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
@@ -454,7 +454,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractW
 			}
 			// Unknown action
 			else {
-				printUsage();
+				System.err.println("Error: unknown combination of arguments. See --help.");
+				exitVal = 2;
 			}
 		}
 		catch(UnrecognizedOptionException ex) {
