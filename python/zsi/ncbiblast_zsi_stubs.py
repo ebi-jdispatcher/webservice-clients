@@ -26,17 +26,18 @@ usage = "%prog [options...] [seqFile]"
 # Process command-line options
 parser = OptionParser(usage=usage)
 # General options
-parser.add_option('--email', help='E-mail address')
-parser.add_option('--title', help='Job title')
-parser.add_option('--outfile', help='File name for results')
-parser.add_option('--outformat', help='Output format for results')
-parser.add_option('--polljob', action="store_true", help='Get job result')
-parser.add_option('--status', action="store_true", help='Get job status')
-parser.add_option('--jobid', help='Job identifier')
-parser.add_option('--async', action='store_true', help='Asynchronous mode')
-parser.add_option('--trace', action="store_true", help='Show SOAP messages')
 parser.add_option('--params', action="store_true", help='Get parameter list')
 parser.add_option('--paramDetail', help='Get parameter details')
+parser.add_option('--async', action='store_true', help='Asynchronous mode')
+parser.add_option('--email', help='E-mail address')
+parser.add_option('--title', help='Job title')
+parser.add_option('--jobid', help='Job identifier')
+parser.add_option('--status', action="store_true", help='Get job status')
+parser.add_option('--resultTypes', action="store_true", help='Get result types')
+parser.add_option('--polljob', action="store_true", help='Get job result')
+parser.add_option('--outfile', help='File name for results')
+parser.add_option('--outformat', help='Output format for results')
+parser.add_option('--trace', action="store_true", help='Show SOAP messages')
 # Tool specific options
 parser.add_option('-p', '--program', help='Program to run')
 parser.add_option('-D', '--database', help='Database to search')
@@ -65,7 +66,31 @@ else:
 def getParameters():
     req = getParametersRequest()
     msg = srvProxy.getParameters(req)
-    return msg._id
+    return msg._parameters._id
+
+def printParameters():
+    params = getParameters()
+    for param in params:
+        print param
+
+# Get information about a parameter
+def getParameterDetails(paramName):
+    req = getParameterDetailsRequest()
+    req._parameterId = paramName
+    msg = srvProxy.getParameterDetails(req)
+    return msg._parameterDetails
+
+# Print parameter information
+def printParameterDetails(paramName):
+    paramDetails = getParameterDetails(paramName)
+    print paramDetails._name + "\t" + paramDetails._type
+    print paramDetails._description
+    for value in paramDetails._values._value:
+        if value._defaultValue:
+            print value._value + "\tdefault"
+        else:
+            print value._value
+        print "\t" + value._label
 
 # Client-side job poll
 def clientPoll(jobId):
@@ -81,35 +106,45 @@ def run(email, title, params):
     req = runRequest()
     req._email = email
     req._title = title
-    req._parameters = ns0.InputParameters_Def
+    InputParameters = ns0.InputParameters_Def(None).pyclass
+    req._parameters = InputParameters()
     if params.has_key('program'):
         req._parameters._program = params['program']
     if params.has_key('database'):
-        req._parameters._database = {'item':params['database']}
+        ArrayOfString = ns0.ArrayOfString_Def(None).pyclass
+        req._parameters._database = ArrayOfString()
+        req._parameters._database._string = [params['database']]
     if params.has_key('stype'):
         req._parameters._stype = params['stype']
     if params.has_key('matrix'):
         req._parameters._matrix = params['matrix']
     if params.has_key('exp'):
         req._parameters._exp = params['exp']
+    else:
+        req._parameters._exp = "10"
     if params.has_key('filter'):
         req._parameters._filter = params['filter']
-    if params.has_key('numal'):
-        req._parameters._numal = params['numal']
+    if params.has_key('alignments'):
+        req._parameters._alignments = params['alignments']
+    else:
+        req._parameters._alignments = 50
     if params.has_key('scores'):
         req._parameters._scores = params['scores']
+    else:
+        req._parameters._scores = 50
     if params.has_key('dropoff'):
         req._parameters._dropoff = params['dropoff']
     if params.has_key('match_score'):
         req._parameters._match_score = params['match_score']
-    if params.has_key('opengap'):
-        req._parameters._opengap = params['opengap']
-    if params.has_key('extendgap'):
-        req._parameters._extendgap = params['extendgap']
+    if params.has_key('gapopen'):
+        req._parameters._gapopen = params['gapopen']
+    if params.has_key('gapext'):
+        req._parameters._gapext = params['gapext']
     if params.has_key('gapalign'):
         req._parameters._gapalign = params['gapalign']
     if params.has_key('sequence'):
         req._parameters._sequence = params['sequence']
+    print req._parameters
     msg = srvProxy.run(req)
     return msg._jobId
 
@@ -128,12 +163,18 @@ def getResultTypes(jobId):
     msg = srvProxy.getResultTypes(req)
     return msg._resultTypes._type
 
+# Print result type for a job
+def printResultTypes(jobId):
+    resultTypes = getResultTypes(jobId)
+    for resultType in resultTypes:
+        print resultType._identifier
+
 # Get result of a specified type
-def getResultOutput(jobId, typeName):
-    req = getRawResultOutputRequest()
+def getResult(jobId, typeName):
+    req = getResultRequest()
     req._jobId = jobId
     req._type = typeName
-    msg = srvProxy.getRawResultOutput(req)
+    msg = srvProxy.getResult(req)
     return msg._output
 
 # Get results for a jobid
@@ -142,12 +183,12 @@ def getResults(jobId):
     resultTypes = getResultTypes(jobId)
     for resultType in resultTypes:
         # Get the result
-        result = getResultOutput(jobId, resultType)
+        result = getResult(jobId, resultType._identifier)
         # Derive the filename for the result
         if options.outfile:
-            filename = options.outfile + '.' + resultType
+            filename = options.outfile + '.' + resultType._identifier + '.' + resultType._fileSuffix
         else:
-            filename = jobId + '.' + resultType
+            filename = jobId + '.' + resultType._identifier + '.' + resultType._fileSuffix
         # Write a result file
         if not options.outformat or options.outformat == resultType:
             fh = open(filename, 'w');
@@ -163,13 +204,18 @@ def readFile(filename):
     return data
 
 if options.params:
-    getParameters()
-# Get results
-elif options.polljob and options.jobid:
-    getResults(options.jobid)
+    printParameters()
+elif options.paramDetail:
+    printParameterDetails(options.paramDetail)
 # Get status
 elif options.status and options.jobid:
     print getStatus(options.jobid)
+# Get result types
+elif options.resultTypes and options.jobid:
+    printResultTypes(options.jobid)
+# Get results
+elif options.polljob and options.jobid:
+    getResults(options.jobid)
 # Submit job
 elif options.email and not options.jobid:
     params = {}
@@ -202,7 +248,7 @@ elif options.email and not options.jobid:
     if options.filter:
         params['filter'] = options.filter
     if options.numal:
-        params['numal'] = options.numal
+        params['alignments'] = options.numal
     if options.scores:
         params['scores'] = options.scores
     if options.dropoff:
@@ -210,9 +256,9 @@ elif options.email and not options.jobid:
     if options.match_score:
         params['match_score'] = options.match_score
     if options.opengap:
-        params['opengap'] = options.opengap
+        params['gapopen'] = options.opengap
     if options.extendgap:
-        params['extendgap'] = options.extendgap
+        params['gapext'] = options.extendgap
     # Submit the job
     jobid = run(options.email, options.title, params)
     if options.async: # Async mode
