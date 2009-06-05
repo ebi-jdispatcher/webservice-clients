@@ -11,13 +11,16 @@
 # http://www.ebi.ac.uk/Tools/webservices/clients/ncbiblast
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 # ======================================================================
+# Note: stubs need to be generated using:
+# wsdl2ruby.rb --type client --wsdl http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl
+# ======================================================================
 # WSDL URL for service
-wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl'
+#wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl'
 
 # Load libraries 
 require 'getoptlong' # Command-line option handling
-require 'soap/wsdlDriver' # SOAP support
 require 'base64' # Unpack encoded data
+require 'ncbiblastDriver.rb' # Generated stubs
 
 # Usage message
 def printUsage(returnCode)
@@ -160,21 +163,42 @@ excludeOpts = {
 # Wrapping class for working with the application
 class EbiWsAppl
   # Accessor methods for attributes
-  attr_reader :wsdlUrl, :timeout
+  attr_reader :timeout, :outputLevel, :debugLevel
 
   # Constructor
-  def initialize(wsdlUrl, trace, timeout)
-    @wsdlUrl = wsdlUrl
+  def initialize(outputLevel, debugLevel, trace, timeout)
+    @outputLevel = outputLevel.to_i
+    @debugLevel = debugLevel.to_i
     @trace = trace
     @timeout = timeout
   end
   
+  # Print debug message
+  def printDebugMessage(methodName, message, level)
+    if(level <= @debugLevel)
+      puts '[' + methodName + '] ' + message
+    end
+  end
+  
   # Get list of input parameters
   def getParams()
+    printDebugMessage('getParams', 'Begin', 1)
     soap = soapConnect
-    req = GetParameters.new()
+    req = nil #GetParameters.new()
     res = soap.getParameters(req)
+    p res
+    printDebugMessage('getParams', 'End', 1)
     return res.parameters
+  end
+  
+  # Print list of parameter names
+  def printParams()
+    printDebugMessage('printParams', 'Begin', 1)
+    paramsList = getParams()
+    paramsList.each { |param|
+      puts param.id
+    }
+    printDebugMessage('printParams', 'End', 1)
   end
   
   # Get detail about a parameter
@@ -202,8 +226,45 @@ class EbiWsAppl
 
   # Get job status
   def getStatus(jobId)
+    printDebugMessage('getStatus', 'Begin', 1)
     soap = soapConnect
-    return soap.getStatus(jobId)
+    req = GetStatus.new()
+    req.jobId = jobId
+    res = soap.getStatus(req)
+    p res
+    status = res.status
+    printDebugMessage('getStatus', 'End', 1)
+    return status
+  end
+  
+  # Print job status
+  def printStatus(jobId)
+    printDebugMessage('printStatus', 'Begin', 1)
+    status = getStatus(jobId)
+    puts status
+    printDebugMessage('printStatus', 'End', 1)
+  end
+  
+  # Get result types
+  def getResultTypes(jobId)
+    printDebugMessage('getResultTypes', 'Begin', 1)
+    soap = soapConnect
+    req = GetResultTypes.new()
+    req.jobId = jobId
+    res = soap.getResultTypes(req)
+    p res
+    printDebugMessage('getResultTypes', 'End', 1)
+    return res.resultTypes
+  end
+
+  # Print result types
+  def printResultTypes(jobId)
+    printDebugMessage('printResultTypes', 'Begin', 1)
+    resultTypes = getResultTypes(jobId)
+    resultTypes.each { |resultType|
+      puts resultType
+    }
+    printDebugMessage('printResultTypes', 'End', 1)
   end
 
   # Get results for a job
@@ -228,11 +289,13 @@ class EbiWsAppl
 
   private
   def soapConnect
-    # Get the object from the WSDL
-    soap = SOAP::WSDLDriverFactory.new(@wsdlUrl).create_rpc_driver
+    printDebugMessage('soapConnect', 'Begin', 11)
+    # Create the service proxy
+    soap = JDispatcherService.new()
     soap.options["protocol.http.connect_timeout"] = @timeout
     soap.options["protocol.http.receive_timeout"] = @timeout
     soap.wiredump_dev = STDOUT if @trace
+    printDebugMessage('soapConnect', 'End', 11)
     return soap
   end
     
@@ -241,6 +304,7 @@ end
 # Process command line options
 begin
   argHash = {}
+  argHash['debugLevel'] = 0
   params = {}
   optParser.each do |name, arg|
     key = name.sub(/^--/, '') # Clean up the argument name
@@ -254,7 +318,8 @@ begin
     end
   end
 rescue
-  printUsage(1)
+  $stderr.print 'Error: command line parsing failed: ' + $!
+  exit(1)
 end
 
 # Do the requested actions
@@ -265,32 +330,28 @@ begin
   else
     timeout = 120
   end
-  # Alternative WSDL
-  if argHash['WSDL']
-    puts argHash['WSDL']
-    wsdlUrl = argHash['WSDL']
-  end
-  ebiWsApp = EbiWsAppl.new(wsdlUrl, argHash['trace'], timeout)
+  ebiWsApp = EbiWsAppl.new(argHash['outputLevel'], argHash['debugLevel'], argHash['trace'], timeout)
+  
+  puts "blah"
   # Help info
   if argHash['help']
     printUsage(0)
 
-  # Get job status
+  # Get lsit of parameter names
   elsif argHash['params']
-    puts ebiWsApp.getParams()
+    ebiWsApp.printParams()
 
-  # Get job status
-  elsif argHash['status'] 
-   if argHash['jobid']
-      puts ebiWsApp.getStatus(argHash['jobid'])
-    else
-      puts 'Error: for --status a jobId must also be specified'
-      printUsage(1)
-    end
-
-  # Get job results
-  elsif argHash['polljob']
-    if argHash['jobid']
+  # Job based actions
+  elsif argHash['jobid']
+    puts "JobID: " + argHash['jobid']
+    # Get job status
+    if argHash['status'] 
+      ebiWsApp.printStatus(argHash['jobid'])
+    # Get result types
+    elsif argHash['resultTypes'] 
+      ebiWsApp.printResultTypes(argHash['jobid'])
+    # Get job results
+    elsif argHash['polljob']
       jobId = argHash['jobid']
       if argHash['outfile']
         fileList = ebiWsApp.getResults(jobId, argHash['outfile'])
@@ -299,8 +360,8 @@ begin
       end
       fileList.each { |fileName| puts "Wrote result file: #{fileName}" }
     else
-      puts 'Error: for --polljob  a jobId must also be specified'
-      printUsage(1)
+      $stderr.print 'Error: for --jobid requires an action (e.g. --status, --resultTypes, --polljob'
+      exit(1)
     end
 
   # Submit a job
@@ -319,7 +380,8 @@ begin
 
   # Unsupported combination of options (or no options)
   else
-    printUsage(1)
+    $stderr.print "Error: unknown option combination\n"
+    exit(1)
   end
 
 # Catch any exceptions and display
