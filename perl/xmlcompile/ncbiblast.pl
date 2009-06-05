@@ -26,6 +26,7 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename qw(basename);
 use MIME::Base64;
 use Data::Dumper;
+#use Log::Report mode => 3;
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -121,7 +122,10 @@ foreach my $soapOp ( $soapSrv->operations ) {
 	&print_debug_message( 'main', 'Operation: ' . $soapOp->name, 12 );
 	# Allow nil elements to be skipped (needed for submission)
 	$soapOps{ $soapOp->name } =
-	  $soapSrv->compileClient( $soapOp->name, interpret_nillable_as_optional=>1, elements_qualified=>'TOP' );
+	  $soapSrv->compileClient(
+	  	$soapOp->name,
+	  	interpret_nillable_as_optional=>1
+	  );
     }
     # XML::Compile::SOAP 0.7x
     else {
@@ -196,9 +200,8 @@ sub soap_request($$) {
 	print_debug_message( 'soap_request', 'Begin', 11 );
 	my $serviceMethod = shift;    # Method name
 	my $serviceParams = shift;    # Method parameters
-	print_debug_message( 'soap_request', 'serviceMethod: ' . $serviceMethod, 11 );
-	print_debug_message( 'soap_request', 'serviceParams: ' . Dumper($serviceParams), 11 );
-
+	print_debug_message( 'soap_request', 'serviceMethod: ' . $serviceMethod, 12 );
+	print_debug_message( 'soap_request', 'serviceParams: ' . Dumper($serviceParams), 21 );
 	# Call the method
 	my ( $response, $trace ) =
 	  $soapOps{$serviceMethod}->( 'parameters' => $serviceParams );
@@ -206,7 +209,7 @@ sub soap_request($$) {
 	if ( $response->{'Fault'} ) {               # Check for server/SOAP fault
 		die "Server fault: " . $response->{'Fault'}->{'faultstring'};
 	}
-	print_debug_message( 'soap_request', 'response: ' . Dumper($response), 11 );
+	print_debug_message( 'soap_request', 'response: ' . Dumper($response), 21 );
 	print_debug_message( 'soap_request', 'End', 11 );
 	return $response;
 }
@@ -226,9 +229,10 @@ sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $response = &soap_request( 'getParameters', {} );
 	#print Dumper($response);
-	my $retVal = $response->{'output'}->{'parameters'}->{'id'};
+	my $paramNameListRef = $response->{'output'}->{'parameters'}->{'id'};
+	die "Error: undefined parameter name list returned by service" if(!defined($paramNameListRef));
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
-	return @$retVal;
+	return @$paramNameListRef;
 }
 
 # Get details of a tool parameter
@@ -242,6 +246,7 @@ sub soap_get_parameter_details($$) {
 		 	'parameterId' => $parameterId
 		 } );
 	my $paramDetail = $response->{'output'}->{'parameterDetails'};
+	die "Error: undefined parameter details returned by service" if(!defined($paramDetail));
 	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
 	return $paramDetail;
 }
@@ -271,6 +276,7 @@ sub soap_run($$$) {
 		}
 	);
 	my $job_id = $response->{'output'}->{'jobId'};
+	die "Error: undefined job identifier returned by service." if(!defined($job_id));
 	print_debug_message( 'soap_run', 'End', 1 );
 	return $job_id;
 }
@@ -282,6 +288,7 @@ sub soap_get_status($) {
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
 	my $response = &soap_request('getStatus', {'jobId' => $jobid});
 	my $status_str = $response->{'output'}->{'status'};
+	die "Error: undefined job status returned by service." if(!defined($status_str)); 
 	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
 	print_debug_message( 'soap_get_status', 'End', 1 );
 	return $status_str;
@@ -293,11 +300,12 @@ sub soap_get_result_types($) {
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
 	my $response = &soap_request('getResultTypes', {'jobId' => $jobid});
-	my (@resultTypes) = @{$response->{'output'}->{'resultTypes'}->{'type'}};
+	my $resultTypes = $response->{'output'}->{'resultTypes'}->{'type'};
+	die "Error: undefined result type list returned by service." if(!defined($resultTypes)); 
 	print_debug_message( 'soap_get_result_types',
-		scalar(@resultTypes) . ' result types', 2 );
+		scalar(@$resultTypes) . ' result types', 2 );
 	print_debug_message( 'soap_get_result_types', 'End', 1 );
-	return (@resultTypes);
+	return (@$resultTypes);
 }
 
 # Get result data of a specified type for a finished job
@@ -310,10 +318,12 @@ sub soap_get_raw_result_output($$) {
 	my $response = &soap_request('getResult', 
 		{
 			'jobId' => $jobid,
-			'type' => $type
+			'type' => $type,
+			'parameters' => 'NIL'
 		}
 	);
 	my $result = $response->{'output'}->{'output'};
+	die "Error: undefined result returned by service." if(!defined($result)); 
 	print_debug_message( 'soap_get_raw_result_output',
 		length($result) . ' characters', 1 );
 	print_debug_message( 'soap_get_raw_result_output', 'End', 1 );
