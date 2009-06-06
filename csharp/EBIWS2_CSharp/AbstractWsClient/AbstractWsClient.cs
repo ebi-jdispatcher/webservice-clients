@@ -189,7 +189,26 @@ Asynchronous job:
 		protected void PrintDebugMessage(string methodName, string message, int level) {
 			if(level <= DebugLevel) Console.Error.WriteLine("[{0}()] {1}", methodName, message);
 		}
-		
+
+        /// <summary>
+        /// Construct a string of the values of an object, both fields and properties.
+        /// </summary>
+        /// <param name="obj">
+        /// Object to get values from. A <see cref="System.Object"/>
+        /// </param>
+        /// <returns>
+        /// Name and the contents of values as a string. A <see cref="System.String"/>
+        /// </returns>
+        protected string ObjectValueToString(Object obj)
+        {
+            PrintDebugMessage("ObjectValueToString", "Begin", 31);
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.Append(ObjectFieldsToString(obj));
+            strBuilder.Append(ObjectPropertiesToString(obj));
+            PrintDebugMessage("ObjectValueToString", "End", 31);
+            return strBuilder.ToString();
+        }
+
 		/// <summary>
 		/// Construct a string of the fields of an object.
 		/// </summary>
@@ -200,12 +219,12 @@ Asynchronous job:
 		/// Name and the contents of fields as a string. A <see cref="System.String"/>
 		/// </returns>
 		protected string ObjectFieldsToString(Object obj) {
-			PrintDebugMessage("ObjectFieldsToString", "Begin", 31);
+			PrintDebugMessage("ObjectFieldsToString", "Begin", 32);
 			StringBuilder strBuilder = new StringBuilder();
 			Type objType = obj.GetType();
-			PrintDebugMessage("ObjectFieldsToString", "objType: " + objType, 32);
+			PrintDebugMessage("ObjectFieldsToString", "objType: " + objType, 33);
 			foreach(FieldInfo info in objType.GetFields()) {
-				PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name, 32);
+				PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name, 33);
 				if (info.FieldType.IsArray)
 				{
 					strBuilder.Append(info.Name + ":\n");
@@ -217,7 +236,7 @@ Asynchronous job:
 					strBuilder.Append(info.Name + ": " + info.GetValue(obj) + "\n");
 				}
 			}
-			PrintDebugMessage("ObjectFieldsToString", "End", 31);
+			PrintDebugMessage("ObjectFieldsToString", "End", 32);
 			return strBuilder.ToString();
 		}
 		
@@ -368,10 +387,10 @@ Asynchronous job:
 		/// </summary>
 		/// <param name="fileName">File to write data to.</param>
 		/// <param name="content">Data to write to file.</param>
-		protected void WriteFile(string fileName, byte[] content) {
-			PrintDebugMessage("WriteFile", "Begin", 1);
-			PrintDebugMessage("WriteFile", "fileName: " + fileName, 1);
-			PrintDebugMessage("WriteFile", "content: " + content.Length + " bytes", 1);
+		protected void WriteBinaryFile(string fileName, byte[] content) {
+            PrintDebugMessage("WriteBinaryFile", "Begin", 1);
+            PrintDebugMessage("WriteBinaryFile", "fileName: " + fileName, 1);
+            PrintDebugMessage("WriteBinaryFile", "content: " + content.Length + " bytes", 1);
 			if(fileName == "-") { // STDOUT
 				Stream s = Console.OpenStandardOutput();
 				BinaryWriter sw = new BinaryWriter(s);
@@ -380,11 +399,50 @@ Asynchronous job:
 			}
 			else { // Data file
 				File.WriteAllBytes(fileName, content);
+                Console.WriteLine("Wrote: {0}", fileName);
 			}
-			PrintDebugMessage("WriteFile", "End", 1);
+            PrintDebugMessage("WriteBinaryFile", "End", 1);
 		}
-		
-		/// <summary>
+
+        /// <summary>
+        /// Write text data encoded as a byte array to a file.
+        /// </summary>
+        /// <param name="fileName">File to write data to.</param>
+        /// <param name="content">Text data to write to file.</param>
+        protected void WriteTextFile(string fileName, byte[] content)
+        {
+            PrintDebugMessage("WriteTextFile", "Begin", 1);
+            PrintDebugMessage("WriteTextFile", "fileName: " + fileName, 1);
+            PrintDebugMessage("WriteTextFile", "content: " + content.Length + " bytes", 1);
+            System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+            string contentStr = enc.GetString(content);
+            WriteTextFile(fileName, contentStr);
+            PrintDebugMessage("WriteTextFile", "End", 1);
+        }
+
+        /// <summary>
+        /// Write a string to a file.
+        /// </summary>
+        /// <param name="fileName">File to write data to.</param>
+        /// <param name="content">Data to write to file.</param>
+        protected void WriteTextFile(string fileName, string content)
+        {
+            PrintDebugMessage("WriteTextFile", "Begin", 1);
+            PrintDebugMessage("WriteTextFile", "fileName: " + fileName, 1);
+            PrintDebugMessage("WriteTextFile", "content: " + content.Length + " characters", 1);
+            if (fileName == "-")
+            { // STDOUT
+                Console.Write(content);
+            }
+            else
+            { // Data file
+                File.WriteAllText(fileName, content);
+                Console.WriteLine("Wrote: {0}", fileName);
+            }
+            PrintDebugMessage("WriteTextFile", "End", 1);
+        }
+
+        /// <summary>
 		/// Get the service connection. Has to be called before attempting to use any of the service operations.
 		/// </summary>
 		protected abstract void ServiceProxyConnect();
