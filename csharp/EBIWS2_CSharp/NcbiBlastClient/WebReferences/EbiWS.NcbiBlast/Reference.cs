@@ -49,34 +49,40 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
         
         public event getParameterDetailsCompletedEventHandler getParameterDetailsCompleted;
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:Run", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("runResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageRunResponse run([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageRun run) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:Run", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlElementAttribute("jobId")]
+        public string run(string email, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] string title, InputParameters parameters) {
             object[] results = this.Invoke("run", new object[] {
-                        run});
-            return ((MessageRunResponse)(results[0]));
+                        email,
+                        title,
+                        parameters});
+            return ((string)(results[0]));
         }
         
-        public System.IAsyncResult Beginrun(MessageRun run, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult Beginrun(string email, string title, InputParameters parameters, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("run", new object[] {
-                        run}, callback, asyncState);
+                        email,
+                        title,
+                        parameters}, callback, asyncState);
         }
         
-        public MessageRunResponse Endrun(System.IAsyncResult asyncResult) {
+        public string Endrun(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageRunResponse)(results[0]));
+            return ((string)(results[0]));
         }
         
-        public void runAsync(MessageRun run) {
-            this.runAsync(run, null);
+        public void runAsync(string email, string title, InputParameters parameters) {
+            this.runAsync(email, title, parameters, null);
         }
         
-        public void runAsync(MessageRun run, object userState) {
+        public void runAsync(string email, string title, InputParameters parameters, object userState) {
             if ((this.runOperationCompleted == null)) {
                 this.runOperationCompleted = new System.Threading.SendOrPostCallback(this.OnrunCompleted);
             }
             this.InvokeAsync("run", new object[] {
-                        run}, this.runOperationCompleted, userState);
+                        email,
+                        title,
+                        parameters}, this.runOperationCompleted, userState);
         }
         
         private void OnrunCompleted(object arg) {
@@ -86,34 +92,34 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             }
         }
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetStatus", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("getStatusResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageGetStatusResponse getStatus([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageGetStatus getStatus) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetStatus", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlElementAttribute("status")]
+        public string getStatus(string jobId) {
             object[] results = this.Invoke("getStatus", new object[] {
-                        getStatus});
-            return ((MessageGetStatusResponse)(results[0]));
+                        jobId});
+            return ((string)(results[0]));
         }
         
-        public System.IAsyncResult BegingetStatus(MessageGetStatus getStatus, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BegingetStatus(string jobId, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("getStatus", new object[] {
-                        getStatus}, callback, asyncState);
+                        jobId}, callback, asyncState);
         }
         
-        public MessageGetStatusResponse EndgetStatus(System.IAsyncResult asyncResult) {
+        public string EndgetStatus(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageGetStatusResponse)(results[0]));
+            return ((string)(results[0]));
         }
         
-        public void getStatusAsync(MessageGetStatus getStatus) {
-            this.getStatusAsync(getStatus, null);
+        public void getStatusAsync(string jobId) {
+            this.getStatusAsync(jobId, null);
         }
         
-        public void getStatusAsync(MessageGetStatus getStatus, object userState) {
+        public void getStatusAsync(string jobId, object userState) {
             if ((this.getStatusOperationCompleted == null)) {
                 this.getStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetStatusCompleted);
             }
             this.InvokeAsync("getStatus", new object[] {
-                        getStatus}, this.getStatusOperationCompleted, userState);
+                        jobId}, this.getStatusOperationCompleted, userState);
         }
         
         private void OngetStatusCompleted(object arg) {
@@ -123,34 +129,35 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             }
         }
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetResultTypes", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("getResultTypesResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageGetResultTypesResponse getResultTypes([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageGetResultTypes getResultTypes) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetResultTypes", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlArray(ElementName="resultTypes")]
+        [return: System.Xml.Serialization.XmlArrayItem(ElementName="type", IsNullable=false)]
+        public wsResultType[] getResultTypes(string jobId) {
             object[] results = this.Invoke("getResultTypes", new object[] {
-                        getResultTypes});
-            return ((MessageGetResultTypesResponse)(results[0]));
+                        jobId});
+            return ((wsResultType[])(results[0]));
         }
         
-        public System.IAsyncResult BegingetResultTypes(MessageGetResultTypes getResultTypes, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BegingetResultTypes(string jobId, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("getResultTypes", new object[] {
-                        getResultTypes}, callback, asyncState);
+                        jobId}, callback, asyncState);
         }
         
-        public MessageGetResultTypesResponse EndgetResultTypes(System.IAsyncResult asyncResult) {
+        public wsResultType[] EndgetResultTypes(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageGetResultTypesResponse)(results[0]));
+            return ((wsResultType[])(results[0]));
         }
         
-        public void getResultTypesAsync(MessageGetResultTypes getResultTypes) {
-            this.getResultTypesAsync(getResultTypes, null);
+        public void getResultTypesAsync(string jobId) {
+            this.getResultTypesAsync(jobId, null);
         }
         
-        public void getResultTypesAsync(MessageGetResultTypes getResultTypes, object userState) {
+        public void getResultTypesAsync(string jobId, object userState) {
             if ((this.getResultTypesOperationCompleted == null)) {
                 this.getResultTypesOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetResultTypesCompleted);
             }
             this.InvokeAsync("getResultTypes", new object[] {
-                        getResultTypes}, this.getResultTypesOperationCompleted, userState);
+                        jobId}, this.getResultTypesOperationCompleted, userState);
         }
         
         private void OngetResultTypesCompleted(object arg) {
@@ -160,34 +167,40 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             }
         }
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetResult", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("getResultResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageGetResultResponse getResult([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageGetResult getResult) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetResult", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlElementAttribute("output", IsNullable=true)]
+        public byte[] getResult(string jobId, string type, [System.Xml.Serialization.XmlArray(IsNullable=true)] [System.Xml.Serialization.XmlArrayItem(ElementName="parameter", IsNullable=false)] wsRawOutputParameter[] parameters) {
             object[] results = this.Invoke("getResult", new object[] {
-                        getResult});
-            return ((MessageGetResultResponse)(results[0]));
+                        jobId,
+                        type,
+                        parameters});
+            return ((byte[])(results[0]));
         }
         
-        public System.IAsyncResult BegingetResult(MessageGetResult getResult, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BegingetResult(string jobId, string type, wsRawOutputParameter[] parameters, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("getResult", new object[] {
-                        getResult}, callback, asyncState);
+                        jobId,
+                        type,
+                        parameters}, callback, asyncState);
         }
         
-        public MessageGetResultResponse EndgetResult(System.IAsyncResult asyncResult) {
+        public byte[] EndgetResult(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageGetResultResponse)(results[0]));
+            return ((byte[])(results[0]));
         }
         
-        public void getResultAsync(MessageGetResult getResult) {
-            this.getResultAsync(getResult, null);
+        public void getResultAsync(string jobId, string type, wsRawOutputParameter[] parameters) {
+            this.getResultAsync(jobId, type, parameters, null);
         }
         
-        public void getResultAsync(MessageGetResult getResult, object userState) {
+        public void getResultAsync(string jobId, string type, wsRawOutputParameter[] parameters, object userState) {
             if ((this.getResultOperationCompleted == null)) {
                 this.getResultOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetResultCompleted);
             }
             this.InvokeAsync("getResult", new object[] {
-                        getResult}, this.getResultOperationCompleted, userState);
+                        jobId,
+                        type,
+                        parameters}, this.getResultOperationCompleted, userState);
         }
         
         private void OngetResultCompleted(object arg) {
@@ -197,34 +210,32 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             }
         }
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameters", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("getParametersResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageGetParametersResponse getParameters([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageGetParameters getParameters) {
-            object[] results = this.Invoke("getParameters", new object[] {
-                        getParameters});
-            return ((MessageGetParametersResponse)(results[0]));
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameters", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlArray(ElementName="parameters")]
+        [return: System.Xml.Serialization.XmlArrayItem(ElementName="id", IsNullable=false)]
+        public string[] getParameters() {
+            object[] results = this.Invoke("getParameters", new object[0]);
+            return ((string[])(results[0]));
         }
         
-        public System.IAsyncResult BegingetParameters(MessageGetParameters getParameters, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("getParameters", new object[] {
-                        getParameters}, callback, asyncState);
+        public System.IAsyncResult BegingetParameters(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getParameters", new object[0], callback, asyncState);
         }
         
-        public MessageGetParametersResponse EndgetParameters(System.IAsyncResult asyncResult) {
+        public string[] EndgetParameters(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageGetParametersResponse)(results[0]));
+            return ((string[])(results[0]));
         }
         
-        public void getParametersAsync(MessageGetParameters getParameters) {
-            this.getParametersAsync(getParameters, null);
+        public void getParametersAsync() {
+            this.getParametersAsync(null);
         }
         
-        public void getParametersAsync(MessageGetParameters getParameters, object userState) {
+        public void getParametersAsync(object userState) {
             if ((this.getParametersOperationCompleted == null)) {
                 this.getParametersOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetParametersCompleted);
             }
-            this.InvokeAsync("getParameters", new object[] {
-                        getParameters}, this.getParametersOperationCompleted, userState);
+            this.InvokeAsync("getParameters", new object[0], this.getParametersOperationCompleted, userState);
         }
         
         private void OngetParametersCompleted(object arg) {
@@ -234,34 +245,34 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             }
         }
         
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameterDetails", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-        [return: System.Xml.Serialization.XmlElementAttribute("getParameterDetailsResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-        public MessageGetParameterDetailsResponse getParameterDetails([System.Xml.Serialization.XmlElementAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")] MessageGetParameterDetails getParameterDetails) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameterDetails", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped, Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+        [return: System.Xml.Serialization.XmlElementAttribute("parameterDetails")]
+        public wsParameterDetails getParameterDetails(string parameterId) {
             object[] results = this.Invoke("getParameterDetails", new object[] {
-                        getParameterDetails});
-            return ((MessageGetParameterDetailsResponse)(results[0]));
+                        parameterId});
+            return ((wsParameterDetails)(results[0]));
         }
         
-        public System.IAsyncResult BegingetParameterDetails(MessageGetParameterDetails getParameterDetails, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BegingetParameterDetails(string parameterId, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("getParameterDetails", new object[] {
-                        getParameterDetails}, callback, asyncState);
+                        parameterId}, callback, asyncState);
         }
         
-        public MessageGetParameterDetailsResponse EndgetParameterDetails(System.IAsyncResult asyncResult) {
+        public wsParameterDetails EndgetParameterDetails(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((MessageGetParameterDetailsResponse)(results[0]));
+            return ((wsParameterDetails)(results[0]));
         }
         
-        public void getParameterDetailsAsync(MessageGetParameterDetails getParameterDetails) {
-            this.getParameterDetailsAsync(getParameterDetails, null);
+        public void getParameterDetailsAsync(string parameterId) {
+            this.getParameterDetailsAsync(parameterId, null);
         }
         
-        public void getParameterDetailsAsync(MessageGetParameterDetails getParameterDetails, object userState) {
+        public void getParameterDetailsAsync(string parameterId, object userState) {
             if ((this.getParameterDetailsOperationCompleted == null)) {
                 this.getParameterDetailsOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetParameterDetailsCompleted);
             }
             this.InvokeAsync("getParameterDetails", new object[] {
-                        getParameterDetails}, this.getParameterDetailsOperationCompleted, userState);
+                        parameterId}, this.getParameterDetailsOperationCompleted, userState);
         }
         
         private void OngetParameterDetailsCompleted(object arg) {
@@ -270,26 +281,6 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
                 this.getParameterDetailsCompleted(this, new getParameterDetailsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("run", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageRun {
-        
-        /// <remarks/>
-        public string email;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public string title;
-        
-        /// <remarks/>
-        public InputParameters parameters;
     }
     
     /// <remarks/>
@@ -396,72 +387,6 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("runResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageRunResponse {
-        
-        /// <remarks/>
-        public string jobId;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getStatus", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetStatus {
-        
-        /// <remarks/>
-        public string jobId;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getStatusResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetStatusResponse {
-        
-        /// <remarks/>
-        public string status;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getResultTypes", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetResultTypes {
-        
-        /// <remarks/>
-        public string jobId;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getResultTypesResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetResultTypesResponse {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItem(ElementName="type", IsNullable=false)]
-        public wsResultType[] resultTypes;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
     public partial class wsResultType {
         
         /// <remarks/>
@@ -488,27 +413,6 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getResult", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetResult {
-        
-        /// <remarks/>
-        public string jobId;
-        
-        /// <remarks/>
-        public string type;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArray(IsNullable=true)]
-        [System.Xml.Serialization.XmlArrayItem(ElementName="parameter", IsNullable=false)]
-        public wsRawOutputParameter[] parameters;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
     public partial class wsRawOutputParameter {
         
         /// <remarks/>
@@ -516,70 +420,6 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
         
         /// <remarks/>
         public string[] value;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getResultResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetResultResponse {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public byte[] output;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getParameters", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetParameters {
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getParametersResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetParametersResponse {
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItem(ElementName="id", IsNullable=false)]
-        public string[] parameters;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getParameterDetails", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetParameterDetails {
-        
-        /// <remarks/>
-        public string parameterId;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "2.0.50727.42")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    [System.Xml.Serialization.XmlRootAttribute("getParameterDetailsResponse", Namespace="http://soap.jdispatcher.ebi.ac.uk")]
-    public partial class MessageGetParameterDetailsResponse {
-        
-        /// <remarks/>
-        public wsParameterDetails parameterDetails;
     }
     
     /// <remarks/>
@@ -650,10 +490,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageRunResponse Result {
+        public string Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageRunResponse)(this.results[0]));
+                return ((string)(this.results[0]));
             }
         }
     }
@@ -669,10 +509,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageGetStatusResponse Result {
+        public string Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageGetStatusResponse)(this.results[0]));
+                return ((string)(this.results[0]));
             }
         }
     }
@@ -688,10 +528,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageGetResultTypesResponse Result {
+        public wsResultType[] Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageGetResultTypesResponse)(this.results[0]));
+                return ((wsResultType[])(this.results[0]));
             }
         }
     }
@@ -707,10 +547,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageGetResultResponse Result {
+        public byte[] Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageGetResultResponse)(this.results[0]));
+                return ((byte[])(this.results[0]));
             }
         }
     }
@@ -726,10 +566,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageGetParametersResponse Result {
+        public string[] Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageGetParametersResponse)(this.results[0]));
+                return ((string[])(this.results[0]));
             }
         }
     }
@@ -745,10 +585,10 @@ namespace NcbiBlastClient.EbiWS.NcbiBlast {
             this.results = results;
         }
         
-        public MessageGetParameterDetailsResponse Result {
+        public wsParameterDetails Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((MessageGetParameterDetailsResponse)(this.results[0]));
+                return ((wsParameterDetails)(this.results[0]));
             }
         }
     }

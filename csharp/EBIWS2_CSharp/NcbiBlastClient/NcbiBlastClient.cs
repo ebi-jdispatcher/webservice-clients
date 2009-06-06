@@ -384,6 +384,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 		{
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11);
 			if (SrvProxy == null) SrvProxy = new JDispatcherService();
+			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " +SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 		
@@ -391,9 +392,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 		{
 			PrintDebugMessage("GetParams", "Begin", 1);
 			ServiceProxyConnect();
-			MessageGetParameters req = new MessageGetParameters();
-			MessageGetParametersResponse res = SrvProxy.getParameters(req);
-			string[] paramNameList = res.parameters;
+			string[] paramNameList = SrvProxy.getParameters();
 			PrintDebugMessage("GetParams", "got " + paramNameList.Length + " parameter names", 2);
 			PrintDebugMessage("GetParams", "End", 1);
 			return paramNameList;
@@ -403,10 +402,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 		{
 			PrintDebugMessage("GetParamDetail", "Begin", 1);
 			PrintDebugMessage("GetParamDetail", "paramName: " + paramName, 2);
-			MessageGetParameterDetails req = new MessageGetParameterDetails();
-			req.parameterId = paramName;
-			MessageGetParameterDetailsResponse res = SrvProxy.getParameterDetails(req);
-			wsParameterDetails paramDetail = res.parameterDetails;
+			wsParameterDetails paramDetail = SrvProxy.getParameterDetails(paramName);
 			PrintDebugMessage("GetParamDetail", "End", 1);
 			return paramDetail;
 		}
@@ -455,12 +451,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 			string jobId = null;
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
 			// Submit the job
-			MessageRun req = new MessageRun();
-			req.email = Email;
-			req.title = JobTitle;
-			req.parameters = input;
-			MessageRunResponse res = SrvProxy.run(req);
-			jobId = res.jobId;
+			jobId = SrvProxy.run(email, title, input);
 			PrintDebugMessage("RunApp", "jobId: " + jobId, 2);
 			PrintDebugMessage("RunApp", "End", 1);
 			return jobId;
@@ -474,10 +465,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 			PrintDebugMessage("GetStatus", "Begin", 1);
 			string status = "PENDING";
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
-			MessageGetStatus req = new MessageGetStatus();
-			req.jobId = jobId;
-			MessageGetStatusResponse res = SrvProxy.getStatus(req);
-			status = res.status;
+			status = SrvProxy.getStatus(jobId);
 			PrintDebugMessage("GetStatus", "status: " + status, 2);
 			PrintDebugMessage("GetStatus", "End", 1);
 			return status;
@@ -486,10 +474,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 		public wsResultType[] GetResultTypes(string jobId)
 		{
 			PrintDebugMessage("GetResultTypes", "Begin", 2);
-			MessageGetResultTypes req = new MessageGetResultTypes();
-			req.jobId = jobId;
-			MessageGetResultTypesResponse res = SrvProxy.getResultTypes(req);
-			wsResultType[] resultTypes = res.resultTypes;
+			wsResultType[] resultTypes = SrvProxy.getResultTypes(jobId);
 			PrintDebugMessage("GetResultTypes", "End", 2);
 			return resultTypes;
 		}
@@ -520,11 +505,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 			PrintDebugMessage("GetResult", "jobId: " + jobId, 1);
 			PrintDebugMessage("GetResult", "format: " + format, 1);
 			byte[] result = null;
-			MessageGetResult req = new MessageGetResult();
-			req.jobId = jobId;
-			req.type = format;
-			MessageGetResultResponse res = SrvProxy.getResult(req);
-			result = res.output;
+			result = SrvProxy.getResult(jobId, format, null);
 			PrintDebugMessage("GetResult", "End", 1);
 			return result;
 		}
