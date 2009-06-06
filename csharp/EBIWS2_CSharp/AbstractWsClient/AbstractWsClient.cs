@@ -20,9 +20,7 @@ namespace AbstractWsClient
 		public int OutputLevel {
 			get{return outputLevel;}
 			set{
-				if(value > -1) {
-					outputLevel = value;
-				}
+				if(value > -1) outputLevel = value;
 			}
 		}
 		private int outputLevel = 1;
@@ -32,9 +30,7 @@ namespace AbstractWsClient
 		public int DebugLevel {
 			get{return debugLevel;}
 			set{
-				if(value > -1) {
-					debugLevel = value;
-				}
+				if(value > -1) debugLevel = value;
 			}
 		}
 		private int debugLevel = 0;
@@ -44,9 +40,7 @@ namespace AbstractWsClient
 		public int MaxCheckInterval {
 			get{return maxCheckInterval;}
 			set{
-				if(value > 5000) {
-					maxCheckInterval = value;
-				}
+				if(value > 5000) maxCheckInterval = value;
 			}
 		}
 		private int maxCheckInterval = 60000;
@@ -172,7 +166,7 @@ Asynchronous job:
 			Async = false;
 			Action = "UNKNOWN";
 		}
-
+		
 		/// <summary>
 		/// Print the generic options usage message to STDOUT.
 		/// </summary>
@@ -183,21 +177,19 @@ Asynchronous job:
 		/// <summary>
 		/// Print a debug message at the specified level.
 		/// </summary>
-		/// <param name="methodName">
+		/// <param name="methodName">Method name to use in output.
 		/// A <see cref="System.String"/>
 		/// </param>
-		/// <param name="message">
+		/// <param name="message">Message to output.
 		/// A <see cref="System.String"/>
 		/// </param>
-		/// <param name="level">
+		/// <param name="level">Debug level at which to output.
 		/// A <see cref="System.Int32"/>
 		/// </param>
 		protected void PrintDebugMessage(string methodName, string message, int level) {
-			if(level <= DebugLevel) {
-				Console.Error.WriteLine("[{0}()] {1}", methodName, message);
-			}
+			if(level <= DebugLevel) Console.Error.WriteLine("[{0}()] {1}", methodName, message);
 		}
-
+		
 		/// <summary>
 		/// Construct a string of the fields of an object.
 		/// </summary>
@@ -207,15 +199,15 @@ Asynchronous job:
 		/// <returns>
 		/// Name and the contents of fields as a string. A <see cref="System.String"/>
 		/// </returns>
-    	protected string ObjectFieldsToString(Object obj) {
-      		PrintDebugMessage("ObjectFieldsToString", "Begin", 31);
-      		StringBuilder strBuilder = new StringBuilder();
-      		Type objType = obj.GetType();
-      		PrintDebugMessage("ObjectFieldsToString", "objType: " + objType, 32);
-      		foreach(FieldInfo info in objType.GetFields()) {
-                PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name, 32);
-                if (info.FieldType.IsArray)
-                {
+		protected string ObjectFieldsToString(Object obj) {
+			PrintDebugMessage("ObjectFieldsToString", "Begin", 31);
+			StringBuilder strBuilder = new StringBuilder();
+			Type objType = obj.GetType();
+			PrintDebugMessage("ObjectFieldsToString", "objType: " + objType, 32);
+			foreach(FieldInfo info in objType.GetFields()) {
+				PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name, 32);
+				if (info.FieldType.IsArray)
+				{
 					strBuilder.Append(info.Name + ":\n");
 					foreach(Object subObj in (Object[])info.GetValue(obj)) {
 						strBuilder.Append("\t" + subObj);
@@ -224,45 +216,45 @@ Asynchronous job:
 				else {
 					strBuilder.Append(info.Name + ": " + info.GetValue(obj) + "\n");
 				}
-      		}
-      		PrintDebugMessage("ObjectFieldsToString", "End", 31);
-      		return strBuilder.ToString();
-    	}
-
-        /// <summary>
-        /// Construct a string of the properties of an object.
-        /// </summary>
-        /// <param name="obj">
-        /// Object to get properties from. A <see cref="System.Object"/>
-        /// </param>
-        /// <returns>
-        /// Name and the contents of properties as a string. A <see cref="System.String"/>
-        /// </returns>
-        protected string ObjectPropertiesToString(Object obj)
-        {
-            PrintDebugMessage("ObjectPropertiesToString", "Begin", 31);
-            StringBuilder strBuilder = new StringBuilder();
-            Type objType = obj.GetType();
-            PrintDebugMessage("ObjectPropertiesToString", "objType: " + objType, 32);
-            foreach (PropertyInfo info in objType.GetProperties())
-            {
-                PrintDebugMessage("ObjectPropertiesToString", "info: " + info.Name, 32);
-                if (info.PropertyType.IsArray)
-                {
-                    strBuilder.Append(info.Name + ":\n");
-                    foreach (Object subObj in (Object[])info.GetValue(obj, null))
-                    {
-                        strBuilder.Append("\t" + subObj);
-                    }
-                }
-                else
-                {
-                    strBuilder.Append(info.Name + ": " + info.GetValue(obj, null) + "\n");
-                }
-            }
-            PrintDebugMessage("ObjectPropertiesToString", "End", 31);
-            return strBuilder.ToString();
-        }
+			}
+			PrintDebugMessage("ObjectFieldsToString", "End", 31);
+			return strBuilder.ToString();
+		}
+		
+		/// <summary>
+		/// Construct a string of the properties of an object.
+		/// </summary>
+		/// <param name="obj">
+		/// Object to get properties from. A <see cref="System.Object"/>
+		/// </param>
+		/// <returns>
+		/// Name and the contents of properties as a string. A <see cref="System.String"/>
+		/// </returns>
+		protected string ObjectPropertiesToString(Object obj)
+		{
+			PrintDebugMessage("ObjectPropertiesToString", "Begin", 31);
+			StringBuilder strBuilder = new StringBuilder();
+			Type objType = obj.GetType();
+			PrintDebugMessage("ObjectPropertiesToString", "objType: " + objType, 32);
+			foreach (PropertyInfo info in objType.GetProperties())
+			{
+				PrintDebugMessage("ObjectPropertiesToString", "info: " + info.Name, 32);
+				if (info.PropertyType.IsArray)
+				{
+					strBuilder.Append(info.Name + ":\n");
+					foreach (Object subObj in (Object[])info.GetValue(obj, null))
+					{
+						strBuilder.Append("\t" + subObj);
+					}
+				}
+				else
+				{
+					strBuilder.Append(info.Name + ": " + info.GetValue(obj, null) + "\n");
+				}
+			}
+			PrintDebugMessage("ObjectPropertiesToString", "End", 31);
+			return strBuilder.ToString();
+		}
 		
 		/// <summary>
 		/// Print a progress message, at the specified output level.
@@ -276,7 +268,7 @@ Asynchronous job:
 		protected void PrintProgressMessage(String msg, int level) {
 			if(OutputLevel >= level) Console.Error.WriteLine(msg);
 		}
-
+		
 		/// <summary>
 		/// Read data from a text file into a string.
 		/// </summary>
@@ -288,45 +280,107 @@ Asynchronous job:
 		/// </returns>
 		protected string ReadTextFile(string fileName) {
 			PrintDebugMessage("ReadTextFile", "Begin", 1);
-      		PrintDebugMessage("ReadTextFile", "fileName: " + fileName, 2);
-      		string retVal = "";
-      		if(fileName == "-") { // Read from STDIN
-        		retVal = Console.In.ReadToEnd();
-      		}
-      		else { // Read from file
-        		StreamReader readStream = File.OpenText(fileName);
-        		retVal = readStream.ReadToEnd();
-        		readStream.Close();
-      		}
-      		PrintDebugMessage("ReadTextFile", "read " + retVal.Length + " characters", 1);
-      		PrintDebugMessage("ReadTextFile", "End", 1);
-      		return retVal;
+			PrintDebugMessage("ReadTextFile", "fileName: " + fileName, 2);
+			string retVal = "";
+			// Read from STDIN
+			if(fileName == "-") retVal = Console.In.ReadToEnd();
+			// Read from file
+			else retVal = File.ReadAllText(fileName);
+			PrintDebugMessage("ReadTextFile", "read " + retVal.Length + " characters", 1);
+			PrintDebugMessage("ReadTextFile", "End", 1);
+			return retVal;
 		}
 		
-		// Read a file into a byte[].
-		// TODO
+		/// <summary>
+		/// Read a file into a byte array.
+		/// </summary>
+		/// <param name="fileName">Filename to read data from.</param>
+		/// <returns>Data read from file as a byte array.</returns>
 		protected byte[] ReadFile(string fileName) {
 			PrintDebugMessage("ReadFile", "Begin", 1);
 			PrintDebugMessage("ReadFile", "fileName: " + fileName, 1);
 			byte[] retVal = null;
-			
+			if(fileName == "-") { // Read from STDIN
+				Stream s = Console.OpenStandardInput();
+				BinaryReader sr = new BinaryReader(s);
+				retVal = sr.ReadBytes((int)s.Length);
+				// Do not close since this is STDIN.
+			}
+			else { // Read from file
+				retVal = File.ReadAllBytes(fileName);
+			}
 			PrintDebugMessage("ReadFile", "read " + retVal.Length + " bytes", 1);
 			PrintDebugMessage("ReadFile", "End", 1);
 			return retVal;
 		}
 		
-		// Load the data to be submitted to the tool.
-		// TODO
-		protected byte[] LoadData(string fileOptionStr) {
-			byte[] retVal = null;
+		/// <summary>
+		/// Load text data to be submitted to the tool.
+		/// </summary>
+		/// <param name="fileOptionStr">Name of file to read data from, a file name of "-" reads data from standard input (STDIN), or raw data to be sent to tool.</param>
+		/// <returns>Data as a string.</returns>
+		protected string LoadData(string fileOptionStr) {
+			PrintDebugMessage("LoadData", "Begin", 1);
+			PrintDebugMessage("LoadData", "fileOptionStr: " + fileOptionStr, 2);
+			string retVal = null;
+			if(fileOptionStr != null) {
+				if(fileOptionStr == "-") { // STDIN
+					retVal = ReadTextFile(fileOptionStr);
+				}
+				else if(File.Exists(fileOptionStr)) { // File
+					retVal = ReadTextFile(fileOptionStr);
+				}
+				else { // Entry Id or raw sequence
+					retVal = fileOptionStr;
+				}
+			}
+			PrintDebugMessage("LoadData", "End", 1);
 			return retVal;
 		}
 		
-		// Write a byte[] to a file.
+		/// <summary>
+		/// Load binary data for submission to the tool service.
+		/// </summary>
+		/// <param name="fileOptionStr">Name of file to read data from, a file name of "-" reads data from standard input (STDIN), or raw data to be sent to tool.</param>
+		/// <returns>Data as a byte array.</returns>
+		protected byte[] LoadBinData(string fileOptionStr) {
+			PrintDebugMessage("LoadBinData", "Begin", 1);
+			PrintDebugMessage("LoadBinData", "fileOptionStr: " + fileOptionStr, 2);
+			byte[] retVal = null;
+			if(fileOptionStr != null) {
+				if(fileOptionStr == "-") { // STDIN
+					retVal = ReadFile(fileOptionStr);
+				}
+				else if(File.Exists(fileOptionStr)) { // File
+					retVal = ReadFile(fileOptionStr);
+				}
+				else { // Entry Id or raw sequence
+					System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+					retVal = enc.GetBytes(fileOptionStr);
+				}
+			}
+			PrintDebugMessage("LoadBinData", "End", 1);
+			return retVal;
+		}
+		
+		/// <summary>
+		/// Write a byte array to a file.
+		/// </summary>
+		/// <param name="fileName">File to write data to.</param>
+		/// <param name="content">Data to write to file.</param>
 		protected void WriteFile(string fileName, byte[] content) {
 			PrintDebugMessage("WriteFile", "Begin", 1);
 			PrintDebugMessage("WriteFile", "fileName: " + fileName, 1);
 			PrintDebugMessage("WriteFile", "content: " + content.Length + " bytes", 1);
+			if(fileName == "-") { // STDOUT
+				Stream s = Console.OpenStandardOutput();
+				BinaryWriter sw = new BinaryWriter(s);
+				sw.Write(content);
+				// Do not close, since this is STDOUT.
+			}
+			else { // Data file
+				File.WriteAllBytes(fileName, content);
+			}
 			PrintDebugMessage("WriteFile", "End", 1);
 		}
 		
@@ -342,22 +396,18 @@ Asynchronous job:
 		/// A <see cref="System.String"/>
 		/// </returns>
 		public abstract string[] GetParams();
-
+		
 		/// <summary>
 		/// Print a list of input parameter names.
 		/// </summary>
 		protected void PrintParams() {
 			PrintDebugMessage("PrintParams", "Begin", 1);
 			string[] paramNameList = GetParams();
-			foreach(string paramName in paramNameList) {
-				Console.WriteLine(paramName);
-			}
+			foreach(string paramName in paramNameList) Console.WriteLine(paramName);
 			PrintDebugMessage("PrintParams", "End", 1);
 		}
 		
 		// Get details for a prameter.
-		
-		// 
 		
 		/// <summary>
 		/// Print a detailed description of a specified input parameter.
@@ -386,12 +436,12 @@ Asynchronous job:
 		/// <summary>
 		/// Print the status of the current job.
 		/// </summary>
-    	public void PrintStatus() {
-      		PrintDebugMessage("PrintStatus", "Begin", 1);
-      		string status = GetStatus(JobId);
-      		Console.WriteLine(status);
-      		PrintDebugMessage("PrintStatus", "End", 1);
-    	}
+		public void PrintStatus() {
+			PrintDebugMessage("PrintStatus", "Begin", 1);
+			string status = GetStatus(JobId);
+			Console.WriteLine(status);
+			PrintDebugMessage("PrintStatus", "End", 1);
+		}
 		
 		/// <summary>
 		/// Wait for a job to finish.
@@ -399,24 +449,22 @@ Asynchronous job:
 		/// <param name="jobId">Job identifier of the job to wait for.
 		/// A <see cref="System.String"/>
 		/// </param>
-    	public void ClientPoll(string jobId) {
-      		PrintDebugMessage("ClientPoll", "Begin", 1);
-      		PrintDebugMessage("ClientPoll", "jobId: " + jobId, 2);
-      		string status = "PENDING";
-      		// Check status and wait if not finished
-      		while(status == "RUNNING" || status == "PENDING") {
-        		status = GetStatus(JobId);
-        		if(OutputLevel > 0) {
-          			Console.WriteLine(status);
-        		}
+		public void ClientPoll(string jobId) {
+			PrintDebugMessage("ClientPoll", "Begin", 1);
+			PrintDebugMessage("ClientPoll", "jobId: " + jobId, 2);
+			string status = "PENDING";
+			// Check status and wait if not finished
+			while(status == "RUNNING" || status == "PENDING") {
+				status = GetStatus(JobId);
+				if(OutputLevel > 0) Console.WriteLine(status);
 				// TODO: use progressive delay.
-        		if(status == "RUNNING" || status == "PENDING") {
-          			// Wait before polling again.
-          			System.Threading.Thread.Sleep(15000);
-        		}
-      		}
-      		PrintDebugMessage("ClientPoll", "End", 1);
-    	}
+				if(status == "RUNNING" || status == "PENDING") {
+					// Wait before polling again.
+					System.Threading.Thread.Sleep(15000);
+				}
+			}
+			PrintDebugMessage("ClientPoll", "End", 1);
+		}
 		
 		/// <summary>
 		/// Print a list of the available result types for the current job.
@@ -437,26 +485,25 @@ Asynchronous job:
 		/// </param>
 		public abstract void GetResults(string jobId, string outformat, string outFileBase);
 		
-  		/// <summary>
-  		/// Get results for a job using the current format and output file.
-  		/// </summary>
+		/// <summary>
+		/// Get results for a job using the current format and output file.
+		/// </summary>
 		/// <param name="jobId">Job identifier.
 		/// A <see cref="System.String"/>
 		/// </param>
-    	public void GetResults(string jobId) {
-     		PrintDebugMessage("PollJob", "Begin", 1);
-      		GetResults(jobId, OutFormat, OutFile);
-      		PrintDebugMessage("PollJob", "End", 1);
-    	}
+		public void GetResults(string jobId) {
+			PrintDebugMessage("PollJob", "Begin", 1);
+			GetResults(jobId, OutFormat, OutFile);
+			PrintDebugMessage("PollJob", "End", 1);
+		}
 		
-  		/// <summary>
-  		/// Get results for the current job
-  		/// </summary>
-    	public void GetResults() {
-     		PrintDebugMessage("PollJob", "Begin", 1);
-      		GetResults(JobId, OutFormat, OutFile);
-      		PrintDebugMessage("PollJob", "End", 1);
-    	}
-		
+		/// <summary>
+		/// Get results for the current job
+		/// </summary>
+		public void GetResults() {
+			PrintDebugMessage("PollJob", "Begin", 1);
+			GetResults(JobId, OutFormat, OutFile);
+			PrintDebugMessage("PollJob", "End", 1);
+		}
 	}
 }
