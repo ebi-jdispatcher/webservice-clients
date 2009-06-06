@@ -8,8 +8,8 @@ See http://www.ebi.ac.uk/Tools/webservices/
 Development Platform
 --------------------
 
-Thye code base is packages as a MonoDevelop 2 solution. This is
-importable into Visual Studio.
+Thye code base is packages as a Visual Studio 2005 solution. This is
+importable into Visual Studio 2008, and usable in MonoDevelop and SharpDevelop.
 
 The solution contains a number of projects:
   - AbstractWsClient: a abstrct defintion of a tool web service client
