@@ -5,9 +5,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}</ProjectGuid>
+    <ProjectGuid>{FE29CBE8-005F-46A1-BE67-00086BB8E715}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AssemblyName>NcbiBlastCliClient</AssemblyName>
+    <AssemblyName>WuBlastCliClient</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,18 +27,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NcbiBlastCliClient.cs" />
+    <Compile Include="WuBlastCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\EbiWS\EbiWS.csproj">
-      <Project>{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}</Project>
-      <Name>EbiWS</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

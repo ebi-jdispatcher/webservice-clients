@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastCliClient", "NcbiB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EbiWS", "EbiWS\EbiWS.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaCliClient", "FastaCliClient\FastaCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WuBlastCliClient", "WuBlastCliClient\WuBlastCliClient.csproj", "{FE29CBE8-005F-46A1-BE67-00086BB8E715}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +19,18 @@ Global
 		{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		version = 0.1
