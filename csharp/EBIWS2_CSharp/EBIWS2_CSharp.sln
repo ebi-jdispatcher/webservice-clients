@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastClient", "NcbiBlastClient\NcbiBlastClient.csproj", "{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.csproj", "{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractWsClient", "AbstractWsClient\AbstractWsClient.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EbiWS", "EbiWS\EbiWS.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +22,6 @@ Global
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		version = 0.1
-		StartupItem = NcbiBlastClient\NcbiBlastClient.csproj
+		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.csproj
 	EndGlobalSection
 EndGlobal
