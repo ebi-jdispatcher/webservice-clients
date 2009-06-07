@@ -510,15 +510,19 @@ Asynchronous job:
 		public void ClientPoll(string jobId) {
 			PrintDebugMessage("ClientPoll", "Begin", 1);
 			PrintDebugMessage("ClientPoll", "jobId: " + jobId, 2);
+			int checkInterval = 1000;
 			string status = "PENDING";
 			// Check status and wait if not finished
 			while(status == "RUNNING" || status == "PENDING") {
 				status = GetStatus(JobId);
-				if(OutputLevel > 0) Console.WriteLine(status);
-				// TODO: use progressive delay.
+				PrintProgressMessage(status, 1);
 				if(status == "RUNNING" || status == "PENDING") {
 					// Wait before polling again.
-					System.Threading.Thread.Sleep(15000);
+					PrintDebugMessage("clientPoll", "checkInterval: " + checkInterval, 2);
+                    System.Threading.Thread.Sleep(checkInterval);
+                    checkInterval *= 2;
+                    if(checkInterval > MaxCheckInterval) checkInterval = MaxCheckInterval;
+
 				}
 			}
 			PrintDebugMessage("ClientPoll", "End", 1);

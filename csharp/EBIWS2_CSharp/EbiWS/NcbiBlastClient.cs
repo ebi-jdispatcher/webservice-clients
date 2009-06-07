@@ -144,14 +144,14 @@ namespace EbiWS
             wsResultType[] resultTypes = GetResultTypes(JobId);
             PrintDebugMessage("PrintResultTypes", "resultTypes: " + resultTypes.Length, 2);
             PrintProgressMessage("Getting output formats for job " + JobId, 1);
-            if (OutputLevel > 0)
-            {
-                Console.WriteLine("Type\tExtension\n==============================");
-            }
-            foreach (wsResultType resultType in resultTypes)
-            {
-                Console.WriteLine(resultType.identifier + "\t" + resultType.fileSuffix);
-            }
+			foreach(wsResultType resultType in resultTypes)
+			{
+				Console.WriteLine(resultType.identifier);
+				if(resultType.label != null) Console.WriteLine("\t{0}", resultType.label);
+				if(resultType.description != null) Console.WriteLine("\t{0}", resultType.description);
+				if(resultType.mediaType != null) Console.WriteLine("\t{0}", resultType.mediaType);
+				if(resultType.fileSuffix != null) Console.WriteLine("\t{0}", resultType.fileSuffix);
+			}
             PrintDebugMessage("PrintResultTypes", "End", 1);
         }
 

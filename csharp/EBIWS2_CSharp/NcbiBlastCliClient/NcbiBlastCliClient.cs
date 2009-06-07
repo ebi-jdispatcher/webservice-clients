@@ -1,6 +1,6 @@
 /* $Id: NcbiBlastClient.cs 1037 2009-06-06 20:35:16Z hpm $
  * ======================================================================
- * jDispatcher SOAP client for NCBI BLAST
+ * jDispatcher SOAP command-line client for NCBI BLAST
  * ====================================================================== */
 using System;
 using System.IO;
@@ -371,6 +371,5 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
             }
             PrintDebugMessage("ParseCommand", "End", 1);
         }
-
     }
 }
