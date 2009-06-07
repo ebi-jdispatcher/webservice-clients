@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s0="http://soap.jdispatcher.ebi.ac.uk" xmlns:tns="http://soap.jdispatcher.ebi.ac.uk" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ncbiblast" targetNamespace="http://soap.jdispatcher.ebi.ac.uk" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://soap.jdispatcher.ebi.ac.uk">
+      <xsd:complexType name="InputParameters">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="program" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="matrix" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="alignments" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="scores" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="exp" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="dropoff" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="match_scores" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="gapopen" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="gapext" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="filter" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="seqrange" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="gapalign" nillable="true" type="xsd:boolean" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="align" nillable="true" type="xsd:int" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="stype" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="sequence" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="database" type="tns:ArrayOfString" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ArrayOfString">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsResultTypes">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="type" type="tns:wsResultType" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsResultType">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="identifier" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="label" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="description" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="mediaType" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="fileSuffix" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="run">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="email" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="title" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="1" maxOccurs="1" name="parameters" type="tns:InputParameters" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="runResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="jobId" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getStatus">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="jobId" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getStatusResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="status" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getResultTypes">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="jobId" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getResultTypesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="resultTypes" type="tns:wsResultTypes" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getResult">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="jobId" type="xsd:string" />
+            <xsd:element minOccurs="1" maxOccurs="1" name="type" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="parameters" nillable="true" type="tns:wsRawOutputParameters" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getResultResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="output" nillable="true" type="xsd:base64Binary" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="wsRawOutputParameters">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="unbounded" name="parameter" type="tns:wsRawOutputParameter" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsRawOutputParameter">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="name" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="value" type="tns:ArrayOfString" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getParameterDetails">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="parameterId" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getParameterDetailsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="parameterDetails" type="tns:wsParameterDetails" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="wsParameterDetails">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="name" type="xsd:string" />
+          <xsd:element minOccurs="0" name="description" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="type" type="xsd:string" />
+          <xsd:element minOccurs="0" name="values" type="tns:wsParameterValues" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsParameterValues">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="value" type="tns:wsParameterValue" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsParameterValue">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="1" name="label" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="value" type="xsd:string" />
+          <xsd:element name="defaultValue" type="xsd:boolean" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="properties" type="tns:wsProperties" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsProperties">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:wsProperty" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="wsProperty">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="key" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="value" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getParameters">
+        <xsd:complexType />
+      </xsd:element>
+      <xsd:element name="getParametersResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="parameters" type="tns:wsParameters" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="wsParameters">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="id" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+  <message name="runResponse">
+    <part name="parameters" element="tns:runResponse" />
+  </message>
+  <message name="runRequest">
+    <part name="parameters" element="tns:run" />
+  </message>
+  <message name="getStatusResponse">
+    <part name="parameters" element="tns:getStatusResponse" />
+  </message>
+  <message name="getStatusRequest">
+    <part name="parameters" element="tns:getStatus" />
+  </message>
+  <message name="getResultTypesResponse">
+    <part name="parameters" element="tns:getResultTypesResponse" />
+  </message>
+  <message name="getResultTypesRequest">
+    <part name="parameters" element="tns:getResultTypes" />
+  </message>
+  <message name="getResultResponse">
+    <part name="parameters" element="tns:getResultResponse" />
+  </message>
+  <message name="getResultRequest">
+    <part name="parameters" element="tns:getResult" />
+  </message>
+  <message name="getParameterDetailsResponse">
+    <part name="parameters" element="tns:getParameterDetailsResponse" />
+  </message>
+  <message name="getParameterDetailsRequest">
+    <part name="parameters" element="tns:getParameterDetails" />
+  </message>
+  <message name="getParametersResponse">
+    <part name="parameters" element="tns:getParametersResponse" />
+  </message>
+  <message name="getParametersRequest">
+    <part name="parameters" element="tns:getParameters" />
+  </message>
+  <portType name="JDispatcherService">
+    <operation name="run">
+      <input name="runRequest" message="tns:runRequest" />
+      <output name="runResponse" message="tns:runResponse" />
+    </operation>
+    <operation name="getStatus">
+      <input name="getStatusRequest" message="tns:getStatusRequest" />
+      <output name="getStatusResponse" message="tns:getStatusResponse" />
+    </operation>
+    <operation name="getResultTypes">
+      <input name="getResultTypesRequest" message="tns:getResultTypesRequest" />
+      <output name="getResultTypesResponse" message="tns:getResultTypesResponse" />
+    </operation>
+    <operation name="getResult">
+      <input name="getResultRequest" message="tns:getResultRequest" />
+      <output name="getResultResponse" message="tns:getResultResponse" />
+    </operation>
+    <operation name="getParameterDetails">
+      <input name="getParameterDetailsRequest" message="tns:getParameterDetailsRequest" />
+      <output name="getParameterDetailsResponse" message="tns:getParameterDetailsResponse" />
+    </operation>
+    <operation name="getParameters">
+      <input name="getParametersRequest" message="tns:getParametersRequest" />
+      <output name="getParametersResponse" message="tns:getParametersResponse" />
+    </operation>
+  </portType>
+  <binding name="JDispatcherServiceHttpBinding" type="tns:JDispatcherService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="run">
+      <soap:operation soapAction="urn:Run" />
+      <input name="runRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="runResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getStatus">
+      <soap:operation soapAction="urn:GetStatus" />
+      <input name="getStatusRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="getStatusResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getResultTypes">
+      <soap:operation soapAction="urn:GetResultTypes" />
+      <input name="getResultTypesRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="getResultTypesResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getResult">
+      <soap:operation soapAction="urn:GetResult" />
+      <input name="getResultRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="getResultResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getParameters">
+      <soap:operation soapAction="urn:GetParameters" />
+      <input name="getParametersRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="getParametersResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getParameterDetails">
+      <soap:operation soapAction="urn:GetParameterDetails" />
+      <input name="getParameterDetailsRequest">
+        <soap:body use="literal" />
+      </input>
+      <output name="getParameterDetailsResponse">
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="JDispatcherService">
+    <port name="JDispatcherServiceHttpPort" binding="tns:JDispatcherServiceHttpBinding">
+      <soap:address location="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast" />
+    </port>
+  </service>
+</definitions>
