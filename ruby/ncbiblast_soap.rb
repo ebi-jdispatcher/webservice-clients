@@ -4,7 +4,7 @@
 # NCBI BLAST jDispatcher SOAP web service Ruby client
 #
 # Tested with:
-#   SOAP4R 1.5.5 and Ruby 1.8.5 (CentOS 5)
+#   SOAP4R 1.5.8 and Ruby 1.8.7
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
@@ -20,6 +20,7 @@
 # Load libraries 
 require 'getoptlong' # Command-line option handling
 require 'base64' # Unpack encoded data
+require 'rubygems' # Ruby Gems to access latest SOAP4r
 require 'ncbiblastDriver.rb' # Generated stubs
 
 # Usage message
@@ -128,7 +129,6 @@ optParser = GetoptLong.new(
 ['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
 ['--timeout', GetoptLong::REQUIRED_ARGUMENT],
 ['--trace', GetoptLong::NO_ARGUMENT],
-['--WSDL', GetoptLong::REQUIRED_ARGUMENT],
 
 # Tool specific options
 ['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
@@ -184,9 +184,8 @@ class EbiWsAppl
   def getParams()
     printDebugMessage('getParams', 'Begin', 1)
     soap = soapConnect
-    req = nil #GetParameters.new()
+    req = GetParameters.new()
     res = soap.getParameters(req)
-    p res
     printDebugMessage('getParams', 'End', 1)
     return res.parameters
   end
@@ -196,15 +195,40 @@ class EbiWsAppl
     printDebugMessage('printParams', 'Begin', 1)
     paramsList = getParams()
     paramsList.each { |param|
-      puts param.id
+      puts param
     }
     printDebugMessage('printParams', 'End', 1)
   end
   
   # Get detail about a parameter
   def getParamDetail(paramName)
+    printDebugMessage('getParamDetail', 'Begin', 1)
     soap = soapConnect
-    return soap.getParameterDetails(paramName)
+    req = GetParameterDetails.new()
+    req.parameterId = paramName
+    res = soap.getParameterDetails(req)
+    printDebugMessage('getParamDetail', 'Begin', 1)
+    return res.parameterDetails
+  end
+
+  # Print detail about a parameter
+  def printParamDetail(paramName)
+    printDebugMessage('printParamDetail', 'Begin', 1)
+    paramDetail = getParamDetail(paramName)
+    puts paramDetail.name + "\t" + paramDetail.type
+    puts paramDetail.description
+    paramDetail.values.each { |value|
+      print value.value
+      if(value.defaultValue)
+        print "\tdefault"
+      end
+      puts
+      if(value.label)
+        puts "\t" + value.label
+      end
+        
+    }
+    printDebugMessage('printParamDetail', 'End', 1)
   end
 
   # Submit a job
@@ -332,14 +356,17 @@ begin
   end
   ebiWsApp = EbiWsAppl.new(argHash['outputLevel'], argHash['debugLevel'], argHash['trace'], timeout)
   
-  puts "blah"
   # Help info
   if argHash['help']
     printUsage(0)
 
-  # Get lsit of parameter names
+  # Get list of parameter names
   elsif argHash['params']
     ebiWsApp.printParams()
+
+  # Get details for a parameter
+  elsif argHash['paramDetail']
+    ebiWsApp.printParamDetail(argHash['paramDetail'])
 
   # Job based actions
   elsif argHash['jobid']
