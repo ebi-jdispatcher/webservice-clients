@@ -120,31 +120,31 @@
 	<target name="stubs-clustalw2-msa">
 		<antcall target="genStubs">
 	    	<param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.msa" />
-	    	<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-msa?wsdl" />
+	    	<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/clustalw2-msa?wsdl" />
 		</antcall>
 	</target>
 	  <target name="stubs-clustalw2-phylotree">
 	    <antcall target="genStubs">
 	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.phylotree" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/clustalw2-phylotree?wsdl" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/clustalw2-phylotree?wsdl" />
 	    </antcall>
 	  </target>
 	  <target name="stubs-fasta">
 	    <antcall target="genStubs">
 	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.fasta" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/fasta?wsdl" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
 	    </antcall>
 	  </target>
 	  <target name="stubs-ncbiblast">
 	    <antcall target="genStubs">
 	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.ncbiblast" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 	    </antcall>
 	  </target>
 	  <target name="stubs-wublast">
 	    <antcall target="genStubs">
 	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.wublast" />
-	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/wublast?wsdl" />
+	      <param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/wublast?wsdl" />
 	    </antcall>
 	  </target>
 
