@@ -39,3 +39,9 @@ $(RELEASEBINDIR)/FastaCliClient.exe: FastaCliClient.cs $(RELEASEBINDIR)/EbiWS.dl
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
 	cp $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll* $(RELEASEBINDIR)/
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/

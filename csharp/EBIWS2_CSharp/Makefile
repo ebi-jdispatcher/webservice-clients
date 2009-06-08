@@ -10,14 +10,26 @@ FastaCliClient/bin/Release/FastaCliClient.exe \
 NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe \
 WuBlastCliClient/bin/Release/WuBlastCliClient.exe
 
-EbiWS:
+EbiWS/bin/Release/EbiWS.dll:
 	cd EbiWS && $(MAKE)
 
-FastaCliClient/bin/Release/FastaCliClient.exe: EbiWS
+FastaCliClient/bin/Release/FastaCliClient.exe: EbiWS/bin/Release/EbiWS.dll
 	cd FastaCliClient && $(MAKE)
 
-NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe: EbiWS
+NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe: EbiWS/bin/Release/EbiWS.dll
 	cd NcbiBlastCliClient && $(MAKE)
 
-WuBlastCliClient/bin/Release/WuBlastCliClient.exe: EbiWS
+WuBlastCliClient/bin/Release/WuBlastCliClient.exe: EbiWS/bin/Release/EbiWS.dll
 	cd WuBlastCliClient && $(MAKE)
+
+clean:
+	cd EbiWS && $(MAKE) clean
+	cd FastaCliClient && $(MAKE) clean
+	cd NcbiBlastCliClient && $(MAKE) clean
+	cd WuBlastCliClient && $(MAKE) clean
+
+distclean:
+	cd EbiWS && $(MAKE) distclean
+	cd FastaCliClient && $(MAKE) distclean
+	cd NcbiBlastCliClient && $(MAKE) distclean
+	cd WuBlastCliClient && $(MAKE) distclean

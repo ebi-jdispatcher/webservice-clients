@@ -9,8 +9,9 @@
 CSC = gmcs
 # C# compiler flags
 CSFLAGS = -r:System.Web.Services
+
 # WSDL to C# tool
-WSDL2CS = wsdl
+WSDL2CS = wsdl1
 # WSDL to C# flags
 WSDL2CSFLAGS = -namespace:EbiWS
 
@@ -51,3 +52,12 @@ $(STUBSRCDIR)/NcbiBlastWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs -out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
 $(STUBSRCDIR)/WuBlastWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs -out:$@ "$(WSDLBASE)/wublast?wsdl"
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/
+
+clean-stubs:
+	rm -rf $(STUBSRCDIR)/*
