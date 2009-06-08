@@ -12,10 +12,10 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 # ======================================================================
 # Note: stubs need to be generated using:
-# wsdl2ruby.rb --type client --wsdl http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl
+# wsdl2ruby.rb --type client --wsdl http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
 # ======================================================================
 # WSDL URL for service
-#wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl'
+#wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries 
 require 'getoptlong' # Command-line option handling
@@ -153,10 +153,22 @@ optParser = GetoptLong.new(
 
 # Options to exclude from the options passed to launch the app
 excludeOpts = {
-  'polljob' => 1,
-  'status' => 1,
+  'help' => 1,
+  'params' => 1,
+  'paramDetail' => 1,
+  'email' => 1,
+  'title' => 1,
+  'async' => 1,
   'jobid' => 1,
+  'status' => 1,
+  'resultTypes' => 1,
+  'polljob' => 1,
+  'outformat' => 1,
   'outfile' => 1,
+  'quiet' => 1,
+  'verbose' => 1,
+  'debugLevel' => 1,
+  'timeout' => 1,
   'trace' => 1,
 }
 
@@ -232,20 +244,19 @@ class EbiWsAppl
   end
 
   # Submit a job
-  def submitJob(method, inData, params)
-    if File.exist?(inData)
-      # Input is a file read it in, otherwise treat as an ID
-      inFile = File.new(inData, 'r')
-      # Read in input sequence
-      sequence = inFile.gets(nil)
-      data = [{'type'=>'sequence', 'content'=>sequence}]
-    else # Argument is an ID, not a file
-      data = [{'type'=>'sequence', 'content'=>inData}]
-    end
-    # Lauch the job and print the jobId
+  def run(email, title, params)
+    printDebugMessage('run', 'Begin', 1)
+    printDebugMessage('run', 'email: ' + email, 1)
+    printDebugMessage('run', 'title: ' + title, 1)
+    p params
     soap = soapConnect
-    jobId = eval "soap.#{method}(params, data)"
-    return jobId
+    req = Run.new()
+    req.email = email
+    req.title = title
+    req.parameters = params
+    res = soap.run(req)
+    printDebugMessage('run', 'End', 1)
+    return res.jobId
   end
 
   # Get job status
@@ -255,10 +266,8 @@ class EbiWsAppl
     req = GetStatus.new()
     req.jobId = jobId
     res = soap.getStatus(req)
-    p res
-    status = res.status
     printDebugMessage('getStatus', 'End', 1)
-    return status
+    return res.status
   end
   
   # Print job status
@@ -276,7 +285,6 @@ class EbiWsAppl
     req = GetResultTypes.new()
     req.jobId = jobId
     res = soap.getResultTypes(req)
-    p res
     printDebugMessage('getResultTypes', 'End', 1)
     return res.resultTypes
   end
@@ -286,29 +294,71 @@ class EbiWsAppl
     printDebugMessage('printResultTypes', 'Begin', 1)
     resultTypes = getResultTypes(jobId)
     resultTypes.each { |resultType|
-      puts resultType
+      puts resultType.identifier
+      puts "\t" + resultType.label if(resultType.label)
+      puts "\t" + resultType.description if(resultType.description)
+      puts "\t" + resultType.mediaType if(resultType.mediaType)
+      puts "\t" + resultType.fileSuffix if(resultType.fileSuffix)
     }
     printDebugMessage('printResultTypes', 'End', 1)
   end
 
-  # Get results for a job
-  def getResults(jobId, outfile)
-    retFileList = []
+  # Get result for a job of the specified format
+  def getResult(jobId, type, params)
+    printDebugMessage('getResult', 'Begin', 1)
+    printDebugMessage('getResult', 'jobId: ' + jobId, 1)
+    printDebugMessage('getResult', 'type: ' + type, 1)
     soap = soapConnect
-    results = soap.getResults(jobId)
-    # Write result to file !!!
-    results.each { |result|
-      outFileName = "#{outfile}.#{result.ext}"
-      outFile = File.new(outFileName, 'w')
-      retFileList << outFileName
-      # Due to a naming conflict get the result type the long way
-      resType = result.__xmlele.last[1]
-      resData = soap.poll(jobId, resType)
-      # Service retuens base64 encoded string to decode to use
-      outFile.puts Base64.decode64(resData)
+    req = GetResult.new()
+    req.jobId = jobId
+    req.type = type
+    req.parameters = params
+    res = soap.getResult(req)
+    resultData = Base64.decode64(Base64.decode64(res.output))
+    #p resultData
+    printDebugMessage('getResult', 'End', 1)
+    return resultData
+  end
+  
+  def writeResultFile(jobId, outFormat, outFileName)
+      result = getResult(jobId, outFormat, nil)
+      outFile = File.new(outFileName, 'wb')
+      outFile.write(result)
       outFile.close
+  end
+  
+  def getResultFile(jobId, outFormat, outFileBase)
+    printDebugMessage('getResultFile', 'Begin', 1)
+    printDebugMessage('getResultFile', 'jobId: ' + jobId, 1)
+    printDebugMessage('getResultFile', 'outFormat: ' + outFormat, 1)
+    printDebugMessage('getResultFile', 'outFileBase: ' + outFileBase, 1)
+    resultTypes = getResultTypes(jobId)
+    selResultType = nil
+    resultTypes.each { |resultType|
+      selResultType = resultType if(resultType.identifier == outFormat)
     }
-    return retFileList
+    if(selResultType)
+      printDebugMessage('getResultFile', 'selResultType: ' + selResultType.identifier, 2)
+      outFileName = "#{outFileBase}.#{selResultType.identifier}.#{selResultType.fileSuffix}"
+      writeResultFile(jobId, selResultType.identifier, outFileName)
+      puts "Wrote #{outFileName}"
+    end
+    printDebugMessage('getResultFile', 'End', 1)
+  end
+
+  def getResultFiles(jobId, outFileBase)
+    printDebugMessage('getResultFiles', 'Begin', 1)
+    printDebugMessage('getResultFiles', 'jobId: ' + jobId, 1)
+    printDebugMessage('getResultFiles', 'outFileBase: ' + outFileBase, 1)
+    resultTypes = getResultTypes(jobId)
+    # Write result to file !!!
+    resultTypes.each { |resultType|
+      printDebugMessage('getResultFiles', 'resultType: ' + resultType.identifier, 2)
+      outFileName = "#{outFileBase}.#{resultType.identifier}.#{resultType.fileSuffix}"
+      writeResultFile(jobId, resultType.identifier, outFileName)
+      puts "Wrote #{outFileName}"
+    }    
+    printDebugMessage('getResultFiles', 'End', 1)
   end
 
   private
@@ -329,14 +379,23 @@ end
 begin
   argHash = {}
   argHash['debugLevel'] = 0
-  params = {}
+  argHash['title'] = 'My Sequence'
+  argHash['stype'] = 'protein'
+  argHash['exp'] = "10"
+  argHash['scores'] = 50
+  argHash['alignments'] = 50
+  argHash['seqrange'] = 'START-END'
   optParser.each do |name, arg|
     key = name.sub(/^--/, '') # Clean up the argument name
-    puts "key: #{key}\tval: #{arg}"
+    #puts "key: #{key}\tval: #{arg}"
     argHash[key] = arg
+  end
+  params = {}
+  argHash.each do |key, arg|
+    #puts "key: #{key}\tval: #{arg}"
     # For application options add to the params hash
     if arg != ''
-      params[key] = arg.dup unless excludeOpts[key]
+      params[key] = arg unless excludeOpts[key]
     else
       params[key] = 1
     end
@@ -380,29 +439,36 @@ begin
     # Get job results
     elsif argHash['polljob']
       jobId = argHash['jobid']
-      if argHash['outfile']
-        fileList = ebiWsApp.getResults(jobId, argHash['outfile'])
-      else
-        fileList = ebiWsApp.getResults(jobId, jobId)
+      if !argHash['outfile']
+        argHash['outfile'] = jobId
       end
-      fileList.each { |fileName| puts "Wrote result file: #{fileName}" }
+      if argHash['outformat']
+        ebiWsApp.getResultFile(jobId, argHash['outformat'], argHash['outfile'])
+      else
+        ebiWsApp.getResultFiles(jobId, argHash['outfile'])
+      end
     else
       $stderr.print 'Error: for --jobid requires an action (e.g. --status, --resultTypes, --polljob'
       exit(1)
     end
 
   # Submit a job
-  elsif ARGV[0]
-    jobId = ebiWsApp.submitJob('runInterProScan', ARGV[0], params)
+  elsif(ARGV[0] || argHash['sequence'])
+    if(ARGV[0])
+      params['sequence'] = ARGV[0]
+    end
+    if(params['database'])
+      params['database'] = params['database'].split(/[ ,]+/)
+    end
+    jobId = ebiWsApp.run(argHash['email'], argHash['title'], params)
     # In synchronous mode can now get results otherwise print the jobId
     puts 'JobId: ' + jobId
     if !argHash['async']
       if argHash['outfile']
-        fileList = ebiWsApp.getResults(jobId, argHash['outfile'])
+        ebiWsApp.getResults(jobId, argHash['outfile'])
       else
-        fileList = ebiWsApp.getResults(jobId, jobId)
+        ebiWsApp.getResults(jobId, jobId)
       end
-      fileList.each { |fileName| puts "Wrote result file: #{fileName}" }
     end
 
   # Unsupported combination of options (or no options)
