@@ -11,7 +11,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
-my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl';
+my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
 
 # Enable Perl warnings
 use strict;
@@ -229,7 +229,7 @@ sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $response = &soap_request( 'getParameters', {} );
 	#print Dumper($response);
-	my $paramNameListRef = $response->{'output'}->{'parameters'}->{'id'};
+	my $paramNameListRef = $response->{'parameters'}->{'parameters'}->{'id'};
 	die "Error: undefined parameter name list returned by service" if(!defined($paramNameListRef));
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return @$paramNameListRef;
@@ -245,7 +245,7 @@ sub soap_get_parameter_details($$) {
 		 {
 		 	'parameterId' => $parameterId
 		 } );
-	my $paramDetail = $response->{'output'}->{'parameterDetails'};
+	my $paramDetail = $response->{'parameters'}->{'parameterDetails'};
 	die "Error: undefined parameter details returned by service" if(!defined($paramDetail));
 	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
 	return $paramDetail;
@@ -275,7 +275,7 @@ sub soap_run($$$) {
 			'parameters' => \%params
 		}
 	);
-	my $job_id = $response->{'output'}->{'jobId'};
+	my $job_id = $response->{'parameters'}->{'jobId'};
 	die "Error: undefined job identifier returned by service." if(!defined($job_id));
 	print_debug_message( 'soap_run', 'End', 1 );
 	return $job_id;
@@ -287,7 +287,7 @@ sub soap_get_status($) {
 	my $jobid = shift;
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
 	my $response = &soap_request('getStatus', {'jobId' => $jobid});
-	my $status_str = $response->{'output'}->{'status'};
+	my $status_str = $response->{'parameters'}->{'status'};
 	die "Error: undefined job status returned by service." if(!defined($status_str)); 
 	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
 	print_debug_message( 'soap_get_status', 'End', 1 );
@@ -300,7 +300,7 @@ sub soap_get_result_types($) {
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
 	my $response = &soap_request('getResultTypes', {'jobId' => $jobid});
-	my $resultTypes = $response->{'output'}->{'resultTypes'}->{'type'};
+	my $resultTypes = $response->{'parameters'}->{'resultTypes'}->{'type'};
 	die "Error: undefined result type list returned by service." if(!defined($resultTypes)); 
 	print_debug_message( 'soap_get_result_types',
 		scalar(@$resultTypes) . ' result types', 2 );
@@ -322,7 +322,7 @@ sub soap_get_raw_result_output($$) {
 			'parameters' => 'NIL'
 		}
 	);
-	my $result = $response->{'output'}->{'output'};
+	my $result = $response->{'parameters'}->{'output'};
 	die "Error: undefined result returned by service." if(!defined($result)); 
 	print_debug_message( 'soap_get_raw_result_output',
 		length($result) . ' characters', 1 );

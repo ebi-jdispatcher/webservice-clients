@@ -13,10 +13,10 @@
 # http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
-#my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl';
-my $NAMESPACE = 'http://soap.webservice.jdispatcher.ebi.ac.uk/';
+#my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
+my $NAMESPACE = 'http://soap.jdispatcher.ebi.ac.uk/';
 my $ENDPOINT  =
-  'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast';
+  'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast';
 
 # Enable Perl warnings
 use strict;

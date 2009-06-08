@@ -12,7 +12,7 @@
 # http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
 # ======================================================================
 # Base URL for service
-my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/rest/ncbiblast';
+my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/ncbiblast';
 
 # Enable Perl warnings
 use strict;
