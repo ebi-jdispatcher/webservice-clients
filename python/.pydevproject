@@ -7,5 +7,6 @@
 <path>/EBIWS2_Python/src</path>
 <path>/EBIWS2_Python/soappy</path>
 <path>/EBIWS2_Python/zsi</path>
+<path>/EBIWS2_Python/urllib</path>
 </pydev_pathproperty>
 </pydev_project>

@@ -10,7 +10,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Note: requires subs generated with:
-#  wsdl2py -u http://wwwdev.ebi.ac.uk/Tools/jdispatcher/services/soap/ncbiblast?wsdl
+#  wsdl2py -u http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
 # ======================================================================
 # Load libraries
 import os
