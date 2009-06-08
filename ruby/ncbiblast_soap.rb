@@ -248,7 +248,6 @@ class EbiWsAppl
     printDebugMessage('run', 'Begin', 1)
     printDebugMessage('run', 'email: ' + email, 1)
     printDebugMessage('run', 'title: ' + title, 1)
-    p params
     soap = soapConnect
     req = Run.new()
     req.email = email
@@ -278,9 +277,22 @@ class EbiWsAppl
     printDebugMessage('printStatus', 'End', 1)
   end
   
+  # Wait for job to finish
+  def clientPoll(jobId)
+    printDebugMessage('clientPoll', 'Begin', 1)
+    status = 'PENDING'
+    while(status == 'PENDING' || status == 'RUNNING') do
+      status = getStatus(jobId)
+      puts status
+      sleep(5) if(status == 'PENDING' || status == 'RUNNING')
+    end
+    printDebugMessage('clientPoll', 'End', 1)
+  end
+  
   # Get result types
   def getResultTypes(jobId)
     printDebugMessage('getResultTypes', 'Begin', 1)
+    clientPoll(jobId)
     soap = soapConnect
     req = GetResultTypes.new()
     req.jobId = jobId
@@ -315,7 +327,6 @@ class EbiWsAppl
     req.parameters = params
     res = soap.getResult(req)
     resultData = Base64.decode64(Base64.decode64(res.output))
-    #p resultData
     printDebugMessage('getResult', 'End', 1)
     return resultData
   end
@@ -387,12 +398,10 @@ begin
   argHash['seqrange'] = 'START-END'
   optParser.each do |name, arg|
     key = name.sub(/^--/, '') # Clean up the argument name
-    #puts "key: #{key}\tval: #{arg}"
     argHash[key] = arg
   end
   params = {}
   argHash.each do |key, arg|
-    #puts "key: #{key}\tval: #{arg}"
     # For application options add to the params hash
     if arg != ''
       params[key] = arg unless excludeOpts[key]
@@ -464,10 +473,13 @@ begin
     # In synchronous mode can now get results otherwise print the jobId
     puts 'JobId: ' + jobId
     if !argHash['async']
-      if argHash['outfile']
-        ebiWsApp.getResults(jobId, argHash['outfile'])
+      if !argHash['outfile']
+        argHash['outfile'] = jobId
+      end
+      if argHash['outformat']
+        ebiWsApp.getResultFile(jobId, argHash['outformat'], argHash['outfile'])
       else
-        ebiWsApp.getResults(jobId, jobId)
+        ebiWsApp.getResultFiles(jobId, argHash['outfile'])
       end
     end
 
