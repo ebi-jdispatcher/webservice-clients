@@ -27,12 +27,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
-    <Compile Include="WebReferences\NcbiBlastWs\Reference.cs" />
     <Compile Include="NcbiBlastClient.cs" />
+    <Compile Include="WebReferences\NcbiBlastWs\Reference.cs" />
+    <Compile Include="WebReferences\FastaWs\Reference.cs" />
+    <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="WebReferences\NcbiBlastWs\Reference.map" />
+    <None Include="WebReferences\FastaWs\Reference.map" />
+    <None Include="WebReferences\WuBlastWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
