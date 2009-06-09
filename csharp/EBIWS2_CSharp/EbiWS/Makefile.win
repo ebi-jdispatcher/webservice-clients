@@ -23,7 +23,7 @@ RELEASEBINDIR = $(BINDIR)\Release
 STUBSRCDIR = WebReferences
 
 # Base URL of WSDLs
-WSDLBASE = "http://wwwdev.ebi.ac.uk/Tools/services/soap"
+WSDLBASE = http://wwwdev.ebi.ac.uk/Tools/services/soap
 
 all: EbiWS
 
@@ -63,10 +63,10 @@ $(STUBSRCDIR)\WuBlastWs\Reference.cs:
 clean:
 
 distclean: clean
-	del $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
 	rmdir $(DEBUGBINDIR)
 	rmdir $(RELEASEBINDIR)
 	rmdir $(BINDIR)
 
 clean-stubs:
-	del $(STUBSRCDIR)\*.*
+	del /f $(STUBSRCDIR)\*.*
