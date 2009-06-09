@@ -20,24 +20,29 @@ EBIWS = ..\EbiWS
 
 all: FastaCliClient
 
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
 ### FASTA command-line client ###
 
 FastaCliClient: $(DEBUGBINDIR)\FastaCliClient.exe $(RELEASEBINDIR)\FastaCliClient.exe
 
-$(DEBUGBINDIR)\FastaCliClient.exe: FastaCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	mkdir $(DEBUGBINDIR)
+$(DEBUGBINDIR)\FastaCliClient.exe: $(DEBUGBINDIR) FastaCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
 	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ FastaCliClient.cs
 
-$(DEBUGBINDIR)\EbiWS.dll: $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
-	mkdir $(DEBUGBINDIR)
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\FastaCliClient.exe: FastaCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	mkdir $(RELEASEBINDIR)
+$(RELEASEBINDIR)\FastaCliClient.exe: $(RELEASEBINDIR) FastaCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
 	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ FastaCliClient.cs
 
-$(RELEASEBINDIR)\EbiWS.dll: $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
-	mkdir $(RELEASEBINDIR)
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
 
 clean:
