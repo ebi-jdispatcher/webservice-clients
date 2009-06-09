@@ -19,7 +19,11 @@ Building Clients
 ----------------
 
 The solution can be built using an IDE which understands Visual Studio
-2005 solutions/projects.
+2005 solutions/projects, for example MonoDevelop, SharpDevelop and Visual Studio.
+
+The Microsoft Build Engine (MSBUILD) or the open source xbuild 
+(http://www.mono-project.com/Microsoft.Build) should also be able to build the 
+solution and its projects.
 
 For plain .NET SDK and Mono environments a set of make files are
 supplied for MS Windows and Linux which can be invoked as follows:
