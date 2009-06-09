@@ -1,0 +1,49 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# WU-BLAST client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: WuBlastCliClient
+
+### WU-BLAST command-line client ###
+
+WuBlastCliClient: $(DEBUGBINDIR)\WuBlastCliClient.exe $(RELEASEBINDIR)\WuBlastCliClient.exe
+
+$(DEBUGBINDIR)\WuBlastCliClient.exe: WuBlastCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\WuBlastCliClient.exe: WuBlastCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

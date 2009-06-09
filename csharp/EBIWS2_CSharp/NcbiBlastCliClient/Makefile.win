@@ -1,0 +1,49 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# NCBI BLAST client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: NcbiBlastCliClient
+
+### NCBI BLAST command-line client ###
+
+NcbiBlastCliClient: $(DEBUGBINDIR)\NcbiBlastCliClient.exe $(RELEASEBINDIR)\NcbiBlastCliClient.exe
+
+$(DEBUGBINDIR)\NcbiBlastCliClient.exe: NcbiBlastCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ NcbiBlastCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\NcbiBlastCliClient.exe: NcbiBlastCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ NcbiBlastCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

@@ -1,0 +1,49 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# FASTA client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: FastaCliClient
+
+### FASTA command-line client ###
+
+FastaCliClient: $(DEBUGBINDIR)\FastaCliClient.exe $(RELEASEBINDIR)\FastaCliClient.exe
+
+$(DEBUGBINDIR)\FastaCliClient.exe: FastaCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ FastaCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	mkdir $(DEBUGBINDIR)
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\FastaCliClient.exe: FastaCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ FastaCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	mkdir $(RELEASEBINDIR)
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

@@ -1,0 +1,72 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# EBI Web Services client library using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# WSDL to C# tool
+WSDL2CS = wsdl
+# WSDL to C# flags
+WSDL2CSFLAGS = /namespace:EbiWS
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+# Directory for generated stubs code
+STUBSRCDIR = WebReferences
+
+# Base URL of WSDLs
+WSDLBASE = "http://wwwdev.ebi.ac.uk/Tools/services/soap"
+
+all: EbiWS
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### EbiWS ###
+
+EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
+
+coreSrc =  AbstractWsClient.cs NcbiBlastClient.cs
+stubSrc = \
+$(STUBSRCDIR)\FastaWs\Reference.cs \
+$(STUBSRCDIR)\NcbiBlastWs\Reference.cs \
+$(STUBSRCDIR)\WuBlastWs\Reference.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(coreSrc) $(stubSrc)
+	$(CSC) $(CSFLAGS) /debug /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
+	$(CSC) $(CSFLAGS) /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+$(STUBSRCDIR)\FastaWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).FastaWs /out:$@ "$(WSDLBASE)/fasta?wsdl"
+
+$(STUBSRCDIR)\NcbiBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+$(STUBSRCDIR)\WuBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs /out:$@ "$(WSDLBASE)/wublast?wsdl"
+
+clean:
+
+distclean: clean
+	del $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)
+
+clean-stubs:
+	del $(STUBSRCDIR)\*.*
