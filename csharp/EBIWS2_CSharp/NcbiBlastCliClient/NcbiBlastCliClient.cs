@@ -227,6 +227,11 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						break;
 					case "/debugLevel":
 						goto case "--debugLevel";
+					case "--endpoint": // Service endpoint
+						ServiceEndPoint = args[++i];
+						break;
+					case "/endpoint":
+						goto case "--endpoint";
 
 						// Tool specific options
 					case "--program": // BLAST program
@@ -250,6 +255,11 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						goto case "--database";
 					case "/D":
 						goto case "--database";
+					case "--stype": // Input sequence type
+						InParams.stype = args[++i];
+						break;
+					case "/stype":
+						goto case "--stype";
 					case "--matrix": // Scoring matrix
 						InParams.matrix = args[++i];
 						Action = "submit";

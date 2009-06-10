@@ -31,6 +31,8 @@
     <Compile Include="WebReferences\NcbiBlastWs\Reference.cs" />
     <Compile Include="WebReferences\FastaWs\Reference.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
+    <Compile Include="FastaClient.cs" />
+    <Compile Include="WuBlastClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

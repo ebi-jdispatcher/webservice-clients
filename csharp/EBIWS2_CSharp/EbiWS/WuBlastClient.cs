@@ -1,15 +1,15 @@
-/* $Id: NcbiBlastClient.cs 1037 2009-06-06 20:35:16Z hpm $
+/* $Id$
  * ======================================================================
- * jDispatcher SOAP client for NCBI BLAST
+ * jDispatcher SOAP client for WU-BLAST
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.NcbiBlastWs;
+using EbiWS.WuBlastWs;
 
 namespace EbiWS
 {
 	
-	public class NcbiBlastClient : EbiWS.AbstractWsClient
+	public class WuBlastClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
 		public JDispatcherService SrvProxy
@@ -26,9 +26,10 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		
-		public NcbiBlastClient()
+		public WuBlastClient()
 		{
 		}
+		
 		protected override void ServiceProxyConnect()
 		{
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11);

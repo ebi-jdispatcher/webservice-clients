@@ -33,4 +33,10 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\EbiWS\EbiWS.csproj">
+      <Project>{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}</Project>
+      <Name>EbiWS</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

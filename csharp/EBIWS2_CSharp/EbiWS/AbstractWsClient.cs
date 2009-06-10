@@ -45,6 +45,16 @@ namespace EbiWS
 		}
 		private int maxCheckInterval = 60000;
 		/// <value>
+		/// Specified endpoint for the SOAP service. If null the default 
+		/// endpoint specified in the WSDL (and thus in the generated 
+		/// stubs) is used.
+		/// </value>
+		public string ServiceEndPoint {
+			get{return serviceEndPoint;}
+			set{serviceEndPoint = value;}
+		}
+		private string serviceEndPoint = null;
+		/// <value>
 		/// Parameter name to be used to get parameter details.
 		/// </value>
 		public string ParamName {
