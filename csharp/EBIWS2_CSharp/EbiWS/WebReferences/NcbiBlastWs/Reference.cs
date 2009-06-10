@@ -41,7 +41,7 @@ namespace EbiWS.NcbiBlastWs {
         
         /// <remarks/>
         public JDispatcherService() {
-            this.Url = "http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast";
+            this.Url = "http://www.ebi.ac.uk/Tools/services/soap/ncbiblast";
         }
         
         /// <remarks/>
