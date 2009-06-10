@@ -23,7 +23,7 @@ RELEASEBINDIR = $(BINDIR)/Release
 STUBSRCDIR = WebReferences
 
 # Base URL of WSDLs
-WSDLBASE = "http://www.ebi.ac.uk/Tools/services/soap"
+WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
 
 all: EbiWS
 
