@@ -23,7 +23,7 @@ RELEASEBINDIR = $(BINDIR)/Release
 STUBSRCDIR = WebReferences
 
 # Base URL of WSDLs
-WSDLBASE = "http://wwwdev.ebi.ac.uk/Tools/services/soap"
+WSDLBASE = "http://www.ebi.ac.uk/Tools/services/soap"
 
 all: EbiWS
 
@@ -31,7 +31,11 @@ all: EbiWS
 
 EbiWS: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
 
-coreSrc =  AbstractWsClient.cs NcbiBlastClient.cs
+coreSrc = AbstractWsClient.cs \
+FastaClient.cs \
+NcbiBlastClient.cs \
+WuBlastClient.cs
+
 stubSrc = \
 $(STUBSRCDIR)/FastaWs/Reference.cs \
 $(STUBSRCDIR)/NcbiBlastWs/Reference.cs \
