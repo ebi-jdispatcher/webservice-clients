@@ -11,7 +11,7 @@ CSC = gmcs
 CSFLAGS = -r:System.Web.Services
 
 # WSDL to C# tool
-WSDL2CS = wsdl
+WSDL2CS = wsdl2
 # WSDL to C# flags
 WSDL2CSFLAGS = -namespace:EbiWS
 
