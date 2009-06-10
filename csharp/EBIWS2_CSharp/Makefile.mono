@@ -5,31 +5,63 @@
 #
 # ======================================================================
 
-all: EbiWS/bin/Release/EbiWS.dll \
-FastaCliClient/bin/Release/FastaCliClient.exe \
-NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe \
-WuBlastCliClient/bin/Release/WuBlastCliClient.exe
+all: build
 
-EbiWS/bin/Release/EbiWS.dll:
+### Build ###
+build: \
+build-EbiWS \
+build-FastaCliClient \
+build-NcbiBlastCliClient \
+build-WuBlastCliClient
+
+build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
 
-FastaCliClient/bin/Release/FastaCliClient.exe: EbiWS/bin/Release/EbiWS.dll
+build-FastaCliClient: build-EbiWS
 	cd FastaCliClient && $(MAKE) -f Makefile.mono
 
-NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe: EbiWS/bin/Release/EbiWS.dll
+build-NcbiBlastCliClient: build-EbiWS
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono
 
-WuBlastCliClient/bin/Release/WuBlastCliClient.exe: EbiWS/bin/Release/EbiWS.dll
+build-WuBlastCliClient: build-EbiWS
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono
 
-clean:
+### Clean-up ###
+
+clean: \
+clean-EbiWS \
+clean-FastaCliClient \
+clean-NcbiBlastCliClient \
+clean-WuBlastCliClient
+
+clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
+
+clean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono clean
 
-distclean:
+### Clean to distribution ###
+
+distclean: \
+distclean-EbiWS \
+distclean-FastaCliClient \
+distclean-NcbiBlastCliClient \
+distclean-WuBlastCliClient
+
+distclean-EbiWS:
 	cd EbiWS && $(MAKE) distclean
+
+distclean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono distclean
