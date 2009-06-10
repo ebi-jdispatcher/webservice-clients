@@ -76,7 +76,19 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 		printDebugMessage("srvProxyConnect", "Begin", 11);
 		if(this.srvProxy == null) {
 			JDispatcherService_Service service =  new JDispatcherService_ServiceLocator();
-			this.srvProxy = service.getJDispatcherServiceHttpPort();
+			if(this.getServiceEndPoint() != null) {
+				try {
+					this.srvProxy = service.getJDispatcherServiceHttpPort(new java.net.URL(this.getServiceEndPoint()));
+				}
+				catch(java.net.MalformedURLException ex) {
+					System.err.println(ex.getMessage());
+					System.err.println("Warning: problem with specified endpoint URL. Default endpoint used.");
+					this.srvProxy = service.getJDispatcherServiceHttpPort();					
+				}
+			}
+			else {
+				this.srvProxy = service.getJDispatcherServiceHttpPort();
+			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 11);
 	}
@@ -389,6 +401,10 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 			// Set debug level
 			if(cli.hasOption("debugLevel")) {
 				client.setDebugLevel(Integer.parseInt(cli.getOptionValue("debugLevel")));
+			}
+			// Alternative service endpoint
+			if(cli.hasOption("endpoint")) {
+				client.setServiceEndPoint(cli.getOptionValue("endpoint"));
 			}
 			// Tool meta-data
 			// List parameters

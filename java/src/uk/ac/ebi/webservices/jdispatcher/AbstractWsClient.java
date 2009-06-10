@@ -31,6 +31,8 @@ public abstract class AbstractWsClient {
 	private int debugLevel = 0;
 	/** Maximum interval between polling events (ms). */
 	private int maxCheckInterval = 60000;
+	/** URL for service endpoint. */
+	private String serviceEndPoint = null;
 	/** Generic options message. */
 	private static final String genericOptsStr = "[General]\n"
 	+ "\n"
@@ -90,6 +92,7 @@ public abstract class AbstractWsClient {
 		options.addOption("paramDetail", "paramDetail", true, "List parameter information");
 		options.addOption("resultTypes", "resultTypes", false, "List result types for job");
 		options.addOption("debugLevel", "debugLevel", true, "Debug output");
+		options.addOption("endpoint", "endpoint", true, "Service endpoint URL");
 	}
 
 	/** Print the generic options usage message to STDOUT. */
@@ -180,7 +183,6 @@ public abstract class AbstractWsClient {
 		return strBuilder.toString();
 	}
 
-	
 	/** Set the output level. 
 	 * 
 	 * @param level Output level. 0 = quiet, 1 = normal and 2 = verbose.
@@ -223,6 +225,22 @@ public abstract class AbstractWsClient {
 		return this.maxCheckInterval;
 	}
 
+	/** Set the service endpoint URL for generating the service connection.
+	 * 
+	 * @param urlStr Service endpoint URL as a string.
+	 */
+	public void setServiceEndPoint(String urlStr) {
+		this.serviceEndPoint = urlStr;
+	}
+	
+	/** Get the current service endpoint URL.
+	 * 
+	 * @return The service endpoint URL as a string.
+	 */
+	public String getServiceEndPoint() {
+		return this.serviceEndPoint;
+	}
+	
 	/** Print a progress message.
 	 * 
 	 * @param msg The message to print.
