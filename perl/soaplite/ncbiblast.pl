@@ -452,14 +452,14 @@ sub client_poll($) {
 	my $result = 'PENDING';
 
 	# Check status and wait if not finished
-	#print STDERR "Checking status: $jobid\n";
-	while ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
+	my $errorCount = 0;
+	while ( $result eq 'RUNNING' || $result eq 'PENDING' || ( $result eq 'ERROR' && $errorCount < 3) ) {
 		$result = soap_get_status($jobid);
 		if ( $outputLevel > 0 ) {
 			print STDERR "$result\n";
 		}
-		if ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
-
+		$errorCount++ if($result eq 'ERROR');
+		if ( $result eq 'RUNNING' || $result eq 'PENDING' || $result eq 'ERROR') {
 			# Wait before polling again.
 			sleep $checkInterval;
 		}
