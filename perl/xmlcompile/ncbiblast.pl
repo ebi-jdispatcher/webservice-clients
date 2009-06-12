@@ -11,7 +11,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
-my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
 
 # Enable Perl warnings
 use strict;
