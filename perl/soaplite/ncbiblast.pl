@@ -87,6 +87,7 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'trace'         => \$params{'trace'},          # SOAP message debug
+	'endpoint=s'      => \$ENDPOINT, # SOAP service endpoint
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
@@ -106,6 +107,7 @@ if ( $params{'trace'} ) {
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
+&print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
 # Create the service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
 	$ENDPOINT,
@@ -442,6 +444,7 @@ sub load_params() {
 		$tool_params{'match_scores'} =
 		  $params{'match'} . ',' . $params{'missmatch'};
 	}
+	print_debug_message( 'load_params', "tool_params:\n" . Dumper(\%tool_params) , 2 );
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
