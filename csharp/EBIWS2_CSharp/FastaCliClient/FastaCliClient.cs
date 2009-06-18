@@ -128,8 +128,9 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 			PrintDebugMessage("ParseCommand", "Begin", 1);
 			InParams = new InputParameters();
 			// Force default values
-			//InParams.stype = "protein";
-			//InParams.hist = true;
+			InParams.stype = "protein";
+			InParams.hist = true;
+			InParams.histSpecified = true;
 			for (int i = 0; i < args.Length; i++)
 			{
 				PrintDebugMessage("parseCommand", "arg: " + args[i], 2);
@@ -324,92 +325,92 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 						goto case "--gapext";
 					case "/g":
 						goto case "--gapext";
-				case "--ktup": // Word length (ktup)
-					InParams.ktup = args[++i];
-					break;
-				case "/ktup":
-					goto case "--ktup";
-				case "-k":
-					goto case "--ktup";
-				case "/k":
-					goto case "--ktup";
-				case "--histogram": // Suppress histogram
-					InParams.hist = false;
-					break;
-				case "/histogram":
-					goto case "--histogram";
-				case "-H":
-					goto case "--histogram";
-				case "/H":
-					goto case "--histogram";
-				case "--nucleotide": // Nucleotide query sequence
-					InParams.stype = "dna";
-					break;
-				case "/nucleotide":
-					goto case "--nucleotide";
-				case "-n":
-					goto case "--nucleotide";
-				case "/n":
-					goto case "--nucleotide";
-				case "--protein": // Protein query sequence
-					InParams.stype = "protein";
-					break;
-				case "/protein":
-					goto case "--nucleotide";
-				case "-p":
-					goto case "--nucleotide";
-				case "/p":
-					goto case "--nucleotide";
-				case "--rna": // RNA query sequence
-					InParams.stype = "rna";
-					break;
-				case "/rna":
-					goto case "--rna";
-				case "-r":
-					goto case "--rna";
-				case "/r":
-					goto case "--rna";
-				case "--topstrand": // TFAST[XY] use only forward frame translations
-					InParams.strand = "top";
-					break;
-				case "/topstrand":
-					goto case "--topstrand";
-				case "-3":
-					goto case "--topstrand";
-				case "/3":
-					goto case "--topstrand";
-				case "--bottomstrand": // Search with reverse complement of sequence.
-					InParams.strand = "bottom";
-					break;
-				case "/bottomstrand":
-					goto case "--bottomstrand";
-				case "-i":
-					goto case "--bottomstrand";
-				case "/i":
-					goto case "--bottomstrand";
-				case "--stats": // Statistical model
-					InParams.stats = args[++i];
-					break;
-				case "/stats":
-					goto case "--stats";
-				case "-z":
-					goto case "--stats";
-				case "/z":
-					goto case "--stats";
-				case "--dbrange": // Range of lengths in database to search.
-					InParams.dbrange = args[++i];
-					break;
-				case "/dbrange":
-					goto case "--dbrange";
-				case "-M":
-					goto case "--dbrange";
-				case "/M":
-					goto case "--dbrange";
-				case "--seqrange": // Region in sequence to use for search.
-					InParams.seqrange = args[++i];
-					break;
-				case "/seqrange":
-					goto case "--seqrange";
+					case "--ktup": // Word length (ktup)
+						InParams.ktup = args[++i];
+						break;
+					case "/ktup":
+						goto case "--ktup";
+					case "-k":
+						goto case "--ktup";
+					case "/k":
+						goto case "--ktup";
+					case "--histogram": // Suppress histogram
+						InParams.hist = false;
+						break;
+					case "/histogram":
+						goto case "--histogram";
+					case "-H":
+						goto case "--histogram";
+					case "/H":
+						goto case "--histogram";
+					case "--nucleotide": // Nucleotide query sequence
+						InParams.stype = "dna";
+						break;
+					case "/nucleotide":
+						goto case "--nucleotide";
+					case "-n":
+						goto case "--nucleotide";
+					case "/n":
+						goto case "--nucleotide";
+					case "--protein": // Protein query sequence
+						InParams.stype = "protein";
+						break;
+					case "/protein":
+						goto case "--nucleotide";
+					case "-p":
+						goto case "--nucleotide";
+					case "/p":
+						goto case "--nucleotide";
+					case "--rna": // RNA query sequence
+						InParams.stype = "rna";
+						break;
+					case "/rna":
+						goto case "--rna";
+					case "-r":
+						goto case "--rna";
+					case "/r":
+						goto case "--rna";
+					case "--topstrand": // TFAST[XY] use only forward frame translations
+						InParams.strand = "top";
+						break;
+					case "/topstrand":
+						goto case "--topstrand";
+					case "-3":
+						goto case "--topstrand";
+					case "/3":
+						goto case "--topstrand";
+					case "--bottomstrand": // Search with reverse complement of sequence.
+						InParams.strand = "bottom";
+						break;
+					case "/bottomstrand":
+						goto case "--bottomstrand";
+					case "-i":
+						goto case "--bottomstrand";
+					case "/i":
+						goto case "--bottomstrand";
+					case "--stats": // Statistical model
+						InParams.stats = args[++i];
+						break;
+					case "/stats":
+						goto case "--stats";
+					case "-z":
+						goto case "--stats";
+					case "/z":
+						goto case "--stats";
+					case "--dbrange": // Range of lengths in database to search.
+						InParams.dbrange = args[++i];
+						break;
+					case "/dbrange":
+						goto case "--dbrange";
+					case "-M":
+						goto case "--dbrange";
+					case "/M":
+						goto case "--dbrange";
+					case "--seqrange": // Region in sequence to use for search.
+						InParams.seqrange = args[++i];
+						break;
+					case "/seqrange":
+						goto case "--seqrange";
 
 						// Input data/sequence option
 					case "--sequence": // Input sequence
