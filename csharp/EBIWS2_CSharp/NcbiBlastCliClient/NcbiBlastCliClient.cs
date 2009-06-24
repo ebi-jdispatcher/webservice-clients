@@ -125,16 +125,6 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 			InParams = new InputParameters();
 			// Force default values
 			InParams.stype = "protein";
-			InParams.program = null;
-			InParams.database = null;
-			InParams.matrix = "BLOSUM62";
-			InParams.exp = "10";
-			InParams.alignments = 50;
-			InParams.alignmentsSpecified = true;
-			InParams.scores = 50;
-			InParams.scoresSpecified = true;
-			InParams.filter = "F";
-			InParams.seqrange = "START-END";
 			for (int i = 0; i < args.Length; i++)
 			{
 				PrintDebugMessage("parseCommand", "arg: " + args[i], 2);
