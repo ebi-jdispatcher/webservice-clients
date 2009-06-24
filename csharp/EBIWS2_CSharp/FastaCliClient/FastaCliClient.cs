@@ -259,7 +259,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/s":
 						goto case "--matrix";
 					case "--eupper": // Upper E-value threshold
-						InParams.expupperlim = args[++i];
+						InParams.expupperlim = Convert.ToDouble(args[++i]);
+						InParams.expupperlimSpecified = true;
 						break;
 					case "/eupper":
 						goto case "--eupper";
@@ -268,7 +269,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/E":
 						goto case "--eupper";
 					case "--elower": // Lower E-value threshold
-						InParams.explowlim = args[++i];
+						InParams.explowlim = Convert.ToDouble(args[++i]);
+						InParams.explowlimSpecified = true;
 						break;
 					case "/elower":
 						goto case "--elower";
@@ -282,7 +284,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/filter":
 						goto case "--filter";
 					case "--scores": // Maximum number of scores to report
-						InParams.scores = args[++i];
+						InParams.scores = Convert.ToInt32(args[++i]);
+						InParams.scoresSpecified = true;
 						break;
 					case "/scores":
 						goto case "--scores";
@@ -291,7 +294,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/b":
 						goto case "--scores";
 					case "--alignments": // Maximum number of alignments to report
-						InParams.alignments = args[++i];
+						InParams.alignments = Convert.ToInt32(args[++i]);
+						InParams.alignmentsSpecified = true;
 						break;
 					case "/alignments":
 						goto case "--alignments";
@@ -300,7 +304,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/d":
 						goto case "--alignments";
 					case "--gapopen": // Gap open penalty
-						InParams.gapopen = args[++i];
+						InParams.gapopen = Convert.ToInt32(args[++i]);
+						InParams.gapopenSpecified = true;
 						break;
 					case "/gapopen":
 						goto case "--gapopen";
@@ -313,7 +318,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/f":
 						goto case "--gapopen";
 					case "--gapext": // Gap extension penalty
-						InParams.gapext = args[++i];
+						InParams.gapext = Convert.ToInt32(args[++i]);
+						InParams.gapextSpecified = true;
 						break;
 					case "/gapext":
 						goto case "--gapext";
@@ -326,7 +332,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 					case "/g":
 						goto case "--gapext";
 					case "--ktup": // Word length (ktup)
-						InParams.ktup = args[++i];
+						InParams.ktup = Convert.ToInt32(args[++i]);
+						InParams.ktupSpecified = true;
 						break;
 					case "/ktup":
 						goto case "--ktup";
