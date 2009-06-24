@@ -35,9 +35,9 @@ namespace EbiWS.FastaWs {
         
         private System.Threading.SendOrPostCallback getResultOperationCompleted;
         
-        private System.Threading.SendOrPostCallback getParameterDetailsOperationCompleted;
-        
         private System.Threading.SendOrPostCallback getParametersOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback getParameterDetailsOperationCompleted;
         
         /// <remarks/>
         public JDispatcherService() {
@@ -57,10 +57,10 @@ namespace EbiWS.FastaWs {
         public event getResultCompletedEventHandler getResultCompleted;
         
         /// <remarks/>
-        public event getParameterDetailsCompletedEventHandler getParameterDetailsCompleted;
+        public event getParametersCompletedEventHandler getParametersCompleted;
         
         /// <remarks/>
-        public event getParametersCompletedEventHandler getParametersCompleted;
+        public event getParameterDetailsCompletedEventHandler getParameterDetailsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:Run", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -244,6 +244,46 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameters", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlArrayAttribute("parameters", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [return: System.Xml.Serialization.XmlArrayItemAttribute("id", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+        public string[] getParameters() {
+            object[] results = this.Invoke("getParameters", new object[0]);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BegingetParameters(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getParameters", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string[] EndgetParameters(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void getParametersAsync() {
+            this.getParametersAsync(null);
+        }
+        
+        /// <remarks/>
+        public void getParametersAsync(object userState) {
+            if ((this.getParametersOperationCompleted == null)) {
+                this.getParametersOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetParametersOperationCompleted);
+            }
+            this.InvokeAsync("getParameters", new object[0], this.getParametersOperationCompleted, userState);
+        }
+        
+        private void OngetParametersOperationCompleted(object arg) {
+            if ((this.getParametersCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.getParametersCompleted(this, new getParametersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameterDetails", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute("parameterDetails", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public wsParameterDetails getParameterDetails([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] string parameterId) {
@@ -286,46 +326,6 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:GetParameters", RequestNamespace="http://soap.jdispatcher.ebi.ac.uk", ResponseNamespace="http://soap.jdispatcher.ebi.ac.uk", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        [return: System.Xml.Serialization.XmlArrayAttribute("parameters", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [return: System.Xml.Serialization.XmlArrayItemAttribute("id", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-        public string[] getParameters() {
-            object[] results = this.Invoke("getParameters", new object[0]);
-            return ((string[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BegingetParameters(System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("getParameters", new object[0], callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public string[] EndgetParameters(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((string[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public void getParametersAsync() {
-            this.getParametersAsync(null);
-        }
-        
-        /// <remarks/>
-        public void getParametersAsync(object userState) {
-            if ((this.getParametersOperationCompleted == null)) {
-                this.getParametersOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetParametersOperationCompleted);
-            }
-            this.InvokeAsync("getParameters", new object[0], this.getParametersOperationCompleted, userState);
-        }
-        
-        private void OngetParametersOperationCompleted(object arg) {
-            if ((this.getParametersCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.getParametersCompleted(this, new getParametersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -345,13 +345,21 @@ namespace EbiWS.FastaWs {
         
         private string matrixField;
         
-        private string gapopenField;
+        private System.Nullable<int> gapopenField;
         
-        private string gapextField;
+        private bool gapopenFieldSpecified;
         
-        private string expupperlimField;
+        private System.Nullable<int> gapextField;
         
-        private string explowlimField;
+        private bool gapextFieldSpecified;
+        
+        private System.Nullable<double> expupperlimField;
+        
+        private bool expupperlimFieldSpecified;
+        
+        private System.Nullable<double> explowlimField;
+        
+        private bool explowlimFieldSpecified;
         
         private string strandField;
         
@@ -359,9 +367,13 @@ namespace EbiWS.FastaWs {
         
         private bool histFieldSpecified;
         
-        private string scoresField;
+        private System.Nullable<int> scoresField;
         
-        private string alignmentsField;
+        private bool scoresFieldSpecified;
+        
+        private System.Nullable<int> alignmentsField;
+        
+        private bool alignmentsFieldSpecified;
         
         private string seqrangeField;
         
@@ -375,7 +387,9 @@ namespace EbiWS.FastaWs {
         
         private string[] databaseField;
         
-        private string ktupField;
+        private System.Nullable<int> ktupField;
+        
+        private bool ktupFieldSpecified;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -412,7 +426,7 @@ namespace EbiWS.FastaWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string gapopen {
+        public System.Nullable<int> gapopen {
             get {
                 return this.gapopenField;
             }
@@ -422,8 +436,19 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool gapopenSpecified {
+            get {
+                return this.gapopenFieldSpecified;
+            }
+            set {
+                this.gapopenFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string gapext {
+        public System.Nullable<int> gapext {
             get {
                 return this.gapextField;
             }
@@ -433,8 +458,19 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool gapextSpecified {
+            get {
+                return this.gapextFieldSpecified;
+            }
+            set {
+                this.gapextFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string expupperlim {
+        public System.Nullable<double> expupperlim {
             get {
                 return this.expupperlimField;
             }
@@ -444,13 +480,35 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool expupperlimSpecified {
+            get {
+                return this.expupperlimFieldSpecified;
+            }
+            set {
+                this.expupperlimFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string explowlim {
+        public System.Nullable<double> explowlim {
             get {
                 return this.explowlimField;
             }
             set {
                 this.explowlimField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool explowlimSpecified {
+            get {
+                return this.explowlimFieldSpecified;
+            }
+            set {
+                this.explowlimFieldSpecified = value;
             }
         }
         
@@ -489,7 +547,7 @@ namespace EbiWS.FastaWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string scores {
+        public System.Nullable<int> scores {
             get {
                 return this.scoresField;
             }
@@ -499,13 +557,35 @@ namespace EbiWS.FastaWs {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool scoresSpecified {
+            get {
+                return this.scoresFieldSpecified;
+            }
+            set {
+                this.scoresFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string alignments {
+        public System.Nullable<int> alignments {
             get {
                 return this.alignmentsField;
             }
             set {
                 this.alignmentsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool alignmentsSpecified {
+            get {
+                return this.alignmentsFieldSpecified;
+            }
+            set {
+                this.alignmentsFieldSpecified = value;
             }
         }
         
@@ -578,12 +658,23 @@ namespace EbiWS.FastaWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string ktup {
+        public System.Nullable<int> ktup {
             get {
                 return this.ktupField;
             }
             set {
                 this.ktupField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ktupSpecified {
+            get {
+                return this.ktupFieldSpecified;
+            }
+            set {
+                this.ktupFieldSpecified = value;
             }
         }
     }
@@ -963,32 +1054,6 @@ namespace EbiWS.FastaWs {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    public delegate void getParameterDetailsCompletedEventHandler(object sender, getParameterDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class getParameterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal getParameterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public wsParameterDetails Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((wsParameterDetails)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void getParametersCompletedEventHandler(object sender, getParametersCompletedEventArgs e);
     
     /// <remarks/>
@@ -1009,6 +1074,32 @@ namespace EbiWS.FastaWs {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((string[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void getParameterDetailsCompletedEventHandler(object sender, getParameterDetailsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class getParameterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal getParameterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public wsParameterDetails Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((wsParameterDetails)(this.results[0]));
             }
         }
     }
