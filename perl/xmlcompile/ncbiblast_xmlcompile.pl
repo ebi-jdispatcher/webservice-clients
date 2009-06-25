@@ -5,9 +5,10 @@
 #
 # Tested with:
 #   XML::Compile::SOAP 0.77, XML::Compile 0.94 and Perl 5.8.8 (Ubuntu 8.10)
-#   XML::Compile::SOAP 2.04, XML::Compile 1.05 and Perl 5.10.0 (Ubuntu 9.04) - broken
+#   XML::Compile::SOAP 2.04, XML::Compile 1.05 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
