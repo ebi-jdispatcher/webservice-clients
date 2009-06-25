@@ -639,51 +639,51 @@ NCBI BLAST
    
 Rapid sequence database search programs utilizing the BLAST algorithm
     
-For more detailed help information refer to 
-http://www.ebi.ac.uk/Tools/blastall/help.html
-
 [Required]
 
-  -p, --program	   : str  : BLAST program to use: blastn, blastp, blastx, 
-                            tblastn or tblastx
-  -D, --database   : str  : database to search
-  seqFile          : file : query sequence ("-" for STDIN)
+  -p, --program	    : str  : BLAST program to use, see --paramDetail program
+  -D, --database    : str  : database(s) to search, space separated. See
+                             --paramDetail database
+      --stype       : str  : query sequence type, see --paramDetail stype
+  seqFile           : file : query sequence ("-" for STDIN)
 
 [Optional]
 
-  -m, --matrix     : str  : scoring matrix
-  -e, --exp        : real : 0<E<= 1000. Statistical significance threshold 
-                            for reporting database sequence matches.
-  -f, --filter	   :      : display the filtered query sequence in the output
-  -A, --align	   : int  : number of alignments to be reported
-  -s, --scores	   : int  : number of scores to be reported
-  -n, --numal	   : int  : Number of alignments
-  -u, --match      : int  : Match score
-  -v, --mismatch   : int  : Mismatch score
-  -o, --opengap	   : int  : Gap open penalty
-  -x, --extendgap  : int  : Gap extension penalty
-  -d, --dropoff	   : int  : Drop-off
-  -g, --gapalign   :      : Optimise gapped alignments
-      --seqrange   : str  : region within input to use as query
-      --format     :      : Return NCBI BLAST XML format
+  -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
+  -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
+                             for reporting database sequence matches.
+  -f, --filter	    :      : filter the query sequence for low complexity 
+                             regions, see --paramDetail filter
+  -A, --align	    : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores	    : int  : number of scores to be reported
+  -n, --alignments  : int  : number of alignments to report
+  -u, --match       : int  : Match score (BLASTN only)
+  -v, --mismatch    : int  : Mismatch score (BLASTN only)
+  -o, --gapopen	    : int  : Gap open penalty
+  -x, --gapext      : int  : Gap extension penalty
+  -d, --dropoff	    : int  : Drop-off
+  -g, --gapalign    :      : Optimise gapped alignments
+      --seqrange    : str  : region within input to use as query
 
 [General]
 
-  -h, --help       :      : prints this help text
-      --async      :      : forces to make an asynchronous query
-      --email	   : str  : e-mail address
-      --title      : str  : title for job
-      --polljob    :      : Poll for the status of a job
-      --jobid      : str  : jobid that was returned when an asynchronous job 
-                            was submitted.
-      --outfile    : str  : file name for results (default is jobid;
-                            "-" for STDOUT)
-      --outformat  : str  : result format to retrieve
-      --params     :      : list input parameters
-      --paramDetail: str  : display details for input parameter
-      --quiet      :      : decrease output
-      --verbose    :      : increase output
-      --trace	   :      : show SOAP messages being interchanged 
+  -h, --help        :      : prints this help text
+      --async       :      : forces to make an asynchronous query
+      --email	    : str  : e-mail address
+      --title       : str  : title for job
+      --status      :      : get job status
+      --resultTypes :      : get available result types for job
+      --polljob     :      : poll for the status of a job
+      --jobid       : str  : jobid that was returned when an asynchronous job 
+                             was submitted.
+      --outfile     : str  : file name for results (default is jobid;
+                             "-" for STDOUT)
+      --outformat   : str  : result format to retrieve
+      --params      :      : list input parameters
+      --paramDetail : str  : display details for input parameter
+      --quiet       :      : decrease output
+      --verbose     :      : increase output
+      --trace	    :      : show SOAP messages being interchanged 
    
 Synchronous job:
 
@@ -704,5 +704,9 @@ Asynchronous job:
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
 
+Further information:
+
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+  http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 EOF
 }

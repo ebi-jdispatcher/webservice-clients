@@ -613,9 +613,6 @@ NCBI BLAST
    
 Rapid sequence database search programs utilizing the BLAST algorithm
     
-For more detailed help information refer to 
-http://www.ebi.ac.uk/Tools/blastall/help.html
-
 [Required]
 
   -p, --program	    : str  : BLAST program to use, see --paramDetail program

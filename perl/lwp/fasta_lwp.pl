@@ -1,32 +1,29 @@
 #!/usr/bin/env perl
 # $Id$
 # ======================================================================
-# FASTA SOAP web service Perl client
+# FASTA REST web service Perl client
 #
 # Tested with:
-#   SOAP::Lite 0.60 and Perl 5.8.3
-#   SOAP::Lite 0.69 and Perl 5.8.8
-#   SOAP::Lite 0.71 and Perl 5.8.8
-#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+#   LWP 5.79, XML::Simple 2.12 and Perl 5.8.3
+#   LWP 5.805, XML::Simple 2.14 and Perl 5.8.7
+#   LWP 5.820, XML::Simple 2.18 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
-# WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl';
-my $NAMESPACE = 'http://soap.jdispatcher.ebi.ac.uk/';
-my $ENDPOINT  = 'http://www.ebi.ac.uk/Tools/services/soap/fasta';
+# Base URL for service
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/fasta';
 
 # Enable Perl warnings
 use strict;
 use warnings;
 
 # Load libraries
-use SOAP::Lite;
+use LWP;
+use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-use MIME::Base64;
 use Data::Dumper;
 
 # Set interval for checking status
@@ -37,11 +34,11 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params  = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = (
-	'stype' => 'protein'
+	'stype'      => 'protein',
 );
 GetOptions(
 
@@ -85,8 +82,7 @@ GetOptions(
 	'quiet'         => \$params{'quiet'},          # Decrease output level
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
-	'trace'         => \$params{'trace'},          # SOAP message debug
-	'endpoint=s'    => \$ENDPOINT,                 # SOAP service endpoint
+	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
@@ -100,37 +96,6 @@ if ( $params{'help'} || $numOpts == 0 ) {
 	exit(0);
 }
 
-# If required enable SOAP message trace
-if ( $params{'trace'} ) {
-	print STDERR "Tracing active\n";
-	SOAP::Lite->import( +trace => 'debug' );
-}
-
-# In debug mode show the service endpoint being used.
-&print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
-
-# Create the service interface, setting the fault handler to throw exceptions
-my $soap = SOAP::Lite->proxy(
-	$ENDPOINT,
-	timeout => 6000,    # HTTP connection timeout
-	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
-  )->uri($NAMESPACE)->on_fault(
-
-	# Map SOAP faults to Perl exceptions (i.e. die).
-	sub {
-		my $soap = shift;
-		my $res  = shift;
-		if ( ref($res) eq '' ) {
-			die($res);
-		}
-		else {
-			die( $res->faultstring );
-		}
-		return new SOAP::SOM;
-	}
-  );
-
-# Check that arguments include required parameters
 if (
 	!(
 		   $params{'polljob'}
@@ -179,107 +144,142 @@ else {
 	&submit_job();
 }
 
-### Wrappers for SOAP operations ###
+### Wrappers for REST resources ###
+
+# Perform a REST request
+#   my $response_str = &rest_request($url);
+sub rest_request($) {
+	print_debug_message( 'rest_request', 'Begin', 11 );
+	my $requestUrl = shift;
+	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+	# Create a user agent
+	my $ua = LWP::UserAgent->new();
+	$ua->env_proxy;
+	# Perform the request
+	my $response = $ua->get($requestUrl);
+	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code, 11 );
+	# Check for HTTP error codes
+	if($response->is_error) {
+    	die 'http status: ' . $response->code . ' ' . $response->message;
+	}
+	print_debug_message( 'rest_request', 'End', 11 );
+	# Return the response data
+	return $response->content();
+}
 
 # Get list of tool parameters
-sub soap_get_parameters() {
-	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $ret = $soap->getParameters(undef);
-	print_debug_message( 'soap_get_parameters', 'End', 1 );
-	return $ret->valueof('//parameters/id');
+#   my (@param_list) = &rest_get_parameters();
+sub rest_get_parameters() {
+	print_debug_message( 'rest_get_parameters', 'Begin', 1 );
+	my $url = $baseUrl . '/parameters/';
+	my $param_list_xml_str = rest_request($url);
+	my $param_list_xml = XMLin($param_list_xml_str);
+	my (@param_list) = @{$param_list_xml->{'id'}};
+	print_debug_message( 'rest_get_parameters', 'End', 1 );
+	return(@param_list);
 }
 
 # Get details of a tool parameter
-sub soap_get_parameter_details($$) {
-	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
+#   my $paramDetail = &rest_get_parameter_details($param_name);
+sub rest_get_parameter_details($) {
+	print_debug_message( 'rest_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
-	print_debug_message( 'soap_get_parameter_details',
+	print_debug_message( 'rest_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret = $soap->getParameterDetails(
-		SOAP::Data->name( 'parameterId' => $parameterId )
-		  ->attr( { 'xmlns' => '' } ) );
-	my $paramDetail = $ret->valueof('//parameterDetails');
-	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
-	$paramDetail->{'values'} = \@paramValueList;
-	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
-	return $paramDetail;
+	my $url = $baseUrl . '/parameterdetails/' . $parameterId;
+	my $param_detail_xml_str = rest_request($url);
+	my $param_detail_xml = XMLin($param_detail_xml_str);
+	print_debug_message( 'rest_get_parameter_details', 'End', 1 );
+	return($param_detail_xml);
 }
 
 # Submit a job
-sub soap_run($$$) {
-	print_debug_message( 'soap_run', 'Begin', 1 );
+#   my $job_id = &rest_run($email, $title, \%params );
+sub rest_run($$$) {
+	print_debug_message( 'rest_run', 'Begin', 1 );
 	my $email  = shift;
 	my $title  = shift;
 	my $params = shift;
-	print_debug_message( 'soap_run', 'email: ' . $email, 1 );
+	print_debug_message( 'rest_run', 'email: ' . $email, 1 );
 	if ( defined($title) ) {
-		print_debug_message( 'soap_run', 'title: ' . $title, 1 );
+		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
-
-	my (@paramsList) = ();
-	foreach my $key ( keys(%$params) ) {
-		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
-			push @paramsList,
-			  SOAP::Data->name( $key => $params->{$key} )
-			  ->attr( { 'xmlns' => '' } );
+	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
+	# User agent to perform http requests
+	my $ua = LWP::UserAgent->new();
+	$ua->env_proxy;
+	# Clean up parameters
+	my (%tmp_params) = %{$params};
+	$tmp_params{'email'} = $email;
+	$tmp_params{'title'} = $title;
+	foreach my $param_name (keys(%tmp_params)) {
+		if(!defined($tmp_params{$param_name})) {
+			delete $tmp_params{$param_name};
 		}
 	}
-	my $ret = $soap->run(
-		SOAP::Data->name( 'email' => $email )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'title' => $title )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )
-		  ->attr( { 'xmlns' => '' } )
-	);
-	print_debug_message( 'soap_run', 'End', 1 );
-	return $ret->valueof('//jobId');
+	# Submit the job as a POST
+	my $url = $baseUrl . '/run';
+	my $response = $ua->post($url, \%tmp_params);
+	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
+	print_debug_message( 'rest_run', 'request: ' . $response->request()->content(), 11 );
+	# Check for HTTP error codes
+	if($response->is_error) {
+    	die 'http status: ' . $response->code . ' ' . $response->message;
+	}
+	# The job id is returned
+	my $job_id = $response->content();
+	print_debug_message( 'rest_run', 'End', 1 );
+	return $job_id;
 }
 
 # Check the status of a job.
-sub soap_get_status($) {
-	print_debug_message( 'soap_get_status', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
-	my $res = $soap->getStatus(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
-	my $status_str = $res->valueof('//status');
-	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
-	print_debug_message( 'soap_get_status', 'End', 1 );
+#   my $status = &rest_get_status($job_id);
+sub rest_get_status($) {
+	print_debug_message( 'rest_get_status', 'Begin', 1 );
+	my $job_id = shift;
+	print_debug_message( 'rest_get_status', 'jobid: ' . $job_id, 2 );
+	my $status_str = 'UNKNOWN';
+	my $url = $baseUrl . '/status/' . $job_id;
+	$status_str = &rest_request($url);
+	print_debug_message( 'rest_get_status', 'status_str: ' . $status_str, 2 );
+	print_debug_message( 'rest_get_status', 'End', 1 );
 	return $status_str;
 }
 
 # Get list of result types for finished job
-sub soap_get_result_types($) {
-	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
-	my $resultTypesXml = $soap->getResultTypes(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
-	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
-	print_debug_message( 'soap_get_result_types',
+#   my (@resultTypes) = &rest_get_result_types($job_id);
+sub rest_get_result_types($) {
+	print_debug_message( 'rest_get_result_types', 'Begin', 1 );
+	my $job_id = shift;
+	print_debug_message( 'rest_get_result_types', 'jobid: ' . $job_id, 2 );
+	my (@resultTypes);
+	my $url = $baseUrl . '/resulttypes/' . $job_id;
+	my $result_type_list_xml_str = &rest_request($url);
+	my $result_type_list_xml = XMLin($result_type_list_xml_str);
+	(@resultTypes) = @{$result_type_list_xml->{'type'}};
+	print_debug_message( 'rest_get_result_types',
 		scalar(@resultTypes) . ' result types', 2 );
-	print_debug_message( 'soap_get_result_types', 'End', 1 );
+	print_debug_message( 'rest_get_result_types', 'End', 1 );
 	return (@resultTypes);
 }
 
 # Get result data of a specified type for a finished job
-sub soap_get_raw_result_output($$) {
-	print_debug_message( 'soap_get_raw_result_output', 'Begin', 1 );
-	my $jobid = shift;
+#   my $result = rest_get_raw_result_output($job_id, $type);
+sub rest_get_raw_result_output($$) {
+	print_debug_message( 'rest_get_raw_result_output', 'Begin', 1 );
+	my $job_id = shift;
 	my $type  = shift;
-	print_debug_message( 'soap_get_raw_result_output', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'type: ' . $type,   1 );
-	my $res = $soap->getResult(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } )
-	);
-	my $result = decode_base64( $res->valueof('//output') );
-	print_debug_message( 'soap_get_raw_result_output',
+	print_debug_message( 'rest_get_raw_result_output', 'jobid: ' . $job_id, 1 );
+	print_debug_message( 'rest_get_raw_result_output', 'type: ' . $type,   1 );
+	my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
+	my $result = &rest_request($url);
+	print_debug_message( 'rest_get_raw_result_output',
 		length($result) . ' characters', 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'End', 1 );
+	print_debug_message( 'rest_get_raw_result_output', 'End', 1 );
 	return $result;
 }
 
-### Service actions and utility functions ###
+###  ###
 
 # Print debug message
 sub print_debug_message($$$) {
@@ -294,8 +294,8 @@ sub print_debug_message($$$) {
 # Print list of tool parameters
 sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
-	my (@paramList) = &soap_get_parameters();
-	foreach my $param (@paramList) {
+	my (@param_list) = &rest_get_parameters();
+	foreach my $param (sort(@param_list)) {
 		print $param, "\n";
 	}
 	print_debug_message( 'print_tool_params', 'End', 1 );
@@ -306,12 +306,12 @@ sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &soap_get_parameter_details($paramName);
+	my $paramDetail = &rest_get_parameter_details($paramName );
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value ( @{ $paramDetail->{'values'} } ) {
+	foreach my $value (@{$paramDetail->{'values'}->{'value'}}) {
 		print $value->{'value'};
-		if ( $value->{'defaultValue'} eq 'true' ) {
+		if($value->{'defaultValue'} eq 'true') {
 			print "\t", 'default';
 		}
 		print "\n";
@@ -328,11 +328,11 @@ sub print_job_status($) {
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting status for job ', $jobid, "\n";
 	}
-	my $status = &soap_get_status($jobid);
-	print "$status\n";
-	if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
-		print STDERR "To get available result types:\n",
-		  "  $scriptName --resultTypes --jobid $jobid\n";
+	my $result = &rest_get_status($jobid);
+	print "$result\n";
+	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
+		print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+		  . "\n";
 	}
 	print_debug_message( 'print_job_status', 'End', 1 );
 }
@@ -345,29 +345,29 @@ sub print_result_types($) {
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting result types for job ', $jobid, "\n";
 	}
-	my $status = &soap_get_status($jobid);
+	my $status = &rest_get_status($jobid);
 	if ( $status eq 'PENDING' || $status eq 'RUNNING' ) {
 		print STDERR 'Error: Job status is ', $status,
 		  '. To get result types the job must be finished.', "\n";
 	}
 	else {
-		my (@resultTypes) = &soap_get_result_types($jobid);
+		my (@resultTypes) = &rest_get_result_types($jobid);
 		if ( $outputLevel > 0 ) {
 			print STDOUT 'Available result types:', "\n";
 		}
 		foreach my $resultType (@resultTypes) {
 			print STDOUT $resultType->{'identifier'}, "\n";
-			if ( defined( $resultType->{'label'} ) ) {
-				print STDOUT "\t", $resultType->{'label'}, "\n";
+			if(defined($resultType->{'label'})) {
+				print STDOUT "\t", $resultType->{'label'},       "\n";
 			}
-			if ( defined( $resultType->{'description'} ) ) {
+			if(defined($resultType->{'description'})) {
 				print STDOUT "\t", $resultType->{'description'}, "\n";
 			}
-			if ( defined( $resultType->{'mediaType'} ) ) {
-				print STDOUT "\t", $resultType->{'mediaType'}, "\n";
+			if(defined($resultType->{'mediaType'})) {
+				print STDOUT "\t", $resultType->{'mediaType'},   "\n";
 			}
-			if ( defined( $resultType->{'fileSuffix'} ) ) {
-				print STDOUT "\t", $resultType->{'fileSuffix'}, "\n";
+			if(defined($resultType->{'fileSuffix'})) {
+				print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
 			}
 		}
 		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
@@ -391,7 +391,7 @@ sub submit_job() {
 	&load_params();
 
 	# Submit the job
-	my $jobid = &soap_run( $params{'email'}, $params{'title'}, \%tool_params );
+	my $jobid = &rest_run( $params{'email'}, $params{'title'}, \%tool_params );
 
 	# Simulate sync/async mode
 	if ( defined( $params{'async'} ) ) {
@@ -441,13 +441,8 @@ sub load_params() {
 
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
-	for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
-		$tool_params{'database'}[$i] =
-		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
-	}
+	$tool_params{'database'} = \@dbList;
 
-	print_debug_message( 'load_params',
-		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -455,33 +450,22 @@ sub load_params() {
 sub client_poll($) {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
-	my $status = 'PENDING';
+	my $result = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
-	my $errorCount = 0;
-	while ($status eq 'RUNNING'
-		|| $status eq 'PENDING'
-		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
-	{
-		$status = soap_get_status($jobid);
-		print STDERR "$status\n" if ( $outputLevel > 0 );
-		if ( $status eq 'ERROR' ) {
-			$errorCount++;
+	# Check status and wait if not finished
+	#print STDERR "Checking status: $jobid\n";
+	while ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
+		$result = rest_get_status($jobid);
+		if ( $outputLevel > 0 ) {
+			print STDERR "$result\n";
 		}
-		elsif ( $errorCount > 0 ) {
-			$errorCount--;
-		}
-		if (   $status eq 'RUNNING'
-			|| $status eq 'PENDING'
-			|| $status eq 'ERROR' )
-		{
+		if ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
 
 			# Wait before polling again.
 			sleep $checkInterval;
 		}
 	}
 	print_debug_message( 'client_poll', 'End', 1 );
-	return $status;
 }
 
 # Get the results for a jobid
@@ -491,75 +475,69 @@ sub get_results($) {
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
 
 	# Verbose
-	print 'Getting results for job ', $jobid, "\n" if ( $outputLevel > 1 );
+	if ( $outputLevel > 1 ) {
+		print 'Getting results for job ', $jobid, "\n";
+	}
 
 	# Check status, and wait if not finished
-	my $status = client_poll($jobid);
+	client_poll($jobid);
 
-	# If job completed get results
-	if ( $status eq 'FINISHED' ) {
+	# Use JobId if output file name is not defined
+	unless ( defined( $params{'outfile'} ) ) {
+		$params{'outfile'} = $jobid;
+	}
 
-		# Use JobId if output file name is not defined
-		$params{'outfile'} = $jobid unless ( defined( $params{'outfile'} ) );
+	# Get list of data types
+	my (@resultTypes) = rest_get_result_types($jobid);
 
-		# Get list of data types
-		my (@resultTypes) = soap_get_result_types($jobid);
-
-		# Get the data and write it to a file
-		if ( defined( $params{'outformat'} ) ) {    # Specified data type
-			my $selResultType;
-			foreach my $resultType (@resultTypes) {
-				if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
-					$selResultType = $resultType;
-				}
+	# Get the data and write it to a file
+	if ( defined( $params{'outformat'} ) ) {    # Specified data type
+		my $selResultType;
+		foreach my $resultType (@resultTypes) {
+			if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
+				$selResultType = $resultType;
 			}
-			if ( defined($selResultType) ) {
-				my $result =
-				  soap_get_raw_result_output( $jobid,
-					$selResultType->{'identifier'} );
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $selResultType->{'identifier'} . '.'
-						  . $selResultType->{'fileSuffix'},
-						$result
-					);
-				}
+		}
+		if ( defined($selResultType) ) {
+			my $result =
+			  rest_get_raw_result_output( $jobid,
+				$selResultType->{'identifier'} );
+			if ( $params{'outfile'} eq '-' ) {
+				write_file( $params{'outfile'}, $result );
 			}
 			else {
-				die 'Error: unknown result format "'
-				  . $params{'outformat'} . '"';
+				write_file(
+					$params{'outfile'} . '.'
+					  . $selResultType->{'identifier'} . '.'
+					  . $selResultType->{'fileSuffix'},
+					$result
+				);
 			}
 		}
 		else {
-
-			# Data types available
-			# Write a file for each output type
-			for my $resultType (@resultTypes) {
-				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
-				  if ( $outputLevel > 1 );
-				my $result =
-				  soap_get_raw_result_output( $jobid,
-					$resultType->{'identifier'} );
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $resultType->{'identifier'} . '.'
-						  . $resultType->{'fileSuffix'},
-						$result
-					);
-				}
-			}
+			die 'Error: unknown result format "' . $params{'outformat'} . '"';
 		}
 	}
-	else {
-		print STDERR "Job failed, unable to get results\n";
+	else {    # Data types available
+		      # Write a file for each output type
+		for my $resultType (@resultTypes) {
+			if ( $outputLevel > 1 ) {
+				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
+			}
+			my $result =
+			  rest_get_raw_result_output( $jobid, $resultType->{'identifier'} );
+			if ( $params{'outfile'} eq '-' ) {
+				write_file( $params{'outfile'}, $result );
+			}
+			else {
+				write_file(
+					$params{'outfile'} . '.'
+					  . $resultType->{'identifier'} . '.'
+					  . $resultType->{'fileSuffix'},
+					$result
+				);
+			}
+		}
 	}
 	print_debug_message( 'get_results', 'End', 1 );
 }
@@ -682,7 +660,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 EOF
 }
