@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # $Id$
 # ======================================================================
-# NCBI BLAST jDispatcher REST web service Perl client
+# NCBI BLAST REST web service Perl client
 #
 # Tested with:
 #   LWP 5.79, XML::Simple 2.12 and Perl 5.8.3
@@ -9,7 +9,8 @@
 #   LWP 5.820 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
+# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
@@ -591,9 +592,6 @@ NCBI BLAST
    
 Rapid sequence database search programs utilizing the BLAST algorithm
     
-For more detailed help information refer to 
-http://www.ebi.ac.uk/Tools/blastall/help.html
-
 [Required]
 
   -p, --program	    : str  : BLAST program to use, see --paramDetail program
@@ -661,9 +659,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/ncbiblast/
-  http://www.ebi.ac.uk/Tools/webservices/clients/ncbiblast
-  http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 EOF
 }
