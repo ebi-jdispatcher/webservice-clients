@@ -11,7 +11,7 @@
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
-# http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
+# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
 #my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl';

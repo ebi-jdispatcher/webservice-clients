@@ -10,7 +10,8 @@
 #   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
 #my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
@@ -682,9 +683,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/ncbiblast/
-  http://www.ebi.ac.uk/Tools/webservices/clients/ncbiblast
-  http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 EOF
 }
