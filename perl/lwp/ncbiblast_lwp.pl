@@ -6,7 +6,7 @@
 # Tested with:
 #   LWP 5.79, XML::Simple 2.12 and Perl 5.8.3
 #   LWP 5.805, XML::Simple 2.14 and Perl 5.8.7
-#   LWP 5.820 and Perl 5.10.0 (Ubuntu 9.04)
+#   LWP 5.820, XML::Simple 2.18 and Perl 5.10.0 (Ubuntu 9.04)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
