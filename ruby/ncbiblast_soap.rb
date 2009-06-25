@@ -29,7 +29,7 @@ def printUsage(returnCode)
 NCBI BLAST
 ==========
    
-Rapid sequence database search programs utilizing the BLAST algorithm
+Rapid sequence database search programs utilising the BLAST algorithm
     
 For more detailed help information refer to 
 http://www.ebi.ac.uk/Tools/blastall/help.html
@@ -49,7 +49,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
                              for reporting database sequence matches.
   -f, --filter      :      : filter the query sequence for low complexity 
                              regions, see --paramDetail filter
-  -A, --align     : int  : pairwise alignment format, see --paramDetail align
+  -A, --align       : int  : pairwise alignment format, see --paramDetail align
   -s, --scores      : int  : number of scores to be reported
   -n, --alignments  : int  : number of alignments to report
   -u, --match       : int  : Match score (BLASTN only)
@@ -57,14 +57,14 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
   -o, --gapopen     : int  : Gap open penalty
   -x, --gapext      : int  : Gap extension penalty
   -d, --dropoff     : int  : Drop-off
-  -g, --gapalign    :      : Optimise gapped alignments
+  -g, --gapalign    :      : Optimise gaped alignments
       --seqrange    : str  : region within input to use as query
 
 [General]
 
   -h, --help        :      : prints this help text
       --async       :      : forces to make an asynchronous query
-      --email     : str  : e-mail address
+      --email       : str  : e-mail address
       --title       : str  : title for job
       --status      :      : get job status
       --resultTypes :      : get available result types for job
@@ -78,7 +78,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
       --paramDetail : str  : display details for input parameter
       --quiet       :      : decrease output
       --verbose     :      : increase output
-      --trace     :      : show SOAP messages being interchanged 
+      --trace       :      : show SOAP messages being interchanged 
    
 Synchronous job:
 
