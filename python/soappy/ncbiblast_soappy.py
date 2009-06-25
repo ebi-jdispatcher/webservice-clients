@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # $Id$
 # ======================================================================
-# NCBI BLAST jDispatcher Python client.
+# NCBI BLAST SOAP service, Python client using SOAPpy.
 #
 # Tested with:
 #   Python 2.5.1 with SOAPpy 0.11.3
 #   Python 2.6.2 with SOAPpy 0.12.0 (Ubuntu 9.04)
 #
 # See:
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # WSDL URL for service
-wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
+wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries
 import os
