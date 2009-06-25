@@ -6,11 +6,11 @@
 #   Python 2.5.2 with ZSI 2.0
 #
 # See:
-#
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Note: requires subs generated with:
-#  wsdl2py -u http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
+#  wsdl2py -u http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
 # ======================================================================
 # Load libraries
 import os
