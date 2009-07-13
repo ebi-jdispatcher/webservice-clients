@@ -518,7 +518,6 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 =cut
 
 sub multi_submit_job() {
-	# TODO: implement.
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
 	my $jobIdForFilename = 1;
 	$jobIdForFilename = 0 if(defined($params{'outfile'}));
@@ -875,6 +874,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -d, --dropoff	    : int  : Drop-off
   -g, --gapalign    :      : Optimise gapped alignments
       --seqrange    : str  : region within input to use as query
+      --multifasta  :      : treat input as a set of fasta formatted sequences
 
 [General]
 
