@@ -63,6 +63,7 @@ GetOptions(
 	'stype=s' => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
 	'seqrange=s' => \$tool_params{'seqrange'},    # Query subsequence to use
 	'sequence=s' => \$params{'sequence'},         # Query sequence file or DB:ID
+	'multifasta' => \$params{'multifasta'},       # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -86,6 +87,10 @@ GetOptions(
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
 
+# Debug mode: print the input parameters
+&print_debug_message( 'MAIN', "params:\n" . Dumper(\%params), 11);
+&print_debug_message( 'MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -101,7 +106,7 @@ if ( $params{'trace'} ) {
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
-# In debug mode show the service endpoint being used.
+# Debug mode: show the service endpoint being used.
 &print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
 
 # Create the service interface, setting the fault handler to throw exceptions
@@ -171,12 +176,34 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	&submit_job();
+	# Multiple input sequence mode, assume fasta format.
+	if($params{'multifasta'}) {
+		&multi_submit_job();
+	}
+	# Entry identifier list file.
+	elsif( ( defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/ ) ||
+			( defined($ARGV[0]) && $ARGV[0] =~ m/^\@/) ) {
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+	# Default: single sequence/identifier.
+	else {
+		# Load the sequence data and submit.
+		&submit_job(&load_data());
+	}
 }
 
 ### Wrappers for SOAP operations ###
 
-# Get list of tool parameters
+=head2 soap_get_parameters()
+
+Get a list of tool parameter names.
+
+  my (@param_name_list) = &soap_get_parameters();
+
+=cut
+
 sub soap_get_parameters() {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $ret = $soap->getParameters(undef);
@@ -184,8 +211,16 @@ sub soap_get_parameters() {
 	return $ret->valueof('//parameters/id');
 }
 
-# Get details of a tool parameter
-sub soap_get_parameter_details($$) {
+=head2 soap_get_parameter_details();
+
+Get detailed information about a tool parameter. Includes a description 
+suitable for use in user help, and details of valid values. 
+
+  my $paramDetail = &soap_get_parameter_details($paramName);
+
+=cut
+
+sub soap_get_parameter_details($) {
 	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
 	print_debug_message( 'soap_get_parameter_details',
@@ -200,7 +235,14 @@ sub soap_get_parameter_details($$) {
 	return $paramDetail;
 }
 
-# Submit a job
+=head2 soap_run()
+
+Submit a job to the service.
+
+  my $job_id = &soap_run($email, $title, \%params);
+
+=cut
+
 sub soap_run($$$) {
 	print_debug_message( 'soap_run', 'Begin', 1 );
 	my $email  = shift;
@@ -229,7 +271,14 @@ sub soap_run($$$) {
 	return $ret->valueof('//jobId');
 }
 
-# Check the status of a job.
+=head2 soap_get_status()
+
+Get the status of a submitted job.
+
+  my $status = &soap_get_status($job_id);
+
+=cut
+
 sub soap_get_status($) {
 	print_debug_message( 'soap_get_status', 'Begin', 1 );
 	my $jobid = shift;
@@ -242,7 +291,12 @@ sub soap_get_status($) {
 	return $status_str;
 }
 
-# Get list of result types for finished job
+=head2 soap_get_result_types()
+
+Get list of available result types for a finished job.
+
+=cut
+
 sub soap_get_result_types($) {
 	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
 	my $jobid = shift;
@@ -256,27 +310,41 @@ sub soap_get_result_types($) {
 	return (@resultTypes);
 }
 
-# Get result data of a specified type for a finished job
-sub soap_get_raw_result_output($$) {
-	print_debug_message( 'soap_get_raw_result_output', 'Begin', 1 );
+=head2 soap_get_result()
+
+Get result data of a specified type for a finished job.
+
+  my $result = &soap_get_result($job_id, $result_type);
+
+=cut
+
+sub soap_get_result($$) {
+	print_debug_message( 'soap_get_result', 'Begin', 1 );
 	my $jobid = shift;
 	my $type  = shift;
-	print_debug_message( 'soap_get_raw_result_output', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'type: ' . $type,   1 );
+	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'soap_get_result', 'type: ' . $type,   1 );
 	my $res = $soap->getResult(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
 		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } )
 	);
 	my $result = decode_base64( $res->valueof('//output') );
-	print_debug_message( 'soap_get_raw_result_output',
+	print_debug_message( 'soap_get_result',
 		length($result) . ' characters', 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'End', 1 );
+	print_debug_message( 'soap_get_result', 'End', 1 );
 	return $result;
 }
 
 ### Service actions and utility functions ###
 
-# Print debug message
+=head2 print_debug_message()
+
+Print a debug message at the specified debug level.
+
+  &print_debug_message($function_name, $message, $level);
+
+=cut
+
 sub print_debug_message($$$) {
 	my $function_name = shift;
 	my $message       = shift;
@@ -286,7 +354,14 @@ sub print_debug_message($$$) {
 	}
 }
 
-# Print list of tool parameters
+=head2 print_tool_params()
+
+Print the list of tool parameter names.
+
+  &print_tool_params();
+
+=cut
+
 sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
 	my (@paramList) = &soap_get_parameters();
@@ -296,7 +371,14 @@ sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'End', 1 );
 }
 
-# Print details of a tool parameter
+=head2 print_param_details()
+
+Print detail information about a tool parameter.
+
+  &print_param_details($param_name);
+
+=cut
+
 sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
@@ -315,7 +397,14 @@ sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
 
-# Print status of a job
+=head2  print_job_status()
+
+Print the status of a submitted job.
+
+  &print_job_status($job_id);
+
+=cut
+
 sub print_job_status($) {
 	print_debug_message( 'print_job_status', 'Begin', 1 );
 	my $jobid = shift;
@@ -332,11 +421,18 @@ sub print_job_status($) {
 	print_debug_message( 'print_job_status', 'End', 1 );
 }
 
-# Print available result types for a job
+=head2 print_result_types()
+
+Print available result types for a finished job.
+
+  &print_result_types($job_id);
+
+=cut
+
 sub print_result_types($) {
-	print_debug_message( 'result_types', 'Begin', 1 );
+	print_debug_message( 'print_result_types', 'Begin', 1 );
 	my $jobid = shift;
-	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'print_result_types', 'jobid: ' . $jobid, 1 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting result types for job ', $jobid, "\n";
 	}
@@ -372,15 +468,22 @@ sub print_result_types($) {
 			  . $params{'jobid'} . "\n";
 		}
 	}
-	print_debug_message( 'result_types', 'End', 1 );
+	print_debug_message( 'print_result_types', 'End', 1 );
 }
 
-# Submit a job
-sub submit_job() {
+=head2 submit_job()
+
+Submit a job to the service.
+
+  &submit_job($seq);
+
+=cut
+
+sub submit_job($) {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
-	# Load the sequence data
-	&load_data();
+	# Set input sequence
+	$tool_params{'sequence'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -406,31 +509,127 @@ sub submit_job() {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
-# Load sequence data
-sub load_data() {
-	print_debug_message( 'load_data', 'Begin', 1 );
+=head2 multi_submit_job()
 
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job() {
+	# TODO: implement.
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if(defined($params{'outfile'}));
+	my (@filename_list) = ();
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $ARGV[0] );
-		}
-		else {                                     # DB:ID or sequence
-			$tool_params{'sequence'} = $ARGV[0];
+			push (@filename_list, $ARGV[0] );
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $params{'sequence'} );
+			push(@filename_list, $params{'sequence'} );
+		}
+	}
+	
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open(INFILE, "<$filename") or die "Error: unable to open file $filename ($!)";
+		while(<INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if($seq =~ m/\w+/) {
+				$seq = '>' . $seq;
+				&print_debug_message('multi_submit_job', $seq, 11);
+				&submit_job($seq);
+				$params{'outfile'} = undef if($jobIdForFilename == 1);
+			}
+		}
+		close INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job($) {
+	my $filename = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if(defined($params{'outfile'}));
+	# Iterate over identifiers, submitting each job
+	open(LISTFILE, "<$filename") or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while(<LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if($line ne '') {
+			&print_debug_message('list_file_submit_job', 'line: ' . $line, 2);
+			if($line =~ m/\w:\w/) { # Check this is an identifier
+				print STDERR  "Submitting job for: $line\n" if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR "Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if($jobIdForFilename == 1);
+	}
+	close LISTFILE;
+}
+
+=head2 load_data()
+
+Load sequence data, from file or direct specification of input data with 
+command-line option.
+
+  my $data = load_data();
+
+=cut
+
+sub load_data() {
+	print_debug_message( 'load_data', 'Begin', 1 );
+	my $retSeq;
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			$retSeq = &read_file( $ARGV[0] );
+		}
+		else {                                     # DB:ID or sequence
+			$retSeq = $ARGV[0];
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			$retSeq = &read_file( $params{'sequence'} );
 		}
 		else {    # DB:ID or sequence
-			$tool_params{'sequence'} = $params{'sequence'};
+			$retSeq = $params{'sequence'};
 		}
 	}
 	print_debug_message( 'load_data', 'End', 1 );
+	return $retSeq;
 }
 
-# Load job parameters
+=head2 load_params()
+
+Load job parameters into input structure.
+
+Since most of the loading is done when processing the command-line options, 
+this function only provides additional processing required from some options.
+
+  &load_params();
+
+=cut
+
 sub load_params() {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
@@ -451,13 +650,20 @@ sub load_params() {
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
-# Client-side job polling
+=head2 client_poll()
+
+Client-side job polling.
+
+  my $status = &client_poll($job_id);
+
+=cut
+
 sub client_poll($) {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -484,7 +690,14 @@ sub client_poll($) {
 	return $status;
 }
 
-# Get the results for a jobid
+=head2 get_results()
+
+Get the results for a jobid.
+
+  &get_results($job_id);
+
+=cut
+
 sub get_results($) {
 	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
@@ -515,7 +728,7 @@ sub get_results($) {
 			}
 			if ( defined($selResultType) ) {
 				my $result =
-				  soap_get_raw_result_output( $jobid,
+				  soap_get_result( $jobid,
 					$selResultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
@@ -542,7 +755,7 @@ sub get_results($) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
 				  if ( $outputLevel > 1 );
 				my $result =
-				  soap_get_raw_result_output( $jobid,
+				  soap_get_result( $jobid,
 					$resultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
@@ -564,7 +777,15 @@ sub get_results($) {
 	print_debug_message( 'get_results', 'End', 1 );
 }
 
-# Read a file
+=head2 read_file()
+
+Read all data from a file. The special filename '-' can be used to read from 
+standard input.
+
+  my $data = &read_file($filename);
+
+=cut
+
 sub read_file($) {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
@@ -586,7 +807,15 @@ sub read_file($) {
 	return $content;
 }
 
-# Write a result file
+=head2 write_file()
+
+Write data to a file. The special filename '-' can be used to write to 
+standard output.
+
+  &write_file($filename, $data);
+
+=cut
+
 sub write_file($$) {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
@@ -605,7 +834,14 @@ sub write_file($$) {
 	print_debug_message( 'write_file', 'End', 1 );
 }
 
-# Print program usage
+=head2 usage()
+
+Print program usage.
+
+  &usage();
+
+=cut
+
 sub usage {
 	print STDERR <<EOF
 NCBI BLAST
@@ -619,7 +855,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -D, --database    : str  : database(s) to search, space separated. See
                              --paramDetail database
       --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN)
+  seqFile           : file : query sequence ("-" for STDIN, \@filename for
+                             identifier list file)
 
 [Optional]
 
