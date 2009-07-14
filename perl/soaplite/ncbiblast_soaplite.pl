@@ -23,7 +23,6 @@ use warnings;
 # Load libraries
 use SOAP::Lite;
 use LWP::Simple;
-use XML::Parser::Lite;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
@@ -90,7 +89,7 @@ if ( $params{'$quiet'} )  { $outputLevel-- }
 
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
-	11 );
+	1 );
 
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
@@ -112,7 +111,7 @@ if ( $params{'trace'} ) {
 }
 
 # Debug mode: show the WSDL, service endpoint and namespace being used.
-&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 11 );
+&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 1 );
 
 # For a document/literal service which has types with repeating elements
 # namespace and endpoint need to be used instead of the WSDL. By default
