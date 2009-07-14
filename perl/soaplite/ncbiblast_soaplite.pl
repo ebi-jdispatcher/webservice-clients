@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # $Id$
 # ======================================================================
-# NCBI BLAST jDispatcher SOAP web service Perl client
+# NCBI BLAST SOAP web service Perl client
 #
 # Tested with:
 #   SOAP::Lite 0.60 and Perl 5.8.3
@@ -14,9 +14,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
 # WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
-my $NAMESPACE = 'http://soap.jdispatcher.ebi.ac.uk/';
-my $ENDPOINT  = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
 
 # Enable Perl warnings
 use strict;
@@ -24,6 +22,8 @@ use warnings;
 
 # Load libraries
 use SOAP::Lite;
+use LWP::Simple;
+use XML::Parser::Lite;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
@@ -37,11 +37,10 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params  = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
-my %tool_params = (
-);
+my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
@@ -82,14 +81,20 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'trace'         => \$params{'trace'},          # SOAP message debug
-	'endpoint=s'    => \$ENDPOINT,                 # SOAP service endpoint
+	'endpoint=s'    => \$params{'endpoint'},       # SOAP service endpoint
+	'namespace=s'   => \$params{'namespace'},      # SOAP service namespace
+	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
 
+# Debug mode: SOAP::Lite version
+&print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
+	11 );
+
 # Debug mode: print the input parameters
-&print_debug_message( 'MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message( 'MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
+&print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
 
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
@@ -106,15 +111,28 @@ if ( $params{'trace'} ) {
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
-# Debug mode: show the service endpoint being used.
-&print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 11 );
+
+# For a document/literal service which has types with repeating elements
+# namespace and endpoint need to be used instead of the WSDL. By default
+# these are extracted from the WSDL.
+my ( $serviceEndpoint, $serviceNamespace ) = &from_wsdl($WSDL);
+
+# User specified endpoint and namespace
+$serviceEndpoint  = $params{'endpoint'}  if ( $params{'endpoint'} );
+$serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
+
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'endpoint: ' . $serviceEndpoint,   11 );
+&print_debug_message( 'MAIN', 'namespace: ' . $serviceNamespace, 11 );
 
 # Create the service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
-	$ENDPOINT,
+	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
 	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
-  )->uri($NAMESPACE)->on_fault(
+  )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
 	sub {
@@ -176,21 +194,26 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
+
 	# Multiple input sequence mode, assume fasta format.
-	if($params{'multifasta'}) {
+	if ( $params{'multifasta'} ) {
 		&multi_submit_job();
 	}
+
 	# Entry identifier list file.
-	elsif( ( defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/ ) ||
-			( defined($ARGV[0]) && $ARGV[0] =~ m/^\@/) ) {
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
 		my $list_filename = $params{'sequence'} || $ARGV[0];
 		$list_filename =~ s/^\@//;
 		&list_file_submit_job($list_filename);
 	}
+
 	# Default: single sequence/identifier.
 	else {
+
 		# Load the sequence data and submit.
-		&submit_job(&load_data());
+		&submit_job( &load_data() );
 	}
 }
 
@@ -225,7 +248,8 @@ sub soap_get_parameter_details($) {
 	my $parameterId = shift;
 	print_debug_message( 'soap_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret = $soap->getParameterDetails(
+	my $ret =
+	  $soap->getParameterDetails(
 		SOAP::Data->name( 'parameterId' => $parameterId )
 		  ->attr( { 'xmlns' => '' } ) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
@@ -256,8 +280,7 @@ sub soap_run($$$) {
 	my (@paramsList) = ();
 	foreach my $key ( keys(%$params) ) {
 		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
-			push @paramsList,
-			  SOAP::Data->name( $key => $params->{$key} )
+			push @paramsList, SOAP::Data->name( $key => $params->{$key} )
 			  ->attr( { 'xmlns' => '' } );
 		}
 	}
@@ -283,7 +306,8 @@ sub soap_get_status($) {
 	print_debug_message( 'soap_get_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
-	my $res = $soap->getStatus(
+	my $res =
+	  $soap->getStatus(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
 	my $status_str = $res->valueof('//status');
 	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
@@ -301,7 +325,8 @@ sub soap_get_result_types($) {
 	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
-	my $resultTypesXml = $soap->getResultTypes(
+	my $resultTypesXml =
+	  $soap->getResultTypes(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
 	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
 	print_debug_message( 'soap_get_result_types',
@@ -329,8 +354,8 @@ sub soap_get_result($$) {
 		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } )
 	);
 	my $result = decode_base64( $res->valueof('//output') );
-	print_debug_message( 'soap_get_result',
-		length($result) . ' characters', 1 );
+	print_debug_message( 'soap_get_result', length($result) . ' characters',
+		1 );
 	print_debug_message( 'soap_get_result', 'End', 1 );
 	return $result;
 }
@@ -352,6 +377,30 @@ sub print_debug_message($$$) {
 	if ( $level <= $params{'debugLevel'} ) {
 		print STDERR '[', $function_name, '()] ', $message, "\n";
 	}
+}
+
+=head2 from_wsdl()
+
+Extract the service namespace and endpoint from the service WSDL document.
+
+  my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
+
+=cut
+
+sub from_wsdl($) {
+	&print_debug_message( 'from_wsdl', 'Begin', 1 );
+	my (@retVal) = ();
+	my $wsdlStr = get($WSDL);
+	if ( $wsdlStr =~ m/<(\w+:)address\s+location=["']([^'"]+)['"]/ ) {
+		push( @retVal, $2 );
+	}
+	if ( $wsdlStr =~
+		m/<(\w+:)definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+	{
+		push( @retVal, $2 );
+	}
+	&print_debug_message( 'from_wsdl', 'End', 1 );
+	return @retVal;
 }
 
 =head2 print_tool_params()
@@ -520,31 +569,33 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 sub multi_submit_job() {
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
 	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if(defined($params{'outfile'}));
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 	my (@filename_list) = ();
+
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			push (@filename_list, $ARGV[0] );
+			push( @filename_list, $ARGV[0] );
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			push(@filename_list, $params{'sequence'} );
+			push( @filename_list, $params{'sequence'} );
 		}
 	}
-	
+
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open(INFILE, "<$filename") or die "Error: unable to open file $filename ($!)";
-		while(<INFILE>) {
+		open( INFILE, "<$filename" )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
-			if($seq =~ m/\w+/) {
+			if ( $seq =~ m/\w+/ ) {
 				$seq = '>' . $seq;
-				&print_debug_message('multi_submit_job', $seq, 11);
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				&submit_job($seq);
-				$params{'outfile'} = undef if($jobIdForFilename == 1);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 			}
 		}
 		close INFILE;
@@ -562,25 +613,29 @@ input.
 =cut
 
 sub list_file_submit_job($) {
-	my $filename = shift;
+	my $filename         = shift;
 	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if(defined($params{'outfile'}));
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
 	# Iterate over identifiers, submitting each job
-	open(LISTFILE, "<$filename") or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
-	while(<LISTFILE>) {
+	open( LISTFILE, "<$filename" )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<LISTFILE>) {
 		my $line = $_;
 		chomp($line);
-		if($line ne '') {
-			&print_debug_message('list_file_submit_job', 'line: ' . $line, 2);
-			if($line =~ m/\w:\w/) { # Check this is an identifier
-				print STDERR  "Submitting job for: $line\n" if ( $outputLevel > 0 );
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
 				&submit_job($line);
 			}
 			else {
-				print STDERR "Warning: line \"$line\" is not recognised as an identifier\n";
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
 			}
 		}
-		$params{'outfile'} = undef if($jobIdForFilename == 1);
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 	}
 	close LISTFILE;
 }
@@ -597,6 +652,7 @@ command-line option.
 sub load_data() {
 	print_debug_message( 'load_data', 'Begin', 1 );
 	my $retSeq;
+
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
@@ -662,7 +718,7 @@ sub client_poll($) {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -727,8 +783,7 @@ sub get_results($) {
 			}
 			if ( defined($selResultType) ) {
 				my $result =
-				  soap_get_result( $jobid,
-					$selResultType->{'identifier'} );
+				  soap_get_result( $jobid, $selResultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
 				}
@@ -754,8 +809,7 @@ sub get_results($) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
 				  if ( $outputLevel > 1 );
 				my $result =
-				  soap_get_result( $jobid,
-					$resultType->{'identifier'} );
+				  soap_get_result( $jobid, $resultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
 				}
