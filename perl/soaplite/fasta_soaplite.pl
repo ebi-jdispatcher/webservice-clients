@@ -1,33 +1,64 @@
 #!/usr/bin/env perl
-# $Id$
-# ======================================================================
-# FASTA SOAP web service Perl client
-#
-# Tested with:
-#   SOAP::Lite 0.60 and Perl 5.8.3
-#   SOAP::Lite 0.69 and Perl 5.8.8
-#   SOAP::Lite 0.71 and Perl 5.8.8
-#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
-#
-# See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
-# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
-# ======================================================================
-# WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl';
-my $NAMESPACE = 'http://soap.jdispatcher.ebi.ac.uk/';
-my $ENDPOINT  = 'http://www.ebi.ac.uk/Tools/services/soap/fasta';
 
+=head1 NAME
+
+fasta_soaplite.pl
+
+=head1 DESCRIPTION
+
+FASTA SOAP web service Perl client using L<SOAP::Lite>.
+
+Tested with:
+
+=over
+
+=item *
+L<SOAP::Lite> 0.60 and Perl 5.8.3
+
+=item *
+L<SOAP::Lite> 0.69 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.71 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+
+=back
+
+For further information see:
+
+=over
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap>
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+
+=back
+
+=head1 VERSION
+
+$Id$
+
+=cut
+
+# ======================================================================
 # Enable Perl warnings
 use strict;
 use warnings;
 
 # Load libraries
 use SOAP::Lite;
+use LWP::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
 use Data::Dumper;
+
+# WSDL URL for service
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -40,15 +71,13 @@ my $numOpts = scalar(@ARGV);
 my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
-my %tool_params = (
-	'stype' => 'protein'
-);
+my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'program=s'      => \$tool_params{'program'},    # Program to use
-	'database=s'     => \$params{'database'},   # Database to search
-	'stype=s'        => \$tool_params{'stype'},      # Molecule type (DNA, RNA or Protein)
+	'program=s'  => \$tool_params{'program'},    # Program to use
+	'database=s' => \$params{'database'},        # Database to search
+	'stype=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
 	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
 	'rna|r'          => \$params{'rna'},             # Force query to be RNA
@@ -67,7 +96,8 @@ GetOptions(
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
-	'sequence=s'     => \$params{'sequence'},        # Query sequence file or DB:ID
+	'sequence=s' => \$params{'sequence'},      # Query sequence file or DB:ID
+	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -86,10 +116,20 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'trace'         => \$params{'trace'},          # SOAP message debug
-	'endpoint=s'    => \$ENDPOINT,                 # SOAP service endpoint
+	'endpoint=s'    => \$params{'endpoint'},       # SOAP service endpoint
+	'namespace=s'   => \$params{'namespace'},      # SOAP service namespace
+	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
+
+# Debug mode: SOAP::Lite version
+&print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
+	1 );
+
+# Debug mode: print the input parameters
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
+&print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
 
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
@@ -106,15 +146,28 @@ if ( $params{'trace'} ) {
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
-# In debug mode show the service endpoint being used.
-&print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 1 );
+
+# For a document/literal service which has types with repeating elements
+# namespace and endpoint need to be used instead of the WSDL. By default
+# these are extracted from the WSDL.
+my ( $serviceEndpoint, $serviceNamespace ) = &from_wsdl($WSDL);
+
+# User specified endpoint and namespace
+$serviceEndpoint  = $params{'endpoint'}  if ( $params{'endpoint'} );
+$serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
+
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'endpoint: ' . $serviceEndpoint,   11 );
+&print_debug_message( 'MAIN', 'namespace: ' . $serviceNamespace, 11 );
 
 # Create the service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
-	$ENDPOINT,
+	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
 	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
-  )->uri($NAMESPACE)->on_fault(
+  )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
 	sub {
@@ -176,21 +229,60 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	&submit_job();
+
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
+
+=head1 FUNCTIONS
+
+=cut
 
 ### Wrappers for SOAP operations ###
 
-# Get list of tool parameters
-sub soap_get_parameters() {
+=head2 soap_get_parameters()
+
+Get a list of tool parameter names.
+
+  my (@param_name_list) = &soap_get_parameters();
+
+=cut
+
+sub soap_get_parameters {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $ret = $soap->getParameters(undef);
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return $ret->valueof('//parameters/id');
 }
 
-# Get details of a tool parameter
-sub soap_get_parameter_details($$) {
+=head2 soap_get_parameter_details();
+
+Get detailed information about a tool parameter. Includes a description 
+suitable for use in user help, and details of valid values. 
+
+  my $paramDetail = &soap_get_parameter_details($paramName);
+
+=cut
+
+sub soap_get_parameter_details {
 	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
 	print_debug_message( 'soap_get_parameter_details',
@@ -205,8 +297,15 @@ sub soap_get_parameter_details($$) {
 	return $paramDetail;
 }
 
-# Submit a job
-sub soap_run($$$) {
+=head2 soap_run()
+
+Submit a job to the service.
+
+  my $job_id = &soap_run($email, $title, \%params);
+
+=cut
+
+sub soap_run {
 	print_debug_message( 'soap_run', 'Begin', 1 );
 	my $email  = shift;
 	my $title  = shift;
@@ -234,8 +333,15 @@ sub soap_run($$$) {
 	return $ret->valueof('//jobId');
 }
 
-# Check the status of a job.
-sub soap_get_status($) {
+=head2 soap_get_status()
+
+Get the status of a submitted job.
+
+  my $status = &soap_get_status($job_id);
+
+=cut
+
+sub soap_get_status {
 	print_debug_message( 'soap_get_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
@@ -247,8 +353,15 @@ sub soap_get_status($) {
 	return $status_str;
 }
 
-# Get list of result types for finished job
-sub soap_get_result_types($) {
+=head2 soap_get_result_types()
+
+Get list of available result types for a finished job.
+
+  my (@resultTypes) = soap_get_result_types($job_id);
+
+=cut
+
+sub soap_get_result_types {
 	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
@@ -261,28 +374,42 @@ sub soap_get_result_types($) {
 	return (@resultTypes);
 }
 
-# Get result data of a specified type for a finished job
-sub soap_get_raw_result_output($$) {
-	print_debug_message( 'soap_get_raw_result_output', 'Begin', 1 );
+=head2 soap_get_result()
+
+Get result data of a specified type for a finished job.
+
+  my $result = &soap_get_result($job_id, $result_type);
+
+=cut
+
+sub soap_get_result {
+	print_debug_message( 'soap_get_result', 'Begin', 1 );
 	my $jobid = shift;
 	my $type  = shift;
-	print_debug_message( 'soap_get_raw_result_output', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'type: ' . $type,   1 );
+	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'soap_get_result', 'type: ' . $type,   1 );
 	my $res = $soap->getResult(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
 		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } )
 	);
 	my $result = decode_base64( $res->valueof('//output') );
-	print_debug_message( 'soap_get_raw_result_output',
-		length($result) . ' characters', 1 );
-	print_debug_message( 'soap_get_raw_result_output', 'End', 1 );
+	print_debug_message( 'soap_get_result', length($result) . ' characters',
+		1 );
+	print_debug_message( 'soap_get_result', 'End', 1 );
 	return $result;
 }
 
 ### Service actions and utility functions ###
 
-# Print debug message
-sub print_debug_message($$$) {
+=head2 print_debug_message()
+
+Print a debug message at the specified debug level.
+
+  &print_debug_message($function_name, $message, $level);
+
+=cut
+
+sub print_debug_message {
 	my $function_name = shift;
 	my $message       = shift;
 	my $level         = shift;
@@ -291,8 +418,39 @@ sub print_debug_message($$$) {
 	}
 }
 
-# Print list of tool parameters
-sub print_tool_params() {
+=head2 from_wsdl()
+
+Extract the service namespace and endpoint from the service WSDL document.
+
+  my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
+
+=cut
+
+sub from_wsdl {
+	&print_debug_message( 'from_wsdl', 'Begin', 1 );
+	my (@retVal) = ();
+	my $wsdlStr = get($WSDL);
+	if ( $wsdlStr =~ m/<(\w+:)address\s+location=["']([^'"]+)['"]/ ) {
+		push( @retVal, $2 );
+	}
+	if ( $wsdlStr =~
+		m/<(\w+:)definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+	{
+		push( @retVal, $2 );
+	}
+	&print_debug_message( 'from_wsdl', 'End', 1 );
+	return @retVal;
+}
+
+=head2 print_tool_params()
+
+Print the list of tool parameter names.
+
+  &print_tool_params();
+
+=cut
+
+sub print_tool_params {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
 	my (@paramList) = &soap_get_parameters();
 	foreach my $param (@paramList) {
@@ -301,8 +459,15 @@ sub print_tool_params() {
 	print_debug_message( 'print_tool_params', 'End', 1 );
 }
 
-# Print details of a tool parameter
-sub print_param_details($) {
+=head2 print_param_details()
+
+Print detail information about a tool parameter.
+
+  &print_param_details($param_name);
+
+=cut
+
+sub print_param_details {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
@@ -320,8 +485,15 @@ sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
 
-# Print status of a job
-sub print_job_status($) {
+=head2  print_job_status()
+
+Print the status of a submitted job.
+
+  &print_job_status($job_id);
+
+=cut
+
+sub print_job_status {
 	print_debug_message( 'print_job_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'print_job_status', 'jobid: ' . $jobid, 1 );
@@ -337,11 +509,18 @@ sub print_job_status($) {
 	print_debug_message( 'print_job_status', 'End', 1 );
 }
 
-# Print available result types for a job
-sub print_result_types($) {
-	print_debug_message( 'result_types', 'Begin', 1 );
+=head2 print_result_types()
+
+Print available result types for a finished job.
+
+  &print_result_types($job_id);
+
+=cut
+
+sub print_result_types {
+	print_debug_message( 'print_result_types', 'Begin', 1 );
 	my $jobid = shift;
-	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'print_result_types', 'jobid: ' . $jobid, 1 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting result types for job ', $jobid, "\n";
 	}
@@ -377,15 +556,22 @@ sub print_result_types($) {
 			  . $params{'jobid'} . "\n";
 		}
 	}
-	print_debug_message( 'result_types', 'End', 1 );
+	print_debug_message( 'print_result_types', 'End', 1 );
 }
 
-# Submit a job
-sub submit_job() {
+=head2 submit_job()
+
+Submit a job to the service.
+
+  &submit_job($seq);
+
+=cut
+
+sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
-	# Load the sequence data
-	&load_data();
+	# Set input sequence
+	$tool_params{'sequence'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -411,32 +597,134 @@ sub submit_job() {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
-# Load sequence data
-sub load_data() {
-	print_debug_message( 'load_data', 'Begin', 1 );
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
 
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $ARGV[0] );
-		}
-		else {                                     # DB:ID or sequence
-			$tool_params{'sequence'} = $ARGV[0];
+			push( @filename_list, $ARGV[0] );
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $params{'sequence'} );
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/\w+/ ) {
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	open( my $LISTFILE, '<', $filename )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
+}
+
+=head2 load_data()
+
+Load sequence data, from file or direct specification of input data with 
+command-line option.
+
+  my $data = load_data();
+
+=cut
+
+sub load_data {
+	print_debug_message( 'load_data', 'Begin', 1 );
+	my $retSeq;
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			$retSeq = &read_file( $ARGV[0] );
+		}
+		else {                                     # DB:ID or sequence
+			$retSeq = $ARGV[0];
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			$retSeq = &read_file( $params{'sequence'} );
 		}
 		else {    # DB:ID or sequence
-			$tool_params{'sequence'} = $params{'sequence'};
+			$retSeq = $params{'sequence'};
 		}
 	}
 	print_debug_message( 'load_data', 'End', 1 );
+	return $retSeq;
 }
 
-# Load job parameters
-sub load_params() {
+=head2 load_params()
+
+Load job parameters into input structure.
+
+Since most of the loading is done when processing the command-line options, 
+this function only provides additional processing required from some options.
+
+  &load_params();
+
+=cut
+
+sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
 	# Database(s) to search
@@ -451,13 +739,20 @@ sub load_params() {
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
-# Client-side job polling
-sub client_poll($) {
+=head2 client_poll()
+
+Client-side job polling.
+
+  my $status = &client_poll($job_id);
+
+=cut
+
+sub client_poll {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -484,8 +779,15 @@ sub client_poll($) {
 	return $status;
 }
 
-# Get the results for a jobid
-sub get_results($) {
+=head2 get_results()
+
+Get the results for a jobid.
+
+  &get_results($job_id);
+
+=cut
+
+sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
@@ -515,8 +817,7 @@ sub get_results($) {
 			}
 			if ( defined($selResultType) ) {
 				my $result =
-				  soap_get_raw_result_output( $jobid,
-					$selResultType->{'identifier'} );
+				  soap_get_result( $jobid, $selResultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
 				}
@@ -542,8 +843,7 @@ sub get_results($) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
 				  if ( $outputLevel > 1 );
 				my $result =
-				  soap_get_raw_result_output( $jobid,
-					$resultType->{'identifier'} );
+				  soap_get_result( $jobid, $resultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
 					write_file( $params{'outfile'}, $result );
 				}
@@ -564,8 +864,16 @@ sub get_results($) {
 	print_debug_message( 'get_results', 'End', 1 );
 }
 
-# Read a file
-sub read_file($) {
+=head2 read_file()
+
+Read all data from a file. The special filename '-' can be used to read from 
+standard input.
+
+  my $data = &read_file($filename);
+
+=cut
+
+sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
 	my ( $content, $buffer );
@@ -575,19 +883,27 @@ sub read_file($) {
 		}
 	}
 	else {    # File
-		open( FILE, $filename )
+		open( my $FILE, '<', $filename )
 		  or die "Error: unable to open input file $filename ($!)";
-		while ( sysread( FILE, $buffer, 1024 ) ) {
+		while ( sysread( $FILE, $buffer, 1024 ) ) {
 			$content .= $buffer;
 		}
-		close(FILE);
+		close($FILE);
 	}
 	print_debug_message( 'read_file', 'End', 1 );
 	return $content;
 }
 
-# Write a result file
-sub write_file($$) {
+=head2 write_file()
+
+Write data to a file. The special filename '-' can be used to write to 
+standard output.
+
+  &write_file($filename, $data);
+
+=cut
+
+sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
@@ -597,15 +913,22 @@ sub write_file($$) {
 		print STDOUT $data;
 	}
 	else {
-		open( FILE, ">$filename" )
+		open( my $FILE, '>', $filename )
 		  or die "Error: unable to open output file $filename ($!)";
-		syswrite( FILE, $data );
-		close(FILE);
+		syswrite( $FILE, $data );
+		close($FILE);
 	}
 	print_debug_message( 'write_file', 'End', 1 );
 }
 
-# Print program usage
+=head2 usage()
+
+Print program usage.
+
+  &usage();
+
+=cut
+
 sub usage {
 	print STDERR <<EOF
 FASTA
@@ -615,52 +938,54 @@ Fast protein comparison or fast nucleotide comparison
 
 [Required]
 
-      --program	    : str  : FASTA program to use, see --paramDetail program
-      --database    : str  : database(s) to search, space separated. See
-                             --paramDetail database
-      --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN)
+      --program      : str  : FASTA program to use, see --paramDetail program
+      --database     : str  : database(s) to search, space separated. See
+                              --paramDetail database
+      --stype        : str  : query sequence type, see --paramDetail stype
+  seqFile            : file : query sequence ("-" for STDIN, \@filename for
+                              identifier list file)
 
 [Optional]
 
-  -f, --gapopen	      : int  : penalty for gap opening
-  -g, --gapext	      : int  : penalty for additional residues in a gap
-  -b, --scores	      : int  : maximum number of scores
-  -d, --alignments    : int  : maximum number of alignments
-  -k, --ktup	      : int  : word size (DNA 1-6, Protein 1-2)
-  -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -E, --eupper	      : real : E-value upper limit for hit display
-  -F, --elower	      : real : E-value lower limit for hit display
-  -H, --histogram     :      : turn off histogram display
-  -n, --nucleotide    :      : force query to nucleotide sequence
-  -3, --topstrand     :      : use only forward frame translations (DNA only)
-  -i, --bottomstrand  :      : reverse complement query sequence (DNA only)
-      --filter        : str  : filter the query sequence for low complexity 
-                               regions, see --paramDetail filter
-  -z, --stats         : int  : statistical model, see --getStats
-  -R, --dbrange	      : str  : search database sequence within length range
-  -S, --seqrange      : str  : search with specified region of query sequence
+  -f, --gapopen      : int  : penalty for gap opening
+  -g, --gapext       : int  : penalty for additional residues in a gap
+  -b, --scores       : int  : maximum number of scores
+  -d, --alignments   : int  : maximum number of alignments
+  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)
+  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -E, --eupper       : real : E-value upper limit for hit display
+  -F, --elower       : real : E-value lower limit for hit display
+  -H, --histogram    :      : turn off histogram display
+  -n, --nucleotide   :      : force query to nucleotide sequence
+  -3, --topstrand    :      : use only forward frame translations (DNA only)
+  -i, --bottomstrand :      : reverse complement query sequence (DNA only)
+      --filter       : str  : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -z, --stats        : int  : statistical model, see --getStats
+  -R, --dbrange      : str  : search database sequence within length range
+  -S, --seqrange     : str  : search with specified region of query sequence
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
 
-  -h, --help        :      : prints this help text
-      --async       :      : forces to make an asynchronous query
-      --email	    : str  : e-mail address
-      --title       : str  : title for job
-      --status      :      : get job status
-      --resultTypes :      : get available result types for job
-      --polljob     :      : poll for the status of a job
-      --jobid       : str  : jobid that was returned when an asynchronous job 
-                             was submitted.
-      --outfile     : str  : file name for results (default is jobid;
-                             "-" for STDOUT)
-      --outformat   : str  : result format to retrieve
-      --params      :      : list input parameters
-      --paramDetail : str  : display details for input parameter
-      --quiet       :      : decrease output
-      --verbose     :      : increase output
-      --trace	    :      : show SOAP messages being interchanged 
-   
+  -h, --help         :      : prints this help text
+      --async        :      : forces to make an asynchronous query
+      --email        : str  : e-mail address
+      --title        : str  : title for job
+      --status       :      : get job status
+      --resultTypes  :      : get available result types for job
+      --polljob      :      : poll for the status of a job
+      --jobid        : str  : jobid that was returned when an asynchronous job 
+                              was submitted.
+      --outfile      : str  : file name for results (default is jobid;
+                              "-" for STDOUT)
+      --outformat    : str  : result format to retrieve
+      --params       :      : list input parameters
+      --paramDetail  : str  : display details for input parameter
+      --quiet        :      : decrease output
+      --verbose      :      : increase output
+      --trace        :      : show SOAP messages being interchanged 
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -682,7 +1007,18 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+
+Support/Feedback:
+
+  http://www.ebi.ac.uk/support/
 EOF
 }
+
+=head1 FEEDBACK/SUPPORT
+
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+feedback, suggestions or issues with the service or this client.
+
+=cut

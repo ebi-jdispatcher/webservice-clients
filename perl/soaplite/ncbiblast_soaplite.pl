@@ -1,21 +1,50 @@
 #!/usr/bin/env perl
-# $Id$
-# ======================================================================
-# NCBI BLAST SOAP web service Perl client
-#
-# Tested with:
-#   SOAP::Lite 0.60 and Perl 5.8.3
-#   SOAP::Lite 0.69 and Perl 5.8.8
-#   SOAP::Lite 0.71 and Perl 5.8.8
-#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
-#
-# See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
-# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
-# ======================================================================
-# WSDL URL for service
-my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
 
+=head1 NAME
+
+ncbiblast_soaplite.pl
+
+=head1 DESCRIPTION
+
+NCBI BLAST SOAP web service Perl client using L<SOAP::Lite>.
+
+Tested with:
+
+=over
+
+=item *
+L<SOAP::Lite> 0.60 and Perl 5.8.3
+
+=item *
+L<SOAP::Lite> 0.69 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.71 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+
+=back
+
+For further information see:
+
+=over
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap>
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+
+=back
+
+=head1 VERSION
+
+$Id$
+
+=cut
+
+# ======================================================================
 # Enable Perl warnings
 use strict;
 use warnings;
@@ -28,6 +57,9 @@ use File::Basename;
 use MIME::Base64;
 use Data::Dumper;
 
+# WSDL URL for service
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
+
 # Set interval for checking status
 my $checkInterval = 3;
 
@@ -36,7 +68,7 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params  = ( 'debugLevel' => 0 );
+my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
@@ -216,6 +248,10 @@ else {
 	}
 }
 
+=head1 FUNCTIONS
+
+=cut
+
 ### Wrappers for SOAP operations ###
 
 =head2 soap_get_parameters()
@@ -226,7 +262,7 @@ Get a list of tool parameter names.
 
 =cut
 
-sub soap_get_parameters() {
+sub soap_get_parameters {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
 	my $ret = $soap->getParameters(undef);
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
@@ -242,13 +278,12 @@ suitable for use in user help, and details of valid values.
 
 =cut
 
-sub soap_get_parameter_details($) {
+sub soap_get_parameter_details {
 	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
 	print_debug_message( 'soap_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret =
-	  $soap->getParameterDetails(
+	my $ret = $soap->getParameterDetails(
 		SOAP::Data->name( 'parameterId' => $parameterId )
 		  ->attr( { 'xmlns' => '' } ) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
@@ -266,7 +301,7 @@ Submit a job to the service.
 
 =cut
 
-sub soap_run($$$) {
+sub soap_run {
 	print_debug_message( 'soap_run', 'Begin', 1 );
 	my $email  = shift;
 	my $title  = shift;
@@ -279,7 +314,8 @@ sub soap_run($$$) {
 	my (@paramsList) = ();
 	foreach my $key ( keys(%$params) ) {
 		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
-			push @paramsList, SOAP::Data->name( $key => $params->{$key} )
+			push @paramsList,
+			  SOAP::Data->name( $key => $params->{$key} )
 			  ->attr( { 'xmlns' => '' } );
 		}
 	}
@@ -301,12 +337,11 @@ Get the status of a submitted job.
 
 =cut
 
-sub soap_get_status($) {
+sub soap_get_status {
 	print_debug_message( 'soap_get_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
-	my $res =
-	  $soap->getStatus(
+	my $res = $soap->getStatus(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
 	my $status_str = $res->valueof('//status');
 	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
@@ -318,14 +353,15 @@ sub soap_get_status($) {
 
 Get list of available result types for a finished job.
 
+  my (@resultTypes) = soap_get_result_types($job_id);
+
 =cut
 
-sub soap_get_result_types($) {
+sub soap_get_result_types {
 	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
-	my $resultTypesXml =
-	  $soap->getResultTypes(
+	my $resultTypesXml = $soap->getResultTypes(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
 	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
 	print_debug_message( 'soap_get_result_types',
@@ -342,7 +378,7 @@ Get result data of a specified type for a finished job.
 
 =cut
 
-sub soap_get_result($$) {
+sub soap_get_result {
 	print_debug_message( 'soap_get_result', 'Begin', 1 );
 	my $jobid = shift;
 	my $type  = shift;
@@ -369,7 +405,7 @@ Print a debug message at the specified debug level.
 
 =cut
 
-sub print_debug_message($$$) {
+sub print_debug_message {
 	my $function_name = shift;
 	my $message       = shift;
 	my $level         = shift;
@@ -386,7 +422,7 @@ Extract the service namespace and endpoint from the service WSDL document.
 
 =cut
 
-sub from_wsdl($) {
+sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
 	my $wsdlStr = get($WSDL);
@@ -410,7 +446,7 @@ Print the list of tool parameter names.
 
 =cut
 
-sub print_tool_params() {
+sub print_tool_params {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
 	my (@paramList) = &soap_get_parameters();
 	foreach my $param (@paramList) {
@@ -427,7 +463,7 @@ Print detail information about a tool parameter.
 
 =cut
 
-sub print_param_details($) {
+sub print_param_details {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
@@ -453,7 +489,7 @@ Print the status of a submitted job.
 
 =cut
 
-sub print_job_status($) {
+sub print_job_status {
 	print_debug_message( 'print_job_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'print_job_status', 'jobid: ' . $jobid, 1 );
@@ -477,7 +513,7 @@ Print available result types for a finished job.
 
 =cut
 
-sub print_result_types($) {
+sub print_result_types {
 	print_debug_message( 'print_result_types', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'print_result_types', 'jobid: ' . $jobid, 1 );
@@ -527,7 +563,7 @@ Submit a job to the service.
 
 =cut
 
-sub submit_job($) {
+sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
 	# Set input sequence
@@ -565,7 +601,7 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 
 =cut
 
-sub multi_submit_job() {
+sub multi_submit_job {
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
 	my $jobIdForFilename = 1;
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
@@ -585,9 +621,9 @@ sub multi_submit_job() {
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( INFILE, "<$filename" )
+		open( my $INFILE, '<', $filename )
 		  or die "Error: unable to open file $filename ($!)";
-		while (<INFILE>) {
+		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
 			if ( $seq =~ m/\w+/ ) {
@@ -597,7 +633,7 @@ sub multi_submit_job() {
 				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 			}
 		}
-		close INFILE;
+		close $INFILE;
 	}
 	print_debug_message( 'multi_submit_job', 'End', 1 );
 }
@@ -611,15 +647,15 @@ input.
 
 =cut
 
-sub list_file_submit_job($) {
+sub list_file_submit_job {
 	my $filename         = shift;
 	my $jobIdForFilename = 1;
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( LISTFILE, "<$filename" )
+	open( my $LISTFILE, '<', $filename )
 	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
-	while (<LISTFILE>) {
+	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
 		if ( $line ne '' ) {
@@ -636,7 +672,7 @@ sub list_file_submit_job($) {
 		}
 		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 	}
-	close LISTFILE;
+	close $LISTFILE;
 }
 
 =head2 load_data()
@@ -648,7 +684,7 @@ command-line option.
 
 =cut
 
-sub load_data() {
+sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
 	my $retSeq;
 
@@ -684,7 +720,7 @@ this function only provides additional processing required from some options.
 
 =cut
 
-sub load_params() {
+sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
 	# Database(s) to search
@@ -712,7 +748,7 @@ Client-side job polling.
 
 =cut
 
-sub client_poll($) {
+sub client_poll {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
 	my $status = 'PENDING';
@@ -752,7 +788,7 @@ Get the results for a jobid.
 
 =cut
 
-sub get_results($) {
+sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
@@ -838,7 +874,7 @@ standard input.
 
 =cut
 
-sub read_file($) {
+sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
 	my ( $content, $buffer );
@@ -848,12 +884,12 @@ sub read_file($) {
 		}
 	}
 	else {    # File
-		open( FILE, $filename )
+		open( my $FILE, '<', $filename )
 		  or die "Error: unable to open input file $filename ($!)";
-		while ( sysread( FILE, $buffer, 1024 ) ) {
+		while ( sysread( $FILE, $buffer, 1024 ) ) {
 			$content .= $buffer;
 		}
-		close(FILE);
+		close($FILE);
 	}
 	print_debug_message( 'read_file', 'End', 1 );
 	return $content;
@@ -868,7 +904,7 @@ standard output.
 
 =cut
 
-sub write_file($$) {
+sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
@@ -878,10 +914,10 @@ sub write_file($$) {
 		print STDOUT $data;
 	}
 	else {
-		open( FILE, ">$filename" )
+		open( my $FILE, '>', $filename )
 		  or die "Error: unable to open output file $filename ($!)";
-		syswrite( FILE, $data );
-		close(FILE);
+		syswrite( $FILE, $data );
+		close($FILE);
 	}
 	print_debug_message( 'write_file', 'End', 1 );
 }
@@ -903,52 +939,52 @@ Rapid sequence database search programs utilizing the BLAST algorithm
     
 [Required]
 
-  -p, --program	    : str  : BLAST program to use, see --paramDetail program
-  -D, --database    : str  : database(s) to search, space separated. See
-                             --paramDetail database
-      --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN, \@filename for
-                             identifier list file)
+  -p, --program      : str  : BLAST program to use, see --paramDetail program
+  -D, --database     : str  : database(s) to search, space separated. See
+                              --paramDetail database
+      --stype        : str  : query sequence type, see --paramDetail stype
+  seqFile            : file : query sequence ("-" for STDIN, \@filename for
+                              identifier list file)
 
 [Optional]
 
-  -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
-  -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
-                             for reporting database sequence matches.
-  -f, --filter	    :      : filter the query sequence for low complexity 
-                             regions, see --paramDetail filter
-  -A, --align	    : int  : pairwise alignment format, see --paramDetail align
-  -s, --scores	    : int  : number of scores to be reported
-  -n, --alignments  : int  : number of alignments to report
-  -u, --match       : int  : Match score (BLASTN only)
-  -v, --mismatch    : int  : Mismatch score (BLASTN only)
-  -o, --gapopen	    : int  : Gap open penalty
-  -x, --gapext      : int  : Gap extension penalty
-  -d, --dropoff	    : int  : Drop-off
-  -g, --gapalign    :      : Optimise gapped alignments
-      --seqrange    : str  : region within input to use as query
-      --multifasta  :      : treat input as a set of fasta formatted sequences
+  -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -e, --exp          : real : 0<E<= 1000. Statistical significance threshold 
+                              for reporting database sequence matches.
+  -f, --filter       :      : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -A, --align        : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores       : int  : number of scores to be reported
+  -n, --alignments   : int  : number of alignments to report
+  -u, --match        : int  : Match score (BLASTN only)
+  -v, --mismatch     : int  : Mismatch score (BLASTN only)
+  -o, --gapopen      : int  : Gap open penalty
+  -x, --gapext       : int  : Gap extension penalty
+  -d, --dropoff      : int  : Drop-off
+  -g, --gapalign     :      : Optimise gapped alignments
+      --seqrange     : str  : region within input to use as query
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
 
-  -h, --help        :      : prints this help text
-      --async       :      : forces to make an asynchronous query
-      --email	    : str  : e-mail address
-      --title       : str  : title for job
-      --status      :      : get job status
-      --resultTypes :      : get available result types for job
-      --polljob     :      : poll for the status of a job
-      --jobid       : str  : jobid that was returned when an asynchronous job 
-                             was submitted.
-      --outfile     : str  : file name for results (default is jobid;
-                             "-" for STDOUT)
-      --outformat   : str  : result format to retrieve
-      --params      :      : list input parameters
-      --paramDetail : str  : display details for input parameter
-      --quiet       :      : decrease output
-      --verbose     :      : increase output
-      --trace	    :      : show SOAP messages being interchanged 
-   
+  -h, --help         :      : prints this help text
+      --async        :      : forces to make an asynchronous query
+      --email        : str  : e-mail address
+      --title        : str  : title for job
+      --status       :      : get job status
+      --resultTypes  :      : get available result types for job
+      --polljob      :      : poll for the status of a job
+      --jobid        : str  : jobid that was returned when an asynchronous job 
+                              was submitted.
+      --outfile      : str  : file name for results (default is jobid;
+                              "-" for STDOUT)
+      --outformat    : str  : result format to retrieve
+      --params       :      : list input parameters
+      --paramDetail  : str  : display details for input parameter
+      --quiet        :      : decrease output
+      --verbose      :      : increase output
+      --trace        :      : show SOAP messages being interchanged 
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -972,5 +1008,16 @@ Further information:
 
   http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+
+Support/Feedback:
+
+  http://www.ebi.ac.uk/support/
 EOF
 }
+
+=head1 FEEDBACK/SUPPORT
+
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+feedback, suggestions or issues with the service or this client.
+
+=cut
