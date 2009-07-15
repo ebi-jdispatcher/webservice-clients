@@ -1,20 +1,47 @@
 #!/usr/bin/env perl
-# $Id$
-# ======================================================================
-# NCBI BLAST REST web service Perl client
-#
-# Tested with:
-#   LWP 5.79, XML::Simple 2.12 and Perl 5.8.3
-#   LWP 5.805, XML::Simple 2.14 and Perl 5.8.7
-#   LWP 5.820, XML::Simple 2.18 and Perl 5.10.0 (Ubuntu 9.04)
-#
-# See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
-# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
-# ======================================================================
-# Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
 
+=head1 NAME
+
+ncbiblast_lwp.pl
+
+=head1 DESCRIPTION
+
+NCBI BLAST REST web service Perl client using L<LWP>.
+
+Tested with:
+
+=over
+
+=item *
+L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
+
+=item *
+L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
+
+=item *
+L<LWP> 5.820, L<XML::Simple> 2.18 and Perl 5.10.0 (Ubuntu 9.04)
+
+=back
+
+For further information see:
+
+=over
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest>
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+
+=back
+
+=head1 VERSION
+
+$Id$
+
+=cut
+
+# ======================================================================
 # Enable Perl warnings
 use strict;
 use warnings;
@@ -26,6 +53,9 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
 
+# Base URL for service
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
+
 # Set interval for checking status
 my $checkInterval = 3;
 
@@ -34,22 +64,20 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params  = ( 'debugLevel' => 0 );
+my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
-my %tool_params = (
-	'stype'      => 'protein',
-);
+my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	"program|p=s"    => \$tool_params{'program'},      # blastp, blastn, blastx, etc.
-	"database|D=s"   => \$params{'database'},          # Database(s) to search
-	"matrix|m=s"     => \$tool_params{'matrix'},       # Scoring martix to use
-	"exp|E=f"        => \$tool_params{'exp'},          # E-value threshold
-	"filter|f"       => \$tool_params{'filter'},       # Low complexity filter
-	"align|A=i"      => \$tool_params{'align'},        # Pairwise alignment format
-	"scores|s=i"     => \$tool_params{'scores'},       # Number of scores
+	"program|p=s"  => \$tool_params{'program'},   # blastp, blastn, blastx, etc.
+	"database|D=s" => \$params{'database'},       # Database(s) to search
+	"matrix|m=s"   => \$tool_params{'matrix'},    # Scoring martix to use
+	"exp|E=f"      => \$tool_params{'exp'},       # E-value threshold
+	"filter|f"     => \$tool_params{'filter'},    # Low complexity filter
+	"align|A=i"    => \$tool_params{'align'},     # Pairwise alignment format
+	"scores|s=i"   => \$tool_params{'scores'},    # Number of scores
 	"alignments|n=i" => \$tool_params{'alignments'},   # Number of alignments
 	"dropoff|d=i"    => \$tool_params{'dropoff'},      # Dropoff score
 	"match_scores=s" => \$tool_params{'match_scores'}, # Match/missmatch scores
@@ -58,9 +86,9 @@ GetOptions(
 	"gapopen|o=i"    => \$tool_params{'gapopen'},      # Open gap penalty
 	"gapext|x=i"     => \$tool_params{'gapext'},       # Gap extension penality
 	"gapalign|g"     => \$tool_params{'gapalign'},     # Optimise gap alignments
-	"stype=s"        => \$tool_params{'stype'},        # Sequence type 'protein' or 'dna'
-	"seqrange=s"     => \$tool_params{'seqrange'},     # Query subsequence to use
-	"sequence=s"     => \$params{'sequence'},          # Query sequence file or DB:ID
+	"stype=s" => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
+	"seqrange=s" => \$tool_params{'seqrange'},    # Query subsequence to use
+	"sequence=s" => \$params{'sequence'},         # Query sequence file or DB:ID
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -140,58 +168,91 @@ else {
 	&submit_job();
 }
 
+=head1 FUNCTIONS
+
+=cut
+
 ### Wrappers for REST resources ###
 
-# Perform a REST request
-#   my $response_str = &rest_request($url);
-sub rest_request($) {
+=head2 rest_request()
+
+Perform a REST request.
+
+  my $response_str = &rest_request($url);
+
+=cut
+
+sub rest_request {
 	print_debug_message( 'rest_request', 'Begin', 11 );
 	my $requestUrl = shift;
 	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
 	$ua->env_proxy;
+
 	# Perform the request
 	my $response = $ua->get($requestUrl);
-	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code, 11 );
+	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
+		11 );
+
 	# Check for HTTP error codes
-	if($response->is_error) {
-    	die 'http status: ' . $response->code . ' ' . $response->message;
+	if ( $response->is_error ) {
+		die 'http status: ' . $response->code . ' ' . $response->message;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
+
 	# Return the response data
 	return $response->content();
 }
 
-# Get list of tool parameters
-#   my (@param_list) = &rest_get_parameters();
-sub rest_get_parameters() {
+=head2 rest_get_parameters()
+
+Get list of tool parameter names.
+
+  my (@param_list) = &rest_get_parameters();
+
+=cut
+
+sub rest_get_parameters {
 	print_debug_message( 'rest_get_parameters', 'Begin', 1 );
-	my $url = $baseUrl . '/parameters/';
+	my $url                = $baseUrl . '/parameters/';
 	my $param_list_xml_str = rest_request($url);
-	my $param_list_xml = XMLin($param_list_xml_str);
-	my (@param_list) = @{$param_list_xml->{'id'}};
+	my $param_list_xml     = XMLin($param_list_xml_str);
+	my (@param_list)       = @{ $param_list_xml->{'id'} };
 	print_debug_message( 'rest_get_parameters', 'End', 1 );
-	return(@param_list);
+	return (@param_list);
 }
 
-# Get details of a tool parameter
-#   my $paramDetail = &rest_get_parameter_details($param_name);
-sub rest_get_parameter_details($) {
+=head2 rest_get_parameter_details()
+
+Get details of a tool parameter.
+
+  my $paramDetail = &rest_get_parameter_details($param_name);
+
+=cut
+
+sub rest_get_parameter_details {
 	print_debug_message( 'rest_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
 	print_debug_message( 'rest_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $url = $baseUrl . '/parameterdetails/' . $parameterId;
+	my $url                  = $baseUrl . '/parameterdetails/' . $parameterId;
 	my $param_detail_xml_str = rest_request($url);
-	my $param_detail_xml = XMLin($param_detail_xml_str);
+	my $param_detail_xml     = XMLin($param_detail_xml_str);
 	print_debug_message( 'rest_get_parameter_details', 'End', 1 );
-	return($param_detail_xml);
+	return ($param_detail_xml);
 }
 
-# Submit a job
-#   my $job_id = &rest_run($email, $title, \%params );
-sub rest_run($$$) {
+=head2 rest_run()
+
+Submit a job.
+
+  my $job_id = &rest_run($email, $title, \%params );
+
+=cut
+
+sub rest_run {
 	print_debug_message( 'rest_run', 'Begin', 1 );
 	my $email  = shift;
 	my $title  = shift;
@@ -201,84 +262,115 @@ sub rest_run($$$) {
 		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
 	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
+
 	# User agent to perform http requests
 	my $ua = LWP::UserAgent->new();
 	$ua->env_proxy;
+
 	# Clean up parameters
 	my (%tmp_params) = %{$params};
 	$tmp_params{'email'} = $email;
 	$tmp_params{'title'} = $title;
-	foreach my $param_name (keys(%tmp_params)) {
-		if(!defined($tmp_params{$param_name})) {
+	foreach my $param_name ( keys(%tmp_params) ) {
+		if ( !defined( $tmp_params{$param_name} ) ) {
 			delete $tmp_params{$param_name};
 		}
 	}
+
 	# Submit the job as a POST
 	my $url = $baseUrl . '/run';
-	my $response = $ua->post($url, \%tmp_params);
+	my $response = $ua->post( $url, \%tmp_params );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
-	print_debug_message( 'rest_run', 'request: ' . $response->request()->content(), 11 );
+	print_debug_message( 'rest_run',
+		'request: ' . $response->request()->content(), 11 );
+
 	# Check for HTTP error codes
-	if($response->is_error) {
-    	die 'http status: ' . $response->code . ' ' . $response->message;
+	if ( $response->is_error ) {
+		die 'http status: ' . $response->code . ' ' . $response->message;
 	}
+
 	# The job id is returned
 	my $job_id = $response->content();
 	print_debug_message( 'rest_run', 'End', 1 );
 	return $job_id;
 }
 
-# Check the status of a job.
-#   my $status = &rest_get_status($job_id);
-sub rest_get_status($) {
+=head2 rest_get_status()
+
+Check the status of a job.
+
+  my $status = &rest_get_status($job_id);
+
+=cut
+
+sub rest_get_status {
 	print_debug_message( 'rest_get_status', 'Begin', 1 );
 	my $job_id = shift;
 	print_debug_message( 'rest_get_status', 'jobid: ' . $job_id, 2 );
 	my $status_str = 'UNKNOWN';
-	my $url = $baseUrl . '/status/' . $job_id;
+	my $url        = $baseUrl . '/status/' . $job_id;
 	$status_str = &rest_request($url);
 	print_debug_message( 'rest_get_status', 'status_str: ' . $status_str, 2 );
 	print_debug_message( 'rest_get_status', 'End', 1 );
 	return $status_str;
 }
 
-# Get list of result types for finished job
-#   my (@resultTypes) = &rest_get_result_types($job_id);
-sub rest_get_result_types($) {
+=head2 rest_get_result_types()
+
+Get list of result types for finished job.
+
+  my (@result_types) = &rest_get_result_types($job_id);
+
+=cut
+
+sub rest_get_result_types {
 	print_debug_message( 'rest_get_result_types', 'Begin', 1 );
 	my $job_id = shift;
 	print_debug_message( 'rest_get_result_types', 'jobid: ' . $job_id, 2 );
 	my (@resultTypes);
-	my $url = $baseUrl . '/resulttypes/' . $job_id;
+	my $url                      = $baseUrl . '/resulttypes/' . $job_id;
 	my $result_type_list_xml_str = &rest_request($url);
-	my $result_type_list_xml = XMLin($result_type_list_xml_str);
-	(@resultTypes) = @{$result_type_list_xml->{'type'}};
+	my $result_type_list_xml     = XMLin($result_type_list_xml_str);
+	(@resultTypes) = @{ $result_type_list_xml->{'type'} };
 	print_debug_message( 'rest_get_result_types',
 		scalar(@resultTypes) . ' result types', 2 );
 	print_debug_message( 'rest_get_result_types', 'End', 1 );
 	return (@resultTypes);
 }
 
-# Get result data of a specified type for a finished job
-#   my $result = rest_get_raw_result_output($job_id, $type);
-sub rest_get_raw_result_output($$) {
-	print_debug_message( 'rest_get_raw_result_output', 'Begin', 1 );
+=head2 rest_get_result()
+
+Get result data of a specified type for a finished job.
+
+  my $result = rest_get_result($job_id, $result_type);
+
+=cut
+
+sub rest_get_result {
+	print_debug_message( 'rest_get_result', 'Begin', 1 );
 	my $job_id = shift;
-	my $type  = shift;
-	print_debug_message( 'rest_get_raw_result_output', 'jobid: ' . $job_id, 1 );
-	print_debug_message( 'rest_get_raw_result_output', 'type: ' . $type,   1 );
-	my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
+	my $type   = shift;
+	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id, 1 );
+	print_debug_message( 'rest_get_result', 'type: ' . $type,    1 );
+	my $url    = $baseUrl . '/result/' . $job_id . '/' . $type;
 	my $result = &rest_request($url);
-	print_debug_message( 'rest_get_raw_result_output',
-		length($result) . ' characters', 1 );
-	print_debug_message( 'rest_get_raw_result_output', 'End', 1 );
+	print_debug_message( 'rest_get_result', length($result) . ' characters',
+		1 );
+	print_debug_message( 'rest_get_result', 'End', 1 );
 	return $result;
 }
 
-###  ###
+### Service actions and utility functions ###
 
-# Print debug message
-sub print_debug_message($$$) {
+=head2 print_debug_message()
+
+Print debug message at specified debug level.
+
+  &print_debug_message($method_name, $message, $level);
+
+=cut
+
+sub print_debug_message {
 	my $function_name = shift;
 	my $message       = shift;
 	my $level         = shift;
@@ -287,27 +379,41 @@ sub print_debug_message($$$) {
 	}
 }
 
-# Print list of tool parameters
-sub print_tool_params() {
+=head2 print_tool_params()
+
+Print list of tool parameters.
+
+  &print_tool_params();
+
+=cut
+
+sub print_tool_params {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
 	my (@param_list) = &rest_get_parameters();
-	foreach my $param (sort(@param_list)) {
+	foreach my $param ( sort(@param_list) ) {
 		print $param, "\n";
 	}
 	print_debug_message( 'print_tool_params', 'End', 1 );
 }
 
-# Print details of a tool parameter
-sub print_param_details($) {
+=head2 print_param_details()
+
+Print details of a tool parameter.
+
+  &print_param_details($param_name);
+
+=cut
+
+sub print_param_details {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &rest_get_parameter_details($paramName );
+	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value (@{$paramDetail->{'values'}->{'value'}}) {
+	foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
 		print $value->{'value'};
-		if($value->{'defaultValue'} eq 'true') {
+		if ( $value->{'defaultValue'} eq 'true' ) {
 			print "\t", 'default';
 		}
 		print "\n";
@@ -316,8 +422,15 @@ sub print_param_details($) {
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
 
-# Print status of a job
-sub print_job_status($) {
+=head2 print_job_status()
+
+Print status of a job.
+
+  &print_job_status($job_id);
+
+=cut
+
+sub print_job_status {
 	print_debug_message( 'print_job_status', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'print_job_status', 'jobid: ' . $jobid, 1 );
@@ -333,8 +446,15 @@ sub print_job_status($) {
 	print_debug_message( 'print_job_status', 'End', 1 );
 }
 
-# Print available result types for a job
-sub print_result_types($) {
+=head2 print_result_types()
+
+Print available result types for a job.
+
+  &print_result_types($job_id);
+
+=cut
+
+sub print_result_types {
 	print_debug_message( 'result_types', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
@@ -353,17 +473,17 @@ sub print_result_types($) {
 		}
 		foreach my $resultType (@resultTypes) {
 			print STDOUT $resultType->{'identifier'}, "\n";
-			if(defined($resultType->{'label'})) {
-				print STDOUT "\t", $resultType->{'label'},       "\n";
+			if ( defined( $resultType->{'label'} ) ) {
+				print STDOUT "\t", $resultType->{'label'}, "\n";
 			}
-			if(defined($resultType->{'description'})) {
+			if ( defined( $resultType->{'description'} ) ) {
 				print STDOUT "\t", $resultType->{'description'}, "\n";
 			}
-			if(defined($resultType->{'mediaType'})) {
-				print STDOUT "\t", $resultType->{'mediaType'},   "\n";
+			if ( defined( $resultType->{'mediaType'} ) ) {
+				print STDOUT "\t", $resultType->{'mediaType'}, "\n";
 			}
-			if(defined($resultType->{'fileSuffix'})) {
-				print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
+			if ( defined( $resultType->{'fileSuffix'} ) ) {
+				print STDOUT "\t", $resultType->{'fileSuffix'}, "\n";
 			}
 		}
 		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
@@ -376,8 +496,15 @@ sub print_result_types($) {
 	print_debug_message( 'result_types', 'End', 1 );
 }
 
-# Submit a job
-sub submit_job() {
+=head2 submit_job()
+
+Submit a job to the service.
+
+  &submit_job();
+
+=cut
+
+sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
 	# Load the sequence data
@@ -407,8 +534,15 @@ sub submit_job() {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
-# Load sequence data
-sub load_data() {
+=head2 load_data()
+
+Load sequence data from file or option specified on the command-line.
+
+  &load_data();
+
+=cut
+
+sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
 
 	# Query sequence
@@ -431,8 +565,15 @@ sub load_data() {
 	print_debug_message( 'load_data', 'End', 1 );
 }
 
-# Load job parameters
-sub load_params() {
+=head2 load_params()
+
+Load job parameters from command-line options.
+
+  &load_params();
+
+=cut
+
+sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
 	# Database(s) to search
@@ -447,8 +588,15 @@ sub load_params() {
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
-# Client-side job polling
-sub client_poll($) {
+=head2 client_poll()
+
+Client-side job polling.
+
+  &client_poll($job_id);
+
+=cut
+
+sub client_poll {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
 	my $result = 'PENDING';
@@ -469,8 +617,15 @@ sub client_poll($) {
 	print_debug_message( 'client_poll', 'End', 1 );
 }
 
-# Get the results for a jobid
-sub get_results($) {
+=head2 get_results()
+
+Get the results for a job identifier.
+
+  &get_results($job_id);
+
+=cut
+
+sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
@@ -526,7 +681,8 @@ sub get_results($) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result =
-			  rest_get_raw_result_output( $jobid, $resultType->{'identifier'} );
+			  rest_get_result( $jobid, $resultType->{'identifier'} )
+			  ;
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
@@ -543,8 +699,16 @@ sub get_results($) {
 	print_debug_message( 'get_results', 'End', 1 );
 }
 
-# Read a file
-sub read_file($) {
+=head2 read_file()
+
+Read a file into a scalar. The special filename '-' can be used to read from 
+standard input (STDIN).
+
+  my $data = &read_file($filename);
+
+=cut
+
+sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
 	my ( $content, $buffer );
@@ -554,19 +718,27 @@ sub read_file($) {
 		}
 	}
 	else {    # File
-		open( FILE, $filename )
+		open( my $FILE, '<', $filename )
 		  or die "Error: unable to open input file $filename ($!)";
-		while ( sysread( FILE, $buffer, 1024 ) ) {
+		while ( sysread( $FILE, $buffer, 1024 ) ) {
 			$content .= $buffer;
 		}
-		close(FILE);
+		close($FILE);
 	}
 	print_debug_message( 'read_file', 'End', 1 );
 	return $content;
 }
 
-# Write a result file
-sub write_file($$) {
+=head2 write_file()
+
+Write data to a file. The special filename '-' can be used to write to 
+standard output (STDOUT).
+
+  &write_file($filename, $data);
+
+=cut
+
+sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
@@ -576,15 +748,22 @@ sub write_file($$) {
 		print STDOUT $data;
 	}
 	else {
-		open( FILE, ">$filename" )
+		open( my $FILE, '>', $filename )
 		  or die "Error: unable to open output file $filename ($!)";
-		syswrite( FILE, $data );
-		close(FILE);
+		syswrite( $FILE, $data );
+		close($FILE);
 	}
 	print_debug_message( 'write_file', 'End', 1 );
 }
 
-# Print program usage
+=head2 usage()
+
+Print program usage message.
+
+  &usage();
+
+=cut
+
 sub usage {
 	print STDERR <<EOF
 NCBI BLAST
@@ -661,5 +840,16 @@ Further information:
 
   http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+
+Support/Feedback:
+
+  http://www.ebi.ac.uk/support/
 EOF
 }
+
+=head1 FEEDBACK/SUPPORT
+
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+feedback, suggestions or issues with the service or this client.
+
+=cut
