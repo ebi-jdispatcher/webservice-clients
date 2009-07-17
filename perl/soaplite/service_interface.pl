@@ -12,9 +12,6 @@
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 # ======================================================================
-# WSDL URL for service
-my $WSDL;
-
 # Enable Perl warnings
 #use strict;
 use warnings;
@@ -27,6 +24,9 @@ use Digest::MD5 qw(md5_hex);
 use XML::Simple;
 use SOAP::Lite;
 use Data::Dumper;
+
+# WSDL URL for service
+my $WSDL;
 
 # Output level
 my $outputLevel = 1;
@@ -152,7 +152,7 @@ sub isWsdl($) {
 		my ($rootTagName) = keys(%$xmlDoc);
 		&print_debug_message('isWsdl', 'rootTagName: ' . $rootTagName, 2);
 		if($rootTagName eq 'definitions' || $rootTagName =~ m/:definitions$/) {
-			# TODO: also check that the WSDL namespace (http://schemas.xmlsoap.org/wsdl/) is used
+			
 			$retVal = 1;
 		}
 	}
@@ -288,10 +288,15 @@ sub usage {
 	print STDERR <<EOF
 SOAP Service
 ============
-   
+
+  $scriptName <wsdlUrl> [--operation <opName>]
+
+      --operation   : str  : service operation to invoke
+
   -h, --help        :      : prints this help text
       --quiet       :      : decrease output
       --verbose     :      : increase output
+      --debugLevel  : int  : debug output level
       --trace	    :      : show SOAP messages being interchanged 
 
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
