@@ -416,7 +416,21 @@ sub print_debug_message {
 
 =head2 from_wsdl()
 
-Extract the service namespace and endpoint from the service WSDL document.
+Extract the service namespace and endpoint from the service WSDL document 
+for use when creating the service interface.
+
+This function assumes that the WSDL contains a single service using a single
+namespace and endpoint.
+
+The namespace and endpoint are required to create a service interface, using 
+SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used 
+in many document/literal services. Using SOAP::Lite->service() with the WSDL
+gives an interface where the data structures returned by the service are 
+mapped into hash structures and repeated elements are collapsed to a single
+instance.
+
+Note: rpc/encoded services are handled  as expected by SOAP::Lite->service() 
+since repeating data structures are encoded using arrays by the service.  
 
   my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
 
@@ -425,13 +439,17 @@ Extract the service namespace and endpoint from the service WSDL document.
 sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
-	my $wsdlStr = get($WSDL);
-	if ( $wsdlStr =~ m/<(\w+:)address\s+location=["']([^'"]+)['"]/ ) {
+	my $wsdlStr = get($WSDL); # Get WSDL using LWP.
+	# Extract service endpoint.
+	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
+		&print_debug_message( 'from_wsdl', 'endpoint: ' . $2, 2 );
 		push( @retVal, $2 );
 	}
+	# Extract namespace.
 	if ( $wsdlStr =~
-		m/<(\w+:)definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+		m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
 	{
+		&print_debug_message( 'from_wsdl', 'namespace: ' . $2, 2 );
 		push( @retVal, $2 );
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );

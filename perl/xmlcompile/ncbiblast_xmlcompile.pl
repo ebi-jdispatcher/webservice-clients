@@ -219,7 +219,10 @@ else {
 
 Generic wrapper for SOAP requests.
 
-  my $response = soap_request($service_method, $service_params);
+If SOAP trace ($params{'trace'}) is enabled the details of the SOAP messages 
+exchanged will be output using &print_soap_trace().
+
+  my $response = soap_request($service_method, \%method_params);
 
 =cut
 
@@ -249,7 +252,7 @@ sub soap_request {
 
 =head2 print_soap_trace()
 
-Print SOAP request/response trace.
+Print SOAP request/response trace obtained when making a service request.
 
   &print_soap_trace($trace);
 

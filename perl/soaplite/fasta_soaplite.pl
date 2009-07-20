@@ -422,6 +422,9 @@ sub print_debug_message {
 
 Extract the service namespace and endpoint from the service WSDL document.
 
+The namespace and endpoint are required to create a service interface that 
+supports repeating elements as used in document/literal services.
+
   my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
 
 =cut
@@ -430,11 +433,11 @@ sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
 	my $wsdlStr = get($WSDL);
-	if ( $wsdlStr =~ m/<(\w+:)address\s+location=["']([^'"]+)['"]/ ) {
+	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
 		push( @retVal, $2 );
 	}
 	if ( $wsdlStr =~
-		m/<(\w+:)definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+		m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
 	{
 		push( @retVal, $2 );
 	}

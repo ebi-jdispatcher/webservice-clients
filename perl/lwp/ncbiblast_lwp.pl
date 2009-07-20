@@ -656,8 +656,7 @@ sub get_results {
 		}
 		if ( defined($selResultType) ) {
 			my $result =
-			  rest_get_raw_result_output( $jobid,
-				$selResultType->{'identifier'} );
+			  rest_get_result( $jobid, $selResultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
@@ -680,9 +679,7 @@ sub get_results {
 			if ( $outputLevel > 1 ) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
-			my $result =
-			  rest_get_result( $jobid, $resultType->{'identifier'} )
-			  ;
+			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
@@ -773,7 +770,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
     
 [Required]
 
-  -p, --program	    : str  : BLAST program to use, see --paramDetail program
+  -p, --program     : str  : BLAST program to use, see --paramDetail program
   -D, --database    : str  : database(s) to search, space separated. See
                              --paramDetail database
       --stype       : str  : query sequence type, see --paramDetail stype
@@ -784,16 +781,16 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
   -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
                              for reporting database sequence matches.
-  -f, --filter	    :      : filter the query sequence for low complexity 
+  -f, --filter      :      : filter the query sequence for low complexity 
                              regions, see --paramDetail filter
-  -A, --align	    : int  : pairwise alignment format, see --paramDetail align
-  -s, --scores	    : int  : number of scores to be reported
+  -A, --align       : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores      : int  : number of scores to be reported
   -n, --alignments  : int  : number of alignments to report
   -u, --match       : int  : Match score (BLASTN only)
   -v, --mismatch    : int  : Mismatch score (BLASTN only)
-  -o, --gapopen	    : int  : Gap open penalty
+  -o, --gapopen     : int  : Gap open penalty
   -x, --gapext      : int  : Gap extension penalty
-  -d, --dropoff	    : int  : Drop-off
+  -d, --dropoff     : int  : Drop-off
   -g, --gapalign    :      : Optimise gapped alignments
       --seqrange    : str  : region within input to use as query
 
@@ -801,7 +798,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 
   -h, --help        :      : prints this help text
       --async       :      : forces to make an asynchronous query
-      --email	    : str  : e-mail address
+      --email       : str  : e-mail address
       --title       : str  : title for job
       --status      :      : get job status
       --resultTypes :      : get available result types for job
@@ -815,7 +812,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
       --paramDetail : str  : display details for input parameter
       --quiet       :      : decrease output
       --verbose     :      : increase output
-      --trace	    :      : show SOAP messages being interchanged 
+      --trace       :      : show SOAP messages being interchanged 
    
 Synchronous job:
 

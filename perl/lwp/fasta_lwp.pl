@@ -64,16 +64,16 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params  = ( 'debugLevel' => 0 );
+my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'program=s'      => \$tool_params{'program'},    # Program to use
-	'database=s'     => \$params{'database'},   # Database to search
-	'stype=s'        => \$tool_params{'stype'},      # Molecule type (DNA, RNA or Protein)
+	'program=s'  => \$tool_params{'program'},    # Program to use
+	'database=s' => \$params{'database'},        # Database to search
+	'stype=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
 	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
 	'rna|r'          => \$params{'rna'},             # Force query to be RNA
@@ -92,7 +92,7 @@ GetOptions(
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
-	'sequence=s'     => \$params{'sequence'},        # Query sequence file or DB:ID
+	'sequence=s' => \$params{'sequence'},    # Query sequence file or DB:ID
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -190,17 +190,22 @@ sub rest_request {
 	print_debug_message( 'rest_request', 'Begin', 11 );
 	my $requestUrl = shift;
 	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
 	$ua->env_proxy;
+
 	# Perform the request
 	my $response = $ua->get($requestUrl);
-	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code, 11 );
+	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
+		11 );
+
 	# Check for HTTP error codes
-	if($response->is_error) {
-    	die 'http status: ' . $response->code . ' ' . $response->message;
+	if ( $response->is_error ) {
+		die 'http status: ' . $response->code . ' ' . $response->message;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
+
 	# Return the response data
 	return $response->content();
 }
@@ -215,12 +220,12 @@ Get list of tool parameter names.
 
 sub rest_get_parameters {
 	print_debug_message( 'rest_get_parameters', 'Begin', 1 );
-	my $url = $baseUrl . '/parameters/';
+	my $url                = $baseUrl . '/parameters/';
 	my $param_list_xml_str = rest_request($url);
-	my $param_list_xml = XMLin($param_list_xml_str);
-	my (@param_list) = @{$param_list_xml->{'id'}};
+	my $param_list_xml     = XMLin($param_list_xml_str);
+	my (@param_list)       = @{ $param_list_xml->{'id'} };
 	print_debug_message( 'rest_get_parameters', 'End', 1 );
-	return(@param_list);
+	return (@param_list);
 }
 
 =head2 rest_get_parameter_details()
@@ -236,11 +241,11 @@ sub rest_get_parameter_details {
 	my $parameterId = shift;
 	print_debug_message( 'rest_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $url = $baseUrl . '/parameterdetails/' . $parameterId;
+	my $url                  = $baseUrl . '/parameterdetails/' . $parameterId;
 	my $param_detail_xml_str = rest_request($url);
-	my $param_detail_xml = XMLin($param_detail_xml_str);
+	my $param_detail_xml     = XMLin($param_detail_xml_str);
 	print_debug_message( 'rest_get_parameter_details', 'End', 1 );
-	return($param_detail_xml);
+	return ($param_detail_xml);
 }
 
 =head2 rest_run()
@@ -261,27 +266,33 @@ sub rest_run {
 		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
 	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
+
 	# User agent to perform http requests
 	my $ua = LWP::UserAgent->new();
 	$ua->env_proxy;
+
 	# Clean up parameters
 	my (%tmp_params) = %{$params};
 	$tmp_params{'email'} = $email;
 	$tmp_params{'title'} = $title;
-	foreach my $param_name (keys(%tmp_params)) {
-		if(!defined($tmp_params{$param_name})) {
+	foreach my $param_name ( keys(%tmp_params) ) {
+		if ( !defined( $tmp_params{$param_name} ) ) {
 			delete $tmp_params{$param_name};
 		}
 	}
+
 	# Submit the job as a POST
 	my $url = $baseUrl . '/run';
-	my $response = $ua->post($url, \%tmp_params);
+	my $response = $ua->post( $url, \%tmp_params );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
-	print_debug_message( 'rest_run', 'request: ' . $response->request()->content(), 11 );
+	print_debug_message( 'rest_run',
+		'request: ' . $response->request()->content(), 11 );
+
 	# Check for HTTP error codes
-	if($response->is_error) {
-    	die 'http status: ' . $response->code . ' ' . $response->message;
+	if ( $response->is_error ) {
+		die 'http status: ' . $response->code . ' ' . $response->message;
 	}
+
 	# The job id is returned
 	my $job_id = $response->content();
 	print_debug_message( 'rest_run', 'End', 1 );
@@ -301,7 +312,7 @@ sub rest_get_status {
 	my $job_id = shift;
 	print_debug_message( 'rest_get_status', 'jobid: ' . $job_id, 2 );
 	my $status_str = 'UNKNOWN';
-	my $url = $baseUrl . '/status/' . $job_id;
+	my $url        = $baseUrl . '/status/' . $job_id;
 	$status_str = &rest_request($url);
 	print_debug_message( 'rest_get_status', 'status_str: ' . $status_str, 2 );
 	print_debug_message( 'rest_get_status', 'End', 1 );
@@ -321,10 +332,10 @@ sub rest_get_result_types {
 	my $job_id = shift;
 	print_debug_message( 'rest_get_result_types', 'jobid: ' . $job_id, 2 );
 	my (@resultTypes);
-	my $url = $baseUrl . '/resulttypes/' . $job_id;
+	my $url                      = $baseUrl . '/resulttypes/' . $job_id;
 	my $result_type_list_xml_str = &rest_request($url);
-	my $result_type_list_xml = XMLin($result_type_list_xml_str);
-	(@resultTypes) = @{$result_type_list_xml->{'type'}};
+	my $result_type_list_xml     = XMLin($result_type_list_xml_str);
+	(@resultTypes) = @{ $result_type_list_xml->{'type'} };
 	print_debug_message( 'rest_get_result_types',
 		scalar(@resultTypes) . ' result types', 2 );
 	print_debug_message( 'rest_get_result_types', 'End', 1 );
@@ -342,13 +353,13 @@ Get result data of a specified type for a finished job.
 sub rest_get_result {
 	print_debug_message( 'rest_get_result', 'Begin', 1 );
 	my $job_id = shift;
-	my $type  = shift;
+	my $type   = shift;
 	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id, 1 );
-	print_debug_message( 'rest_get_result', 'type: ' . $type,   1 );
-	my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
+	print_debug_message( 'rest_get_result', 'type: ' . $type,    1 );
+	my $url    = $baseUrl . '/result/' . $job_id . '/' . $type;
 	my $result = &rest_request($url);
-	print_debug_message( 'rest_get_result',
-		length($result) . ' characters', 1 );
+	print_debug_message( 'rest_get_result', length($result) . ' characters',
+		1 );
 	print_debug_message( 'rest_get_result', 'End', 1 );
 	return $result;
 }
@@ -383,7 +394,7 @@ Print list of tool parameters.
 sub print_tool_params {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
 	my (@param_list) = &rest_get_parameters();
-	foreach my $param (sort(@param_list)) {
+	foreach my $param ( sort(@param_list) ) {
 		print $param, "\n";
 	}
 	print_debug_message( 'print_tool_params', 'End', 1 );
@@ -401,12 +412,12 @@ sub print_param_details {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &rest_get_parameter_details($paramName );
+	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value (@{$paramDetail->{'values'}->{'value'}}) {
+	foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
 		print $value->{'value'};
-		if($value->{'defaultValue'} eq 'true') {
+		if ( $value->{'defaultValue'} eq 'true' ) {
 			print "\t", 'default';
 		}
 		print "\n";
@@ -466,17 +477,17 @@ sub print_result_types {
 		}
 		foreach my $resultType (@resultTypes) {
 			print STDOUT $resultType->{'identifier'}, "\n";
-			if(defined($resultType->{'label'})) {
-				print STDOUT "\t", $resultType->{'label'},       "\n";
+			if ( defined( $resultType->{'label'} ) ) {
+				print STDOUT "\t", $resultType->{'label'}, "\n";
 			}
-			if(defined($resultType->{'description'})) {
+			if ( defined( $resultType->{'description'} ) ) {
 				print STDOUT "\t", $resultType->{'description'}, "\n";
 			}
-			if(defined($resultType->{'mediaType'})) {
-				print STDOUT "\t", $resultType->{'mediaType'},   "\n";
+			if ( defined( $resultType->{'mediaType'} ) ) {
+				print STDOUT "\t", $resultType->{'mediaType'}, "\n";
 			}
-			if(defined($resultType->{'fileSuffix'})) {
-				print STDOUT "\t", $resultType->{'fileSuffix'},  "\n";
+			if ( defined( $resultType->{'fileSuffix'} ) ) {
+				print STDOUT "\t", $resultType->{'fileSuffix'}, "\n";
 			}
 		}
 		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
@@ -644,8 +655,7 @@ sub get_results {
 		}
 		if ( defined($selResultType) ) {
 			my $result =
-			  rest_get_result( $jobid,
-				$selResultType->{'identifier'} );
+			  rest_get_result( $jobid, $selResultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
@@ -668,8 +678,7 @@ sub get_results {
 			if ( $outputLevel > 1 ) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
-			my $result =
-			  rest_get_result( $jobid, $resultType->{'identifier'} );
+			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
 			if ( $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
@@ -760,22 +769,22 @@ Fast protein comparison or fast nucleotide comparison
 
 [Required]
 
-      --program	    : str  : FASTA program to use, see --paramDetail program
-      --database    : str  : database(s) to search, space separated. See
-                             --paramDetail database
-      --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN)
+      --program       : str  : FASTA program to use, see --paramDetail program
+      --database      : str  : database(s) to search, space separated. See
+                               --paramDetail database
+      --stype         : str  : query sequence type, see --paramDetail stype
+  seqFile             : file : query sequence ("-" for STDIN)
 
 [Optional]
 
-  -f, --gapopen	      : int  : penalty for gap opening
-  -g, --gapext	      : int  : penalty for additional residues in a gap
-  -b, --scores	      : int  : maximum number of scores
+  -f, --gapopen       : int  : penalty for gap opening
+  -g, --gapext        : int  : penalty for additional residues in a gap
+  -b, --scores        : int  : maximum number of scores
   -d, --alignments    : int  : maximum number of alignments
-  -k, --ktup	      : int  : word size (DNA 1-6, Protein 1-2)
+  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)
   -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -E, --eupper	      : real : E-value upper limit for hit display
-  -F, --elower	      : real : E-value lower limit for hit display
+  -E, --eupper        : real : E-value upper limit for hit display
+  -F, --elower        : real : E-value lower limit for hit display
   -H, --histogram     :      : turn off histogram display
   -n, --nucleotide    :      : force query to nucleotide sequence
   -3, --topstrand     :      : use only forward frame translations (DNA only)
@@ -783,28 +792,28 @@ Fast protein comparison or fast nucleotide comparison
       --filter        : str  : filter the query sequence for low complexity 
                                regions, see --paramDetail filter
   -z, --stats         : int  : statistical model, see --getStats
-  -R, --dbrange	      : str  : search database sequence within length range
+  -R, --dbrange       : str  : search database sequence within length range
   -S, --seqrange      : str  : search with specified region of query sequence
 
 [General]
 
-  -h, --help        :      : prints this help text
-      --async       :      : forces to make an asynchronous query
-      --email	    : str  : e-mail address
-      --title       : str  : title for job
-      --status      :      : get job status
-      --resultTypes :      : get available result types for job
-      --polljob     :      : poll for the status of a job
-      --jobid       : str  : jobid that was returned when an asynchronous job 
-                             was submitted.
-      --outfile     : str  : file name for results (default is jobid;
-                             "-" for STDOUT)
-      --outformat   : str  : result format to retrieve
-      --params      :      : list input parameters
-      --paramDetail : str  : display details for input parameter
-      --quiet       :      : decrease output
-      --verbose     :      : increase output
-      --trace	    :      : show SOAP messages being interchanged 
+  -h, --help          :      : prints this help text
+      --async         :      : forces to make an asynchronous query
+      --email         : str  : e-mail address
+      --title         : str  : title for job
+      --status        :      : get job status
+      --resultTypes   :      : get available result types for job
+      --polljob       :      : poll for the status of a job
+      --jobid         : str  : jobid that was returned when an asynchronous job 
+                               was submitted.
+      --outfile       : str  : file name for results (default is jobid;
+                               "-" for STDOUT)
+      --outformat     : str  : result format to retrieve
+      --params        :      : list input parameters
+      --paramDetail   : str  : display details for input parameter
+      --quiet         :      : decrease output
+      --verbose       :      : increase output
+      --trace         :      : show SOAP messages being interchanged 
    
 Synchronous job:
 
