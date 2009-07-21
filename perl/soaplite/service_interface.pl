@@ -1,16 +1,46 @@
 #!/usr/bin/env perl
-# $Id$
-# ======================================================================
-# Show interface for a SOAP service.
-#
-# Tested with:
-#   SOAP::Lite 0.60 and Perl 5.8.3
-#   SOAP::Lite 0.69 and Perl 5.8.8
-#   SOAP::Lite 0.71 and Perl 5.8.8
-#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
-#
-# See:
-# http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+
+=head1 NAME
+
+service_interface.pl
+
+=head1 DESCRIPTION
+
+Show interface for a SOAP service.
+
+Tested with:
+
+=over
+
+=item *
+L<SOAP::Lite> 0.60 and Perl 5.8.3
+
+=item *
+L<SOAP::Lite> 0.69 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.71 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+
+=back
+
+See:
+
+=over
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+
+=back
+
+=head1 VERSION
+
+$Id$
+
+=cut
+
 # ======================================================================
 # Enable Perl warnings
 #use strict;
@@ -35,7 +65,7 @@ my $outputLevel = 1;
 my $numOpts = scalar(@ARGV);
 my %params = ( 'debugLevel' => 0 );
 GetOptions(
-	'operation=s'   => \$params{'operation'},
+	'operation=s'   => \$params{'operation'}, # Operation to perform
 	# Generic options
 	'help|h'        => \$params{'help'},           # Usage help
 	'quiet'         => \$params{'quiet'},          # Decrease output level
@@ -69,9 +99,7 @@ if ( $params{'trace'} ) {
 }
 
 # In debug mode show the service WSDL being used.
-if(defined($WSDL)) {
-	&print_debug_message( 'MAIN', 'wsdl: ' . $WSDL, 2 );
-}
+&print_debug_message( 'MAIN', 'wsdl: ' . $WSDL, 2 ) if(defined($WSDL));
 
 # Directly fetch the WSDL.
 my  $response = &getUrl($WSDL);
@@ -95,9 +123,10 @@ if(&isWsdl($response->content)) {
 		print "\n" if($outputLevel > 0);
 	}
 }
+# Not a WSDL...
+# TODO: REST checks instead?
 else {
-	# TODO: some basic REST checks instead.
-	# Print WSDL summary information
+	# Print document summary information
 	print '++Document++', "\n\n" if($outputLevel > 0);
 	&docInfo($response);
 	print "\n" if($outputLevel > 0);
@@ -106,10 +135,14 @@ else {
 	die 'Error: not a WSDL: ' . $WSDL;
 }
 
+=head1 FUNCTIONS
+
+=cut
+
 
 =head2 getUrl()
 
-Get a document from a URL.
+Get a document from a URL using a HTTP GET.
 
   my  $response = &getUrl($url);
 
@@ -134,8 +167,15 @@ sub getUrl($) {
 =head2 isWsdl()
 
 Test a document to determine if it is a WSDL document.
- 
+
+Checks that the document is a XML-like document and that the root tag is 
+'defintitions'.
+
   &isWsdl($response->content);
+
+TODO: this is a basic check. The checks should confirm this is an XML document 
+using the WSDL and SOAP namespaces, andd that it validates against the 
+appropriate WSDL schema(s).
 
 =cut
 
@@ -144,7 +184,8 @@ sub isWsdl($) {
 	my $docStr = shift;
 	my $retVal = 0;
 	&print_debug_message('isWsdl', "docStr:\n" . $docStr, 2);
-	# TODO: Is this XML? Should check for "<?xml ", but this is missing on some docs.
+	# Is this XML? Should be able to check for "<?xml ", but this is missing 
+	# on some docs, so just look for something tag like.
 	if($docStr =~ m/^\s*<\??\w+/) {
 		&print_debug_message('isWsdl', 'looks like an ?ML', 2);
 		# Check that the root tag is 'definitions'.
@@ -152,7 +193,6 @@ sub isWsdl($) {
 		my ($rootTagName) = keys(%$xmlDoc);
 		&print_debug_message('isWsdl', 'rootTagName: ' . $rootTagName, 2);
 		if($rootTagName eq 'definitions' || $rootTagName =~ m/:definitions$/) {
-			
 			$retVal = 1;
 		}
 	}
@@ -164,9 +204,12 @@ sub isWsdl($) {
 
 Display some information about the document.
 
-This includes the URL, the content type from the HTTP header and an MD5 checksum for the document.
+This includes the URL, the content type from the HTTP header and an MD5 
+checksum for the document.
 
-For static documents the "last modification" time from the HTTP header is also reported. 
+If set, the "last modification" time from the HTTP header is also reported. 
+This is usually only present for static documents and is derived from the 
+modification time of the file.  
 
   &docInfo($response);
 
@@ -185,7 +228,12 @@ sub docInfo($) {
 
 =head2 getSoapProxy()
 
-Create an interface proxy object for a SOAP service using a WSDL.
+Create an interface proxy object for a SOAP service using a WSDL. This 
+includes a fault handler to map SOAP faults into Perl exceptions (die).
+
+This uses the SOAP::Lite->service() method to generate the service interface
+object. Since this maps the data structure returned by an operation into a 
+hash, repeating elements are collapsed to a single instance.
 
   my $soap = &getSoapProxy($WSDL);
 
@@ -222,7 +270,9 @@ sub getSoapProxy() {
 
 =head2 listObjMethods()
 
-Using interospection list the methods of an object.
+List the methods of an object.
+
+Uses Perl introspection (package as hash) to get the list of method names.
 
   &listObjMethods($obj);
 
@@ -244,6 +294,8 @@ sub listObjMethods($) {
 =head2 invokeSoapOp()
 
 Invoke a named operation on the SOAP interface without any arguments.
+
+SOAP faults are caught and re-thrown.
 
   &invokeSoapOp($soap, $opName);
 
@@ -302,3 +354,10 @@ SOAP Service
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 EOF
 }
+
+=head1 FEEDBACK/SUPPORT
+
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+feedback, suggestions or issues with the service or this client.
+
+=cut
