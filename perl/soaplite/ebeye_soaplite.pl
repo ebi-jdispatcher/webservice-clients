@@ -1,33 +1,64 @@
 #!/usr/bin/env perl
-# $Id$
-# ======================================================================
-# EB-eye SOAP client using SOAP::Lite
-#
-# Tested with:
-#   SOAP::Lite 0.60 and Perl 5.8.3
-#   SOAP::Lite 0.69 and Perl 5.8.8
-#   SOAP::Lite 0.71 and Perl 5.8.8
-#   SOAP::Lite 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
-#
-# See:
-# http://www.ebi.ac.uk/Tools/webservices/services/eb-eye
-# http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl
-# ======================================================================
-# WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl';
-my $NAMESPACE = 'http://webservice.ebinocle.ebi.ac.uk';
-my $ENDPOINT  = 'http://www.ebi.ac.uk/ebisearch/service.ebi';
 
+=head1 NAME
+
+ebeye_soaplite.pl
+
+=head1 DESCRIPTION
+
+EB-eye SOAP client using SOAP::Lite
+
+Tested with:
+
+=over
+
+=item *
+L<SOAP::Lite> 0.60 and Perl 5.8.3
+
+=item *
+L<SOAP::Lite> 0.69 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.71 and Perl 5.8.8
+
+=item *
+L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+
+=back
+
+For further information see:
+
+=over
+
+=item *
+L<http://www.ebi.ac.uk/Tools/webservices/services/eb-eye>
+
+=item *
+L<http://www.ebi.ac.uk/Tools/Webservices/tutorials/perl>
+
+=back
+
+=head1 VERSION
+
+$Id$
+
+=cut
+
+# ======================================================================
 # Enable Perl warnings
 use strict;
 use warnings;
 
 # Load libraries
 use SOAP::Lite;
+use LWP::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
 use Data::Dumper;
+
+# WSDL URL for service
+my $WSDL = 'http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl';
 
 # Output level
 my $outputLevel = 1;
@@ -63,14 +94,23 @@ GetOptions(
 	# Generic
 	'quiet'        => \$params{'quiet'},         # Decrease output level
 	'verbose'      => \$params{'verbose'},       # Increase output level
-	'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
-	'trace'        => \$params{'trace'},         # SOAP message debug
-	'endpoint=s'   => \$ENDPOINT,                # SOAP service endpoint
+	'debugLevel=i'  => \$params{'debugLevel'},   # Debug output level
+	'trace'         => \$params{'trace'},        # SOAP message debug
+	'endpoint=s'    => \$params{'endpoint'},     # SOAP service endpoint
+	'namespace=s'   => \$params{'namespace'},    # SOAP service namespace
+	'WSDL=s'        => \$WSDL,                   # SOAP service WSDL
 );
 
 # Adjust output level for options
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
+
+# Debug mode: SOAP::Lite version
+&print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
+	1 );
+
+# Debug mode: print the parameters
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
 
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
@@ -87,15 +127,28 @@ if ( $params{'trace'} ) {
 	SOAP::Lite->import( +trace => 'debug' );
 }
 
-# In debug mode show the service endpoint being used.
-&print_debug_message( 'MAIN', 'endpoint: ' . $ENDPOINT, 11 );
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 1 );
+
+# For a document/literal service which has types with repeating elements
+# namespace and endpoint need to be used instead of the WSDL. By default
+# these are extracted from the WSDL.
+my ( $serviceEndpoint, $serviceNamespace ) = &from_wsdl($WSDL);
+
+# User specified endpoint and namespace
+$serviceEndpoint  = $params{'endpoint'}  if ( $params{'endpoint'} );
+$serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
+
+# Debug mode: show the WSDL, service endpoint and namespace being used.
+&print_debug_message( 'MAIN', 'endpoint: ' . $serviceEndpoint,   11 );
+&print_debug_message( 'MAIN', 'namespace: ' . $serviceNamespace, 11 );
 
 # Create the service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
-	$ENDPOINT,
+	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
 	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
-  )->uri($NAMESPACE)->on_fault(
+  )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
 	sub {
@@ -274,31 +327,59 @@ else {
 	die 'Error: no method specified';
 }
 
+=head1 FUNCTIONS
+
+=cut
+
 ### Wrappers for SOAP operations ###
 
-# listDomains()
-sub soap_list_domains() {
+=head2 soap_list_domains()
+
+Get a list of search domain names.
+
+  my (@domain_name_list) = &soap_list_domains();
+
+=cut
+
+sub soap_list_domains {
 	print_debug_message( 'soap_list_domains', 'Begin', 1 );
 	my $domainList = $soap->listDomains();
 	print_debug_message( 'soap_list_domains', 'End', 1 );
 	return $domainList->valueof('//arrayOfDomainNames/string');
 }
 
-# getNumberOfResults(domain, query)
-sub soap_get_number_of_results($$) {
+=head2 soap_get_number_of_results()
+
+Get the number of results matching a query.
+
+  my $num_results = soap_get_number_of_results($domain, $query_str);
+
+=cut
+
+sub soap_get_number_of_results {
 	print_debug_message( 'soap_get_number_of_results', 'Begin', 1 );
 	my $domain = shift;
-	my $query  = shift;
+	my $query_str  = shift;
 	print_debug_message( 'soap_get_number_of_results', 'domain: ' . $domain,
 		2 );
-	print_debug_message( 'soap_get_number_of_results', 'query: ' . $query, 2 );
-	my $res = $soap->getNumberOfResults( $domain, $query );
+	print_debug_message( 'soap_get_number_of_results', 'query_str: ' . $query_str, 2 );
+	my $res = $soap->getNumberOfResults( $domain, $query_str );
 	print_debug_message( 'soap_get_number_of_results', 'End', 1 );
 	return $res->valueof('//numberOfResults');
 }
 
-# getResultsIds(domain, query, start, size)
-sub soap_get_results_ids($$$$) {
+=head2 soap_get_results_ids()
+
+Get the identifiers of the results matching a query.
+
+For large sets of results use this method to chunk through the results rather 
+than fetching all the results in a single request.
+
+  my (@result_id_list) = soap_get_results_ids($domain, $query_str, $start, $size);
+
+=cut
+
+sub soap_get_results_ids {
 	print_debug_message( 'soap_get_results_ids', 'Begin', 1 );
 	my ( $domain, $query, $start, $size ) = @_;
 	print_debug_message( 'soap_get_results_ids', 'domain: ' . $domain, 2 );
@@ -310,8 +391,19 @@ sub soap_get_results_ids($$$$) {
 	return $res->valueof('//arrayOfIds/string');
 }
 
-# getAllResultsIds(domain, query)
-sub soap_get_all_results_ids($$) {
+=head2 soap_get_all_results_ids()
+
+Get all the identifiers of the results matching a query.
+
+To be used with caution since for queries which match a very large number of 
+entries the list will be large enough that the transaction may cause timeout
+and memory issues. 
+
+  my (@result_id_list) = soap_get_all_results_ids($domain, $query_str);
+
+=cut
+
+sub soap_get_all_results_ids {
 	print_debug_message( 'soap_get_all_results_ids', 'Begin', 1 );
 	my ( $domain, $query ) = @_;
 	print_debug_message( 'soap_get_all_results_ids', 'domain: ' . $domain, 2 );
@@ -321,8 +413,15 @@ sub soap_get_all_results_ids($$) {
 	return $res->valueof('//arrayOfIds/string');
 }
 
-# listFields(domain)
-sub soap_list_fields($) {
+=head2 soap_list_fields()
+
+Get a list of the fields available in a search domain.
+
+  my (@field_name_list) = soap_list_fields($domain);
+
+=cut
+
+sub soap_list_fields {
 	print_debug_message( 'soap_list_fields', 'Begin', 1 );
 	my $domain = shift;
 	print_debug_message( 'soap_list_fields', 'domain: ' . $domain, 2 );
@@ -331,8 +430,16 @@ sub soap_list_fields($) {
 	return $res->valueof('//arrayOfFieldNames/string');
 }
 
-# getResults(domain, query, fields, start, size)
-sub soap_get_results($$$$$) {
+=head2 soap_get_results()
+
+Get the set of results matching a query. The data returned is specified by a 
+list of fields to retrive.
+
+  my (@results) = soap_get_results($domain, $query_str, \@fields, $start, $size);
+
+=cut
+
+sub soap_get_results {
 	print_debug_message( 'soap_get_results', 'Begin', 1 );
 	my ( $domain, $query, $fields, $start, $size ) = @_;
 	my $res = $soap->getResults( $domain, $query, $fields, $start, $size );
@@ -340,7 +447,12 @@ sub soap_get_results($$$$$) {
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
 
-# getEntry(domain, entry, fields)
+=head2 soap_get_entry()
+
+  my $entry = soap_get_entry($domain, $entry_id, \@fields);
+
+=cut
+
 sub soap_get_entry($$$) {
 	print_debug_message( 'soap_get_entry', 'Begin', 1 );
 	my ( $domain, $entry, $fields ) = @_;
@@ -352,8 +464,13 @@ sub soap_get_entry($$$) {
 	return $res->valueof('//entryValues/string');
 }
 
-# getEntries(domain, entries, fields)
-sub soap_get_entries($$$) {
+=head2 soap_get_entries()
+
+  my (@entry_list) = soap_get_entries($domain, \@entry_id_list, \@fields);
+
+=cut
+
+sub soap_get_entries {
 	print_debug_message( 'soap_get_entries', 'Begin', 1 );
 	my ( $domain, $entries, $fields ) = @_;
 	print_debug_message( 'soap_get_entries', 'domain: ' . $domain, 2 );
@@ -365,8 +482,13 @@ sub soap_get_entries($$$) {
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
 
-# getEntryFieldUrls(domain, entry, fields)
-sub soap_get_entry_field_urls($$$) {
+=head2 soap_get_entry_field_urls()
+
+  my (@entry_url_list) = soap_get_entry_field_urls($domain, $entry_id, \@fields);
+
+=cut
+
+sub soap_get_entry_field_urls {
 	print_debug_message( 'soap_get_entry_field_urls', 'Begin', 1 );
 	my ( $domain, $entry, $fields ) = @_;
 	print_debug_message( 'soap_get_entry_field_urls', 'domain: ' . $domain, 2 );
@@ -378,8 +500,13 @@ sub soap_get_entry_field_urls($$$) {
 	return $res->valueof('//entryUrlsValues/string');
 }
 
-# getEntriesFieldUrls(domain, entries, fields)
-sub soap_get_entries_field_urls($$$) {
+=head2 soap_get_entries_field_urls()
+
+  my (@entry_url_list_list) = soap_get_entries_field_urls($domain, \@entry_id_list, \@fields);
+
+=cut
+
+sub soap_get_entries_field_urls {
 	print_debug_message( 'soap_get_entries_field_urls', 'Begin', 1 );
 	my ( $domain, $entries, $fields ) = @_;
 	print_debug_message( 'soap_get_entries_field_urls', 'domain: ' . $domain,
@@ -393,8 +520,15 @@ sub soap_get_entries_field_urls($$$) {
 	return &toNestedArray( '//arrayOfEntryUrlsValues', $res );
 }
 
-# getDomainsReferencedInDomain(domain)
-sub soap_get_domains_referenced_in_domain($) {
+=head2 soap_get_domains_referenced_in_domain()
+
+Get list of domains that appear in cross-references from the specified domain.
+
+  my (@domain_list) = soap_get_domains_referenced_in_domain($domain);
+
+=cut
+
+sub soap_get_domains_referenced_in_domain {
 	print_debug_message( 'soap_get_domains_referenced_in_domain', 'Begin', 1 );
 	my $domain = shift;
 	print_debug_message( 'soap_get_domains_referenced_in_domain',
@@ -404,8 +538,15 @@ sub soap_get_domains_referenced_in_domain($) {
 	return $res->valueof('//arrayOfDomainNames/string');
 }
 
-# getDomainsReferencedInEntry(domain, entry)
-sub soap_get_domains_referenced_in_entry($$) {
+=head2 soap_get_domains_referenced_in_entry()
+
+Get list of domains that appear in cross-references from the specified entry.
+
+  my (@domain_list) = soap_get_domains_referenced_in_entry($domain, $entry_id);
+
+=cut
+
+sub soap_get_domains_referenced_in_entry {
 	print_debug_message( 'soap_get_domains_referenced_in_entry', 'Begin', 1 );
 	my $domain = shift;
 	my $entry  = shift;
@@ -418,8 +559,13 @@ sub soap_get_domains_referenced_in_entry($$) {
 	return $res->valueof('//arrayOfDomainNames/string');
 }
 
-# listAdditionalReferenceFields(domain)
-sub soap_list_additional_reference_fields($) {
+=head2 soap_list_additional_reference_fields()
+
+  my (@field_list) = soap_list_additional_reference_fields($domain);
+
+=cut
+
+sub soap_list_additional_reference_fields {
 	print_debug_message( 'soap_list_additional_reference_fields', 'Begin', 1 );
 	my $domain = shift;
 	my $res    = $soap->listAdditionalReferenceFields($domain);
@@ -427,7 +573,12 @@ sub soap_list_additional_reference_fields($) {
 	return $res->valueof('//arrayOfFieldNames/string');
 }
 
-# getReferencedEntries(domain, entry, referencedDomain)
+=head2 soap_get_referenced_entries()
+
+  my (@entry_id_list) = soap_get_referenced_entries($domain, $entry_id, $referenced_domain);
+
+=cut
+
 sub soap_get_referenced_entries($$$) {
 	print_debug_message( 'soap_get_referenced_entries', 'Begin', 1 );
 	my ( $domain, $entry, $referencedDomain ) = @_;
@@ -436,7 +587,12 @@ sub soap_get_referenced_entries($$$) {
 	return $res->valueof('//arrayOfEntryIds/string');
 }
 
-# getReferencedEntriesSet(domain, entries, referencedDomain, fields)
+=head2 soap_get_referenced_entries_set()
+
+  my $res = soap_get_referenced_entries_set($domain, \@entry_id_list, $referenced_domain, \@fields);
+
+=cut
+
 sub soap_get_referenced_entries_set($$$$) {
 	print_debug_message( 'soap_get_referenced_entries_set', 'Begin', 1 );
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
@@ -447,8 +603,13 @@ sub soap_get_referenced_entries_set($$$$) {
 	return $res;
 }
 
-# getReferencedEntriesFlatSet(domain, entries, referencedDomain, fields)
-sub soap_get_referenced_entries_flat_set($$$$) {
+=head2 soap_get_referenced_entries_flat_set()
+
+  my (@entry_list) = soap_get_referenced_entries_flat_set($domain, \@entry_id_list, $referenced_domain, \@fields);
+
+=cut
+
+sub soap_get_referenced_entries_flat_set {
 	print_debug_message( 'soap_get_referenced_entries_flat_set', 'Begin', 1 );
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
 	my $res =
@@ -458,16 +619,26 @@ sub soap_get_referenced_entries_flat_set($$$$) {
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
 
-# getDomainsHierarchy()
-sub soap_get_domains_hierarchy() {
+=head2 soap_get_domains_hierarchy()
+
+  my $res = soap_get_domains_hierarchy();
+
+=cut
+
+sub soap_get_domains_hierarchy {
 	print_debug_message( 'soap_get_domains_hierarchy', 'Begin', 1 );
 	my $res = $soap->getDomainsHierarchy();
 	print_debug_message( 'soap_get_domains_hierarchy', 'End', 1 );
 	return $res;
 }
 
-# getDetailledNumberOfResults(domain, query, flat)
-sub soap_get_detailled_number_of_results($$$) {
+=head2 soap_get_detailled_number_of_results()
+
+  my $res = soap_get_detailled_number_of_results($domain, $query_str, $flat);
+
+=cut 
+
+sub soap_get_detailled_number_of_results {
 	print_debug_message( 'soap_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
 	my $res = $soap->getDetailledNumberOfResults( $domain, $query, $flat );
@@ -475,8 +646,13 @@ sub soap_get_detailled_number_of_results($$$) {
 	return $res;
 }
 
-# listFieldsInformation(domain)
-sub soap_list_fields_information($) {
+=head2 soap_list_fields_information()
+
+  my $res = soap_list_fields_information($domain);
+
+=cut
+
+sub soap_list_fields_information {
 	print_debug_message( 'soap_list_fields_information', 'Begin', 1 );
 	my $domain = shift;
 	my $res    = $soap->listFieldsInformation($domain);
@@ -486,8 +662,15 @@ sub soap_list_fields_information($) {
 
 ### Service actions and utility functions ###
 
-# Print debug message
-sub print_debug_message($$$) {
+=head2 print_debug_message()
+
+Print a debug message at the specified debug level.
+
+  &print_debug_message($function_name, $message, $level);
+
+=cut
+
+sub print_debug_message {
 	my $function_name = shift;
 	my $message       = shift;
 	my $level         = shift;
@@ -496,8 +679,57 @@ sub print_debug_message($$$) {
 	}
 }
 
-# Convert an ArrayOfArrayOfString result into a nested array
-sub toNestedArray($$) {
+=head2 from_wsdl()
+
+Extract the service namespace and endpoint from the service WSDL document 
+for use when creating the service interface.
+
+This function assumes that the WSDL contains a single service using a single
+namespace and endpoint.
+
+The namespace and endpoint are required to create a service interface, using 
+SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used 
+in many document/literal services. Using SOAP::Lite->service() with the WSDL
+gives an interface where the data structures returned by the service are 
+mapped into hash structures and repeated elements are collapsed to a single
+instance.
+
+Note: rpc/encoded services are handled  as expected by SOAP::Lite->service() 
+since repeating data structures are encoded using arrays by the service.  
+
+  my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
+
+=cut
+
+sub from_wsdl {
+	&print_debug_message( 'from_wsdl', 'Begin', 1 );
+	my (@retVal) = ();
+	my $wsdlStr = get($WSDL); # Get WSDL using LWP.
+	# Extract service endpoint.
+	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
+		&print_debug_message( 'from_wsdl', 'endpoint: ' . $2, 2 );
+		push( @retVal, $2 );
+	}
+	# Extract namespace.
+	if ( $wsdlStr =~
+		m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+	{
+		&print_debug_message( 'from_wsdl', 'namespace: ' . $2, 2 );
+		push( @retVal, $2 );
+	}
+	&print_debug_message( 'from_wsdl', 'End', 1 );
+	return @retVal;
+}
+
+=head2 toNestedArray()
+
+Convert an ArrayOfArrayOfString result into a nested array
+
+  my (@array) = toNestedArray($xpath, $obj);
+
+=cut
+
+sub toNestedArray {
 	print_debug_message( 'toNestedArray', 'Begin', 11 );
 	my ( $xpath, $obj ) = @_;
 	my (@returnArray) = ();
@@ -509,8 +741,15 @@ sub toNestedArray($$) {
 	return \@returnArray;
 }
 
-# Print the list of domains available in EB-eye
-sub print_list_domains() {
+=head2 print_list_domains()
+
+Print the list of domains available in EB-eye.
+
+  &print_list_domains();
+
+=cut
+
+sub print_list_domains {
 	print_debug_message( 'print_list_domains', 'Begin', 1 );
 	my (@domainNameList) = soap_list_domains();
 	foreach my $domainName (@domainNameList) {
@@ -519,8 +758,15 @@ sub print_list_domains() {
 	print_debug_message( 'print_list_domains', 'End', 1 );
 }
 
-# Print the number of results found for a query
-sub print_get_number_of_results($$) {
+=head2 print_get_number_of_results()
+
+Print the number of results found for a query.
+
+  &print_get_number_of_results($domain, $query_str);
+
+=cut
+
+sub print_get_number_of_results {
 	print_debug_message( 'print_get_number_of_results', 'Begin', 1 );
 	my $domain = shift;
 	my $query  = shift;
@@ -528,8 +774,15 @@ sub print_get_number_of_results($$) {
 	print_debug_message( 'print_get_number_of_results', 'End', 1 );
 }
 
-# Print identifiers of results found
-sub print_get_results_ids($$$$) {
+=head2 print_get_results_ids()
+
+Print identifiers of results found.
+
+  &print_get_results_ids($domain, $query_str, $start, $size);
+
+=cut
+
+sub print_get_results_ids {
 	print_debug_message( 'print_get_results_ids', 'Begin', 1 );
 	my ( $domain, $query, $start, $size ) = @_;
 	my (@idList) = soap_get_results_ids( $domain, $query, $start, $size );
@@ -539,7 +792,14 @@ sub print_get_results_ids($$$$) {
 	print_debug_message( 'print_get_results_ids', 'End', 1 );
 }
 
-# Print identifiers of all results found
+=head2 print_get_all_results_ids()
+
+Print identifiers of all results found.
+
+  &print_get_all_results_ids($domain, $query_str);
+
+=cut
+
 sub print_get_all_results_ids($$$$) {
 	print_debug_message( 'print_get_all_results_ids', 'Begin', 1 );
 	my ( $domain, $query ) = @_;
@@ -550,7 +810,14 @@ sub print_get_all_results_ids($$$$) {
 	print_debug_message( 'print_get_all_results_ids', 'End', 1 );
 }
 
-# Print fields available for a domain
+=head2 print_list_fields()
+
+Print fields available for a domain.
+
+  &print_list_fields($domain);
+
+=cut
+
 sub print_list_fields($) {
 	print_debug_message( 'print_list_fields', 'Begin', 1 );
 	my $domain = shift;
@@ -561,7 +828,14 @@ sub print_list_fields($) {
 	print_debug_message( 'print_list_fields', 'End', 1 );
 }
 
-# Print query results
+=head2 print_get_results()
+
+Print query results.
+
+  &print_get_results($domain, $query_str, \@fields, $start, $size)
+
+=cut
+
 sub print_get_results($$$$$) {
 	print_debug_message( 'print_get_results', 'Begin', 1 );
 	my ( $domain, $query, $fields, $start, $size ) = @_;
@@ -575,8 +849,15 @@ sub print_get_results($$$$$) {
 	print_debug_message( 'print_get_results', 'End', 1 );
 }
 
-# Print an entry
-sub print_get_entry($$$) {
+=head2 print_get_entry()
+
+Print an entry.
+
+  &print_get_entry($domain, $query_str, \@fields)
+
+=cut
+
+sub print_get_entry {
 	print_debug_message( 'print_get_entry', 'Begin', 1 );
 	my ( $domain, $query, $fields ) = @_;
 	my (@fieldDataArray) = soap_get_entry( $domain, $query, $fields );
@@ -586,8 +867,15 @@ sub print_get_entry($$$) {
 	print_debug_message( 'print_get_entry', 'End', 1 );
 }
 
-# Print an entry
-sub print_get_entries($$$) {
+=head2 print_get_entries()
+
+Print a set of entries.
+
+  &print_get_entries($domain, \@entry_id_list, \@fields);
+
+=cut
+
+sub print_get_entries {
 	print_debug_message( 'print_get_entries', 'Begin', 1 );
 	my ( $domain, $entries, $fields ) = @_;
 	my $entryList = soap_get_entries( $domain, $entries, $fields );
@@ -599,7 +887,13 @@ sub print_get_entries($$$) {
 	print_debug_message( 'print_get_entries', 'End', 1 );
 }
 
-sub print_get_entry_field_urls($$$) {
+=head2 print_get_entry_field_urls()
+
+  &print_get_entry_field_urls($domain, $entry_id, \@fields);
+
+=cut
+
+sub print_get_entry_field_urls {
 	print_debug_message( 'print_get_entry_field_urls', 'Begin', 1 );
 	my ( $domain, $entry, $fields ) = @_;
 	my (@urlList) = soap_get_entry_field_urls( $domain, $entry, $fields );
@@ -610,8 +904,13 @@ sub print_get_entry_field_urls($$$) {
 	print_debug_message( 'print_get_entry_field_urls', 'End', 1 );
 }
 
-# Print an entry
-sub print_get_entries_field_urls($$$) {
+=head2 print_get_entries_field_urls()
+
+  &print_get_entries_field_urls($domain, \@entry_id_list, \@fields);
+
+=cut
+
+sub print_get_entries_field_urls {
 	print_debug_message( 'print_get_entries_field_urls', 'Begin', 1 );
 	my ( $domain, $entries, $fields ) = @_;
 	my $entryList = soap_get_entries_field_urls( $domain, $entries, $fields );
@@ -624,7 +923,13 @@ sub print_get_entries_field_urls($$$) {
 	print_debug_message( 'print_get_entries_field_urls', 'End', 1 );
 }
 
-sub print_get_domains_referenced_in_domain($) {
+=head2 print_get_domains_referenced_in_domain()
+
+  &print_get_domains_referenced_in_domain($domain);
+
+=cut
+
+sub print_get_domains_referenced_in_domain {
 	print_debug_message( 'print_get_domains_referenced_in_domain', 'Begin', 1 );
 	my $domain = shift;
 	my (@domainNameList) = soap_get_domains_referenced_in_domain($domain);
@@ -634,7 +939,13 @@ sub print_get_domains_referenced_in_domain($) {
 	print_debug_message( 'print_get_domains_referenced_in_domain', 'End', 1 );
 }
 
-sub print_get_domains_referenced_in_entry($$) {
+=head2 print_get_domains_referenced_in_entry()
+
+  &print_get_domains_referenced_in_entry($domain, $entry_id);
+
+=cut
+
+sub print_get_domains_referenced_in_entry {
 	print_debug_message( 'print_get_domains_referenced_in_entry', 'Begin', 1 );
 	my $domain = shift;
 	my $entry  = shift;
@@ -646,7 +957,13 @@ sub print_get_domains_referenced_in_entry($$) {
 	print_debug_message( 'print_get_domains_referenced_in_entry', 'End', 1 );
 }
 
-sub print_list_additional_reference_fields($) {
+=head2 print_list_additional_reference_fields($)
+
+  &print_list_additional_reference_fields($domain);
+
+=cut
+
+sub print_list_additional_reference_fields {
 	print_debug_message( 'print_list_additional_reference_fields', 'Begin', 1 );
 	my $domain = shift;
 	my (@fieldNameList) = soap_list_additional_reference_fields($domain);
@@ -656,7 +973,13 @@ sub print_list_additional_reference_fields($) {
 	print_debug_message( 'print_list_additional_reference_fields', 'End', 1 );
 }
 
-sub print_get_referenced_entries($$$) {
+=head2 print_get_referenced_entries()
+
+  &print_get_referenced_entries($domain, $entry_id, $referenced_domain);
+
+=cut
+
+sub print_get_referenced_entries {
 	print_debug_message( 'print_get_referenced_entries', 'Begin', 1 );
 	my ( $domain, $entry, $referencedDomain ) = @_;
 	my (@entryIdList) =
@@ -667,10 +990,16 @@ sub print_get_referenced_entries($$$) {
 	print_debug_message( 'print_get_referenced_entries', 'End', 1 );
 }
 
-# TODO: print resulting tree.
-sub print_get_referenced_entries_set($$$$) {
+=head2 print_get_referenced_entries_set()
+
+  &print_get_referenced_entries_set($domain, \@entry_id_list, $referenced_domain, \@fields);
+
+=cut
+
+sub print_get_referenced_entries_set {
 	print_debug_message( 'print_get_referenced_entries_set', 'Begin', 1 );
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
+	# TODO: print resulting tree.
 	print Dumper(
 		soap_get_referenced_entries_set(
 			$domain, $entries, $referencedDomain, $fields
@@ -679,7 +1008,13 @@ sub print_get_referenced_entries_set($$$$) {
 	print_debug_message( 'print_get_referenced_entries_set', 'End', 1 );
 }
 
-sub print_get_referenced_entries_flat_set($$$$) {
+=head2 print_get_referenced_entries_flat_set($$$$)
+
+  &print_get_referenced_entries_flat_set($domain, \@entry_id_list, $referenced_domain, \@fields);
+
+=cut
+
+sub print_get_referenced_entries_flat_set {
 	print_debug_message( 'print_get_referenced_entries_flat_set', 'Begin', 1 );
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
 	my $entryList = soap_get_referenced_entries_flat_set( $domain, $entries,
@@ -692,36 +1027,159 @@ sub print_get_referenced_entries_flat_set($$$$) {
 	print_debug_message( 'print_get_referenced_entries_flat_set', 'Begin', 1 );
 }
 
-# TODO: print tree of domains
-sub print_get_domains_hierarchy() {
+=head2 print_get_domains_hierarchy()
+
+  &print_get_domains_hierarchy();
+
+=cut
+
+sub print_get_domains_hierarchy {
 	print_debug_message( 'print_get_domains_hierarchy', 'Begin', 1 );
+	# TODO: print tree of domains
 	print Dumper( soap_get_domains_hierarchy() );
 	print_debug_message( 'print_get_domains_hierarchy', 'Begin', 1 );
 }
 
-# TODO: print tree of domain results
+=head2 print_get_detailled_number_of_results()
+
+  &print_get_detailled_number_of_results($domain, $query_str, $flat)
+
+=cut
+
 sub print_get_detailled_number_of_results($$$) {
 	print_debug_message( 'print_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
+	# TODO: print tree of domain results
 	print Dumper(
 		soap_get_detailled_number_of_results( $domain, $query, $flat ) );
 	print_debug_message( 'print_get_detailled_number_of_results', 'End', 1 );
 }
 
-# TODO: print field information objects
+=head2 print_list_fields_information()
+
+  &print_list_fields_information($domain);
+
+=cut
+
 sub print_list_fields_information($) {
 	print_debug_message( 'print_list_fields_information', 'Begin', 1 );
 	my $domain = shift;
+	# TODO: print field information objects
 	print Dumper( soap_list_fields_information($domain) );
 	print_debug_message( 'print_list_fields_information', 'End', 1 );
 }
 
-# Print program usage
+=head2 usage()
+
+Print program usage.
+
+  &usage();
+
+=cut
+
+# TODO: complete usage message for EB-eye
 sub usage {
 	print STDERR <<EOF
 EB-eye
 ======
 
+--listDomains
+  Returns a list of all the domains identifiers which can be used in a query.
+
+--getNumberOfResults <domain> <query>
+  Executes a query and returns the number of results found.
+
+--getResultsIds <domain> <query> <start> <size>
+  Executes a query and returns the list of identifiers for the entries found.
+
+--getAllResultsIds <domain> <query>
+  Executes a query and returns the list of all the identifiers for the entries
+  found. 
+
+--listFields <domain>
+  Returns the list of fields that can be retrieved for a particular domain.
+
+--getResults <domain> <query> <fields> <start> <size>
+  Executes a query and returns a list of results. Each result contains the 
+  values for each field specified in the "fields" argument in the same order 
+  as they appear in the "fields" list.
+ 
+--getEntry <domain> <entry> <fields>
+  Search for a particular entry in a domain and returns the values for some 
+  of the fields of this entry. The result contains the values for each field 
+  specified in the "fields" argument in the same order as they appear in the 
+  "fields" list.
+ 
+--getEntries <domain> <entries> <fields>
+  Search for entries in a domain and returns the values for some of the 
+  fields of these entries. The result contains the values for each field 
+  specified in the "fields" argument in the same order as they appear in the 
+  "fields" list. 
+
+--getEntryFieldUrls <domain> <entry> <fields>
+  Search for a particular entry in a domain and returns the urls configured 
+  for some of the fields of this entry. The result contains the urls for each 
+  field specified in the "fields" argument in the same order as they appear 
+  in the "fields" list. 
+
+--getEntriesFieldUrls <domain> <entries> <fields>
+  Search for a list of entries in a domain and returns the urls configured for
+  some of the fields of these entries. Each result contains the url for each 
+  field specified in the "fields" argument in the same order as they appear in
+  the "fields" list. 
+
+--getDomainsReferencedInDomain <domain>
+  Returns the list of domains with entries referenced in a particular domain. 
+  These domains are indexed in the EB-eye. 
+
+--getDomainsReferencedInEntry <domain> <entry>
+  Returns the list of domains with entries referenced in a particular domain 
+  entry. These domains are indexed in the EB-eye. 
+
+--listAdditionalReferenceFields <domain>
+  Returns the list of fields corresponding to databases referenced in the 
+  domain but not included as a domain in the EB-eye. 
+  
+--getReferencedEntries <domain> <entry> <referencedDomain>
+  Returns the list of referenced entry identifiers from a domain referenced 
+  in a particular domain entry. 
+  
+--getReferencedEntriesSet <domain> <entries> <referencedDomain> <fields>
+  Returns the list of referenced entries from a domain referenced in a set of
+  entries. The result will be returned as a list of objects, each representing
+  an entry reference.
+
+--getReferencedEntriesFlatSet <domain> <entries> <referencedDomain> <fields>
+  Returns the list of referenced entries from a domain referenced in a set of 
+  entries. The result will be returned as a flat table corresponding to the 
+  list of results where, for each result, the first value is the original 
+  entry identifier and the other values correspond to the fields values. 
+
+--getDomainsHierarchy
+  Returns the hierarchy of the domains available.
+
+--getDetailledNumberOfResult <domain> <query> <flat>
+  Executes a query and returns the number of results found per domain.
+
+--listFieldsInformation <domain>
+  Returns the list of fields that can be retrievedand/or searched for a 
+  particular domain. 
+
+Further information:
+
+  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye
+  http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+
+Support/Feedback:
+
+  http://www.ebi.ac.uk/support/
 
 EOF
 }
+
+=head1 FEEDBACK/SUPPORT
+
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+feedback, suggestions or issues with the service or this client.
+
+=cut
