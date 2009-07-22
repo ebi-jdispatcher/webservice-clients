@@ -962,9 +962,14 @@ sub print_get_entries_field_urls {
 	my ( $domain, $entries, $fields ) = @_;
 	my $entryList = soap_get_entries_field_urls( $domain, $entries, $fields );
 	foreach my $entry (@$entryList) {
-		foreach my $url (@$entry) {
-			print $url if defined($url);
-			print "\n";
+		if(ref($entry) eq 'ARRAY') {
+			foreach my $url (@$entry) {
+				print $url if defined($url);
+				print "\n";
+			}
+		}
+		else {
+			print $entry, "\n";
 		}
 	}
 	print_debug_message( 'print_get_entries_field_urls', 'End', 1 );
