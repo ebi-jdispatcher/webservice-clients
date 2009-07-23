@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/sss/clustalw2_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalw2_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -936,7 +936,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalw2_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
