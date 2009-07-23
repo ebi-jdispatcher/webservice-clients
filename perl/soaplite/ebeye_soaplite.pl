@@ -781,6 +781,7 @@ sub toNestedArray {
 	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
 	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 	foreach my $item (@tmpArray) {
+		print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
 		push @returnArray, $item->value()->{'string'};
 	}
 	print_debug_message( 'toNestedArray', "returnArray:\n" . Dumper(\@returnArray), 12 );
