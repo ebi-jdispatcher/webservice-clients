@@ -1,159 +1,240 @@
 # ======================================================================
 #
-# Test sample SOAP::Lite clients run correctly
+# Test sample SOAP::Lite clients run.
 #
 # ======================================================================
 
-#PERL = perl
-PERL = /ebi/extserv/bin/perl/bin/perl
-EMAIL = email@example.org
+PERL = perl
+#PERL = /ebi/extserv/bin/perl/bin/perl
+#EMAIL = email@example.org
+EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all:
+all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
 
 # ClustalW 2.0.x
-clustalw2: clustalw2_align clustalw2_tree clustalw2_align_stdin_stdout
+clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
+
+clustalw2_params:
+	${PERL} clustalw2_soaplite.pl --params
+
+clustalw2_param_detail:
+	${PERL} clustalw2_soaplite.pl --paramDetail alignment
 
 clustalw2_align:
-	${PERL} clustalw2.pl --email ${EMAIL} --align ../test/multi_prot.tfa
-
-clustalw2_tree:
-	${PERL} clustalw2.pl --email ${EMAIL} --tree --outputtree nj --kimura ../test/multi_prot.aln
+	${PERL} clustalw2_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.tfa
 
 clustalw2_align_stdin_stdout:
-	cat ../test/multi_prot.tfa | ${PERL} clustalw2.pl --email ${EMAIL} --align --quiet --outformat toolaln --outfile - - > clustalw2-blah.aln
+	cat ../test_data/multi_prot.tfa | ${PERL} clustalw2_soaplite.pl --email ${EMAIL} --quiet --outformat aln-clustalw --outfile - - > clustalw2-blah.aln
+
+# EB-eye
+ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
+ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
+ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
+ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResult ebeye_listFieldsInformation
+
+ebeye_listDomains:
+	${PERL} ebeye_soaplite.pl --listDomains
+
+ebeye_getNumberOfResults:
+	${PERL} ebeye_soaplite.pl --getNumberOfResults uniprot 'azurin'
+
+ebeye_getResultsIds:
+	${PERL} ebeye_soaplite.pl --getResultsIds uniprot 'azurin' 1 10
+
+ebeye_getAllResultsIds:
+	${PERL} ebeye_soaplite.pl --getAllResultsIds uniprot 'azurin'
+
+ebeye_listFields:
+	${PERL} ebeye_soaplite.pl --listFields uniprot
+
+ebeye_getResults:
+	${PERL} ebeye_soaplite.pl --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
+
+ebeye_getEntry:
+	${PERL} ebeye_soaplite.pl --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
+
+ebeye_getEntries:
+	${PERL} ebeye_soaplite.pl --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
+
+ebeye_getEntryFieldUrls:
+	${PERL} ebeye_soaplite.pl --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
+
+ebeye_getEntriesFieldUrls:
+	${PERL} ebeye_soaplite.pl --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
+
+ebeye_getDomainsReferencedInDomain:
+	${PERL} ebeye_soaplite.pl --getDomainsReferencedInDomain uniprot
+
+ebeye_getDomainsReferencedInEntry:
+	${PERL} ebeye_soaplite.pl --getDomainsReferencedInEntry uniprot 'WAP_RAT'
+
+ebeye_listAdditionalReferenceFields:
+	${PERL} ebeye_soaplite.pl --listAdditionalReferenceFields uniprot
+
+ebeye_getReferencedEntries:
+	${PERL} ebeye_soaplite.pl --getReferencedEntries uniprot 'WAP_RAT' interpro
+
+ebeye_getReferencedEntriesSet:
+	${PERL} ebeye_soaplite.pl --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
+
+ebeye_getReferencedEntriesFlatSet:
+	${PERL} ebeye_soaplite.pl --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
+
+ebeye_getDomainsHierarchy:
+	${PERL} ebeye_soaplite.pl --getDomainsHierarchy
+
+ebeye_getDetailledNumberOfResult: ebeye_getDetailledNumberOfResult_flat ebeye_getDetailledNumberOfResult_tree
+
+ebeye_getDetailledNumberOfResult_flat:
+	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResult allebi 'azurin' true
+
+ebeye_getDetailledNumberOfResult_tree:
+	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResult allebi 'azurin' false
+
+ebeye_listFieldsInformation:
+	${PERL} ebeye_soaplite.pl --listFieldsInformation uniprot
 
 # FASTA
-fasta: fasta_getMatrices fasta_getPrograms fasta_getDatabases fasta_getStats fasta_getFilters fasta_file fasta_dbid fasta_stdin_stdout
+fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout
 
-fasta_getMatrices:
-	${PERL} fasta.pl --getMatrices
+fasta_params:
+	${PERL} fasta_soaplite.pl --params
 
-fasta_getPrograms:
-	${PERL} fasta.pl --getPrograms
-
-fasta_getDatabases:
-	${PERL} fasta.pl --getDatabases
-
-fasta_getStats:
-	${PERL} fasta.pl --getStats
-
-fasta_getFilters:
-	${PERL} fasta.pl --getFilters
+fasta_param_detail:
+	${PERL} fasta_soaplite.pl --paramDetail program
 
 fasta_file:
-	${PERL} fasta.pl --email ${EMAIL} --program fasta3 --database swissprot --eupper 1.0 --scores 10 --alignments 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} fasta_soaplite.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 fasta_dbid:
-	${PERL} fasta.pl --email ${EMAIL} --program fasta3 --database swissprot --eupper 1.0 --scores 10 --alignments 10 SWISSPROT:ABCC9_HUMAN
+	${PERL} fasta_soaplite.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein UNIPROT:ABCC9_HUMAN
 
 fasta_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} fasta.pl --email ${EMAIL} --program fasta3 --database swissprot --eupper 1.0 --scores 10 --alignments 10 --quiet --outformat tooloutput --outfile - - > fasta-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} fasta_soaplite.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > fasta-blah.txt
 
 # Kalign
-kalign: kalign_file kalign_stdin_stdout
+kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
+
+kalign_params:
+	${PERL} kalign_soaplite.pl --params
+
+kalign_param_detail:
+	${PERL} kalign_soaplite.pl --paramDetail format
 
 kalign_file:
-	${PERL} kalign.pl --email ${EMAIL} --moltype P ../test/multi_prot.tfa
+	${PERL} kalign_soaplite.pl --email ${EMAIL} --stype protein ../test_data/multi_prot.tfa
 
 kalign_stdin_stdout:
-	cat ../test/multi_prot.tfa | ${PERL} kalign.pl --email ${EMAIL} --moltype P --quiet --outformat tooloutput --outfile - - > kalign-blah.aln
+	cat ../test_data/multi_prot.tfa | ${PERL} kalign_soaplite.pl --email ${EMAIL} --stype protein --quiet --outformat aln-clustalw --outfile - - > kalign-blah.aln
 
 # MAFFT
-mafft: mafft_file mafft_stdin_stdout
+mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
+
+mafft_params:
+	${PERL} mafft_soaplite.pl --params
+
+mafft_param_detail:
+	${PERL} mafft_soaplite.pl --paramDetail matrix
 
 mafft_file:
-	${PERL} mafft.pl --email ${EMAIL} ../test/multi_prot.tfa
+	${PERL} mafft_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.tfa
 
 mafft_stdin_stdout:
-	cat ../test/multi_prot.tfa | ${PERL} mafft.pl --email ${EMAIL} --quiet --outformat tooloutput --outfile - - > mafft-blah.aln
+	cat ../test_data/multi_prot.tfa | ${PERL} mafft_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > mafft-blah.aln
 
 # MUSCLE
-muscle: muscle_file muscle_stdin_stdout
+muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
+
+muscle_params:
+	${PERL} muscle_soaplite.pl --params
+
+muscle_param_detail:
+	${PERL} muscle_soaplite.pl --paramDetail format
 
 muscle_file:
-	${PERL} muscle.pl --email ${EMAIL} --output clw ../test/multi_prot.tfa
+	${PERL} muscle_soaplite.pl --email ${EMAIL} --output clw ../test_data/multi_prot.tfa
 
 muscle_stdin_stdout:
-	cat ../test/multi_prot.tfa | ${PERL} muscle.pl --email ${EMAIL} --output clw --quiet --outformat tooloutput --outfile - - > muscle-blah.aln
+	cat ../test_data/multi_prot.tfa | ${PERL} muscle_soaplite.pl --email ${EMAIL} --output clw --quiet --outformat out --outfile - - > muscle-blah.aln
 
 # NCBI BLAST
-ncbiblast: ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout
+ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout
+
+ncbiblast_params:
+	${PERL} ncbiblast_soaplite.pl --params
+
+ncbiblast_param_detail:
+	${PERL} ncbiblast_soaplite.pl --paramDetail program
 
 ncbiblast_file:
-	${PERL} ncbiblast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --numal 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} ncbiblast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 ncbiblast_dbid:
-	${PERL} ncbiblast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --numal 10 SWISSPROT:ABCC9_HUMAN
+	${PERL} ncbiblast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein UNIPROT:ABCC9_HUMAN
 
 ncbiblast_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} ncbiblast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --numal 10 --quiet --outformat tooloutput --outfile - - > ncbiblast-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} ncbiblast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
 
 # PSI-BLAST
-psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
-
-psiblast_file:
-	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
-
-psiblast_dbid:
-	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 SWISSPROT:ABCC9_HUMAN
-
-psiblast_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
+#psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
+#
+#psiblast_file:
+#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+#
+#psiblast_dbid:
+#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 SWISSPROT:ABCC9_HUMAN
+#
+#psiblast_stdin_stdout:
+#	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
 
 # PSI-Search
-psisearch: psisearch_file psisearch_dbid psisearch_stdin_stdout
+psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
+
+psisearch_params:
+	${PERL} psisearch_soaplite.pl --params
+
+psisearch_param_detail:
+	${PERL} psisearch_soaplite.pl --paramDetail matrix
 
 psisearch_file:
-	${PERL} psisearch.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 psisearch_dbid:
-	${PERL} psisearch.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 SWISSPROT:ABCC9_HUMAN
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
 
 psisearch_stdin_stdout:
 	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
 
 # T-Coffee
-tcoffee: tcoffee_file tcoffee_stdin_stdout
+tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
+
+tcoffee_params:
+	${PERL} tcoffee_soaplite.pl --params
+
+tcoffee_param_detail:
+	${PERL} tcoffee_soaplite.pl --paramDetail matrix
 
 tcoffee_file:
-	${PERL} tcoffee.pl --email ${EMAIL} ../test/multi_prot.tfa
+	${PERL} tcoffee_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.tfa
 
 tcoffee_stdin_stdout:
-	cat ../test/multi_prot.tfa | ${PERL} tcoffee.pl --email ${EMAIL} --quiet --outformat tooloutput --outfile - - > tcoffee-blah.aln
+	cat ../test_data/multi_prot.tfa | ${PERL} tcoffee_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > tcoffee-blah.aln
 
 # WU-BLAST
-wublast: wublast_getMatrices wublast_getPrograms wublast_getDatabases wublast_getSensitivity wublast_getSort wublast_getStats wublast_getXmlFormats wublast_getFilters wublast_file wublast_dbid wublast_stdin_stdout
+wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout
 
-wublast_getMatrices:
-	${PERL} wublast.pl --getMatrices
+wublast_params:
+	${PERL} wublast_soaplite.pl --params
 
-wublast_getPrograms:
-	${PERL} wublast.pl --getPrograms
-
-wublast_getDatabases:
-	${PERL} wublast.pl --getDatabases
-
-wublast_getSensitivity:
-	${PERL} wublast.pl --getSensitivity
-
-wublast_getSort:
-	${PERL} wublast.pl --getSort
-
-wublast_getStats:
-	${PERL} wublast.pl --getStats
-
-wublast_getXmlFormats:
-	${PERL} wublast.pl --getXmlFormats
-
-wublast_getFilters:
-	${PERL} wublast.pl --getFilters
+wublast_param_detail:
+	${PERL} wublast_soaplite.pl --paramDetail program
 
 wublast_file:
-	${PERL} wublast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --alignments 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} wublast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 wublast_dbid:
-	${PERL} wublast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --alignments 10 SWISSPROT:ABCC9_HUMAN
+	${PERL} wublast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein UNIPROT:ABCC9_HUMAN
 
 wublast_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} wublast.pl --email ${EMAIL} --program blastp --database swissprot --scores 10 --alignments 10 --quiet --outformat tooloutput --outfile - - > wublast-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} wublast_soaplite.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > wublast-blah.txt
