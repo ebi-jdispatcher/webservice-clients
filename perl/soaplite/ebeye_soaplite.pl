@@ -779,10 +779,11 @@ sub toNestedArray {
 	print_debug_message( 'toNestedArray', "obj:\n" . Dumper($obj), 12 );
 	my (@returnArray) = ();
 	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
+	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 	foreach my $item (@tmpArray) {
 		push @returnArray, $item->value()->{'string'};
 	}
-	print_debug_message( 'toNestedArray', "returnArray:\n" . Dumper(\@returnArray), 11 );
+	print_debug_message( 'toNestedArray', "returnArray:\n" . Dumper(\@returnArray), 12 );
 	print_debug_message( 'toNestedArray', 'End', 11 );
 	return \@returnArray;
 }
