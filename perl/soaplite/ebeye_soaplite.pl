@@ -889,8 +889,13 @@ sub print_get_results {
 	my $resultList =
 	  soap_get_results( $domain, $query, $fields, $start, $size );
 	foreach my $entry (@$resultList) {
-		foreach my $field (@$entry) {
-			print $field, "\n";
+		if(ref($entry) eq 'ARRAY') {
+			foreach my $field (@$entry) {
+				print $field, "\n";
+			}
+		}
+		else {
+			print $entry, "\n";
 		}
 	}
 	print_debug_message( 'print_get_results', 'End', 1 );
