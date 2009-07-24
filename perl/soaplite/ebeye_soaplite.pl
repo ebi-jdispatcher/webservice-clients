@@ -778,11 +778,18 @@ sub toNestedArray {
 	print_debug_message( 'toNestedArray', 'xpath: ' . $xpath, 12 );
 	print_debug_message( 'toNestedArray', "obj:\n" . Dumper($obj), 12 );
 	my (@returnArray) = ();
-	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
-	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
-	foreach my $item (@tmpArray) {
-		print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
-		push @returnArray, $item->value()->{'string'};
+	if($SOAP::Lite::VERSION > 0.60) {
+		my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
+		print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
+		foreach my $item (@tmpArray) {
+			print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
+			push @returnArray, $item->value()->{'string'};
+		}
+	}
+	else {
+		my (@tmpArray) = $obj->valueof("$xpath/ArrayOfString");
+		print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
+		
 	}
 	print_debug_message( 'toNestedArray', "returnArray:\n" . Dumper(\@returnArray), 12 );
 	print_debug_message( 'toNestedArray', 'End', 11 );
