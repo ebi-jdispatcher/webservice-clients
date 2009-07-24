@@ -229,7 +229,7 @@ psisearch_dbid:
 	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
 
 psisearch_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
 
 psisearch_clean:
 	rm -f psisearch-*
