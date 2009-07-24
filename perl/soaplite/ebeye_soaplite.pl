@@ -630,55 +630,23 @@ sub soap_get_referenced_entries_set {
 	my $res =
 	  $soap->getReferencedEntriesSet( $domain, $entries, $referencedDomain,
 		$fields );
-	if($SOAP::Lite::VERSION > 0.60) {
-		my (@entry_list) = $res->dataof('//getReferencedEntriesSetResponse/arrayOfEntryValues/EntryReferences');
-		print_debug_message( 'soap_get_referenced_entries_set', "entry_list:\n" . Dumper(\@entry_list), 11 );
-		foreach my $entry (@entry_list) {
-			my (%tmpEntry) = ('entry' => $entry->{'entry'});
-			if(ref($entry->{'references'}->{'ArrayOfString'}) eq 'ARRAY') {
-				foreach my $xref (@{$entry->{'references'}->{'ArrayOfString'}}) {
-					if(ref($xref->{'string'}) eq 'ARRAY') {
-						foreach my $field (@{$xref->{'string'}}) {
-							print "\t", $field;
-						}
-					}
-					else {
-						print $xref->{'string'};
-					}
-					print "\n";
-				}
-			}
-			else {
-				if(ref($entry->{'references'}->{'ArrayOfString'}->{'string'}) eq 'ARRAY') {
-					foreach my $field (@{$entry->{'references'}->{'ArrayOfString'}->{'string'}}) {
-						print "\t", $field;
-					}
-				}
-				else {
-					print $entry->{'references'}->{'ArrayOfString'}->{'string'};
-				}
-				print "\n";
-			}
-			print "\n";
+	# To support SOAP::Lite 0.60, this uses SOAP::SOM rather than the 
+	# valueof() hash structure.
+	my (@idList) = $res->valueof('//getReferencedEntriesSetResponse/arrayOfEntryValues/EntryReferences/entry');
+	print_debug_message( 'soap_get_referenced_entries_set', "idList:\n" . Dumper(\@idList), 11 );
+	for(my $idNum = 0; $idNum < scalar(@idList); $idNum++) {
+		my (%tmpEntry) = ('entry' => $idList[$idNum]);
+		my $idNodeNum = $idNum + 1;
+		my (@tmpRefList) = ();
+		my (@refs) = $res->valueof("//getReferencedEntriesSetResponse/arrayOfEntryValues/[$idNodeNum]/references/*");
+		print_debug_message( 'soap_get_referenced_entries_set', 'refs: ' . @refs, 11 );
+		my $tmpObj = $res->match("//getReferencedEntriesSetResponse/arrayOfEntryValues/[$idNodeNum]/*");
+		for(my $refNum = 0; $refNum < scalar(@refs); $refNum++) {
+			my $refNodeNum = $refNum + 1;
+			push(@tmpRefList, [$tmpObj->valueof("[$refNodeNum]/*")]);
 		}
-	}
-	else {
-		my (@idList) = $res->valueof('//getReferencedEntriesSetResponse/arrayOfEntryValues/EntryReferences/entry');
-		print_debug_message( 'soap_get_referenced_entries_set', "idList:\n" . Dumper(\@idList), 11 );
-		for(my $idNum = 0; $idNum < scalar(@idList); $idNum++) {
-			my (%tmpEntry) = ('entry' => $idList[$idNum]);
-			my $idNodeNum = $idNum + 1;
-			my (@tmpRefList) = ();
-			my (@refs) = $res->valueof("//getReferencedEntriesSetResponse/arrayOfEntryValues/[$idNodeNum]/references/*");
-			print_debug_message( 'soap_get_referenced_entries_set', 'refs: ' . @refs, 11 );
-			my $tmpObj = $res->match("//getReferencedEntriesSetResponse/arrayOfEntryValues/[$idNodeNum]/*");
-			for(my $refNum = 0; $refNum < scalar(@refs); $refNum++) {
-				my $refNodeNum = $refNum + 1;
-				push(@tmpRefList, [$tmpObj->valueof("[$refNodeNum]/*")]);
-			}
-			$tmpEntry{'references'} = \@tmpRefList;
-			push(@retVal, \%tmpEntry);
-		}
+		$tmpEntry{'references'} = \@tmpRefList;
+		push(@retVal, \%tmpEntry);
 	}
 	print_debug_message( 'soap_get_referenced_entries_set', "retVal:\n" . Dumper(\@retVal), 11 );
 	print_debug_message( 'soap_get_referenced_entries_set', 'End', 1 );
