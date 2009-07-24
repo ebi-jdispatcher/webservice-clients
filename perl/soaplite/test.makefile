@@ -198,13 +198,13 @@ psisearch_param_detail:
 	${PERL} psisearch_soaplite.pl --paramDetail matrix
 
 psisearch_file:
-	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 psisearch_dbid:
-	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
 
 psisearch_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
+	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
 
 # T-Coffee
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
