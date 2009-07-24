@@ -778,18 +778,31 @@ sub toNestedArray {
 	print_debug_message( 'toNestedArray', 'xpath: ' . $xpath, 12 );
 	print_debug_message( 'toNestedArray', "obj:\n" . Dumper($obj), 12 );
 	my (@returnArray) = ();
+	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
+	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 	if($SOAP::Lite::VERSION > 0.60) {
-		my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
-		print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 		foreach my $item (@tmpArray) {
 			print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
 			push @returnArray, $item->value()->{'string'};
 		}
 	}
 	else {
-		my (@tmpArray) = $obj->valueof("$xpath/ArrayOfString");
-		print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
-		
+		# SOAP::Lite 0.60 doesn't handle dataof() in the same way as later 
+		# versions so an alternative method needs to be used. Instead we 
+		# assume the sub-lists are all the same length and split the leaf
+		# nodes between the lists evenly.
+		my (@tmpArray1) = $obj->valueof("$xpath/ArrayOfString/string");
+		print_debug_message( 'toNestedArray', "tmpArray1:\n" . Dumper(\@tmpArray1), 13 );
+		my $numChildItems = scalar(@tmpArray1) / scalar(@tmpArray);
+		my $childNum = 0;
+		foreach my $parent (@tmpArray) {
+			my (@tmpArray2) = ();
+			for(my $i =0; $i < $numChildItems; $i++) {
+				$childNum++;
+				push(@tmpArray2, $tmpArray1[$i]);
+			}
+			push(@returnArray, \@tmpArray2);
+		}
 	}
 	print_debug_message( 'toNestedArray', "returnArray:\n" . Dumper(\@returnArray), 12 );
 	print_debug_message( 'toNestedArray', 'End', 11 );
