@@ -685,9 +685,44 @@ Returns the hierarchy of the domains available.
 sub soap_get_domains_hierarchy {
 	print_debug_message( 'soap_get_domains_hierarchy', 'Begin', 1 );
 	my $res = $soap->getDomainsHierarchy();
-	print_debug_message( 'soap_get_domains_hierarchy', "res:\n" . Dumper($res), 11 );
+	print_debug_message( 'soap_get_domains_hierarchy', "res:\n" . Dumper($res), 21 );
+	my $retVal = $res->valueof('//rootDomain');
+	&_domain_description_to_hash($res, $retVal, '//rootDomain');
+	print_debug_message( 'soap_get_domains_hierarchy', "retVal:\n" . Dumper($retVal), 21 );
 	print_debug_message( 'soap_get_domains_hierarchy', 'End', 1 );
-	return $res->valueof('//rootDomain');
+	return $retVal;
+}
+
+=head2 _domain_description_to_hash
+
+Map a DomainDescription hierarchy into a set of nested hashes.
+
+Used by soap_get_domains_hierarchy().
+
+  &_domain_description_to_hash($soap_obj, \%parent_domain, $xpath);
+
+=cut
+
+sub _domain_description_to_hash {
+	print_debug_message( '_domain_description_to_hash', 'Begin', 11 );
+	my $soapObj = shift;
+	my $parentDomain = shift;
+	my $xpath = shift;
+	print_debug_message( '_domain_description_to_hash', 'xpath: ' . $xpath, 12 );
+	print_debug_message( '_domain_description_to_hash', "parentDomain:\n" . Dumper($parentDomain), 21 );
+	my $tmpXpath = $xpath . '/subDomains/DomainDescription';
+	print_debug_message( '_domain_description_to_hash', 'tmpXpath: ' . $tmpXpath, 21 );
+	if($soapObj->valueof($tmpXpath) && scalar($soapObj->valueof($tmpXpath)) > 1) {
+		my (@domainList) = $soapObj->valueof($tmpXpath);
+		for(my $i = 0; $i < scalar(@domainList); $i++) {
+			my $nodeNum = $i + 1;
+			my $tmpXpath2 = $xpath . "/subDomains/[$nodeNum]";
+			&_domain_description_to_hash($soapObj, $domainList[$i], $tmpXpath2);
+		}
+		$parentDomain->{'subDomains'}->{'DomainDescription'} = \@domainList;
+	}
+	print_debug_message( '_domain_description_to_hash', 'xpath: ' . $xpath, 12 );
+	print_debug_message( '_domain_description_to_hash', 'End', 11 );
 }
 
 =head2 soap_get_detailled_number_of_results()
@@ -702,9 +737,46 @@ sub soap_get_detailled_number_of_results {
 	print_debug_message( 'soap_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
 	my $res = $soap->getDetailledNumberOfResults( $domain, $query, $flat );
+	print_debug_message( 'soap_get_detailled_number_of_results', "res:\n" . Dumper($res), 21 );
+	my $retVal = $res->valueof('//detailledNumberOfResults');
+	&_domain_results_to_hash($res, $retVal, '//detailledNumberOfResults');
+	print_debug_message( 'soap_get_detailled_number_of_results', "retVal:\n" . Dumper($retVal), 21 );
 	print_debug_message( 'soap_get_detailled_number_of_results', 'End', 1 );
-	return $res->valueof('//detailledNumberOfResults');
+	return $retVal;
 }
+
+=head2 _domain_results_to_hash
+
+Map a DomainResults hierarchy into a set of nested hashes.
+
+Used by soap_get_detailled_number_of_results().
+
+  &_domain_results_to_hash($soap_obj, \%parent_domain, $xpath);
+
+=cut
+
+sub _domain_results_to_hash {
+	print_debug_message( '_domain_results_to_hash', 'Begin', 11 );
+	my $soapObj = shift;
+	my $parentDomain = shift;
+	my $xpath = shift;
+	print_debug_message( '_domain_results_to_hash', 'xpath: ' . $xpath, 12 );
+	print_debug_message( '_domain_results_to_hash', "parentDomain:\n" . Dumper($parentDomain), 21 );
+	my $tmpXpath = $xpath . '/subDomainsResults/DomainResult';
+	print_debug_message( '_domain_results_to_hash', 'tmpXpath: ' . $tmpXpath, 21 );
+	if($soapObj->valueof($tmpXpath) && scalar($soapObj->valueof($tmpXpath)) > 1) {
+		my (@domainList) = $soapObj->valueof($tmpXpath);
+		for(my $i = 0; $i < scalar(@domainList); $i++) {
+			my $nodeNum = $i + 1;
+			my $tmpXpath2 = $xpath . "/subDomainsResults/[$nodeNum]";
+			&_domain_results_to_hash($soapObj, $domainList[$i], $tmpXpath2);
+		}
+		$parentDomain->{'subDomainsResults'}->{'DomainResult'} = \@domainList;
+	}
+	print_debug_message( '_domain_results_to_hash', 'xpath: ' . $xpath, 12 );
+	print_debug_message( '_domain_results_to_hash', 'End', 11 );
+}
+
 
 =head2 soap_list_fields_information()
 
@@ -1156,12 +1228,12 @@ Print hierarchy of EB-eye domains.
 
 =cut
 
-# TODO: adapt to handle hierarchy in SOAP::Lite 0.60
 sub print_get_domains_hierarchy {
 	print_debug_message( 'print_get_domains_hierarchy', 'Begin', 1 );
 	my $res = soap_get_domains_hierarchy();
+	print_debug_message( 'print_get_domains_hierarchy', "res:\n" . Dumper($res), 21 );
 	print_domain_description($res, 0);
-	print_debug_message( 'print_get_domains_hierarchy', 'Begin', 1 );
+	print_debug_message( 'print_get_domains_hierarchy', 'End', 1 );
 }
 
 =head2 print_domain_description()
@@ -1173,7 +1245,7 @@ Recursive method used to print domain hierarchy.
 =cut
 
 sub print_domain_description {
-	print_debug_message( 'print_domains_description', 'Begin', 1 );
+	print_debug_message( 'print_domains_description', 'Begin', 21 );
 	my $domainDes = shift;
 	my $level = shift;
 	my $indent = '';
@@ -1192,7 +1264,7 @@ sub print_domain_description {
 			&print_domain_description($domainDes->{'subDomains'}->{'DomainDescription'}, $level);
 		}
 	}
-	print_debug_message( 'print_domains_description', 'End', 1 );
+	print_debug_message( 'print_domains_description', 'End', 21 );
 }
 
 =head2 print_get_detailled_number_of_results()
@@ -1203,7 +1275,6 @@ Print query results for each domain in the search.
 
 =cut
 
-# TODO: adapt to handle hierarchy in SOAP::Lite 0.60
 sub print_get_detailled_number_of_results {
 	print_debug_message( 'print_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
