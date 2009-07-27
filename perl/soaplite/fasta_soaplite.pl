@@ -85,8 +85,8 @@ GetOptions(
 	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
 	'ktup|k=i'       => \$tool_params{'ktup'},       # Word size
 	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
-	'eupper|E=f'     => \$tool_params{'eupperlim'},  # Upper E-value
-	'elower|F=f'     => \$tool_params{'elowlim'},    # Lower E-value
+	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
+	'explowlim|F=f'  => \$tool_params{'explowlim'},    # Lower E-value
 	'filter=s'       => \$tool_params{'filter'},     # Low complexity filter
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
@@ -100,6 +100,8 @@ GetOptions(
 	'protein|p'      => \$params{'protein'},         # Force query to be protein
 	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
 	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
+	'eupper=f'     => \$tool_params{'eupper'},  # Upper E-value
+	'elower=f'     => \$tool_params{'elower'},    # Lower E-value
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -749,6 +751,12 @@ sub load_params {
 		$tool_params{'strand'} = 'top' if($params{'topstrand'});
 		$tool_params{'strand'} = 'bottom' if($params{'bottomstrand'});
 	}	
+	if(!$tool_params{'expupperlim'} && $params{'eupper'}) {
+		$tool_params{'expupperlim'} = $params{'eupper'};
+	}
+	if(!$tool_params{'explowlim'} && $params{'elower'}) {
+		$tool_params{'explowlim'} = $params{'elower'};
+	}
 	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
@@ -892,6 +900,7 @@ standard input.
 sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 2 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -922,6 +931,7 @@ standard output.
 sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
+	print_debug_message( 'write_file', 'filename: ' . $filename, 2 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
 	}
@@ -969,8 +979,8 @@ Fast protein comparison or fast nucleotide comparison
   -d, --alignments   : int  : maximum number of alignments
   -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)
   -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
-  -E, --eupper       : real : E-value upper limit for hit display
-  -F, --elower       : real : E-value lower limit for hit display
+  -E, --expupperlim  : real : E-value upper limit for hit display
+  -F, --explowlim    : real : E-value lower limit for hit display
   -H, --histogram    :      : turn off histogram display
   -n, --nucleotide   :      : force query to nucleotide sequence
   -3, --topstrand    :      : use only forward frame translations (DNA only)
