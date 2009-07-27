@@ -72,28 +72,33 @@ GetOptions(
 
 	# Tool specific options
 	'program=s'  => \$tool_params{'program'},    # Program to use
-	'database=s' => \$params{'database'},        # Database to search
-	'stype=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
+	'database|D=s' => \$params{'database'},        # Database to search
+	'stype|m=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
-	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
-	'rna|r'          => \$params{'rna'},             # Force query to be RNA
-	'protein|p'      => \$params{'protein'},         # Force query to be protein
-	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
-	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
 	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
 	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
 	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
 	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
 	'ktup|k=i'       => \$tool_params{'ktup'},       # Word size
 	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
-	'eupper|E=f'     => \$tool_params{'eupperlim'},  # Upper E-value
-	'elower|F=f'     => \$tool_params{'elowlim'},    # Lower E-value
+	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
+	'explowlim|F=f'   => \$tool_params{'explowlim'},    # Lower E-value
 	'filter=s'       => \$tool_params{'filter'},     # Low complexity filter
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
 	'sequence=s' => \$params{'sequence'},    # Query sequence file or DB:ID
+	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
+	# Compatability options, old command-line
+	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
+	'rna|r'          => \$params{'rna'},             # Force query to be RNA
+	'protein|p'      => \$params{'protein'},         # Force query to be protein
+	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
+	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
+	'eupper=f'       => \$params{'eupper'},  # Upper E-value
+	'elower=f'       => \$params{'elower'},    # Lower E-value
+	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -115,6 +120,14 @@ GetOptions(
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
 
+# Debug mode: LWP version
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
+	1 );
+
+# Debug mode: print the input parameters
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
+&print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -123,6 +136,9 @@ if ( $params{'help'} || $numOpts == 0 ) {
 	&usage();
 	exit(0);
 }
+
+# Debug mode: show the base URL
+&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
 
 if (
 	!(
@@ -169,7 +185,27 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	&submit_job();
+
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
 
 =head1 FUNCTIONS
@@ -202,7 +238,8 @@ sub rest_request {
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
-		die 'http status: ' . $response->code . ' ' . $response->message;
+		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -287,10 +324,13 @@ sub rest_run {
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
 		'request: ' . $response->request()->content(), 11 );
+	print_debug_message( 'rest_run',
+		'response: ' . $response->content(), 11 );
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
-		die 'http status: ' . $response->code . ' ' . $response->message;
+		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
 	}
 
 	# The job id is returned
@@ -504,15 +544,15 @@ sub print_result_types {
 
 Submit a job to the service.
 
-  &submit_job();
+  &submit_job($seq);
 
 =cut
 
 sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
-	# Load the sequence data
-	&load_data();
+	# Set input sequence
+	$tool_params{'sequence'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -538,6 +578,90 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	open( my $LISTFILE, '<', $filename )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
+}
+
 =head2 load_data()
 
 Load sequence data from file or option specified on the command-line.
@@ -548,25 +672,27 @@ Load sequence data from file or option specified on the command-line.
 
 sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
+	my $retSeq;
 
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $ARGV[0] );
+			$retSeq = &read_file( $ARGV[0] );
 		}
 		else {                                     # DB:ID or sequence
-			$tool_params{'sequence'} = $ARGV[0];
+			$retSeq = $ARGV[0];
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $params{'sequence'} );
+			$retSeq = &read_file( $params{'sequence'} );
 		}
 		else {    # DB:ID or sequence
-			$tool_params{'sequence'} = $params{'sequence'};
+			$retSeq = $params{'sequence'};
 		}
 	}
 	print_debug_message( 'load_data', 'End', 1 );
+	return $retSeq;
 }
 
 =head2 load_params()
@@ -584,6 +710,24 @@ sub load_params {
 	my (@dbList) = split /[ ,]/, $params{'database'};
 	$tool_params{'database'} = \@dbList;
 
+
+	# Compatability options, old command-line
+	if(!$tool_params{'stype'}) {
+		$tool_params{'stype'} = 'dna' if($params{'nucleotide'});
+		$tool_params{'stype'} = 'protein' if($params{'protein'});
+		$tool_params{'stype'} = 'rna' if($params{'rna'});
+	}
+	if(!$tool_params{'strand'}) {
+		$tool_params{'strand'} = 'top' if($params{'topstrand'});
+		$tool_params{'strand'} = 'bottom' if($params{'bottomstrand'});
+	}
+	if(!$tool_params{'expupperlim'} && $params{'eupper'}) {
+		$tool_params{'expupperlim'} = $params{'eupper'};
+	}
+	if(!$tool_params{'explowlim'} && $params{'elower'}) {
+		$tool_params{'explowlim'} = $params{'elower'};
+	}
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -598,22 +742,33 @@ Client-side job polling.
 sub client_poll {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
-	my $result = 'PENDING';
+	my $status = 'PENDING';
 
-	# Check status and wait if not finished
-	#print STDERR "Checking status: $jobid\n";
-	while ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
-		$result = rest_get_status($jobid);
-		if ( $outputLevel > 0 ) {
-			print STDERR "$result\n";
+# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	my $errorCount = 0;
+	while ($status eq 'RUNNING'
+		|| $status eq 'PENDING'
+		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
+	{
+		$status = rest_get_status($jobid);
+		print STDERR "$status\n" if ( $outputLevel > 0 );
+		if ( $status eq 'ERROR' ) {
+			$errorCount++;
 		}
-		if ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
+		elsif ( $errorCount > 0 ) {
+			$errorCount--;
+		}
+		if (   $status eq 'RUNNING'
+			|| $status eq 'PENDING'
+			|| $status eq 'ERROR' )
+		{
 
 			# Wait before polling again.
 			sleep $checkInterval;
 		}
 	}
 	print_debug_message( 'client_poll', 'End', 1 );
+	return $status;
 }
 
 =head2 get_results()
@@ -707,6 +862,7 @@ standard input (STDIN).
 sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 2 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -737,6 +893,7 @@ standard output (STDOUT).
 sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
+	print_debug_message( 'write_file', 'filename: ' . $filename, 2 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
 	}
@@ -769,31 +926,33 @@ Fast protein comparison or fast nucleotide comparison
 
 [Required]
 
-      --program       : str  : FASTA program to use, see --paramDetail program
-      --database      : str  : database(s) to search, space separated. See
-                               --paramDetail database
-      --stype         : str  : query sequence type, see --paramDetail stype
-  seqFile             : file : query sequence ("-" for STDIN)
+      --program      : str  : FASTA program to use, see --paramDetail program
+      --database     : str  : database(s) to search, space separated. See
+                              --paramDetail database
+      --stype        : str  : query sequence type, see --paramDetail stype
+  seqFile            : file : query sequence ("-" for STDIN, \@filename for
+                              identifier list file)
 
 [Optional]
 
-  -f, --gapopen       : int  : penalty for gap opening
-  -g, --gapext        : int  : penalty for additional residues in a gap
-  -b, --scores        : int  : maximum number of scores
-  -d, --alignments    : int  : maximum number of alignments
-  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)
-  -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -E, --eupper        : real : E-value upper limit for hit display
-  -F, --elower        : real : E-value lower limit for hit display
-  -H, --histogram     :      : turn off histogram display
-  -n, --nucleotide    :      : force query to nucleotide sequence
-  -3, --topstrand     :      : use only forward frame translations (DNA only)
-  -i, --bottomstrand  :      : reverse complement query sequence (DNA only)
-      --filter        : str  : filter the query sequence for low complexity 
-                               regions, see --paramDetail filter
-  -z, --stats         : int  : statistical model, see --getStats
-  -R, --dbrange       : str  : search database sequence within length range
-  -S, --seqrange      : str  : search with specified region of query sequence
+  -f, --gapopen      : int  : penalty for gap opening
+  -g, --gapext       : int  : penalty for additional residues in a gap
+  -b, --scores       : int  : maximum number of scores
+  -d, --alignments   : int  : maximum number of alignments
+  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)
+  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -E, --expupperlim  : real : E-value upper limit for hit display
+  -F, --explowlim    : real : E-value lower limit for hit display
+  -H, --histogram    :      : turn off histogram display
+  -n, --nucleotide   :      : force query to nucleotide sequence
+  -3, --topstrand    :      : use only forward frame translations (DNA only)
+  -i, --bottomstrand :      : reverse complement query sequence (DNA only)
+      --filter       : str  : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -z, --stats        : int  : statistical model, see --getStats
+  -R, --dbrange      : str  : search database sequence within length range
+  -S, --seqrange     : str  : search with specified region of query sequence
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
 

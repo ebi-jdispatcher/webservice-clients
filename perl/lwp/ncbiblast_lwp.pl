@@ -667,25 +667,27 @@ Load sequence data from file or option specified on the command-line.
 
 sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
+	my $retSeq;
 
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $ARGV[0] );
+			$retSeq = &read_file( $ARGV[0] );
 		}
 		else {                                     # DB:ID or sequence
-			$tool_params{'sequence'} = $ARGV[0];
+			$retSeq = $ARGV[0];
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$tool_params{'sequence'} = &read_file( $params{'sequence'} );
+			$retSeq = &read_file( $params{'sequence'} );
 		}
 		else {    # DB:ID or sequence
-			$tool_params{'sequence'} = $params{'sequence'};
+			$retSeq = $params{'sequence'};
 		}
 	}
 	print_debug_message( 'load_data', 'End', 1 );
+	return $retSeq;
 }
 
 =head2 load_params()
@@ -854,6 +856,7 @@ standard input (STDIN).
 sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 2 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -884,6 +887,7 @@ standard output (STDOUT).
 sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
+	print_debug_message( 'write_file', 'filename: ' . $filename, 2 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
 	}
