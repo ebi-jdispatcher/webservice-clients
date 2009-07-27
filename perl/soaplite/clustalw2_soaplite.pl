@@ -98,6 +98,10 @@ GetOptions(
     'outorder|r=s'  => \$tool_params{'outorder'},  # Order of sequences in alignment
     'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
 
+	# Compatability options, old command-line
+	'align|A'      => \$params{'align'},       # Do full multiple alignment
+	'quicktree|Q'  => \$params{'quicktree'},   # Fast guide tree
+
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -643,6 +647,12 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
+	# Compatability options, old command-line
+	if(!$tool_params{'alignment'}) {
+		$tool_params{'alignment'} = 'fast' if($params{'quicktree'});
+		$tool_params{'alignment'} = 'slow' if($params{'align'});
+	}
+	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
