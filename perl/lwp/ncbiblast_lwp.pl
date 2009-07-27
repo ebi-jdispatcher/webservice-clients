@@ -117,6 +117,14 @@ GetOptions(
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'$quiet'} )  { $outputLevel-- }
 
+# Debug mode: LWP version
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
+	1 );
+
+# Debug mode: print the input parameters
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
+&print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -125,6 +133,9 @@ if ( $params{'help'} || $numOpts == 0 ) {
 	&usage();
 	exit(0);
 }
+
+# Debug mode: show the base URL
+&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
 
 if (
 	!(
@@ -171,7 +182,27 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	&submit_job();
+
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
 
 =head1 FUNCTIONS
@@ -204,7 +235,8 @@ sub rest_request {
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
-		die 'http status: ' . $response->code . ' ' . $response->message;
+		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -292,7 +324,8 @@ sub rest_run {
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
-		die 'http status: ' . $response->code . ' ' . $response->message;
+		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
 	}
 
 	# The job id is returned
@@ -506,15 +539,15 @@ sub print_result_types {
 
 Submit a job to the service.
 
-  &submit_job();
+  &submit_job($seq);
 
 =cut
 
 sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
-	# Load the sequence data
-	&load_data();
+	# Set input sequence
+	$tool_params{'sequence'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -538,6 +571,90 @@ sub submit_job {
 		&get_results($jobid);
 	}
 	print_debug_message( 'submit_job', 'End', 1 );
+}
+
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	open( my $LISTFILE, '<', $filename )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
 }
 
 =head2 load_data()
@@ -591,6 +708,18 @@ sub load_params {
 		$tool_params{'match_scores'} =
 		  $params{'match'} . ',' . $params{'missmatch'};
 	}
+	
+	# Compatability options, old command-line
+	if(!$tool_params{'alignments'} && $params{'numal'}) {
+		$tool_params{'alignments'} = $params{'numal'};
+	}
+	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
+		$tool_params{'gapopen'} = $params{'opengap'};
+	}
+	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
+		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -605,22 +734,33 @@ Client-side job polling.
 sub client_poll {
 	print_debug_message( 'client_poll', 'Begin', 1 );
 	my $jobid  = shift;
-	my $result = 'PENDING';
+	my $status = 'PENDING';
 
-	# Check status and wait if not finished
-	#print STDERR "Checking status: $jobid\n";
-	while ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
-		$result = rest_get_status($jobid);
-		if ( $outputLevel > 0 ) {
-			print STDERR "$result\n";
+# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	my $errorCount = 0;
+	while ($status eq 'RUNNING'
+		|| $status eq 'PENDING'
+		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
+	{
+		$status = rest_get_status($jobid);
+		print STDERR "$status\n" if ( $outputLevel > 0 );
+		if ( $status eq 'ERROR' ) {
+			$errorCount++;
 		}
-		if ( $result eq 'RUNNING' || $result eq 'PENDING' ) {
+		elsif ( $errorCount > 0 ) {
+			$errorCount--;
+		}
+		if (   $status eq 'RUNNING'
+			|| $status eq 'PENDING'
+			|| $status eq 'ERROR' )
+		{
 
 			# Wait before polling again.
 			sleep $checkInterval;
 		}
 	}
 	print_debug_message( 'client_poll', 'End', 1 );
+	return $status;
 }
 
 =head2 get_results()
@@ -776,29 +916,31 @@ Rapid sequence database search programs utilizing the BLAST algorithm
     
 [Required]
 
-  -p, --program     : str  : BLAST program to use, see --paramDetail program
-  -D, --database    : str  : database(s) to search, space separated. See
-                             --paramDetail database
-      --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN)
+  -p, --program      : str  : BLAST program to use, see --paramDetail program
+  -D, --database     : str  : database(s) to search, space separated. See
+                              --paramDetail database
+      --stype        : str  : query sequence type, see --paramDetail stype
+  seqFile            : file : query sequence ("-" for STDIN, \@filename for
+                              identifier list file)
 
 [Optional]
 
-  -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
-  -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
-                             for reporting database sequence matches.
-  -f, --filter      :      : filter the query sequence for low complexity 
-                             regions, see --paramDetail filter
-  -A, --align       : int  : pairwise alignment format, see --paramDetail align
-  -s, --scores      : int  : number of scores to be reported
-  -n, --alignments  : int  : number of alignments to report
-  -u, --match       : int  : Match score (BLASTN only)
-  -v, --mismatch    : int  : Mismatch score (BLASTN only)
-  -o, --gapopen     : int  : Gap open penalty
-  -x, --gapext      : int  : Gap extension penalty
-  -d, --dropoff     : int  : Drop-off
-  -g, --gapalign    :      : Optimise gapped alignments
-      --seqrange    : str  : region within input to use as query
+  -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -e, --exp          : real : 0<E<= 1000. Statistical significance threshold 
+                              for reporting database sequence matches.
+  -f, --filter       :      : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -A, --align        : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores       : int  : number of scores to be reported
+  -n, --alignments   : int  : number of alignments to report
+  -u, --match        : int  : Match score (BLASTN only)
+  -v, --mismatch     : int  : Mismatch score (BLASTN only)
+  -o, --gapopen      : int  : Gap open penalty
+  -x, --gapext       : int  : Gap extension penalty
+  -d, --dropoff      : int  : Drop-off
+  -g, --gapalign     :      : Optimise gapped alignments
+      --seqrange     : str  : region within input to use as query
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
 
