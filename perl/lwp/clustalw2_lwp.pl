@@ -28,7 +28,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/sss/clustalw2_rest>
+L<http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalw2_rest>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -978,7 +978,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/clustalw2_rest
+  http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalw2_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
