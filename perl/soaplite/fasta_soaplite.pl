@@ -76,14 +76,9 @@ GetOptions(
 
 	# Tool specific options
 	'program=s'  => \$tool_params{'program'},    # Program to use
-	'database=s' => \$params{'database'},        # Database to search
-	'stype=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
+	'database|D=s' => \$params{'database'},        # Database to search
+	'stype|m=s' => \$tool_params{'stype'},   # Molecule/sequence type
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
-	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
-	'rna|r'          => \$params{'rna'},             # Force query to be RNA
-	'protein|p'      => \$params{'protein'},         # Force query to be protein
-	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
-	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
 	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
 	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
 	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
@@ -96,9 +91,16 @@ GetOptions(
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
-	'sequence=s' => \$params{'sequence'},      # Query sequence file or DB:ID
+	'sequence=s' => \$params{'sequence'},      # Query sequence
 	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
+	# Compatability options, old command-line
+	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
+	'rna|r'          => \$params{'rna'},             # Force query to be RNA
+	'protein|p'      => \$params{'protein'},         # Force query to be protein
+	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
+	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
+	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -737,6 +739,17 @@ sub load_params {
 		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
 	}
 
+	# Compatability options, old command-line
+	if(!$tool_params{'stype'}) {
+		$tool_params{'stype'} = 'dna' if($params{'nucleotide'});
+		$tool_params{'stype'} = 'protein' if($params{'protein'});
+		$tool_params{'stype'} = 'rna' if($params{'rna'});
+	}
+	if(!$tool_params{'strand'}) {
+		$tool_params{'strand'} = 'top' if($params{'topstrand'});
+		$tool_params{'strand'} = 'bottom' if($params{'bottomstrand'});
+	}	
+	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
