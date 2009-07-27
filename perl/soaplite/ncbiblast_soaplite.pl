@@ -90,11 +90,16 @@ GetOptions(
 	'gapopen|o=i'    => \$tool_params{'gapopen'},      # Open gap penalty
 	'gapext|x=i'     => \$tool_params{'gapext'},       # Gap extension penality
 	'gapalign|g'     => \$tool_params{'gapalign'},     # Optimise gap alignments
-	'stype=s' => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
-	'seqrange=s' => \$tool_params{'seqrange'},    # Query subsequence to use
-	'sequence=s' => \$params{'sequence'},         # Query sequence file or DB:ID
+	'stype=s' => \$tool_params{'stype'},    # Sequence type
+	'seqrange=s' => \$tool_params{'seqrange'},    # Query subsequence
+	'sequence=s' => \$params{'sequence'},         # Query sequence
 	'multifasta' => \$params{'multifasta'},       # Multiple fasta input
 
+	# Compatability options, old command-line
+	'numal|n=i'     => \$params{'numal'},        # Number of alignments
+	'opengap|o=i'   => \$params{'opengap'},      # Open gap penalty
+	'extendgap|x=i' => \$params{'extendgap'},    # Gap extension penality
+	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -753,6 +758,18 @@ sub load_params {
 		$tool_params{'match_scores'} =
 		  $params{'match'} . ',' . $params{'missmatch'};
 	}
+
+	# Compatability options, old command-line
+	if(!$tool_params{'alignments'} && $params{'numal'}) {
+		$tool_params{'alignments'} = $params{'numal'};
+	}
+	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
+		$tool_params{'gapopen'} = $params{'opengap'};
+	}
+	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
+		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
