@@ -6,8 +6,9 @@
 
 PERL = perl
 #PERL = /ebi/extserv/bin/perl/bin/perl
-#EMAIL = email@example.org
-EMAIL = support@ebi.ac.uk
+#PERL = /sw/arch/bin/perl
+EMAIL = email@example.org
+#EMAIL = support@ebi.ac.uk
 
 # Run all test sets
 all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
