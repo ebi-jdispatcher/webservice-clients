@@ -685,6 +685,7 @@ Returns the hierarchy of the domains available.
 sub soap_get_domains_hierarchy {
 	print_debug_message( 'soap_get_domains_hierarchy', 'Begin', 1 );
 	my $res = $soap->getDomainsHierarchy();
+	print_debug_message( 'soap_get_domains_hierarchy', "res:\n" . Dumper($res), 11 );
 	print_debug_message( 'soap_get_domains_hierarchy', 'End', 1 );
 	return $res->valueof('//rootDomain');
 }
@@ -818,8 +819,8 @@ sub toNestedArray {
 		foreach my $parent (@tmpArray) {
 			my (@tmpArray2) = ();
 			for(my $i =0; $i < $numChildItems; $i++) {
+				push(@tmpArray2, $tmpArray1[$childNum]);
 				$childNum++;
-				push(@tmpArray2, $tmpArray1[$i]);
 			}
 			push(@returnArray, \@tmpArray2);
 		}
