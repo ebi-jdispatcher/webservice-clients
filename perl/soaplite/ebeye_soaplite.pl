@@ -1155,6 +1155,7 @@ Print hierarchy of EB-eye domains.
 
 =cut
 
+# TODO: adapt to handle hierarchy in SOAP::Lite 0.60
 sub print_get_domains_hierarchy {
 	print_debug_message( 'print_get_domains_hierarchy', 'Begin', 1 );
 	my $res = soap_get_domains_hierarchy();
@@ -1201,6 +1202,7 @@ Print query results for each domain in the search.
 
 =cut
 
+# TODO: adapt to handle hierarchy in SOAP::Lite 0.60
 sub print_get_detailled_number_of_results {
 	print_debug_message( 'print_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
@@ -1208,6 +1210,14 @@ sub print_get_detailled_number_of_results {
 	print_domain_result($res, 0);
 	print_debug_message( 'print_get_detailled_number_of_results', 'End', 1 );
 }
+
+=head2 print_domain_result()
+
+Recursive method used to print detailed results.
+
+  &print_domain_result($domain_result, $level);
+
+=cut
 
 sub print_domain_result {
 	print_debug_message( 'print_domain_result', 'Begin', 1 );
