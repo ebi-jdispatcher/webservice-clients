@@ -182,7 +182,7 @@ if (
 		|| $params{'params'}
 		|| $params{'paramDetail'}
 	)
-	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
+	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} || defined($params{'previousjobid'}) ) )
   )
 {
 
@@ -722,12 +722,12 @@ sub load_params {
 
 	# Selected hit identifier list.
 	if(defined($params{'selectedHits'}) && -f $params{'selectedHits'}) {
-		$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'} ));
+		$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'}), '');
 	}
 	
 	# PSI-BLAST checkpoint from previous iteration.
 	if(defined($params{'cpfile'}) && -f $params{'cpfile'}) {
-		$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ));
+		$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ), '');
 	}
 
 	print_debug_message( 'load_params',
