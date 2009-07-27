@@ -4,16 +4,16 @@
 #
 # ======================================================================
 
-#PERL = perl
-PERL = /ebi/extserv/bin/perl/bin/perl
+PERL = perl
+#PERL = /ebi/extserv/bin/perl/bin/perl
 #PERL = /sw/arch/bin/perl
-#EMAIL = email@example.org
-EMAIL = support@ebi.ac.uk
+EMAIL = email@example.org
+#EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
+all: clustalw2 fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
 
-clean: clustalw2_clean ebeye_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psisearch_clean tcoffee_clean wublast_clean
+clean: clustalw2_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
 # ClustalW 2.0.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
@@ -32,76 +32,6 @@ clustalw2_align_stdin_stdout:
 
 clustalw2_clean:
 	rm -f clustalw2-*
-
-# EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
-ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResult ebeye_listFieldsInformation
-
-ebeye_listDomains:
-	${PERL} ebeye_lwp.pl --listDomains
-
-ebeye_getNumberOfResults:
-	${PERL} ebeye_lwp.pl --getNumberOfResults uniprot 'azurin'
-
-ebeye_getResultsIds:
-	${PERL} ebeye_lwp.pl --getResultsIds uniprot 'azurin' 1 10
-
-ebeye_getAllResultsIds:
-	${PERL} ebeye_lwp.pl --getAllResultsIds uniprot 'azurin'
-
-ebeye_listFields:
-	${PERL} ebeye_lwp.pl --listFields uniprot
-
-ebeye_getResults:
-	${PERL} ebeye_lwp.pl --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
-
-ebeye_getEntry:
-	${PERL} ebeye_lwp.pl --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
-
-ebeye_getEntries:
-	${PERL} ebeye_lwp.pl --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
-
-ebeye_getEntryFieldUrls:
-	${PERL} ebeye_lwp.pl --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
-
-ebeye_getEntriesFieldUrls:
-	${PERL} ebeye_lwp.pl --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
-
-ebeye_getDomainsReferencedInDomain:
-	${PERL} ebeye_lwp.pl --getDomainsReferencedInDomain uniprot
-
-ebeye_getDomainsReferencedInEntry:
-	${PERL} ebeye_lwp.pl --getDomainsReferencedInEntry uniprot 'WAP_RAT'
-
-ebeye_listAdditionalReferenceFields:
-	${PERL} ebeye_lwp.pl --listAdditionalReferenceFields uniprot
-
-ebeye_getReferencedEntries:
-	${PERL} ebeye_lwp.pl --getReferencedEntries uniprot 'WAP_RAT' interpro
-
-ebeye_getReferencedEntriesSet:
-	${PERL} ebeye_lwp.pl --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getReferencedEntriesFlatSet:
-	${PERL} ebeye_lwp.pl --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getDomainsHierarchy:
-	${PERL} ebeye_lwp.pl --getDomainsHierarchy
-
-ebeye_getDetailledNumberOfResult: ebeye_getDetailledNumberOfResult_flat ebeye_getDetailledNumberOfResult_tree
-
-ebeye_getDetailledNumberOfResult_flat:
-	${PERL} ebeye_lwp.pl --getDetailledNumberOfResult allebi 'azurin' true
-
-ebeye_getDetailledNumberOfResult_tree:
-	${PERL} ebeye_lwp.pl --getDetailledNumberOfResult allebi 'azurin' false
-
-ebeye_listFieldsInformation:
-	${PERL} ebeye_lwp.pl --listFieldsInformation uniprot
-
-ebeye_clean:
 
 # FASTA
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_multifasta_file
@@ -266,7 +196,7 @@ tcoffee_clean:
 	rm -f tcoffee-*
 
 # WU-BLAST
-wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout
+wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_multifasta_file
 
 wublast_params:
 	${PERL} wublast_lwp.pl --params
@@ -282,6 +212,12 @@ wublast_dbid:
 
 wublast_stdin_stdout:
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > wublast-blah.txt
+
+wublast_id_list_file:
+	${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
+
+wublast_multifasta_file:
+	${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta  ../test_data/multi_prot.tfa
 
 wublast_clean:
 	rm -f wublast-*
