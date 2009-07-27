@@ -93,6 +93,11 @@ GetOptions(
 	'sequence=s' => \$params{'sequence'},         # Query sequence file or DB:ID
 	'multifasta' => \$params{'multifasta'},       # Multiple fasta input
 
+	# Compatability options, old command-line.
+	'echofilter|e'    => \$params{'echofilter'},   # Display filtered sequence
+	'b=i'  => \$params{'numal'},        # Number of alignments
+	'appxml=s'        => \$params{'appxml'},       # Application XML
+
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -744,6 +749,18 @@ sub load_params {
 	for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
 		$tool_params{'database'}[$i] =
 		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
+	}
+
+	# Compatability options, old command-line.
+	if(!$tool_params{'viewfilter'} && $params{'echofilter'}) {
+		$tool_params{'viewfilter'} = 'true';
+	}
+	if(!$tool_params{'alignments'} && $params{'numal'}) {
+		$tool_params{'alignments'} = $params{'numal'};
+	}
+	# TODO: set alignment format option to get NCBI BLAST XML.
+	if($params{'appxml'}) {
+		$tool_params{'align'} = '';
 	}
 
 	print_debug_message( 'load_params',
