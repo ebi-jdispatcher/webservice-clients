@@ -981,7 +981,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/wu_blast_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
