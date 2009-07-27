@@ -71,25 +71,31 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	"program|p=s"  => \$tool_params{'program'},   # blastp, blastn, blastx, etc.
-	"database|D=s" => \$params{'database'},       # Database(s) to search
-	"matrix|m=s"   => \$tool_params{'matrix'},    # Scoring martix to use
-	"exp|E=f"      => \$tool_params{'exp'},       # E-value threshold
-	"filter|f"     => \$tool_params{'filter'},    # Low complexity filter
-	"align|A=i"    => \$tool_params{'align'},     # Pairwise alignment format
-	"scores|s=i"   => \$tool_params{'scores'},    # Number of scores
-	"alignments|n=i" => \$tool_params{'alignments'},   # Number of alignments
-	"dropoff|d=i"    => \$tool_params{'dropoff'},      # Dropoff score
-	"match_scores=s" => \$tool_params{'match_scores'}, # Match/missmatch scores
-	"match|u=i"      => \$params{'match'},             # Match score
-	"mismatch|v=i"   => \$params{'mismatch'},          # Mismatch score
-	"gapopen|o=i"    => \$tool_params{'gapopen'},      # Open gap penalty
-	"gapext|x=i"     => \$tool_params{'gapext'},       # Gap extension penality
-	"gapalign|g"     => \$tool_params{'gapalign'},     # Optimise gap alignments
-	"stype=s" => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
-	"seqrange=s" => \$tool_params{'seqrange'},    # Query subsequence to use
-	"sequence=s" => \$params{'sequence'},         # Query sequence file or DB:ID
+	'program|p=s'  => \$tool_params{'program'},   # blastp, blastn, blastx, etc.
+	'database|D=s' => \$params{'database'},       # Database(s) to search
+	'matrix|m=s'   => \$tool_params{'matrix'},    # Scoring martix to use
+	'exp|E=f'      => \$tool_params{'exp'},       # E-value threshold
+	'filter|f=s'   => \$tool_params{'filter'},    # Low complexity filter
+	'align|A=i'    => \$tool_params{'align'},     # Pairwise alignment format
+	'scores|s=i'   => \$tool_params{'scores'},    # Number of scores
+	'alignments|n=i' => \$tool_params{'alignments'},   # Number of alignments
+	'dropoff|d=i'    => \$tool_params{'dropoff'},      # Dropoff score
+	'match_scores=s' => \$tool_params{'match_scores'}, # Match/missmatch scores
+	'match|u=i'      => \$params{'match'},             # Match score
+	'mismatch|v=i'   => \$params{'mismatch'},          # Mismatch score
+	'gapopen|o=i'    => \$tool_params{'gapopen'},      # Open gap penalty
+	'gapext|x=i'     => \$tool_params{'gapext'},       # Gap extension penality
+	'gapalign|g'     => \$tool_params{'gapalign'},     # Optimise gap alignments
+	'stype=s' => \$tool_params{'stype'},    # Sequence type
+	'seqrange=s' => \$tool_params{'seqrange'},    # Query subsequence
+	'sequence=s' => \$params{'sequence'},         # Query sequence
+	'multifasta' => \$params{'multifasta'},       # Multiple fasta input
 
+	# Compatability options, old command-line
+	'numal|n=i'     => \$params{'numal'},        # Number of alignments
+	'opengap|o=i'   => \$params{'opengap'},      # Open gap penalty
+	'extendgap|x=i' => \$params{'extendgap'},    # Gap extension penality
+	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
