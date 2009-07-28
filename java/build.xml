@@ -1,26 +1,28 @@
 <!-- Build Java clients for EBI web services. -->
-<project name="EBIWS2-Java" basedir="." default="jar">
+<project name="EBIWS2-Java" basedir="." default="axis1-jar">
 	<property name="src.dir" value="src" />
-	<property name="jdispatcher.src.dir" value="${src.dir}/uk/ac/ebi/webservices/jdispatcher" />
+	<property name="ws.src.dir" value="${src.dir}/uk/ac/ebi/webservices" />
+	<property name="axis1.stubs.src.dir" value="${ws.src.dir}/axis1/stubs" />
+	<property name="jaxws.stubs.src.dir" value="${ws.src.dir}/jaxws/stubs" />
 	<property name="build.dir" value="bin" />
 	<property name="lib.dir" value="lib"/>
 	<property name="jar.dir" value="jar"/>
 
-  <!-- Add all jars in lib/ to classpath -->
-  <path id="classpath">
-    <fileset dir="${lib.dir}" includes="**/*.jar"/>
-  </path>
+	<!-- Add all jars in lib/ to classpath -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
 
-  <!-- Clean-up build directory -->
-  <target name="clean">
-    <delete includeemptydirs="true">
-      <fileset dir="${build.dir}" includes="**/*"/>
-    </delete>
-  </target>
+	<!-- Clean-up build directory -->
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${build.dir}" includes="**/*"/>
+		</delete>
+	</target>
 
-  <!-- Get back to distributed/repository state -->
-  <target name="distclean" depends="clean,distclean-lib,distclean-stubs">
-  </target>
+	<!-- Get back to distributed/repository state -->
+	<target name="distclean" depends="clean,distclean-lib,distclean-stubs">
+	</target>
 
 	<target name="distclean-lib">
 	    <delete includeemptydirs="true" quiet="true">
@@ -29,168 +31,297 @@
         	<fileset dir="." includes="${lib.dir}"/>
 	    </delete>
 	</target>
-	
+
 	<target name="distclean-stubs">
-		<antcall target="distclean-stubs-clustalw2" />
-		<antcall target="distclean-stubs-fasta" />
-		<antcall target="distclean-stubs-ncbiblast" />
-		<antcall target="distclean-stubs-wublast" />
-	</target>
-	
-	<target name="distclean-stubs-clustalw2" depends="distclean-stubs-clustalw2-msa,distclean-stubs-clustalw2-phylotree">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/" includes="clustalw2" />
-	    </delete>
-	</target>
-	
-	<target name="distclean-stubs-clustalw2-msa">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/clustalw2/msa" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="msa" />
-	    </delete>
+		<antcall target="axis1-distclean-stubs" />
+		<antcall target="jaxws-distclean-stubs" />
 	</target>
 
-	<target name="distclean-stubs-clustalw2-phylotree">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/clustalw2/phylotree" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/clustalw2" includes="phylotree" />
-	    </delete>
+	<!-- Get dependencies archive, includes Axis 1.4 and Commons-CLI libraries -->
+	<target name="get-dependencies">
+		<get src="http://www.ebi.ac.uk/Tools/webservices/downloads/java/lib-1.4.zip" dest="lib-1.4.zip" />
 	</target>
 
-	<target name="distclean-stubs-fasta">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/fasta" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/" includes="fasta" />
-	    </delete>
+	<!-- Unpack dependencies archive -->
+	<target name="unpack-dependencies" depends="get-dependencies">
+		<unzip src="lib-1.4.zip" dest="." />
 	</target>
 
-	<target name="distclean-stubs-ncbiblast">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/ncbiblast" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/" includes="ncbiblast" />
-	    </delete>
+	<!-- Generate Axis 1.x stubs from a WSDL -->
+	<target name="genAxis1Stubs">
+		<echo message="${stubPkg}" />
+		<echo message="${wsdlUrl}" />
+		<java classname="org.apache.axis.wsdl.WSDL2Java" classpathref="classpath" fork="yes" dir="${src.dir}">
+			<arg value="-p" />
+			<arg value="${stubPkg}" />
+			<arg value="${wsdlUrl}" />
+		</java>
 	</target>
 
-	<target name="distclean-stubs-wublast">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jdispatcher.src.dir}/wublast" includes="*/**" />
-	        <fileset dir="${jdispatcher.src.dir}/" includes="wublast" />
-	    </delete>
+	<!-- Generate Axis 1.x stubs for all services -->
+	<target name="axis1-stubs" depends="unpack-dependencies">
+		<!-- <antcall target="axis1-stubs-clustalw2" /> -->
+		<antcall target="axis1-stubs-fasta" />
+		<antcall target="axis1-stubs-ncbiblast" />
+		<antcall target="axis1-stubs-wublast" />
 	</target>
 
-  <!-- Get dependencies archive, includes Axis 1.4, Axis 2 and JAX-RPC libraries -->
-  <target name="get-dependencies">
-    <get src="http://www.ebi.ac.uk/Tools/webservices/downloads/java/lib-1.4.zip"
-	 dest="lib-1.4.zip" />
-  </target>
-
-  <!-- Unpack dependencies archive -->
-  <target name="unpack-dependencies" depends="get-dependencies">
-    <unzip src="lib-1.4.zip" dest="." />
-  </target>
-
-  <!-- Generate stubs from a WSDL -->
-  <target name="genStubs">
-    <echo message="${stubPkg}" />
-    <echo message="${wsdlUrl}" />
-    <java classname="org.apache.axis.wsdl.WSDL2Java"
-	  classpathref="classpath"
-	  fork="yes"
-	  dir="${src.dir}">
-      <arg value="-p" />
-      <arg value="${stubPkg}" />
-      <arg value="${wsdlUrl}" />
-    </java>
-  </target>
-
-  <!-- Generate stubs for all services -->
-  <target name="stubs-all" depends="unpack-dependencies">
-    <!-- <antcall target="stubs-clustalw2" /> -->
-    <antcall target="stubs-fasta" />
-    <antcall target="stubs-ncbiblast" />
-    <antcall target="stubs-wublast" />
-  </target>
-
-	<!-- Generate stubs for each service -->
-	<target name="stubs-clustalw2">
-		<antcall target="stubs-clustalw2-msa" />
-		<antcall target="stubs-clustalw2-phylotree" />
-	</target>
-	<target name="stubs-clustalw2-msa">
-		<antcall target="genStubs">
-	    	<param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.msa" />
-	    	<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2-msa?wsdl" />
+	<!-- Generate Axis 1.x stubs for each service -->
+	<target name="axis1-stubs-clustalw2">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
 		</antcall>
 	</target>
-	  <target name="stubs-clustalw2-phylotree">
-	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.clustalw2.phylotree" />
-	      <param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2-phylotree?wsdl" />
-	    </antcall>
-	  </target>
-	  <target name="stubs-fasta">
-	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.fasta" />
-	      <param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
-	    </antcall>
-	  </target>
-	  <target name="stubs-ncbiblast">
-	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.ncbiblast" />
-	      <param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
-	    </antcall>
-	  </target>
-	  <target name="stubs-wublast">
-	    <antcall target="genStubs">
-	      <param name="stubPkg" value="uk.ac.ebi.webservices.jdispatcher.wublast" />
-	      <param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl" />
-	    </antcall>
-	  </target>
+	<target name="axis1-stubs-fasta">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fasta" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-ncbiblast">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ncbiblast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-wublast">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.wublast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl" />
+		</antcall>
+	</target>
 
-  <!-- Compile code into classes -->
-  <target name="compile">
-    <javac
-      srcdir="${src.dir}"
-      destdir="${build.dir}"
-      classpathref="classpath"
-    />
-  </target>
+	<!-- Compile Axis 1.x code into classes -->
+	<target name="axis1-compile">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/" />
+	</target>
 
-  <!-- Package jars -->
-  <target name="jar" depends="compile">
-    <!-- <jar destfile="${jar.dir}/ClustalW2.jar"
-	 basedir="${build.dir}"
-	 includes="uk/ac/ebi/webservices/jdispatcher/ClustalW2Client.** uk/ac/ebi/webservices/jdispatcher/clustalw2/**">
-     <manifest>
-       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.ClustalW2Client"/>
-     </manifest>
-   </jar> -->
-    <jar destfile="${jar.dir}/Fasta.jar"
-	 basedir="${build.dir}"
-	 includes="uk/ac/ebi/webservices/jdispatcher/FastaClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/fasta/**">
-     <manifest>
-       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.FastaClient"/>
-     </manifest>
-   </jar>
-    <jar destfile="${jar.dir}/NCBIBlast.jar"
-	 basedir="${build.dir}"
-	 includes="uk/ac/ebi/webservices/jdispatcher/NCBIBlastClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/ncbiblast/**">
-     <manifest>
-       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.NCBIBlastClient"/>
-     </manifest>
-   </jar>
-    <jar destfile="${jar.dir}/WUBlast.jar"
-	 basedir="${build.dir}"
-	 includes="uk/ac/ebi/webservices/jdispatcher/WUBlastClient.** uk/ac/ebi/webservices/jdispatcher/AbstractWsClient.** uk/ac/ebi/webservices/jdispatcher/wublast/**">
-     <manifest>
-       <attribute name="Main-Class" value="uk.ac.ebi.webservices.jdispatcher.WUBlastClient"/>
-     </manifest>
-   </jar>
-  </target>
+	<!-- Package Axis 1.x jars -->
+	<target name="axis1-jar" depends="axis1-compile">
+		<tstamp>
+			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
+		</tstamp>
+		<!-- <jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar> -->
+		<jar destfile="${jar.dir}/Fasta_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/FastaClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FastaClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.NCBIBlastClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/WUBlast_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.WUBlastClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="axis1-distclean-stubs">
+		<antcall target="axis1-distclean-stubs-clustalw2" />
+		<antcall target="axis1-distclean-stubs-fasta" />
+		<antcall target="axis1-distclean-stubs-ncbiblast" />
+		<antcall target="axis1-distclean-stubs-wublast" />
+	</target>
+	
+	<target name="axis1-distclean-stubs-clustalw2">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/clustalw2" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-fasta">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/fasta" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="fasta" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-ncbiblast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/ncbiblast" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-wublast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/wublast" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="wublast" />
+	    </delete>
+	</target>
+	
+	<!-- Generate JAX-WS stubs from a WSDL -->
+	<!--
+	Uses the wsimport command:
+	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
+	-->
+	<target name="genJaxwsStubs">
+		<echo message="${stubPkg}" />
+		<echo message="${wsdlUrl}" />
+		<exec executable="wsimport">
+			<arg value="-d" />
+			<arg value="${build.dir}" />
+			<arg value="-p" />
+			<arg value="${stubPkg}" />
+			<arg value="-keep" />
+			<arg value="-s" />
+			<arg value="${src.dir}" />
+			<arg value="${wsdlUrl}" />
+		</exec>
+	</target>
+
+	<!-- Generate JAX-WS stubs for all services -->
+	<target name="jaxws-stubs" depends="unpack-dependencies">
+		<!-- <antcall target="jaxws-stubs-clustalw2" /> -->
+		<antcall target="jaxws-stubs-fasta" />
+		<antcall target="jaxws-stubs-ncbiblast" />
+		<antcall target="jaxws-stubs-wublast" />
+	</target>
+
+	<!-- Generate JAX-WS stubs for each service -->
+	<target name="jaxws-stubs-clustalw2">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-fasta">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.fasta" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-ncbiblast">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ncbiblast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-wublast">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.wublast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl" />
+		</antcall>
+	</target>
+
+	<!-- Compile JAX-WS code into classes -->
+	<target name="jaxws-compile">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/" />
+	</target>
+
+	<!-- Package JAX-WS jars -->
+	<target name="jaxws-jar" depends="jaxws-compile">
+		<tstamp>
+			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
+		</tstamp>
+		<!-- <jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.ClustalW2Client"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar> -->
+		<jar destfile="${jar.dir}/Fasta_JAXWS.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/jaxws/FastaClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/fasta/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.FastaClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.NCBIBlastClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/WUBlast_JAXWS.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/jaxws/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/wublast/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.WUBlastClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+	</target>
+
+
+	<target name="jaxws-distclean-stubs">
+		<antcall target="jaxws-distclean-stubs-clustalw2" />
+		<antcall target="jaxws-distclean-stubs-fasta" />
+		<antcall target="jaxws-distclean-stubs-ncbiblast" />
+		<antcall target="jaxws-distclean-stubs-wublast" />
+	</target>
+	
+	<target name="jaxws-distclean-stubs-clustalw2">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/clustalw2" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-fasta">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/fasta" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fasta" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-ncbiblast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/ncbiblast" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-wublast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/wublast" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="wublast" />
+	    </delete>
+	</target>
 
 	<!-- Test clients -->
-	<target name="test" depends="jar">
-	    <ant dir="test" inheritAll="false" />
+	<target name="axis1-test" depends="axis1-jar">
+		<ant dir="test" inheritAll="false" />
+	</target>
+	<target name="jaxws-test" depends="jaxws-jar">
+		<ant dir="test" inheritAll="false" />
 	</target>
 </project>

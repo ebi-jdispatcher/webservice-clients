@@ -1,41 +1,41 @@
 /* $Id$
  * ======================================================================
- * jDispatcher FASTA SOAP web service Java client using Axis 1.4.
+ * jDispatcher NCBI BLAST SOAP web service Java client using Axis 1.4.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
  * ====================================================================== */
-package uk.ac.ebi.webservices.jdispatcher;
+package uk.ac.ebi.webservices.axis1;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
-import uk.ac.ebi.webservices.jdispatcher.fasta.*;
+import uk.ac.ebi.webservices.axis1.stubs.ncbiblast.*;
 
-/** jDispatcher FASTA SOAP web service Java client.
+/** jDispatcher NCBI BLAST SOAP web service Java client.
  * 
  * See:
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/fasta">http://www.ebi.ac.uk/Tools/Webservices/services/fasta</a>
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/fasta">http://www.ebi.ac.uk/Tools/Webservices/clients/fasta</a>
+ * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/ncbiblast">http://www.ebi.ac.uk/Tools/Webservices/services/ncbiblast</a>
+ * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast">http://www.ebi.ac.uk/Tools/Webservices/clients/ncbiblast</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsClient {
+public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Tool specific usage message */
-	private static final String usageMsg = "FASTA\n"
+	private static final String usageMsg = "NCBI BLAST\n"
 		+ "==========\n"
 		+ "   \n"
-		+ "Rapid sequence database search programs utilizing the FASTA algorithm\n"
+		+ "Rapid sequence database search programs utilizing the BLAST algorithm\n"
 		+ "    \n"
 		+ "For more detailed help information refer to \n"
-		+ "http://www.ebi.ac.uk/Tools/fasta/help.html\n"
+		+ "http://www.ebi.ac.uk/Tools/blastall/help.html\n"
 		+ "\n"
 		+ "[Required]\n"
 		+ "\n"
-		+ "  -p, --program        : str  : FASTA program to use: see --paramDetail program\n"
+		+ "  -p, --program        : str  : BLAST program to use: see --paramDetail program\n"
 		+ "  -D, --database       : str  : database(s) to search, space seperated: see\n"
 		+ "                                --paramDetail database\n"
 		+ "      --stype          : str  : query sequence type\n"
@@ -43,24 +43,21 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "  -f, --gapopen       : int  : penalty for gap opening\n"
-		+ "  -g, --gapext        : int  : penalty for additional residues in a gap\n"
-		+ "  -b, --scores        : int  : maximum number of scores\n"
-		+ "  -d, --alignments    : int  : maximum number of alignments\n"
-		+ "  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)\n"
-		+ "  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix\n"
-		+ "  -E, --eupper        : real : E-value upper limit for hit display\n"
-		+ "  -F, --elower        : real : E-value lower limit for hit display\n"
-		+ "  -H, --histogram     :      : turn off histogram display\n"
-		+ "  -n, --nucleotide    :      : force query to nucleotide sequence\n"
-		+ "  -3, --topstrand     :      : use only forward frame translations (DNA only)\n"
-		+ "  -i, --bottomstrand  :      : reverse complement query sequence (DNA only)\n"
-		+ "      --filter        : str  : low complexity input sequence filter,\n"
-		+ "                               see --paramDetail filter\n"
-		+ "  -z, --stats         : int  : statistical model for search,\n"
-		+ "                               see --paramDetail stats\n"
-		+ "  -R, --dbrange       : str  : define a subset database by sequence length\n"
-		+ "  -S, --seqrange      : str  : search with a region of the query\n";
+		+ "  -m, --matrix         : str  : scoring matrix, see --paramDetail matrix\n"
+		+ "  -e, --exp            : real : 0<E<= 1000. Statistical significance threshold\n"
+		+ "                                for reporting database sequence matches.\n"
+		+ "  -f, --filter         :      : low complexity sequence filter, see\n"
+		+ "                                --paramDetail filter\n"
+		+ "  -A, --align          : int  : alignment format, see --paramDetail align\n"
+		+ "  -s, --scores         : int  : maximum number of scores to report\n"
+		+ "  -n, --alignments     : int  : maximum number of alignments to report\n"
+		+ "  -u, --match          : int  : score for a match (BLASTN only)\n"
+		+ "  -v, --mismatch       : int  : score for a missmatch (BLASTN only)\n"
+		+ "  -o, --gapopen        : int  : gap open penalty\n"
+		+ "  -x, --gapext         : int  : gap extension penalty\n"
+		+ "  -d, --dropoff        : int  : drop-off score\n"
+		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
+		+ "      --seqrange       : str  : region in query sequence to use for search\n";
 
 	/** Print usage message. */
 	private static void printUsage() {
@@ -320,25 +317,24 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 			String[] dbList = line.getOptionValue("D").split(" +");
 			params.setDatabase(dbList);
 		}
-		if (line.hasOption("s")) params.setMatrix(line.getOptionValue("s"));
-		if (line.hasOption("F")) params.setExplowlim(new Double(line.getOptionValue("F")));
-		if (line.hasOption("E")) params.setExpupperlim(new Double(line.getOptionValue("E")));
-		//else params.setExpupperlim("10");
-		if (line.hasOption("b")) params.setScores(new Integer(line.getOptionValue("b"))); 
-		//else params.setScores("50");
-		if (line.hasOption("k")) params.setKtup(new Integer(line.getOptionValue("k"))); 
-		if (line.hasOption("d")) params.setAlignments(new Integer(line.getOptionValue("d"))); 
-		//else params.setAlignments("50");
-		if (line.hasOption("g")) params.setGapext(new Integer(line.getOptionValue("g"))); 
-		if (line.hasOption("f")) params.setGapopen(new Integer(line.getOptionValue("f"))); 
-		if (line.hasOption("R")) params.setDbrange(line.getOptionValue("R"));
+		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
+		if (line.hasOption("e")) params.setExp(line.getOptionValue("e"));
+		else params.setExp("10");
+		if (line.hasOption("u") && line.hasOption("v")) {
+			params.setMatch_scores(line.getOptionValue("u") + "," + line.getOptionValue("v"));
+		}
+		if (line.hasOption("o")) params.setGapopen(new Integer(line.getOptionValue("o"))); 
+		if (line.hasOption("x")) params.setGapext(new Integer(line.getOptionValue("x")));
+		if (line.hasOption("d")) params.setDropoff(new Integer(line.getOptionValue("d"))); 
+		if (line.hasOption("A")) params.setAlign(new Integer(line.getOptionValue("A"))); 
+		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s")));
+		else params.setScores(new Integer(50));
+		if (line.hasOption("n")) params.setAlignments(new Integer(line.getOptionValue("n")));
+		else params.setAlignments(new Integer(50));
+		if (line.hasOption("g")) params.setGapalign(new Boolean(true)); 
+		if (line.hasOption("f")) params.setFilter(line.getOptionValue("f"));
+		//if (line.hasOption("F")) params.setFormat(new Boolean(true));
 		if (line.hasOption("S")) params.setSeqrange(line.getOptionValue("S"));
-		if (line.hasOption("H")) params.setHist(false);
-		else params.setHist(true);
-		if (line.hasOption("3")) params.setStrand("top");
-		if (line.hasOption("i")) params.setStrand("bottom");
-		if (line.hasOption("filter")) params.setFilter(line.getOptionValue("filter"));
-		if (line.hasOption("z")) params.setStats(line.getOptionValue("z"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -357,33 +353,27 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 		addGenericOptions(options);
 		// Application specific options
 		options.addOption("ids", "ids", false, "Get list of identifiers from result");
-		options.addOption("stype", "stype", true, "Sequence type");
-		options.addOption("p", "program", true, "Search program");
+		options.addOption("p", "program", true, "Program to use");
 		options.addOption("D", "database", true, "Database to search");
-		options.addOption("H", "histogram", false, "Output histogram");
-		options.addOption("n", "nucleotide", false, "Nucleotide query sequence");
-		options.addOption("3", "topstrand", false,  "Search using top strand only");
-		options.addOption("i", "bottomstrand", false, "Search using bottom strand only");
-		options.addOption("f", "gapopen", true, "Gap creation penalty");
-		options.addOption("g", "gapext", true, "Gap extension penalty");
-		options.addOption("b", "scores", true, "Maximum number of reported scores");
-		options.addOption("d", "alignments", true, "Maximum number of reported alignments");
-		options.addOption("k", "ktup", true, "Word length");
-		options.addOption("s", "matrix", true, "Scoring matrix");
-		options.addOption("E", "eupper", true, "Upper expectation value");
-		options.addOption("F", "elower", true, "Lower expectation value");
-		options.addOption("filter", "filter", true, "Low complexity sequence filter");
-		options.addOption("z", "stats", true, "Statistical model for search");
-		options.addOption("R", "dbrange", true, "Range of sequence lengths in database to search");
-		options.addOption("S", "seqrange", true, "Region within the query sequence to search with");
-		options.addOption("protein", "protein", false, "Protein search");       
-		options.addOption("dna", "dna", false, "DNA search");    
-		options.addOption("rna", "rna", false, "RNA search");
-		options.addOption("sequence", true, "sequence file or datbase entry database:acc.no");
+		options.addOption("m", "matrix", true, "Scoring matrix");
+		options.addOption("e", "exp", true, "Expectation value threshold");
+		options.addOption("f", "filter", true, "Low complexity sequence filter");
+		options.addOption("g", "gapalign", true, "Perform gapped alignments");
+		options.addOption("A", "align", true, "Alignment format");
+		options.addOption("s", "scores", true, "Maximum number of scores to display");
+		options.addOption("n", "alignments", true, "Maximum number of alignments to display");
+		options.addOption("u", "match", true, "Match score");
+		options.addOption("v", "mismatch", true, "Mismatch score");
+		options.addOption("o", "gapopen", true, "Gap creation penalty");
+		options.addOption("x", "gapext", true, "Gap extension penalty");
+		options.addOption("d", "dropoff", true, "Drop off score");
+		options.addOption("seqrange", "seqrange", true, "Region in query sequence to use for search");
+		options.addOption("stype", "stype", true, "Sequence type");
+		options.addOption("sequence", "sequence", true, "Query sequence");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
 		// Create an instance of the client
-		FastaClient client = new FastaClient();
+		NCBIBlastClient client = new NCBIBlastClient();
 		try {
 			// Parse the command-line
 			CommandLine cli = cliParser.parse(options, args);
@@ -466,7 +456,7 @@ public class FastaClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsCli
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar WSfasta.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar WSNCBIBlast.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);

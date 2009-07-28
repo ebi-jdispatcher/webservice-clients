@@ -5,14 +5,14 @@
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
  * ====================================================================== */
-package uk.ac.ebi.webservices.jdispatcher;
+package uk.ac.ebi.webservices.axis1;
 
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
-import uk.ac.ebi.webservices.jdispatcher.wublast.*;
+import uk.ac.ebi.webservices.axis1.stubs.wublast.*;
 
 /** jDispatcher wu BLAST SOAP web service Java client.
  * 
@@ -21,7 +21,7 @@ import uk.ac.ebi.webservices.jdispatcher.wublast.*;
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/wublast">http://www.ebi.ac.uk/Tools/Webservices/clients/wublast</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class WUBlastClient extends uk.ac.ebi.webservices.jdispatcher.AbstractWsClient {
+public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Tool specific usage message */

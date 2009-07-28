@@ -2,7 +2,7 @@
  * ======================================================================
  * Abstract jDispatcher web services Java client.
  * ====================================================================== */
-package uk.ac.ebi.webservices.jdispatcher;
+package uk.ac.ebi.webservices;
 
 import java.io.File;
 import java.io.FileInputStream;
