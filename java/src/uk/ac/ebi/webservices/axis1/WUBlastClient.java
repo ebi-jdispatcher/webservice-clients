@@ -21,7 +21,7 @@ import uk.ac.ebi.webservices.axis1.stubs.wublast.*;
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/wublast">http://www.ebi.ac.uk/Tools/Webservices/clients/wublast</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsClient {
+public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Tool specific usage message */

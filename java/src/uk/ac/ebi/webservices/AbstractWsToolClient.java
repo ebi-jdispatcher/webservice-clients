@@ -24,7 +24,7 @@ import org.apache.commons.cli.*;
  * <a href="http://www.ebi.ac.uk/Tools/webservices/">http://www.ebi.ac.uk/Tools/webservices/</a>
  * <a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/java</a>
  */
-public abstract class AbstractWsClient {
+public abstract class AbstractWsToolClient {
 	/** Output level. Controlled by the --verbose and --quiet options. */
 	protected int outputLevel = 1;
 	/** Debug level. Controlled by the --debugLevel option. */

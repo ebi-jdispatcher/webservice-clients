@@ -21,7 +21,7 @@ import uk.ac.ebi.webservices.axis1.stubs.fasta.*;
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/fasta">http://www.ebi.ac.uk/Tools/Webservices/clients/fasta</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
-public class FastaClient extends uk.ac.ebi.webservices.AbstractWsClient {
+public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Tool specific usage message */
