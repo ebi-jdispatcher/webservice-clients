@@ -678,15 +678,26 @@ an entry reference.
 
 =cut
 
-# TODO: object conversion to use display code unchanged.
 sub soap_get_referenced_entries_set {
 	print_debug_message( 'soap_get_referenced_entries_set', 'Begin', 1 );
 	my (@retVal) = ();
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
 	my $response = &soap_request('getReferencedEntriesSet', {'domain' => $domain, 'entries' => {'string' => $entries}, 'referencedDomain' => $referencedDomain, 'fields' => {'string' => $fields}});
-	print_debug_message( 'soap_get_referenced_entries_set', "response:\n" . Dumper($response), 11 );
+	print_debug_message( 'soap_get_referenced_entries_set', "response:\n" . Dumper($response), 21 );
+	# Simplify the object, into an array of hash.
+	my (@idList) = @{$response->{'parameters'}->{'arrayOfEntryValues'}->{'EntryReferences'}}; 
+	foreach my $entry (@idList) {
+		my (%tmpEntry) = ('entry' => $entry->{'entry'});
+		my (@tmpRefList) = ();
+		foreach my $ref (@{$entry->{'references'}->{'ArrayOfString'}}) {
+			push(@tmpRefList, $ref->{'string'});
+		}
+		$tmpEntry{'references'} = \@tmpRefList;
+		push(@retVal, \%tmpEntry);
+	}
+	print_debug_message( 'soap_get_referenced_entries_set', "retVal:\n" . Dumper(\@retVal), 11 );
 	print_debug_message( 'soap_get_referenced_entries_set', 'End', 1 );
-	return @{$response->{'parameters'}->{'arrayOfEntryValues'}->{'EntryReferences'}};
+	return @retVal;
 }
 
 =head2 soap_get_referenced_entries_flat_set()
