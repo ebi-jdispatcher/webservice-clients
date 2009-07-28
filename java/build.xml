@@ -13,6 +13,11 @@
 		<fileset dir="${lib.dir}" includes="**/*.jar"/>
 	</path>
 
+	<!-- Build all -->
+	<target name="all" depends="axis1,jaxws" />
+	<target name="compile" depends="axis1-compile,jaxws-compile" />
+	<target name="jar" depends="axis1-jar,jaxws-jar" />
+	
 	<!-- Clean-up build directory -->
 	<target name="clean">
 		<delete includeemptydirs="true">
@@ -47,6 +52,9 @@
 		<unzip src="lib-1.4.zip" dest="." />
 	</target>
 
+	<!-- Axis 1.x -->
+	<target name="axis1" depends="axis1-jar" />
+	
 	<!-- Generate Axis 1.x stubs from a WSDL -->
 	<target name="genAxis1Stubs">
 		<echo message="${stubPkg}" />
@@ -60,7 +68,8 @@
 
 	<!-- Generate Axis 1.x stubs for all services -->
 	<target name="axis1-stubs" depends="unpack-dependencies">
-		<!-- <antcall target="axis1-stubs-clustalw2" /> -->
+		<antcall target="axis1-stubs-clustalw2" />
+		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-ncbiblast" />
 		<antcall target="axis1-stubs-wublast" />
@@ -71,6 +80,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-ebeye">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ebeye" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-fasta">
@@ -94,7 +109,7 @@
 
 	<!-- Compile Axis 1.x code into classes -->
 	<target name="axis1-compile">
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/" />
 	</target>
 
 	<!-- Package Axis 1.x jars -->
@@ -102,17 +117,27 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- <jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
+		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar> -->
+		</jar>
+		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EBeyeClient.** uk/ac/ebi/webservices/axis1/stubs/ebeye/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EBeyeClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Fasta_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/FastaClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/**">
+			includes="uk/ac/ebi/webservices/axis1/FastaClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FastaClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -122,7 +147,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
+			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.NCBIBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -132,7 +157,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/WUBlast_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/**">
+			includes="uk/ac/ebi/webservices/axis1/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.WUBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -144,6 +169,7 @@
 
 	<target name="axis1-distclean-stubs">
 		<antcall target="axis1-distclean-stubs-clustalw2" />
+		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
 		<antcall target="axis1-distclean-stubs-wublast" />
@@ -153,6 +179,13 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-ebeye">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/ebeye" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
 
@@ -177,6 +210,9 @@
 	    </delete>
 	</target>
 	
+	<!-- JAX-WS -->
+	<target name="jaxws" depends="jaxws-jar" />
+	
 	<!-- Generate JAX-WS stubs from a WSDL -->
 	<!--
 	Uses the wsimport command:
@@ -199,7 +235,8 @@
 
 	<!-- Generate JAX-WS stubs for all services -->
 	<target name="jaxws-stubs" depends="unpack-dependencies">
-		<!-- <antcall target="jaxws-stubs-clustalw2" /> -->
+		<antcall target="jaxws-stubs-clustalw2" />
+		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-wublast" />
@@ -210,6 +247,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-ebeye">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ebeye" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-fasta">
@@ -233,7 +276,7 @@
 
 	<!-- Compile JAX-WS code into classes -->
 	<target name="jaxws-compile">
-		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/" />
+		<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/" />
 	</target>
 
 	<!-- Package JAX-WS jars -->
@@ -241,17 +284,25 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- <jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
+		<jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar> -->
+		</jar>
+		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Fasta_JAXWS.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/jaxws/FastaClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/fasta/**">
+			includes="uk/ac/ebi/webservices/jaxws/FastaClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/fasta/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.FastaClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -261,7 +312,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
+			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.NCBIBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -271,7 +322,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/WUBlast_JAXWS.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/jaxws/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsClient.** uk/ac/ebi/webservices/jaxws/stubs/wublast/**">
+			includes="uk/ac/ebi/webservices/jaxws/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/wublast/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.WUBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -281,9 +332,9 @@
 		</jar>
 	</target>
 
-
 	<target name="jaxws-distclean-stubs">
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
+		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
 		<antcall target="jaxws-distclean-stubs-wublast" />
@@ -293,6 +344,13 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-ebeye">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/ebeye" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
 
