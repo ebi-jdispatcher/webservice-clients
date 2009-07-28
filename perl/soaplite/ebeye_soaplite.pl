@@ -6,7 +6,7 @@ ebeye_soaplite.pl
 
 =head1 DESCRIPTION
 
-EB-eye SOAP client using SOAP::Lite
+EB-eye SOAP client using L<SOAP::Lite>
 
 Tested with:
 
@@ -874,16 +874,18 @@ sub toNestedArray {
 	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
 	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 	if($SOAP::Lite::VERSION > 0.60) {
+		# SOAP::Lite recent versions... simplify the data structure by 
+		# removing a layer of nesting. 
 		foreach my $item (@tmpArray) {
 			print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
 			push @returnArray, $item->value()->{'string'};
 		}
 	}
 	else {
-		# SOAP::Lite 0.60 doesn't handle dataof() in the same way as later 
-		# versions so an alternative method needs to be used. Instead we 
-		# assume the sub-lists are all the same length and split the leaf
-		# nodes between the lists evenly.
+		# SOAP::Lite 0.60 doesn't handle dataof() in the same way so an 
+		# alternative method needs to be used. Instead assume the sub-lists 
+		# are all the same length and split the leaf nodes between the lists 
+		# evenly.
 		my (@tmpArray1) = $obj->valueof("$xpath/ArrayOfString/string");
 		print_debug_message( 'toNestedArray', "tmpArray1:\n" . Dumper(\@tmpArray1), 13 );
 		my $numChildItems = scalar(@tmpArray1) / scalar(@tmpArray);
