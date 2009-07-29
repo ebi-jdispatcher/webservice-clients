@@ -1140,8 +1140,12 @@ public class EBeyeClient {
 	 */
 	public FieldInfo[] listFieldsInformation(String domain)
 	throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+		printDebugMessage("listFieldsInformation", "Begin", 1);
+		FieldInfo[] retVal = null;
 		srvProxyConnect(); // Ensure we have a service proxy
-		return this.srvProxy.listFieldsInformation(domain);
+		retVal = this.srvProxy.listFieldsInformation(domain);
+		printDebugMessage("listFieldsInformation", "End", 1);
+		return retVal;
 	}
 
 	/**
@@ -1154,6 +1158,7 @@ public class EBeyeClient {
 	 */
 	public void printListFieldsInformation(String domain)
 	throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+		printDebugMessage("printListFieldsInformation", "Begin", 1);
 		FieldInfo[] fieldList = listFieldsInformation(domain);
 		for (int i = 0; i < fieldList.length; i++) {
 			FieldInfo a = fieldList[i];
@@ -1163,6 +1168,7 @@ public class EBeyeClient {
 			System.out.print("\t" + a.getRetrievable());
 			System.out.println("\t" + a.getSearchable());
 		}
+		printDebugMessage("printListFieldsInformation", "End", 1);
 	}
 
 	/**
