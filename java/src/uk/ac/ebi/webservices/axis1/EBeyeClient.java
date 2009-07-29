@@ -7,9 +7,7 @@ package uk.ac.ebi.webservices.axis1;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.xml.rpc.ServiceException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -17,13 +15,11 @@ import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.axis1.stubs.ebeye.*;
 
 /**
- * EB-eye Java client.
+ * Java EB-eye client using Apache Axis 1.4.
  * 
- * See: <a
- * href="http://www.ebi.ac.uk/Tools/Webservices/services/ebeye">http://www
- * .ebi.ac.uk/Tools/Webservices/services/ebeye</a> <a
- * href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java"
- * >http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
+ * See:
+ * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/ebeye">http://www.ebi.ac.uk/Tools/Webservices/services/ebeye</a>
+ * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
 public class EBeyeClient {
 	/** Output level. Controlled by the --verbose and --quiet options. */
@@ -118,11 +114,17 @@ public class EBeyeClient {
 		+ "\n"
 		+ "--listFieldsInformation <domain>\n"
 		+ "  Returns the list of fields that can be retrievedand/or searched for a\n"
-		+ "  particular domain.\n" + "\n" + "Further information:\n" + "\n"
+		+ "  particular domain.\n" 
+		+ "\n" 
+		+ "Further information:\n" 
+		+ "\n"
 		+ "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye\n"
 		+ "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n"
-		+ "\n" + "Support/Feedback:\n" + "\n"
-		+ "  http://www.ebi.ac.uk/support/\n" + "\n";
+		+ "\n" 
+		+ "Support/Feedback:\n" 
+		+ "\n"
+		+ "  http://www.ebi.ac.uk/support/\n" 
+		+ "\n";
 
 	/**
 	 * Print the usage message to STDOUT.
@@ -134,8 +136,7 @@ public class EBeyeClient {
 	/**
 	 * Set debug level.
 	 * 
-	 * @param level
-	 *            Debug level. 0 = off.
+	 * @param level Debug level. 0 = off.
 	 */
 	public void setDebugLevel(int level) {
 		printDebugMessage("setDebugLevel", "Begin " + level, 1);
@@ -159,15 +160,11 @@ public class EBeyeClient {
 	/**
 	 * Output debug message at specified level
 	 * 
-	 * @param methodName
-	 *            Name of the method to appear in the message
-	 * @param message
-	 *            The message
-	 * @param level
-	 *            Level at which to output message
+	 * @param methodName Name of the method to appear in the message
+	 * @param message The message
+	 * @param level Level at which to output message
 	 */
-	protected void printDebugMessage(String methodName, String message,
-			int level) {
+	protected void printDebugMessage(String methodName, String message,	int level) {
 		if (level <= debugLevel) {
 			System.err.println("[" + methodName + "()] " + message);
 		}
@@ -176,8 +173,7 @@ public class EBeyeClient {
 	/**
 	 * Set the output level.
 	 * 
-	 * @param level
-	 *            Output level. 0 = quiet, 1 = normal and 2 = verbose.
+	 * @param level Output level. 0 = quiet, 1 = normal and 2 = verbose.
 	 */
 	public void setOutputLevel(int level) {
 		printDebugMessage("setOutputLevel", "Begin " + level, 1);
@@ -193,16 +189,14 @@ public class EBeyeClient {
 	 * @return Output level.
 	 */
 	public int getOutputLevel() {
-		printDebugMessage("getOutputLevel", new Integer(this.outputLevel)
-		.toString(), 1);
+		printDebugMessage("getOutputLevel", new Integer(this.outputLevel).toString(), 1);
 		return this.outputLevel;
 	}
 
 	/**
 	 * Set the service endpoint URL for generating the service connection.
 	 * 
-	 * @param urlStr
-	 *            Service endpoint URL as a string.
+	 * @param urlStr Service endpoint URL as a string.
 	 */
 	public void setServiceEndPoint(String urlStr) {
 		printDebugMessage("setServiceEndpoint", "urlStr: " + urlStr, 1);
@@ -215,19 +209,15 @@ public class EBeyeClient {
 	 * @return The service endpoint URL as a string.
 	 */
 	public String getServiceEndPoint() {
-		printDebugMessage("getServiceEndpoint", "serviceEndPoint: "
-				+ this.serviceEndPoint, 1);
+		printDebugMessage("getServiceEndpoint", "serviceEndPoint: "	+ this.serviceEndPoint, 1);
 		return this.serviceEndPoint;
 	}
 
 	/**
 	 * Print a progress message.
 	 * 
-	 * @param msg
-	 *            The message to print.
-	 * @param level
-	 *            The output level at or above which this message should be
-	 *            displayed.
+	 * @param msg The message to print.
+	 * @param level The output level at or above which this message should be displayed.
 	 */
 	protected void printProgressMessage(String msg, int level) {
 		if (outputLevel >= level) {
@@ -255,8 +245,7 @@ public class EBeyeClient {
 	 * @return The web service proxy.
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public EBISearchService_PortType getSrvProxy()
-	throws javax.xml.rpc.ServiceException {
+	public EBISearchService_PortType getSrvProxy() throws javax.xml.rpc.ServiceException {
 		printDebugMessage("getSrvProxy", "Begin", 2);
 		this.srvProxyConnect(); // Ensure the service proxy exists
 		printDebugMessage("getSrvProxy", "End", 2);
@@ -266,10 +255,8 @@ public class EBeyeClient {
 	/**
 	 * Split a string into an array using a specified set of separators.
 	 * 
-	 * @param inStr
-	 *            String to split.
-	 * @param sepListStr
-	 *            Set of characters to use as separators.
+	 * @param inStr String to split.
+	 * @param sepListStr Set of characters to use as separators.
 	 * @return Array of strings.
 	 */
 	@SuppressWarnings("unchecked")
@@ -293,8 +280,7 @@ public class EBeyeClient {
 	 * Split a string into an array of strings based on the separators ' ', ','
 	 * and ';'.
 	 * 
-	 * @param inStr
-	 *            String to split.
+	 * @param inStr String to split.
 	 * @return Array of strings.
 	 */
 	private String[] splitString(String inStr) {
@@ -304,14 +290,12 @@ public class EBeyeClient {
 	/**
 	 * Print an array of strings to STDOUT.
 	 * 
-	 * @param strList
-	 *            Array of strings to print.
+	 * @param strList Array of strings to print.
 	 */
 	private void printStrList(String[] strList) {
 		printDebugMessage("printStrList", "Begin", 1);
 		for (int i = 0; i < strList.length; i++) {
 			System.out.println(strList[i]);
-			// System.out.println("\"" + strList[i] + "\"");
 		}
 		printDebugMessage("printStrList", "End", 1);
 	}
@@ -319,8 +303,7 @@ public class EBeyeClient {
 	/**
 	 * Print an array of array of strings to STDOUT.
 	 * 
-	 * @param strList
-	 *            Array of array of strings to print.
+	 * @param strList Array of array of strings to print.
 	 * @param table Output in table format (multiple columns), otherwise list format (single column) is used.
 	 */
 	private void printArrayOfStringList(String[][] arrayList, boolean table) {
@@ -337,7 +320,6 @@ public class EBeyeClient {
 					}
 				}
 				System.out.print(strList[j]);
-				//System.out.print("\"" + strList[j] + "\"");
 			}
 			System.out.println();
 		}
@@ -351,8 +333,7 @@ public class EBeyeClient {
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public String[] listDomains() throws java.rmi.RemoteException,
-	javax.xml.rpc.ServiceException {
+	public String[] listDomains() throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("listDomains", "Begin", 1);
 		String[] retVal = null;
 		srvProxyConnect(); // Ensure we have a service proxy
@@ -367,8 +348,7 @@ public class EBeyeClient {
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public void printListDomains() throws java.rmi.RemoteException,
-	javax.xml.rpc.ServiceException {
+	public void printListDomains() throws java.rmi.RemoteException,	javax.xml.rpc.ServiceException {
 		printDebugMessage("printListDomains", "Begin", 1);
 		printStrList(listDomains());
 		printDebugMessage("printListDomains", "End", 1);
@@ -377,16 +357,13 @@ public class EBeyeClient {
 	/**
 	 * Get the number of entries in a domain matching a query
 	 * 
-	 * @param domain
-	 *            Name of the domain to search
-	 * @param query
-	 *            The query to perform
+	 * @param domain Name of the domain to search
+	 * @param query The query to perform
 	 * @return an array of domain names
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public int getNumberOfResults(String domain, String query)
-	throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+	public int getNumberOfResults(String domain, String query) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("getNumberOfResults", "Begin", 1);
 		int retVal = -1;
 		srvProxyConnect(); // Ensure we have a service proxy
@@ -398,15 +375,12 @@ public class EBeyeClient {
 	/**
 	 * Print number of entries matching a query
 	 * 
-	 * @param domain
-	 *            Name of the domain to search
-	 * @param query
-	 *            The query to perform
+	 * @param domain Name of the domain to search
+	 * @param query The query to perform
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public void printGetNumberOfResults(String domain, String query)
-	throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+	public void printGetNumberOfResults(String domain, String query) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("printGetNumberOfResults", "Begin", 1);
 		System.out.println(getNumberOfResults(domain, query));
 		printDebugMessage("printGetNumberOfResults", "End", 1);
@@ -415,21 +389,15 @@ public class EBeyeClient {
 	/**
 	 * Get the identifiers of the entries matching a query
 	 * 
-	 * @param domain
-	 *            The domain to search
-	 * @param query
-	 *            The query to perform
-	 * @param start
-	 *            Starting index in results
-	 * @param size
-	 *            Number of results to return
+	 * @param domain The domain to search
+	 * @param query The query to perform
+	 * @param start Starting index in results
+	 * @param size Number of results to return
 	 * @return Array of identifiers
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public String[] getResultsIds(String domain, String query, int start,
-			int size) throws java.rmi.RemoteException,
-			javax.xml.rpc.ServiceException {
+	public String[] getResultsIds(String domain, String query, int start, int size) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("getResultsIds", "Begin", 1);
 		String[] retVal = null;
 		srvProxyConnect(); // Ensure we have a service proxy
@@ -441,20 +409,14 @@ public class EBeyeClient {
 	/**
 	 * Print identifiers matching a query
 	 * 
-	 * @param domain
-	 *            The domain to search
-	 * @param query
-	 *            The query to perform
-	 * @param start
-	 *            Starting index in results
-	 * @param size
-	 *            Number of results to return
+	 * @param domain The domain to search
+	 * @param query The query to perform
+	 * @param start Starting index in results
+	 * @param size Number of results to return
 	 * @throws java.rmi.RemoteException
 	 * @throws javax.xml.rpc.ServiceException
 	 */
-	public void printGetResultsIds(String domain, String query, int start,
-			int size) throws java.rmi.RemoteException,
-			javax.xml.rpc.ServiceException {
+	public void printGetResultsIds(String domain, String query, int start, int size) throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
 		printDebugMessage("printGetResultsIds", "Begin", 1);
 		printStrList(getResultsIds(domain, query, start, size));
 		printDebugMessage("printGetResultsIds", "End", 1);
@@ -646,7 +608,7 @@ public class EBeyeClient {
 		printDebugMessage("getEntry", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print information about a specified entry.
 	 * 
 	 * @param domain The domain to search.
@@ -660,7 +622,7 @@ public class EBeyeClient {
 		printStrList(getEntry(domain, entry, fields));
 		printDebugMessage("printGetEntry", "End", 1);
 	}
-	
+
 	/** Print information about a specified entry.
 	 * 
 	 * @param domain The domain to search.
@@ -675,7 +637,7 @@ public class EBeyeClient {
 		printGetEntry(domain, entry, fieldNames);
 		printDebugMessage("printGetEntry", "End", 1);		
 	}
-	
+
 	/** Get information about a set of specified entries.
 	 * 
 	 * @param domain The domain to search.
@@ -693,7 +655,7 @@ public class EBeyeClient {
 		printDebugMessage("getEntries", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print information about a set of specified entries.
 	 * 
 	 * @param domain The domain to search.
@@ -707,7 +669,7 @@ public class EBeyeClient {
 		printArrayOfStringList(getEntries(domain, entries, fields), false);
 		printDebugMessage("printGetEntries", "End", 1);
 	}
-	
+
 	/** Print information about a set of specified entries.
 	 * 
 	 * @param domain The domain to search.
@@ -723,7 +685,7 @@ public class EBeyeClient {
 		printGetEntries(domain, entryIdentifiers, fieldNames);
 		printDebugMessage("printGetEntries", "End", 1);		
 	}
-	
+
 	/** Get URLs for a specified entry.
 	 * 
 	 * @param domain The domain to search.
@@ -741,7 +703,7 @@ public class EBeyeClient {
 		printDebugMessage("getEntryFieldUrls", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print URLs for a specified entry.
 	 * 
 	 * @param domain The domain to search.
@@ -755,7 +717,7 @@ public class EBeyeClient {
 		printStrList(getEntryFieldUrls(domain, entry, fields));
 		printDebugMessage("printGetEntryFieldUrls", "End", 1);
 	}
-	
+
 	/** Print URLs for a specified entry.
 	 * 
 	 * @param domain The domain to search.
@@ -788,7 +750,7 @@ public class EBeyeClient {
 		printDebugMessage("getEntriesFieldUrls", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print URLs for a set of specified entries.
 	 * 
 	 * @param domain The domain to search.
@@ -802,7 +764,7 @@ public class EBeyeClient {
 		printArrayOfStringList(getEntriesFieldUrls(domain, entries, fields), false);
 		printDebugMessage("printGetEntriesFieldUrls", "End", 1);
 	}
-	
+
 	/** Print URLs for a set of specified entries.
 	 * 
 	 * @param domain The domain to search.
@@ -834,7 +796,7 @@ public class EBeyeClient {
 		printDebugMessage("getDomainsReferencedInDomain", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of domains referenced by the specified domain.
 	 * 
 	 * @param domain Domain name.
@@ -846,7 +808,7 @@ public class EBeyeClient {
 		printStrList(getDomainsReferencedInDomain(domain));
 		printDebugMessage("printGetDomainsReferencedInDomain", "End", 1);
 	}
-	
+
 	/** Get list of domains referenced by the specified entry.
 	 * 
 	 * @param domain Domain name.
@@ -863,7 +825,7 @@ public class EBeyeClient {
 		printDebugMessage("getDomainsReferencedInEntry", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of domains referenced by the specified entry.
 	 * 
 	 * @param domain Domain name.
@@ -892,7 +854,7 @@ public class EBeyeClient {
 		printDebugMessage("listAdditionalReferenceFields", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of additional cross-reference fields.
 	 * 
 	 * @param domain Domain name.
@@ -922,7 +884,7 @@ public class EBeyeClient {
 		printDebugMessage("getReferencedEntries", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -936,7 +898,7 @@ public class EBeyeClient {
 		printStrList(getReferencedEntries(domain, entry, referencedDomain));
 		printDebugMessage("printGetReferencedEntries", "End", 1);
 	}
-	
+
 	/** Get list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -955,7 +917,7 @@ public class EBeyeClient {
 		printDebugMessage("getReferencedEntriesSet", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -983,7 +945,7 @@ public class EBeyeClient {
 		}
 		printDebugMessage("printGetReferencedEntriesSet", "End", 1);
 	}
-	
+
 	/** Print list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -1000,7 +962,7 @@ public class EBeyeClient {
 		printGetReferencedEntriesSet(domain, entryIdentifiers, referencedDomain, fieldNames);
 		printDebugMessage("printGetReferencedEntriesSet", "End", 1);
 	}
-	
+
 	/** Get list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -1019,7 +981,7 @@ public class EBeyeClient {
 		printDebugMessage("getReferencedEntriesFlatSet", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -1034,7 +996,7 @@ public class EBeyeClient {
 		printArrayOfStringList(getReferencedEntriesFlatSet(domain, entries, referencedDomain, fields), true);
 		printDebugMessage("printGetReferencedEntriesFlatSet", "End", 1);
 	}
-	
+
 	/** Print list of entries in referenced domain cross-referenced by entry.
 	 * 
 	 * @param domain Domain name.
@@ -1051,7 +1013,7 @@ public class EBeyeClient {
 		printGetReferencedEntriesFlatSet(domain, entryIdentifiers, referencedDomain, fieldNames);
 		printDebugMessage("printGetReferencedEntriesFlatSet", "End", 1);
 	}
-	
+
 	/** Get domain description tree.
 	 * 
 	 * @return Domain description object tree.
@@ -1066,7 +1028,7 @@ public class EBeyeClient {
 		printDebugMessage("getDomainsHierarchy", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print domain description tree.
 	 * 
 	 * @throws RemoteException
@@ -1078,7 +1040,7 @@ public class EBeyeClient {
 		printDomainDescription(rootDomain, "");
 		printDebugMessage("printGetDomainsHierarchy", "End", 1);
 	}
-	
+
 	/** Recursive method to print tree of domain descriptions. 
 	 * 
 	 * @param domainDes Domain description node from tree.
@@ -1096,7 +1058,7 @@ public class EBeyeClient {
 		}
 		printDebugMessage("printDomainDescription", "End", 1);
 	}
-	
+
 	/** Get results description tree.
 	 * 
 	 * @param domain Search domain.
@@ -1114,7 +1076,7 @@ public class EBeyeClient {
 		printDebugMessage("getDetailledNumberOfResults", "End", 1);
 		return retVal;
 	}
-	
+
 	/** Print domain description tree.
 	 * 
 	 * @param domain Search domain.
@@ -1129,7 +1091,7 @@ public class EBeyeClient {
 		printDomainResult(rootDomain, "");
 		printDebugMessage("", "End", 1);
 	}
-	
+
 	/** Print domain description tree.
 	 * 
 	 * @param domain Search domain.
@@ -1148,7 +1110,7 @@ public class EBeyeClient {
 		printGetDetailledNumberOfResults(domain, query, flatFlag);
 		printDebugMessage("", "End", 1);
 	}
-	
+
 	/** Recursive method to print tree of domain results. 
 	 * 
 	 * @param domainDes Domain result node from tree.
@@ -1166,7 +1128,7 @@ public class EBeyeClient {
 		}
 		printDebugMessage("printDomainResult", "End", 1);
 	}
-	
+
 	/**
 	 * Get the list of field information from a domain
 	 * 
