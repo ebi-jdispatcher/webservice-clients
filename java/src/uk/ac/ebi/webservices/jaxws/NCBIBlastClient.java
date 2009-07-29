@@ -327,7 +327,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p"));
 		if (line.hasOption("D")) {
 			List<String> dbList = Arrays.asList(line.getOptionValue("D").split(" +"));
-			ArrayOfString dbArray = new ArrayOfString();
+			ArrayOfString dbArray = objFactory.createArrayOfString();
 			dbArray.getString().addAll(dbList);
 			params.setDatabase(dbArray);
 		}
