@@ -319,7 +319,7 @@ public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("E")) params.setExp(line.getOptionValue("E"));
 		else params.setExp("10");
-		if(line.hasOption("e")) params.setViewfilter(true);
+		if(line.hasOption("e")) params.setViewfilter(new Boolean(true));
 		if (line.hasOption("f")) params.setFilter(line.getOptionValue("f"));
 		if (line.hasOption("s")) params.setScores(new Integer(line.getOptionValue("s")));
 		else params.setScores(new Integer(50));

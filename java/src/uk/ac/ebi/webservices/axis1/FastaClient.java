@@ -333,8 +333,8 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("f")) params.setGapopen(new Integer(line.getOptionValue("f"))); 
 		if (line.hasOption("R")) params.setDbrange(line.getOptionValue("R"));
 		if (line.hasOption("S")) params.setSeqrange(line.getOptionValue("S"));
-		if (line.hasOption("H")) params.setHist(false);
-		else params.setHist(true);
+		if (line.hasOption("H")) params.setHist(new Boolean(false));
+		else params.setHist(new Boolean(true));
 		if (line.hasOption("3")) params.setStrand("top");
 		if (line.hasOption("i")) params.setStrand("bottom");
 		if (line.hasOption("filter")) params.setFilter(line.getOptionValue("filter"));

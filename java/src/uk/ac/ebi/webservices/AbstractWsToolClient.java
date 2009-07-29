@@ -138,7 +138,7 @@ public abstract class AbstractWsToolClient {
 	 * @param obj Object the get values from
 	 * @return String containing values and method names.
 	 */
-	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 	protected String objectFieldsToString(Object obj) {
 		printDebugMessage("ObjectFieldsToString", "Begin", 31);
 		StringBuilder strBuilder = new StringBuilder();

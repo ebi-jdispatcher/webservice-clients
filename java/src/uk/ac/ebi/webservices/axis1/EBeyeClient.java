@@ -259,7 +259,7 @@ public class EBeyeClient {
 	 * @param sepListStr Set of characters to use as separators.
 	 * @return Array of strings.
 	 */
-	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 	private String[] splitString(String inStr, String sepListStr) {
 		printDebugMessage("splitString", "Begin", 11);
 		String[] retVal = null;
@@ -440,7 +440,7 @@ public class EBeyeClient {
 			String size) throws java.rmi.RemoteException,
 			javax.xml.rpc.ServiceException {
 		printDebugMessage("printGetResultsIds", "Begin", 1);
-		printGetResultsIds(domain, query, new Integer(start), new Integer(size));
+		printGetResultsIds(domain, query, new Integer(start).intValue(), new Integer(size).intValue());
 		printDebugMessage("printGetResultsIds", "End", 1);
 	}
 
@@ -586,8 +586,8 @@ public class EBeyeClient {
 			javax.xml.rpc.ServiceException {
 		printDebugMessage("printGetResults", "Begin", 1);
 		String[] fieldNames = splitString(fields);
-		printGetResults(domain, query, fieldNames, new Integer(start),
-				new Integer(size));
+		printGetResults(domain, query, fieldNames, new Integer(start).intValue(),
+				new Integer(size).intValue());
 		printDebugMessage("printGetResults", "End", 1);
 	}
 
