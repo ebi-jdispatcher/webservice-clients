@@ -22,7 +22,7 @@ RELEASEBINDIR = $(BINDIR)/Release
 # Directory for generated stubs code
 STUBSRCDIR = WebReferences
 
-# Base URL of WSDLs
+# Base URL of Tool WSDLs
 WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
 
 all: EbiWS
@@ -32,11 +32,13 @@ all: EbiWS
 EbiWS: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
 
 coreSrc = AbstractWsClient.cs \
+EBeyeClient.cs \
 FastaClient.cs \
 NcbiBlastClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
+$(STUBSRCDIR)/EBeyeWs/Reference.cs \
 $(STUBSRCDIR)/FastaWs/Reference.cs \
 $(STUBSRCDIR)/NcbiBlastWs/Reference.cs \
 $(STUBSRCDIR)/WuBlastWs/Reference.cs
@@ -48,6 +50,9 @@ $(DEBUGBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
 $(RELEASEBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
 	mkdir -p $(RELEASEBINDIR)
 	$(CSC) $(CSFLAGS) -target:library -out:$@ $(coreSrc) $(stubSrc)
+
+$(STUBSRCDIR)/EBeyeWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
 
 $(STUBSRCDIR)/FastaWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).FastaWs -out:$@ "$(WSDLBASE)/fasta?wsdl"

@@ -33,12 +33,15 @@
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
     <Compile Include="FastaClient.cs" />
     <Compile Include="WuBlastClient.cs" />
+    <Compile Include="WebReferences\EBeyeWs\Reference.cs" />
+    <Compile Include="EBeyeClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="WebReferences\NcbiBlastWs\Reference.map" />
     <None Include="WebReferences\FastaWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
+    <None Include="WebReferences\EBeyeWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
