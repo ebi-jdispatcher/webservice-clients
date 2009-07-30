@@ -6,12 +6,16 @@
 # ======================================================================
 
 all: EbiWS \
+EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe
 
 EbiWS\bin\Release\EbiWS.dll:
 	cd EbiWS && $(MAKE) /f Makefile.win
+
+EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EBeyeCliClient && $(MAKE) /f Makefile.win
 
 FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastaCliClient && $(MAKE) /f Makefile.win
@@ -24,12 +28,14 @@ WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 clean:
 	cd EbiWS && $(MAKE) /f Makefile.win clean
+	cd EBeyeCliClient && $(MAKE) /f Makefile.win clean
 	cd FastaCliClient && $(MAKE) /f Makefile.win clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.win clean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.win clean
 
 distclean:
 	cd EbiWS && $(MAKE) /f Makefile.win distclean
+	cd EBeyeCliClient && $(MAKE) /f Makefile.win distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.win distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.win distclean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.win distclean

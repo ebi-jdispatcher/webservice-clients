@@ -10,12 +10,16 @@ all: build
 ### Build ###
 build: \
 build-EbiWS \
+build-EBeyeCliClient \
 build-FastaCliClient \
 build-NcbiBlastCliClient \
 build-WuBlastCliClient
 
 build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
+
+build-EBeyeCliClient: build-EbiWS
+	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
 
 build-FastaCliClient: build-EbiWS
 	cd FastaCliClient && $(MAKE) -f Makefile.mono
@@ -30,12 +34,16 @@ build-WuBlastCliClient: build-EbiWS
 
 clean: \
 clean-EbiWS \
+clean-EBeyeCliClient \
 clean-FastaCliClient \
 clean-NcbiBlastCliClient \
 clean-WuBlastCliClient
 
 clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
+
+clean-EBeyeCliClient:
+	cd EBeyeCliClient && $(MAKE) -f Makefile.mono) clean
 
 clean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono) clean
@@ -50,12 +58,16 @@ clean-WuBlastCliClient:
 
 distclean: \
 distclean-EbiWS \
+distclean-EBeyeCliClient \
 distclean-FastaCliClient \
 distclean-NcbiBlastCliClient \
 distclean-WuBlastCliClient
 
 distclean-EbiWS:
 	cd EbiWS && $(MAKE) distclean
+
+distclean-EBeyeCliClient:
+	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono distclean
