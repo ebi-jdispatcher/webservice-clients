@@ -29,7 +29,11 @@ all: EbiWS
 
 ### EbiWS ###
 
-EbiWS: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
+EbiWS: EbiWS.dll
+
+EbiWS.dll: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
+
+EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
 
 coreSrc = AbstractWsClient.cs \
 EBeyeClient.cs \
@@ -50,6 +54,14 @@ $(DEBUGBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
 $(RELEASEBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
 	mkdir -p $(RELEASEBINDIR)
 	$(CSC) $(CSFLAGS) -target:library -out:$@ $(coreSrc) $(stubSrc)
+
+$(DEBUGBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
+	mkdir -p $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) -debug -target:module -out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
+	mkdir -p $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) -target:module -out:$@ $(coreSrc) $(stubSrc)
 
 $(STUBSRCDIR)/EBeyeWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
