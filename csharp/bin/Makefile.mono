@@ -1,0 +1,32 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to package C# EBI Web Services clients using Mono.Merge.
+#
+# ======================================================================
+
+MERGE = $$HOME/bin/monomerge.exe
+
+projectDir =  ../EBIWS2_CSharp
+
+all: EbiWS.dll EBeyeCliClient.exe FastaCliClient.exe NcbiBlastCliClient.exe WuBlastCliClient.exe
+
+EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
+	cp ${projectDir}/EbiWS/bin/Release/$@ $@
+	chmod -x $@
+
+EBeyeCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EBeyeCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+FastaCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/FastaCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+NcbiBlastCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/NcbiBlastCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+WuBlastCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/WuBlastCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
