@@ -12,30 +12,30 @@ NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe
 
 EbiWS\bin\Release\EbiWS.dll:
-	cd EbiWS && $(MAKE) /f Makefile.win
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk
 
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EBeyeCliClient && $(MAKE) /f Makefile.win
+	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
 
 FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd FastaCliClient && $(MAKE) /f Makefile.win
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk
 
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd NcbiBlastCliClient && $(MAKE) /f Makefile.win
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd WuBlastCliClient && $(MAKE) /f Makefile.win
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
 clean:
-	cd EbiWS && $(MAKE) /f Makefile.win clean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.win clean
-	cd FastaCliClient && $(MAKE) /f Makefile.win clean
-	cd NcbiBlastCliClient && $(MAKE) /f Makefile.win clean
-	cd WuBlastCliClient && $(MAKE) /f Makefile.win clean
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk clean
+	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 
 distclean:
-	cd EbiWS && $(MAKE) /f Makefile.win distclean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.win distclean
-	cd FastaCliClient && $(MAKE) /f Makefile.win distclean
-	cd NcbiBlastCliClient && $(MAKE) /f Makefile.win distclean
-	cd WuBlastCliClient && $(MAKE) /f Makefile.win distclean
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
