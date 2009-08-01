@@ -5,6 +5,8 @@
 // Load library
 require('ncbiblast_php5.php');
 
+echo '<!-- ' . phpversion() . ' -->';
+
 // Generate HTML option tags for a parameter detail.
 function paramDetailToOptionStr($paramDetail) {
   $retStr = '';
@@ -188,10 +190,12 @@ if(floatval(phpversion()) < 5.0) {
 else {
 
   // Map PHP errors to exceptions
-  function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+  if(class_exists('ErrorException')) {
+    function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+      throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+    set_error_handler("exception_error_handler");
   }
-  set_error_handler("exception_error_handler");
   
   try {
     // Grab input params
@@ -219,6 +223,9 @@ else {
     }
   }
   catch(SoapFault $ex) {
+    echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
+  }
+  catch(Exception $ex) {
     echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
   }
 }
