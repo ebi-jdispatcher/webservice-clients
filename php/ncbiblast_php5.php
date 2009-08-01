@@ -1,4 +1,5 @@
 <?php
+# $Id$
 # ======================================================================
 # PHP NCBI BLAST SOAP client library
 #
@@ -39,9 +40,17 @@ class NcbiBlastClient {
 
   // Print list of tool parameters
   function printGetParameters() {
-    foreach($this->getParameters() as $paramName) {
-      print $paramName . "\n";
+    $paramList = $this->getParameters();
+    if(!$GLOBALS['argc']) print "<ul>\n";
+    foreach($paramList as $paramName) {
+      if($GLOBALS['argc']) {
+	print $paramName . "\n";
+      }
+      else {
+	print '<li>' . $paramName . "</li>\n";
+      }
     }
+    if(!$GLOBALS['argc']) print "</ul>\n";
   }
 
   // Get detail of a parameter
@@ -79,6 +88,7 @@ class NcbiBlastClient {
 
   // Get the status of a job
   function getStatus($jobId) {
+    $this->serviceProxyConnect();
     $res = $this->proxy->getStatus(array('jobId' => $jobId));
     if($this->trace) $this->soapTrace();
     return $res->status;
@@ -86,6 +96,7 @@ class NcbiBlastClient {
   
   // Available result types for a finished job
   function getResultTypes($jobId) {
+    $this->serviceProxyConnect();
     $res = $this->proxy->getResultTypes(array('jobId' => $jobId));
     if($this->trace) $this->soapTrace();
     return $res->resultTypes->type;
@@ -107,6 +118,7 @@ class NcbiBlastClient {
   
   // Get job results
   function getResult($jobId, $type) {
+    $this->serviceProxyConnect();
     $res = $this->proxy->getResult(array('jobId' => $jobId,
 					 'type' => $type,
 					 'parameters' => array()
@@ -117,12 +129,16 @@ class NcbiBlastClient {
   }
 
   function submit($options) {
+    if(!$options['params']['match_scores'] &&
+       ($options['match'] && $options['mismatch'])) {
+      $options['params']['match_scores'] = $options['match'] . ',' . $options['mismatch'];
+    }
     $jobId = $this->run(
 			$options['email'],
 			$options['title'],
 			$options['params']);
     // Async submission
-    if($options['async']) {
+    if($options['async'] && $options['outputLevel'] > 0) {
       echo "$jobId\n";
     }
     // Get results
