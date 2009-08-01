@@ -31,7 +31,10 @@ try {
 
   # Get service proxy
   $client = new NcbiBlastClient();
-  if($options['trace'] == 1) $client->trace = 1;
+  if(array_key_exists('trace', $options)) $client->trace = 1;
+  if(array_key_exists('debugLevel', $options)) {
+    $client->debugLevel = $options['debugLevel'];
+  }
 
   # Perform requested action
   switch($options['action']) {
@@ -63,7 +66,24 @@ try {
   }
 }
 catch(SoapFault $ex) {
-  echo $ex . "\n";
+  echo 'Error: ';
+  if($ex->getMessage() != '') {
+    echo $ex->getMessage();
+  }
+  else {
+    echo $ex;
+  }
+  echo "\n";
+}
+catch(Exception $ex) {
+  echo 'Error: ';
+  if($ex->getMessage() != '') {
+    echo $ex->getMessage();
+  }
+  else {
+    echo $ex;
+  }
+  echo "\n";
 }
 
 // Parse command-line options
@@ -83,6 +103,11 @@ function parseCommandLine($argList) {
       // SOAP message trace
       case '--trace':
         $options['trace'] = 1;
+        break;
+      // Debug output
+      case '--debugLevel':
+	$i++;
+        $options['debugLevel'] = $argList[$i];
         break;
 
 	// List params

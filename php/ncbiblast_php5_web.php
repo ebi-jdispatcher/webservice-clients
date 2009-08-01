@@ -201,7 +201,12 @@ else {
     
     // Create an instance of the client.
     $client = new NcbiBlastClient();
-    
+
+    // Debug
+    if(array_key_exists('debug', $inputParams)) {
+      $client->debugLevel = 2;
+    }
+
     // Get a result
     if(array_key_exists('jobId', $inputParams) &&
        array_key_exists('resultType', $inputParams)) {
