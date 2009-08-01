@@ -181,38 +181,46 @@ function getResult($client, $jobId, $resultType) {
 <hr />
 
 <?php
-// Map PHP errors to exceptions
-function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+// Check PHP version...
+if(floatval(phpversion()) < 5.0) {
+  echo "<p>PHP 5 is required for this page. This is PHP " . phpversion() . "</p>";
+}
+else {
+
+  // Map PHP errors to exceptions
+  function exception_error_handler($errno, $errstr, $errfile, $errline ) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-}
-set_error_handler("exception_error_handler");
-
-try {
-  // Grab input params
-  $inputParams = (count($HTTP_POST_VARS)) ? $HTTP_POST_VARS : $HTTP_GET_VARS;
-
-  // Create an instance of the client.
-  $client = new NcbiBlastClient();
-
-  // Get a result
-  if($inputParams['jobId'] && $inputParams['resultType']) {
-    getResult($client, $inputParams['jobId'], $inputParams['resultType']);
   }
-  // Get job status, and poll
-  elseif($inputParams['jobId']) {
-    getStatus($client, $inputParams['jobId']);
+  set_error_handler("exception_error_handler");
+  
+  try {
+    // Grab input params
+    $inputParams = (count($HTTP_POST_VARS)) ? $HTTP_POST_VARS : $HTTP_GET_VARS;
+    
+    // Create an instance of the client.
+    $client = new NcbiBlastClient();
+    
+    // Get a result
+    if(array_key_exists('jobId', $inputParams) &&
+       array_key_exists('resultType', $inputParams)) {
+      getResult($client, $inputParams['jobId'], $inputParams['resultType']);
+    }
+    // Get job status, and poll
+    elseif(array_key_exists('jobId', $inputParams)) {
+      getStatus($client, $inputParams['jobId']);
+    }
+    // Submit a job
+    elseif(array_key_exists('stype', $inputParams)) {
+      submitJob($client, $inputParams);
+    }
+    // Input form
+    else {
+      printForm($client);
+    }
   }
-  // Submit a job
-  elseif($inputParams['stype']) {
-    submitJob($client, $inputParams);
+  catch(SoapFault $ex) {
+    echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
   }
-  // Input form
-  else {
-    printForm($client);
-  }
-}
-catch(SoapFault $ex) {
-  echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
 }
 ?>
 <hr />
