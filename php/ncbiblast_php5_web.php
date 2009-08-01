@@ -5,8 +5,6 @@
 // Load library
 require('ncbiblast_php5.php');
 
-echo '<!-- ' . phpversion() . ' -->';
-
 // Generate HTML option tags for a parameter detail.
 function paramDetailToOptionStr($paramDetail) {
   $retStr = '';
@@ -223,10 +221,24 @@ else {
     }
   }
   catch(SoapFault $ex) {
-    echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
+    echo '<p><b>Error</b>: ';
+    if($ex->getMessage() != '') {
+      echo $ex->getMessage();
+    }
+    else {
+      echo $ex;
+    }
+    echo "</p>\n";
   }
   catch(Exception $ex) {
-    echo '<p><b>Error</b>: ' . $ex->getMessage() . "</p>\n";
+    echo '<p><b>Error</b>: ';
+    if($ex->getMessage() != '') {
+      echo $ex->getMessage();
+    }
+    else {
+      echo $ex;
+    }
+    echo "</p>\n";
   }
 }
 ?>
