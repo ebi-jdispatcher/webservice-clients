@@ -2,8 +2,10 @@
 <!-- $Id$ -->
 <head>
 <?php
+// Load library
 require('ncbiblast_php5.php');
 
+// Generate HTML option tags for a parameter detail.
 function paramDetailToOptionStr($paramDetail) {
   $retStr = '';
   foreach($paramDetail->values->value as $val) {
@@ -16,7 +18,7 @@ function paramDetailToOptionStr($paramDetail) {
   }
   return $retStr;
 }
-
+// Output a submission form
 function printForm($client) {
   $paramDetail = $client->getParameterDetails('stype');
   $stypeOptions = paramDetailToOptionStr($paramDetail);
@@ -84,6 +86,7 @@ EOF
     ;
 }
 
+// Submit a job to the service.
 function submitJob($client, $options) {
     echo "Submit job...<br />\n";
     $params  = array();
@@ -117,6 +120,7 @@ function submitJob($client, $options) {
     echo "<p>Job Id: <a href=\"?jobId=$jobId\">$jobId</a></p>";
 }
 
+// Get the status of a job.
 function getStatus($client, $jobId) {
   $status = $client->getStatus($jobId);
   echo "<p>Status for job <a href=\"?jobId=$jobId\">$jobId</a>: $status</p>\n";
@@ -125,6 +129,7 @@ function getStatus($client, $jobId) {
   }
 }
 
+// Print details of available results for a job
 function printResultsSummary($client, $jobId) {
   echo "<p>Results:</p>\n";
   echo "<ul>\n";
@@ -140,6 +145,7 @@ function printResultsSummary($client, $jobId) {
   echo "</ul>\n";
 }
 
+// Get a job result.
 function getResult($client, $jobId, $resultType) {
   echo "<p>Result for job <a href=\"?jobId=$jobId\">$jobId</a>:</p>\n";
   $resultTypeObjs = $client->getResultTypes($jobId);
@@ -175,6 +181,12 @@ function getResult($client, $jobId, $resultType) {
 <hr />
 
 <?php
+// Map PHP errors to exceptions
+function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
+set_error_handler("exception_error_handler");
+
 try {
   // Grab input params
   $inputParams = (count($HTTP_POST_VARS)) ? $HTTP_POST_VARS : $HTTP_GET_VARS;

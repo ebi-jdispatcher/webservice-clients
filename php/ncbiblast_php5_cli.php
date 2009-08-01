@@ -13,6 +13,12 @@
 # Load NCBI BLAST client library
 require('ncbiblast_php5.php');
 
+// Map PHP errors to exceptions
+function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
+set_error_handler("exception_error_handler");
+
 try {
   # Parse command-line options
   $options = parseCommandLine($argv);
@@ -60,7 +66,7 @@ catch(SoapFault $ex) {
   echo $ex . "\n";
 }
 
-  // Parse command-line options
+// Parse command-line options
 function parseCommandLine($argList) {
   $options = array(
     'action' => 'unknown',
