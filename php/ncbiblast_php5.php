@@ -44,6 +44,10 @@ class NcbiBlastClient {
   // Get a service proxy
   function serviceProxyConnect() {
     $this->printDebugMessage('serviceProxyConnect', 'Begin', 2);
+    // CHeck for SoapClient
+    if(!class_exists('SoapClient')) {
+      throw new Exception('SoapClient class cannot be found.');
+    }
     // Get service proxy
     if($this->srvProxy == null) {
       $options = array('trace' => $this->trace);

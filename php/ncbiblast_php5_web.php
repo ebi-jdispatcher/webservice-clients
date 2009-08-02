@@ -205,8 +205,14 @@ else {
   
   try {
     // Grab input params
-    $inputParams = (count($HTTP_POST_VARS)) ? $HTTP_POST_VARS : $HTTP_GET_VARS;
-    
+    $inputParams = array();
+    if(isset($_POST) && count($_POST) > 0) {
+      $inputParams = $_POST;
+    }
+    elseif(isset($_GET) && count($_GET) > 0) {
+      $inputParams = $_GET;
+    }
+
     // Create an instance of the client.
     $client = new NcbiBlastClient();
     // HTTP proxy config.
@@ -241,22 +247,14 @@ else {
   }
   catch(SoapFault $ex) {
     echo '<p><b>Error</b>: ';
-    if($ex->getMessage() != '') {
-      echo $ex->getMessage();
-    }
-    else {
-      echo $ex;
-    }
+    if($ex->getMessage() != '') echo $ex->getMessage();
+    else echo $ex;
     echo "</p>\n";
   }
   catch(Exception $ex) {
     echo '<p><b>Error</b>: ';
-#    if($ex->getMessage() != '') {
-#      echo $ex->getMessage();
-#    }
-#    else {
-      echo $ex;
-#    }
+    if($ex->getMessage() != '') echo $ex->getMessage();
+    else echo $ex;
     echo "</p>\n";
   }
 }
