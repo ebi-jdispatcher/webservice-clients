@@ -95,13 +95,38 @@ class NcbiBlastClient {
   function printGetParameterDetails($parameterId) {
     $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
     $paramDetail = $this->getParameterDetails($parameterId);
-    print $paramDetail->name . "\t" . $paramDetail->type . "\n";
-    print $paramDetail->description . "\n";
-    foreach($paramDetail->values->value as $val) {
-      print $val->value . "\t";
-      if($val->defaultValue) print 'default';
-      print "\n";
-      print "\t" . $val->label . "\n";
+    if(array_key_exists('argc', $GLOBALS)) {
+      // Plain text
+      print $paramDetail->name . "\t" . $paramDetail->type . "\n";
+      print $paramDetail->description . "\n";
+      if(isset($paramDetail->values)) {
+	foreach($paramDetail->values->value as $val) {
+	  print $val->value . "\t";
+	  if($val->defaultValue) print 'default';
+	  print "\n";
+	  if($val->label) print "\t" . $val->label . "\n";
+	}
+      }
+    }
+    else {
+      // HTML
+      print <<<EOF
+<h3>$paramDetail->name</h3>
+
+<p>$paramDetail->description</p>
+EOF
+    ;
+      if(isset($paramDetail->values)) {
+	print "<table border=\"1\">\n";
+	print "<tr><th>Label</th><th>Value</th><th>Default</th></tr>\n";
+	foreach($paramDetail->values->value as $val) {
+	  print "<tr><td>$val->label</td><td>$val->value</td><td>";
+	  if($val->defaultValue) print 'default';
+	  else print '&nbsp;';
+	  print "</td></tr>\n";
+	}
+	print "</table>\n";
+      }
     }
     $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
   }

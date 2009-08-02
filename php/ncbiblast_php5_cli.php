@@ -13,12 +13,6 @@
 # Load NCBI BLAST client library
 require('ncbiblast_php5.php');
 
-// Map PHP errors to exceptions
-function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-}
-set_error_handler("exception_error_handler");
-
 try {
   # Parse command-line options
   $options = parseCommandLine($argv);
@@ -66,16 +60,6 @@ try {
   }
 }
 catch(SoapFault $ex) {
-  echo 'Error: ';
-  if($ex->getMessage() != '') {
-    echo $ex->getMessage();
-  }
-  else {
-    echo $ex;
-  }
-  echo "\n";
-}
-catch(Exception $ex) {
   echo 'Error: ';
   if($ex->getMessage() != '') {
     echo $ex->getMessage();

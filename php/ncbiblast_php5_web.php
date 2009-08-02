@@ -1,81 +1,32 @@
 <html>
 <!-- $Id$ -->
-<head>
+<body>
 <?php
 // Load library
 require('ncbiblast_php5.php');
 
-// Generate HTML option tags for a parameter detail.
-function paramDetailToOptionStr($paramDetail) {
-  $retStr = '';
-  foreach($paramDetail->values->value as $val) {
-    if($val->defaultValue) {
-      $retStr .= "<option selected=\"1\" value=\"$val->value\">$val->label</option>\n";
-    }
-    else {
-      $retStr .= "<option value=\"$val->value\">$val->label</option>\n";
-    }
-  }
-  return $retStr;
-}
 // Output a submission form
 function printForm($client) {
-  $paramDetail = $client->getParameterDetails('stype');
-  $stypeOptions = paramDetailToOptionStr($paramDetail);
-  $paramDetail = $client->getParameterDetails('program');
-  $programOptions = paramDetailToOptionStr($paramDetail);
-  $paramDetail = $client->getParameterDetails('database');
-  $databaseOptions = paramDetailToOptionStr($paramDetail);
-  $paramDetail = $client->getParameterDetails('scores');
-  $scoresOptions = paramDetailToOptionStr($paramDetail);
-  $paramDetail = $client->getParameterDetails('alignments');
-  $alignmentsOptions = paramDetailToOptionStr($paramDetail);
-  $paramDetail = $client->getParameterDetails('exp');
-  $expOptions = paramDetailToOptionStr($paramDetail);
+  $stypeStr = paramDetailToStr($client, 'stype');
+  $programStr = paramDetailToStr($client, 'program');
+  $databaseStr =  paramDetailToStr($client, 'database', TRUE);
+  $scoresStr = paramDetailToStr($client, 'scores');
+  $alignmentsStr = paramDetailToStr($client, 'alignments');
+  $expStr = paramDetailToStr($client, 'exp');
 
   print <<<EOF
 <form method="POST">
-<p>
-E-mail: <input type="text" name="email" /><br />
-Job title: <input type="text" name="title" />
-</p>
+<p>E-mail: <input type="text" name="email" />&nbsp;
+Job title: <input type="text" name="title" /></p>
 
-<p>
-Query
-<select name="stype">
-$stypeOptions
-</select>
-sequence:<br />
+<p>$stypeStr<br />
+<a href="?paramDetail=sequence">Sequence</a>:<br />
 <textarea name="sequence" rows="5" cols="80">
-</textarea>
-</p>
+</textarea></p>
 
-<p>
-Program:
-<select name="program">
-$programOptions
-</select>
-<br />
-Database:
-<select name="database[]" multiple="1">
-$databaseOptions
-</select>
-<br />
-Scores:
-<select name="scores">
-$scoresOptions
-</select>
-<br />
-Alignments:
-<select name="alignments">
-$alignmentsOptions
-</select>
-<br />
-E-value threshold:
-<select name="exp">
-$expOptions
-</select>
-</p>
+<p>$programStr $databaseStr</p>
+
+<p>$scoresStr $alignmentsStr $expStr</p>
 
 <p align="right">
 <input type="submit" value="Submit" />
@@ -84,6 +35,52 @@ $expOptions
 </form>
 EOF
     ;
+}
+
+// Generate HTML tags for a parameter detail. menu or text input.
+function paramDetailToStr($client, $parameterId, $multi=FALSE) {
+  $paramDetail = $client->getParameterDetails($parameterId);
+  $retStr = paramDetailToLabelStr($parameterId, $paramDetail);
+  if(isset($paramDetail->values)) {
+    if($multi) {
+      // Multi-select menu
+      $retStr .= '<select name="' . $parameterId .'[]"  multiple="1">';
+    }
+    else {
+      // Drop-down list
+      $retStr .= '<select name="' . $parameterId .'">';
+    }
+    $retStr .= paramDetailToOptionStr($paramDetail);
+    $retStr .= '</select>';
+  }
+  else {
+    // Input box
+    $retStr .= '<input type="text" name="' . $parameterId . '" />';
+  }
+  return $retStr;
+}
+
+// Label for an option, generated from the parameter details.
+function paramDetailToLabelStr($parameterId, $paramDetail) {
+  $helpUrl = '?paramDetail=' . $parameterId;
+  $retStr = '<a href="' . $helpUrl . '">' . $paramDetail->name .'</a>: ';
+  return $retStr;
+}
+
+// Generate HTML option tags for a parameter detail.
+function paramDetailToOptionStr($paramDetail) {
+  $retStr = '';
+  if(isset($paramDetail->values)) {
+    foreach($paramDetail->values->value as $val) {
+      if($val->defaultValue) {
+	$retStr .= "<option selected=\"1\" value=\"$val->value\">$val->label</option>\n";
+      }
+      else {
+	$retStr .= "<option value=\"$val->value\">$val->label</option>\n";
+      }
+    }
+  }
+  return $retStr;
 }
 
 // Submit a job to the service.
@@ -118,15 +115,21 @@ function submitJob($client, $options) {
 			  $params
 			  );
     echo "<p>Job Id: <a href=\"?jobId=$jobId\">$jobId</a></p>";
+    return genMetaRefresh($jobId);
 }
 
 // Get the status of a job.
 function getStatus($client, $jobId) {
+  $retVal = '';
   $status = $client->getStatus($jobId);
   echo "<p>Status for job <a href=\"?jobId=$jobId\">$jobId</a>: $status</p>\n";
   if($status == 'FINISHED') {
     printResultsSummary($client, $jobId);
   }
+  else {
+    $retVal = genMetaRefresh($jobId);
+  }
+  return $retVal;
 }
 
 // Print details of available results for a job
@@ -137,7 +140,7 @@ function printResultsSummary($client, $jobId) {
   foreach($resultTypes as $resultType) {
     $resultUrl = "?jobId=$jobId&resultType=" . $resultType->identifier;
     print "<li><a href=\"$resultUrl\">" . $resultType->label . "</a>";
-    if($resultType->description) {
+    if(isset($resultType->description)) {
       print ": " . $resultType->description . "\n";
     }
     print "</li>\n";
@@ -172,15 +175,20 @@ function getResult($client, $jobId, $resultType) {
     echo "<iframe src=\"$resultUrl\" width=\"100%\" height=\"100%\"></iframe>";
   }
 }
-?>
-<title>NCBI BLAST</title>
-</head>
 
-<body>
+// Generate meta-refresh tag for a job.
+function genMetaRefresh($jobId) {
+  $statusUrl = "?jobId=$jobId";
+  return "<meta http-equiv=\"refresh\" content=\"10;url=$statusUrl\">";
+}
+?>
+
 <h1 align="center">NCBI BLAST</h1>
 <hr />
 
 <?php
+// No refresh.
+$metaRefresh = '';
 // Check PHP version...
 if(floatval(phpversion()) < 5.0) {
   echo "<p>PHP 5 is required for this page. This is PHP " . phpversion() . "</p>";
@@ -214,11 +222,15 @@ else {
     }
     // Get job status, and poll
     elseif(array_key_exists('jobId', $inputParams)) {
-      getStatus($client, $inputParams['jobId']);
+      $metaRefresh = getStatus($client, $inputParams['jobId']);
+    }
+    // Option/parameter details/help.
+    elseif(array_key_exists('paramDetail', $inputParams)) {
+      $client->printGetParameterDetails($inputParams['paramDetail']);
     }
     // Submit a job
     elseif(array_key_exists('stype', $inputParams)) {
-      submitJob($client, $inputParams);
+      $metaRefresh = submitJob($client, $inputParams);
     }
     // Input form
     else {
@@ -237,12 +249,12 @@ else {
   }
   catch(Exception $ex) {
     echo '<p><b>Error</b>: ';
-    if($ex->getMessage() != '') {
-      echo $ex->getMessage();
-    }
-    else {
+#    if($ex->getMessage() != '') {
+#      echo $ex->getMessage();
+#    }
+#    else {
       echo $ex;
-    }
+#    }
     echo "</p>\n";
   }
 }
@@ -250,4 +262,12 @@ else {
 <hr />
 <p>Powered by <a href="http://www.ebi.ac.uk/Tools/webservices/">EMBL-EBI Web Services</a></p>
 </body>
+
+<head>
+<title>NCBI BLAST</title>
+</head>
+<?php
+// Meta refresh
+print $metaRefresh;
+?>
 </html>
