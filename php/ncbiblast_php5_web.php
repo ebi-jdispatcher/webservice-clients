@@ -3,7 +3,7 @@
 <body>
 <?php
 // Load library
-require('ncbiblast_php5.php');
+require_once('ncbiblast_php5.php');
 
 // Output a submission form
 function printForm($client) {
@@ -209,6 +209,8 @@ else {
     
     // Create an instance of the client.
     $client = new NcbiBlastClient();
+    // HTTP proxy config.
+    //$client->setHttpProxy($proxy_host, $proxy_port);
 
     // Debug
     if(array_key_exists('debug', $inputParams)) {

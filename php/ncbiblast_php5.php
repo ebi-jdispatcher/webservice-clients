@@ -13,7 +13,9 @@ class NcbiBlastClient {
   // Service WSDL
   private $wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl';
   // Service proxy
-  private $proxy;
+  private $srvProxy;
+  // HTTP proxy details
+  private $httpProxy;
   // Trace flag
   public $trace = 0;
   // Debug level
@@ -31,15 +33,25 @@ class NcbiBlastClient {
     }
   }
 
+  // Set HTTP proxy details
+  function setHttpProxy($host, $port=8080) {
+    $this->printDebugMessage('setHttpProxy', 'Begin', 1);
+    $this->httpProxy = array('proxy_host' => $host,
+			     'proxy_port' => $port);
+    $this->printDebugMessage('setHttpProxy', 'End', 1);
+  }
+
   // Get a service proxy
   function serviceProxyConnect() {
     $this->printDebugMessage('serviceProxyConnect', 'Begin', 2);
     // Get service proxy
-    if($this->proxy == null) {
+    if($this->srvProxy == null) {
       $options = array('trace' => $this->trace);
-      $options['proxy_host'] = 'my.proxy';
-      $options['proxy_port'] = '8080';
-      $this->proxy = new SoapClient($this->wsdlUrl,
+      if(isset($this->httpProxy)) {
+	$options['proxy_host'] = $this->httpProxy['proxy_host'];
+	$options['proxy_port'] = $this->httpProxy['proxy_port'];
+      }
+      $this->srvProxy = new SoapClient($this->wsdlUrl,
 				    $options);
     }
     $this->printDebugMessage('serviceProxyConnect', 'End', 2);
@@ -47,8 +59,8 @@ class NcbiBlastClient {
 
   function soapTrace() {
     $this->printDebugMessage('soapTrace', 'Begin', 12);
-    echo "REQUEST:\n" . $this->proxy->__getLastRequest() . "\n";
-    echo "RESPONSE:\n" . $this->proxy->__getLastResponse() . "\n";
+    echo "REQUEST:\n" . $this->srvProxy->__getLastRequest() . "\n";
+    echo "RESPONSE:\n" . $this->srvProxy->__getLastResponse() . "\n";
     $this->printDebugMessage('soapTrace', 'End', 12);
   }
 
@@ -56,7 +68,7 @@ class NcbiBlastClient {
   function getParameters() {
     $this->printDebugMessage('getParameters', 'Begin', 1);
     $this->serviceProxyConnect();
-    $parameters = $this->proxy->getParameters();
+    $parameters = $this->srvProxy->getParameters();
     if($this->trace) $this->soapTrace();
     $this->printDebugMessage('getParameters', 'End', 1);
     return $parameters->parameters->id;
@@ -85,7 +97,7 @@ class NcbiBlastClient {
     $this->printDebugMessage('getParameterDetails',
 			     "parameterId: $parameterId", 2);
     $this->serviceProxyConnect();
-    $res = $this->proxy->getParameterDetails(array('parameterId' => $parameterId));
+    $res = $this->srvProxy->getParameterDetails(array('parameterId' => $parameterId));
     if($this->trace) $this->soapTrace();
     $this->printDebugMessage('getParameterDetails', 'End', 1);
     return $res->parameterDetails;
@@ -135,7 +147,7 @@ EOF
   function run($email, $title, $params) {
     $this->printDebugMessage('run', 'Begin', 1);
     $this->serviceProxyConnect();
-    $res = $this->proxy->run(
+    $res = $this->srvProxy->run(
 			     array('email' => $email,
 				   'title' => $title,
 				   'parameters' => $params)
@@ -149,7 +161,7 @@ EOF
   function getStatus($jobId) {
     $this->printDebugMessage('getStatus', 'Begin', 1);
     $this->serviceProxyConnect();
-    $res = $this->proxy->getStatus(array('jobId' => $jobId));
+    $res = $this->srvProxy->getStatus(array('jobId' => $jobId));
     if($this->trace) $this->soapTrace();
     $this->printDebugMessage('getStatus', 'End', 1);
     return $res->status;
@@ -159,7 +171,7 @@ EOF
   function getResultTypes($jobId) {
     $this->printDebugMessage('getResultTypes', 'Begin', 1);
     $this->serviceProxyConnect();
-    $res = $this->proxy->getResultTypes(array('jobId' => $jobId));
+    $res = $this->srvProxy->getResultTypes(array('jobId' => $jobId));
     if($this->trace) $this->soapTrace();
     $this->printDebugMessage('getResultTypes', 'End', 1);
     return $res->resultTypes->type;
@@ -185,7 +197,7 @@ EOF
   function getResult($jobId, $type) {
     $this->printDebugMessage('getResult', 'Begin', 1);
     $this->serviceProxyConnect();
-    $res = $this->proxy->getResult(array('jobId' => $jobId,
+    $res = $this->srvProxy->getResult(array('jobId' => $jobId,
 					 'type' => $type,
 					 'parameters' => array()
 					 )

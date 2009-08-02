@@ -14,23 +14,27 @@
 require('ncbiblast_php5.php');
 
 try {
-  # Parse command-line options
+  // Parse command-line options
   $options = parseCommandLine($argv);
 
-  # For no options or explict help request
+  // For no options or explict help request
   if($argc == 1 || strcmp($options['action'], 'help') == 0) {
     printUsage();
     exit(0);
   }
 
-  # Get service proxy
+  // Get service proxy
   $client = new NcbiBlastClient();
+  // HTTP proxy config.
+  //$client->setHttpProxy($proxy_host, $proxy_port);
+
+  // Debug options
   if(array_key_exists('trace', $options)) $client->trace = 1;
   if(array_key_exists('debugLevel', $options)) {
     $client->debugLevel = $options['debugLevel'];
   }
 
-  # Perform requested action
+  // Perform requested action
   switch($options['action']) {
     // List params
   case 'params':
