@@ -160,7 +160,7 @@ function getResult($client, $jobId, $resultType) {
   // Plain text
   if($selResultTypeObj->mediaType == 'text/plain') {
     $resultStr = $client->getResult($jobId, $resultType);
-    echo "<pre>$resultStr</pre>\n";
+    echo "<p><pre>$resultStr</pre></p>\n";
   }
   // Image, embed using img tag using service REST API for document
   elseif(strpos($selResultTypeObj->mediaType, 'image') === 0 && strpos($selResultTypeObj->mediaType, 'xml') == 0) {
@@ -250,6 +250,12 @@ else {
     if($ex->getMessage() != '') echo $ex->getMessage();
     else echo $ex;
     echo "</p>\n";
+    // In debug mode, output message trace for exception.
+    if(array_key_exists('debug', $inputParams)) {
+      print '<p><pre>';
+      $client->soapTrace();
+      print '</pre></p>';
+    }
   }
   catch(Exception $ex) {
     echo '<p><b>Error</b>: ';
