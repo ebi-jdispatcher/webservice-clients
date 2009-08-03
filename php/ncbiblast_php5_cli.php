@@ -33,6 +33,9 @@ try {
   if(array_key_exists('debugLevel', $options)) {
     $client->debugLevel = $options['debugLevel'];
   }
+  if(array_key_exists('WSDL', $options)) {
+    $client->setWsdlUrl($options['WSDL']);
+  }
 
   // Perform requested action
   switch($options['action']) {
@@ -96,6 +99,11 @@ function parseCommandLine($argList) {
       case '--debugLevel':
 	$i++;
         $options['debugLevel'] = $argList[$i];
+        break;
+      // Service WSDL location
+      case '--WSDL':
+	$i++;
+        $options['WSDL'] = $argList[$i];
         break;
 
 	// List params

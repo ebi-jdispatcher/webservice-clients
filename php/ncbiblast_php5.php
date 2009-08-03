@@ -41,9 +41,17 @@ class NcbiBlastClient {
     $this->printDebugMessage('setHttpProxy', 'End', 1);
   }
 
+  // Set WSDL to an alternative server
+  function setWsdl($wsdlUrl) {
+    $this->printDebugMessage('setWsdlUrl', 'Begin', 1);
+    $this->printDebugMessage('setWsdlUrl', 'wsdlUrl: ' . $wsdlUrl, 2);
+    $this->wsdlUrl = $wsdlUrl;
+    $this->printDebugMessage('setWsdlUrl', 'End', 1);
+  }
+
   // Get a service proxy
   function serviceProxyConnect() {
-    $this->printDebugMessage('serviceProxyConnect', 'Begin', 2);
+    $this->printDebugMessage('serviceProxyConnect', 'Begin', 3);
     // CHeck for SoapClient
     if(!class_exists('SoapClient')) {
       throw new Exception('SoapClient class cannot be found.');
@@ -58,7 +66,7 @@ class NcbiBlastClient {
       $this->srvProxy = new SoapClient($this->wsdlUrl,
 				    $options);
     }
-    $this->printDebugMessage('serviceProxyConnect', 'End', 2);
+    $this->printDebugMessage('serviceProxyConnect', 'End', 3);
   }
 
   function soapTrace() {
