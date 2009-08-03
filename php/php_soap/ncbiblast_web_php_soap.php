@@ -15,7 +15,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
 // Load library
-require_once('ncbiblast_php5.php');
+require_once('ncbiblast_lib_php_soap.php');
 
 // Output a submission form
 function printForm($client) {

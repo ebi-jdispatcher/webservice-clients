@@ -15,7 +15,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
 # Load NCBI BLAST client library
-require_once('ncbiblast_php5.php');
+require_once('ncbiblast_lib_php_soap.php');
 
 try {
   // Parse command-line options
