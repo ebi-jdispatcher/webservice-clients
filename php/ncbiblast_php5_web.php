@@ -2,6 +2,18 @@
 <!-- $Id$ -->
 <body>
 <?php
+# ======================================================================
+# PHP NCBI BLAST SOAP web client
+#
+# Tested with:
+#   PHP 5.1.6 (CentOS 5)
+#   PHP 5.2.6 (Ubuntu 9.04)
+#
+# See:
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
+# http://www.ebi.ac.uk/Tools/webservices/tutorials/php
+# ======================================================================
 // Load library
 require_once('ncbiblast_php5.php');
 

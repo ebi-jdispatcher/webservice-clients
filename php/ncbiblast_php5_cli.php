@@ -1,17 +1,21 @@
 <?php
 # $Id$
 # ======================================================================
-# PHP NCBI BLAST SOAP client.
+# PHP NCBI BLAST SOAP command-line client.
 #
 # Note: this is a command-line program, call using:
 #  php ncbiblast_php5.php [options...]
+#
+# Tested with:
+#   PHP 5.1.6 (CentOS 5)
+#   PHP 5.2.6 (Ubuntu 9.04)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbiblast
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
 # Load NCBI BLAST client library
-require('ncbiblast_php5.php');
+require_once('ncbiblast_php5.php');
 
 try {
   // Parse command-line options

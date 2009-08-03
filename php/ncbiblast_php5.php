@@ -3,9 +3,12 @@
 # ======================================================================
 # PHP NCBI BLAST SOAP client library
 #
+# Tested with:
+#   PHP 5.1.6 (CentOS 5)
+#   PHP 5.2.6 (Ubuntu 9.04)
+#
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
 
@@ -24,12 +27,10 @@ class NcbiBlastClient {
   // Debug message
   private function printDebugMessage($method, $message, $level) {
     if($level <= $this->debugLevel) {
-      if(array_key_exists('argc', $GLOBALS)) {
-	print "[$method] $message\n";
-      }
-      else {
-	print "<p>[$method] $message</p>\n";
-      }
+      // Plain text
+      if(array_key_exists('argc', $GLOBALS)) print "[$method] $message\n";
+      // HTML
+      else print "<p>[$method] $message</p>\n";
     }
   }
 
@@ -42,7 +43,7 @@ class NcbiBlastClient {
   }
 
   // Set WSDL to an alternative server
-  function setWsdl($wsdlUrl) {
+  function setWsdlUrl($wsdlUrl) {
     $this->printDebugMessage('setWsdlUrl', 'Begin', 1);
     $this->printDebugMessage('setWsdlUrl', 'wsdlUrl: ' . $wsdlUrl, 2);
     $this->wsdlUrl = $wsdlUrl;
