@@ -17,16 +17,107 @@
 // Load library
 require_once('ncbiblast_lib_php_soap.php');
 
-// Output a submission form
-function printForm($client) {
-  $stypeStr = paramDetailToStr($client, 'stype');
-  $programStr = paramDetailToStr($client, 'program');
-  $databaseStr =  paramDetailToStr($client, 'database', TRUE);
-  $scoresStr = paramDetailToStr($client, 'scores');
-  $alignmentsStr = paramDetailToStr($client, 'alignments');
-  $expStr = paramDetailToStr($client, 'exp');
+// Extend client class
+class NcbiBlastWebClient extends NcbiBlastClient {
+  // Print list of tool parameters
+  function printGetParameters() {
+    $this->printDebugMessage('printGetParameters', 'Begin', 1);
+    $paramList = $this->getParameters();
+    print "<ul>\n";
+    foreach($paramList as $paramName) {
+      print '<li>' . $paramName . "</li>\n";
+    }
+    print "</ul>\n";
+    $this->printDebugMessage('printGetParameters', 'End', 1);
+  }
 
-  print <<<EOF
+  // Print details of a parameter
+  function printGetParameterDetails($parameterId) {
+    $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
+    $paramDetail = $this->getParameterDetails($parameterId);
+    print <<<EOF
+<h3>$paramDetail->name</h3>
+
+<p>$paramDetail->description</p>
+EOF
+    ;
+    if(isset($paramDetail->values)) {
+      print "<table border=\"1\">\n";
+      print "<tr><th>Label</th><th>Value</th><th>Default</th></tr>\n";
+      foreach($paramDetail->values->value as $val) {
+	print "<tr><td>$val->label</td><td>$val->value</td><td>";
+	if($val->defaultValue) print 'default';
+	else print '&nbsp;';
+	print "</td></tr>\n";
+      }
+      print "</table>\n";
+    }
+    $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
+  }
+  
+  // Label for an option, generated from the parameter details.
+  function paramDetailToLabelStr($parameterId, $paramDetail) {
+    $this->printDebugMessage('paramDetailToLabelStr', 'Begin', 1);
+    $helpUrl = '?paramDetail=' . $parameterId;
+    $retStr = '<a href="' . $helpUrl . '">' . $paramDetail->name .'</a>: ';
+    $this->printDebugMessage('paramDetailToLabelStr', 'End', 1);
+    return $retStr;
+  }
+  
+  // Generate HTML option tags for a parameter detail.
+  function paramDetailToOptionStr($paramDetail) {
+    $this->printDebugMessage('paramDetailToOptionStr', 'Begin', 1);
+    $retStr = '';
+    if(isset($paramDetail->values)) {
+      foreach($paramDetail->values->value as $val) {
+	if($val->defaultValue) {
+	  $retStr .= "<option selected=\"1\" value=\"$val->value\">$val->label</option>\n";
+	}
+	else {
+	  $retStr .= "<option value=\"$val->value\">$val->label</option>\n";
+	}
+      }
+    }
+    $this->printDebugMessage('paramDetailToOptionStr', 'End', 1);
+    return $retStr;
+  }
+
+  // Generate HTML tags for a parameter detail. menu or text input.
+  function paramDetailToStr($parameterId, $multi=FALSE) {
+    $this->printDebugMessage('paramDetailToStr', 'Begin', 1);
+    $paramDetail = $this->getParameterDetails($parameterId);
+    $retStr = $this->paramDetailToLabelStr($parameterId, $paramDetail);
+    if(isset($paramDetail->values)) {
+      if($multi) {
+	// Multi-select menu
+	$retStr .= '<select name="' . $parameterId .'[]"  multiple="1">';
+      }
+      else {
+	// Drop-down list
+	$retStr .= '<select name="' . $parameterId .'">';
+      }
+      $retStr .= $this->paramDetailToOptionStr($paramDetail);
+      $retStr .= '</select>';
+    }
+    else {
+      // Input box
+      $retStr .= '<input type="text" name="' . $parameterId . '" />';
+    }
+    $this->printDebugMessage('paramDetailToStr', 'End', 1);
+    return $retStr;
+  }
+
+  // Output a submission form
+  function printForm() {
+    $this->printDebugMessage('printForm', 'Begin', 1);
+    $stypeStr = $this->paramDetailToStr('stype');
+    $programStr = $this->paramDetailToStr('program');
+    $databaseStr =  $this->paramDetailToStr('database', TRUE);
+    $scoresStr = $this->paramDetailToStr('scores');
+    $alignmentsStr = $this->paramDetailToStr('alignments');
+    $expStr = $this->paramDetailToStr('exp');
+    
+    print <<<EOF
 <form method="POST">
 <p>E-mail: <input type="text" name="email" />&nbsp;
 Job title: <input type="text" name="title" /></p>
@@ -46,58 +137,13 @@ Job title: <input type="text" name="title" /></p>
 </p>
 </form>
 EOF
-    ;
-}
-
-// Generate HTML tags for a parameter detail. menu or text input.
-function paramDetailToStr($client, $parameterId, $multi=FALSE) {
-  $paramDetail = $client->getParameterDetails($parameterId);
-  $retStr = paramDetailToLabelStr($parameterId, $paramDetail);
-  if(isset($paramDetail->values)) {
-    if($multi) {
-      // Multi-select menu
-      $retStr .= '<select name="' . $parameterId .'[]"  multiple="1">';
-    }
-    else {
-      // Drop-down list
-      $retStr .= '<select name="' . $parameterId .'">';
-    }
-    $retStr .= paramDetailToOptionStr($paramDetail);
-    $retStr .= '</select>';
+  ;
+    $this->printDebugMessage('printForm', 'End', 1);
   }
-  else {
-    // Input box
-    $retStr .= '<input type="text" name="' . $parameterId . '" />';
-  }
-  return $retStr;
-}
-
-// Label for an option, generated from the parameter details.
-function paramDetailToLabelStr($parameterId, $paramDetail) {
-  $helpUrl = '?paramDetail=' . $parameterId;
-  $retStr = '<a href="' . $helpUrl . '">' . $paramDetail->name .'</a>: ';
-  return $retStr;
-}
-
-// Generate HTML option tags for a parameter detail.
-function paramDetailToOptionStr($paramDetail) {
-  $retStr = '';
-  if(isset($paramDetail->values)) {
-    foreach($paramDetail->values->value as $val) {
-      if($val->defaultValue) {
-	$retStr .= "<option selected=\"1\" value=\"$val->value\">$val->label</option>\n";
-      }
-      else {
-	$retStr .= "<option value=\"$val->value\">$val->label</option>\n";
-      }
-    }
-  }
-  return $retStr;
-}
-
-// Submit a job to the service.
-function submitJob($client, $options) {
-    echo "Submit job...<br />\n";
+  
+  // Submit a job to the service.
+  function submitJob($options) {
+    $this->printDebugMessage('submitJob', 'Begin', 1);
     $params  = array();
     foreach($options as $key => $val) {
       switch($key) {
@@ -121,77 +167,90 @@ function submitJob($client, $options) {
 	break;
       }
     }
-    $jobId = $client->run(
-			  $options['email'],
-			  $options['title'],
-			  $params
-			  );
+    $jobId = $this->run(
+			$options['email'],
+			$options['title'],
+			$params
+			);
     echo "<p>Job Id: <a href=\"?jobId=$jobId\">$jobId</a></p>";
-    return genMetaRefresh($jobId);
-}
-
-// Get the status of a job.
-function getStatus($client, $jobId) {
-  $retVal = '';
-  $status = $client->getStatus($jobId);
-  echo "<p>Status for job <a href=\"?jobId=$jobId\">$jobId</a>: $status</p>\n";
-  if($status == 'FINISHED') {
-    printResultsSummary($client, $jobId);
+    echo "<p>Please wait...</p>";
+    $this->printDebugMessage('submitJob', 'End', 1);
+    return $this->genMetaRefresh($jobId);
   }
-  else {
-    $retVal = genMetaRefresh($jobId);
-  }
-  return $retVal;
-}
 
-// Print details of available results for a job
-function printResultsSummary($client, $jobId) {
-  echo "<p>Results:</p>\n";
-  echo "<ul>\n";
-  $resultTypes = $client->getResultTypes($jobId);
-  foreach($resultTypes as $resultType) {
-    $resultUrl = "?jobId=$jobId&resultType=" . $resultType->identifier;
-    print "<li><a href=\"$resultUrl\">" . $resultType->label . "</a>";
-    if(isset($resultType->description)) {
-      print ": " . $resultType->description . "\n";
+  // Get the status of a job.
+  function printStatus($jobId) {
+    $this->printDebugMessage('printStatus', 'Begin', 1);
+    $retVal = '';
+    $status = $this->getStatus($jobId);
+    echo "<p>Status for job <a href=\"?jobId=$jobId\">$jobId</a>: $status</p>\n";
+    if($status == 'FINISHED') {
+      $this->printResultsSummary($jobId);
     }
-    print "</li>\n";
-  }
-  echo "</ul>\n";
-}
-
-// Get a job result.
-function getResult($client, $jobId, $resultType) {
-  echo "<p>Result for job <a href=\"?jobId=$jobId\">$jobId</a>:</p>\n";
-  $resultTypeObjs = $client->getResultTypes($jobId);
-  foreach($resultTypeObjs as $resultTypeObj) {
-    if($resultTypeObj->identifier == $resultType) {
-       $selResultTypeObj = $resultTypeObj;
+    else {
+      $retVal = $this->genMetaRefresh($jobId);
     }
+    $this->printDebugMessage('printStatus', 'End', 1);
+    return $retVal;
   }
-  // Plain text
-  if($selResultTypeObj->mediaType == 'text/plain') {
-    $resultStr = $client->getResult($jobId, $resultType);
-    echo "<p><pre>$resultStr</pre></p>\n";
-  }
-  // Image, embed using img tag using service REST API for document
-  elseif(strpos($selResultTypeObj->mediaType, 'image') === 0 && strpos($selResultTypeObj->mediaType, 'xml') == 0) {
-    $resultUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast/result/';
-    $resultUrl .= $jobId . '/' . $resultType;
-    echo "<img src=\"$resultUrl\"></img>";
-  }
-  // Other, embed in iframe using service REST API for document
-  else {
-    $resultUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast/result/';
-    $resultUrl .= $jobId . '/' . $resultType;
-    echo "<iframe src=\"$resultUrl\" width=\"100%\" height=\"100%\"></iframe>";
-  }
-}
 
-// Generate meta-refresh tag for a job.
-function genMetaRefresh($jobId) {
-  $statusUrl = "?jobId=$jobId";
-  return "<meta http-equiv=\"refresh\" content=\"10;url=$statusUrl\">";
+  // Print details of available results for a job
+  function printResultsSummary($jobId) {
+    $this->printDebugMessage('printResultsSummary', 'Begin', 1);
+    echo "<p>Results:</p>\n";
+    echo "<ul>\n";
+    $resultTypes = $this->getResultTypes($jobId);
+    foreach($resultTypes as $resultType) {
+      $resultUrl = "?jobId=$jobId&resultType=" . $resultType->identifier;
+      print "<li><a href=\"$resultUrl\">" . $resultType->label . "</a>";
+      if(isset($resultType->description)) {
+	print ": " . $resultType->description . "\n";
+      }
+      print "</li>\n";
+    }
+    echo "</ul>\n";
+    $this->printDebugMessage('printResultsSummary', 'End', 1);
+  }
+
+  // Get a job result.
+  function printResult($jobId, $resultType) {
+    $this->printDebugMessage('printResult', 'Begin', 1);
+    echo "<p>Result for job <a href=\"?jobId=$jobId\">$jobId</a>:</p>\n";
+    $resultTypeObjs = $this->getResultTypes($jobId);
+    foreach($resultTypeObjs as $resultTypeObj) {
+      if($resultTypeObj->identifier == $resultType) {
+	$selResultTypeObj = $resultTypeObj;
+      }
+    }
+    // Plain text
+    if($selResultTypeObj->mediaType == 'text/plain') {
+      $resultStr = $this->getResult($jobId, $resultType);
+      echo "<p><pre>$resultStr</pre></p>\n";
+    }
+    // Image, embed using img tag using service REST API for document
+    elseif(strpos($selResultTypeObj->mediaType, 'image') === 0 &&
+	   strpos($selResultTypeObj->mediaType, 'xml') == 0) {
+      $resultUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast/result/';
+      $resultUrl .= $jobId . '/' . $resultType;
+      echo "<img src=\"$resultUrl\"></img>";
+    }
+    // Other, embed in iframe using service REST API for document
+    else {
+      $resultUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast/result/';
+      $resultUrl .= $jobId . '/' . $resultType;
+      echo "<iframe src=\"$resultUrl\" width=\"100%\" height=\"100%\"></iframe>";
+    }
+    $this->printDebugMessage('printResult', 'Begin', 1);
+  }
+
+  // Generate meta-refresh tag for a job.
+  function genMetaRefresh($jobId) {
+    $this->printDebugMessage('genMetaRefresh', 'Begin', 2);
+    $statusUrl = "?jobId=$jobId";
+    $retVal = "<meta http-equiv=\"refresh\" content=\"10;url=$statusUrl\">";
+    $this->printDebugMessage('genMetaRefresh', 'Begin', 2);
+    return $retVal;
+  }
 }
 ?>
 
@@ -226,23 +285,22 @@ else {
     }
 
     // Create an instance of the client.
-    $client = new NcbiBlastClient();
+    $client = new NcbiBlastWebClient();
     // HTTP proxy config.
     //$client->setHttpProxy($proxy_host, $proxy_port);
 
     // Debug
-    if(array_key_exists('debug', $inputParams)) {
-      $client->debugLevel = 2;
-    }
+    if(array_key_exists('debug', $inputParams)) $client->debugLevel = 2;
 
     // Get a result
     if(array_key_exists('jobId', $inputParams) &&
        array_key_exists('resultType', $inputParams)) {
-      getResult($client, $inputParams['jobId'], $inputParams['resultType']);
+      $client->printResult($inputParams['jobId'],
+			   $inputParams['resultType']);
     }
     // Get job status, and poll
     elseif(array_key_exists('jobId', $inputParams)) {
-      $metaRefresh = getStatus($client, $inputParams['jobId']);
+      $metaRefresh = $client->printStatus($inputParams['jobId']);
     }
     // Option/parameter details/help.
     elseif(array_key_exists('paramDetail', $inputParams)) {
@@ -250,11 +308,11 @@ else {
     }
     // Submit a job
     elseif(array_key_exists('stype', $inputParams)) {
-      $metaRefresh = submitJob($client, $inputParams);
+      $metaRefresh = $client->submitJob($inputParams);
     }
     // Input form
     else {
-      printForm($client);
+      $client->printForm();
     }
   }
   catch(SoapFault $ex) {

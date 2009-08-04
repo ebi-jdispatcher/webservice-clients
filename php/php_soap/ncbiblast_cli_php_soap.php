@@ -17,6 +17,118 @@
 # Load NCBI BLAST client library
 require_once('ncbiblast_lib_php_soap.php');
 
+// Extend client class
+class NcbiBlastCliClient extends NcbiBlastClient {
+  // Print list of tool parameters
+  function printGetParameters() {
+    $this->printDebugMessage('printGetParameters', 'Begin', 1);
+    $paramList = $this->getParameters();
+    foreach($paramList as $paramName) {
+      print $paramName . "\n";
+    }
+    $this->printDebugMessage('printGetParameters', 'End', 1);
+  }
+
+  // Print details of a parameter
+  function printGetParameterDetails($parameterId) {
+    $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
+    $paramDetail = $this->getParameterDetails($parameterId);
+    print $paramDetail->name . "\t" . $paramDetail->type . "\n";
+    print $paramDetail->description . "\n";
+    if(isset($paramDetail->values)) {
+      foreach($paramDetail->values->value as $val) {
+	print $val->value . "\t";
+	if($val->defaultValue) print 'default';
+	print "\n";
+	if($val->label) print "\t" . $val->label . "\n";
+      }
+    }
+    $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
+  }
+
+  // Print available result types for a job
+  function printGetResultTypes($jobId) {
+    $this->printDebugMessage('PrintGetResultTypes', 'Begin', 1);
+    $resultTypes = $this->getResultTypes($jobId);
+    foreach($resultTypes as $resultType) {
+      print $resultType->identifier . "\n";
+      print "\t" . $resultType->label . "\n";
+      if($resultType->description) {
+	print "\t" . $resultType->description . "\n";
+      }
+      print "\t" . $resultType->mediaType . "\n";
+      print "\t" . $resultType->fileSuffix . "\n";
+    }
+    $this->printDebugMessage('PrintGetResultTypes', 'End', 1);
+  }
+  
+  function submit($options) {
+    $this->printDebugMessage('submit', 'Begin', 1);
+    if(!$options['params']['match_scores'] &&
+       ($options['match'] && $options['mismatch'])) {
+      $options['params']['match_scores'] = $options['match'] . ',' . $options['mismatch'];
+    }
+    $jobId = $this->run(
+			$options['email'],
+			$options['title'],
+			$options['params']);
+    // Async submission
+    if($options['async'] || $options['outputLevel'] > 0) {
+      echo "$jobId\n";
+    }
+    // Sync submission... get results
+    if(!$options['async']) {
+      $options['jobId'] = $jobId;
+      $this->poll($options);
+    }
+    $this->printDebugMessage('submit', 'End', 1);
+  }
+
+  // Client-side job polling.
+  function clientPoll($jobId) {
+    $this->printDebugMessage('clientPoll', 'Begin', 1);
+    // Get status
+    $status = 'PENDING';
+    while(strcmp($status, 'PENDING') == 0 || strcmp($status, 'RUNNING') == 0) {
+      $status = $this->getStatus($jobId);
+      echo "$status\n";
+      if(strcmp($status, 'PENDING') == 0 || strcmp($status, 'RUNNING') == 0) {
+	sleep(15);
+      }
+    }
+    $this->printDebugMessage('clientPoll', 'End', 1);
+  }
+
+  function poll($options) {
+    $this->printDebugMessage('poll', 'Begin', 1);
+    // Check status and wait if necessary
+    $this->clientPoll($options['jobId']);
+    // Get the result types
+    $resultTypeList = $this->getResultTypes($options['jobId']);
+    if($options['outfile']) {
+      $baseName = $options['outfile'];
+    } else {
+      $baseName = $options['jobId'];
+    }
+    foreach($resultTypeList as $resultType) {
+      $result = '';
+      $filename = $baseName . '.' . $resultType->identifier . '.' . $resultType->fileSuffix;
+      if($options['input']['outformat']) {
+	if(strcmp($options['input']['outformat'], $resultType->identifier) == 0) {
+	  $result = $this->getResult($options['jobId'], $resultType->identifier);
+	}
+      } else {
+	$result = $this->getResult($options['jobId'], $resultType->identifier);
+      }
+      if($result) {
+	print "$filename\n";
+	file_put_contents($filename, $result);
+      }
+    }
+    $this->printDebugMessage('poll', 'End', 1);
+  }
+}
+
 try {
   // Parse command-line options
   $options = parseCommandLine($argv);
@@ -28,7 +140,7 @@ try {
   }
 
   // Get service proxy
-  $client = new NcbiBlastClient();
+  $client = new NcbiBlastCliClient();
   // HTTP proxy config.
   //$client->setHttpProxy($proxy_host, $proxy_port);
 
