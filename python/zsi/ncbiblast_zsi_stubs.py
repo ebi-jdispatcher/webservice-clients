@@ -4,6 +4,7 @@
 #
 # Tested with:
 #   Python 2.5.2 with ZSI 2.0
+#   Python 2.6.2 with ZSI 2.0 (Ubuntu 9.04)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
