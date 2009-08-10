@@ -1,22 +1,18 @@
 #!/usr/bin/env ruby
 # $Id$
 # ======================================================================
-# NCBI BLAST jDispatcher SOAP web service Ruby client
+# NCBI BLAST jDispatcher SOAP web service Ruby client using soap4r.
 #
 # Tested with:
 #   SOAP4R 1.5.8 and Ruby 1.8.7
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
-# http://www.ebi.ac.uk/Tools/webservices/clients/ncbiblast
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 # ======================================================================
 # Note: stubs need to be generated using:
-# wsdl2ruby.rb --type client --wsdl http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
+# wsdl2ruby.rb --type client --wsdl http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
 # ======================================================================
-# WSDL URL for service
-#wsdlUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
-
 # Load libraries 
 require 'getoptlong' # Command-line option handling
 require 'base64' # Unpack encoded data
@@ -30,9 +26,6 @@ NCBI BLAST
 ==========
    
 Rapid sequence database search programs utilising the BLAST algorithm
-    
-For more detailed help information refer to 
-http://www.ebi.ac.uk/Tools/blastall/help.html
 
 [Required]
 
@@ -83,28 +76,27 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: ncbiblast_soap4r.rb --email <your\@email> [options...] seqFile
   Returns: results as an attachment
 
 Asynchronous job:
 
   Use this if you want to retrieve the results at a later time. The results 
   are stored for up to 24 hours.  
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: ncbiblast_soap4r.rb --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished, 
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: ncbiblast_soap4r.rb --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
 
 Further information:
 
   http://www.ebi.ac.uk/Tools/ncbiblast/
-  http://www.ebi.ac.uk/Tools/webservices/clients/ncbiblast
   http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
-  http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
+  http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 END_OF_STRING
   exit(returnCode)
 end
