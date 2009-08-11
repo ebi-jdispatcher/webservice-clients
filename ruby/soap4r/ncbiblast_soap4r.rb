@@ -95,7 +95,7 @@ Asynchronous job:
 Further information:
 
   http://www.ebi.ac.uk/Tools/ncbiblast/
-  http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
+  http://www.ebi.ac.uk/Tools/webservices/sss/ncbi_blast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 END_OF_STRING
   exit(returnCode)
