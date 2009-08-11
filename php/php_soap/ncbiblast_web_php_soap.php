@@ -254,7 +254,7 @@ EOF
 }
 ?>
 
-<h1 align="center">NCBI BLAST</h1>
+<h1 align="center">NCBI BLAST (SOAP)</h1>
 <hr />
 
 <?php
@@ -340,7 +340,7 @@ else {
 </body>
 
 <head>
-<title>NCBI BLAST</title>
+<title>NCBI BLAST (SOAP)</title>
 </head>
 <?php
 // Meta refresh
