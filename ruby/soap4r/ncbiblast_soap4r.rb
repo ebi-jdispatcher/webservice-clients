@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 # $Id$
 # ======================================================================
-# NCBI BLAST jDispatcher SOAP web service Ruby client using soap4r.
+# NCBI BLAST SOAP web service Ruby client using soap4r.
 #
 # Tested with:
 #   SOAP4R 1.5.8 and Ruby 1.8.7
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/ncbiblast
+# http://www.ebi.ac.uk/Tools/webservices/sss/ncbi_blast_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 # ======================================================================
 # Note: stubs need to be generated using:
