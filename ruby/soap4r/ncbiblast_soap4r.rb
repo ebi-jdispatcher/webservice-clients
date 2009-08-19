@@ -16,7 +16,6 @@
 # Load libraries 
 require 'getoptlong' # Command-line option handling
 require 'base64' # Unpack encoded data
-require 'rubygems' # Ruby Gems to access latest SOAP4r
 require 'ncbiblastDriver.rb' # Generated stubs
 
 # Usage message
@@ -101,6 +100,9 @@ END_OF_STRING
   exit(returnCode)
 end
 
+# Remember the number of command-line arguments before processing.
+numArgs = ARGV.length
+
 # Process command-line options
 optParser = GetoptLong.new(
 # Generic options
@@ -162,6 +164,7 @@ excludeOpts = {
   'debugLevel' => 1,
   'timeout' => 1,
   'trace' => 1,
+  'database' => 1
 }
 
 # Wrapping class for working with the application
@@ -190,8 +193,11 @@ class EbiWsAppl
     soap = soapConnect
     req = GetParameters.new()
     res = soap.getParameters(req)
+    if(2 <= @debugLevel)
+      p res
+    end
     printDebugMessage('getParams', 'End', 1)
-    return res.parameters
+    return res.parameters['id']
   end
   
   # Print list of parameter names
@@ -211,6 +217,9 @@ class EbiWsAppl
     req = GetParameterDetails.new()
     req.parameterId = paramName
     res = soap.getParameterDetails(req)
+    if(2 <= @debugLevel)
+      p res
+    end
     printDebugMessage('getParamDetail', 'Begin', 1)
     return res.parameterDetails
   end
@@ -219,18 +228,17 @@ class EbiWsAppl
   def printParamDetail(paramName)
     printDebugMessage('printParamDetail', 'Begin', 1)
     paramDetail = getParamDetail(paramName)
-    puts paramDetail.name + "\t" + paramDetail.type
+    puts paramDetail.name + "\t" + paramDetail['type']
     puts paramDetail.description
-    paramDetail.values.each { |value|
+    paramDetail.values.value.each { |value|
       print value.value
-      if(value.defaultValue)
+      if(value.defaultValue == 'true')
         print "\tdefault"
       end
       puts
       if(value.label)
         puts "\t" + value.label
       end
-        
     }
     printDebugMessage('printParamDetail', 'End', 1)
   end
@@ -289,8 +297,9 @@ class EbiWsAppl
     req = GetResultTypes.new()
     req.jobId = jobId
     res = soap.getResultTypes(req)
+    resultTypes = res.resultTypes['type']
     printDebugMessage('getResultTypes', 'End', 1)
-    return res.resultTypes
+    return resultTypes
   end
 
   # Print result types
@@ -318,7 +327,7 @@ class EbiWsAppl
     req.type = type
     req.parameters = params
     res = soap.getResult(req)
-    resultData = Base64.decode64(Base64.decode64(res.output))
+    resultData = Base64.decode64(res.output)
     printDebugMessage('getResult', 'End', 1)
     return resultData
   end
@@ -382,23 +391,20 @@ end
 begin
   argHash = {}
   argHash['debugLevel'] = 0
-  argHash['title'] = 'My Sequence'
-  argHash['stype'] = 'protein'
-  argHash['exp'] = "10"
-  argHash['scores'] = 50
-  argHash['alignments'] = 50
-  argHash['seqrange'] = 'START-END'
+  argHash['title'] = ''
   optParser.each do |name, arg|
     key = name.sub(/^--/, '') # Clean up the argument name
     argHash[key] = arg
   end
-  params = {}
+  params = InputParameters.new
   argHash.each do |key, arg|
     # For application options add to the params hash
-    if arg != ''
-      params[key] = arg unless excludeOpts[key]
-    else
-      params[key] = 1
+    if !excludeOpts[key]
+      if arg != ''
+        eval "params.#{key} = arg"
+      else
+        eval "params.#{key} = 1"
+      end
     end
   end
 rescue
@@ -417,7 +423,7 @@ begin
   ebiWsApp = EbiWsAppl.new(argHash['outputLevel'], argHash['debugLevel'], argHash['trace'], timeout)
   
   # Help info
-  if argHash['help']
+  if argHash['help'] || numArgs == 0
     printUsage(0)
 
   # Get list of parameter names
@@ -456,10 +462,13 @@ begin
   # Submit a job
   elsif(ARGV[0] || argHash['sequence'])
     if(ARGV[0])
-      params['sequence'] = ARGV[0]
+      params.sequence = ARGV[0]
     end
-    if(params['database'])
-      params['database'] = params['database'].split(/[ ,]+/)
+    if(argHash['database'])
+      databaseList = ArrayOfString.new
+      tmpDatabaseList = argHash['database'].split(/[ ,]+/)
+      tmpDatabaseList.each { |dbName| databaseList << dbName}
+      params.database = databaseList
     end
     jobId = ebiWsApp.run(argHash['email'], argHash['title'], params)
     # In synchronous mode can now get results otherwise print the jobId
@@ -477,11 +486,12 @@ begin
 
   # Unsupported combination of options (or no options)
   else
-    $stderr.print "Error: unknown option combination\n"
+    $stderr.puts "Error: unknown option combination"
     exit(1)
   end
 
 # Catch any exceptions and display
 rescue StandardError => ex
-  puts ex
+  $stderr.puts 'Exception'
+  $stderr.puts ex
 end
