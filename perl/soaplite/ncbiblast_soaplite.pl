@@ -50,6 +50,7 @@ use strict;
 use warnings;
 
 # Load libraries
+use English;
 use SOAP::Lite;
 use LWP::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
@@ -183,6 +184,10 @@ my $soap = SOAP::Lite->proxy(
 		return new SOAP::SOM;
 	}
   );
+# Prefix a more specific user-agent (see RFC2616 section 14.43)
+'$Revision$' =~ m/(\d+)/;
+$soap->transport->agent('EBI-NCBI-BLAST-Client/' . $1 .' (' . $OSNAME . ') ' . $soap->transport->agent());
+&print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
 if (
@@ -445,6 +450,9 @@ sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
 	my $wsdlStr = get($WSDL); # Get WSDL using LWP.
+	if(!defined($wsdlStr) || $wsdlStr eq '') {
+		die "Error: unable to get WSDL document from $WSDL";
+	}
 	# Extract service endpoint.
 	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
 		&print_debug_message( 'from_wsdl', 'endpoint: ' . $2, 2 );
