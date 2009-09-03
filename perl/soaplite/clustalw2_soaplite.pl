@@ -50,6 +50,7 @@ use strict;
 use warnings;
 
 # Load libraries
+use English;
 use SOAP::Lite;
 use LWP::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
@@ -185,6 +186,10 @@ my $soap = SOAP::Lite->proxy(
 		return new SOAP::SOM;
 	}
   );
+# Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
+'$Revision: 1312 $' =~ m/(\d+)/;
+$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
+&print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
 if (

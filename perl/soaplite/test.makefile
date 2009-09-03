@@ -4,11 +4,11 @@
 #
 # ======================================================================
 
-PERL = perl
-#PERL = /ebi/extserv/bin/perl/bin/perl
+#PERL = perl
+PERL = /ebi/extserv/bin/perl/bin/perl
 #PERL = /sw/arch/bin/perl
-EMAIL = email@example.org
-#EMAIL = support@ebi.ac.uk
+#EMAIL = email@example.org
+EMAIL = support@ebi.ac.uk
 
 # Run all test sets
 all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
@@ -230,7 +230,7 @@ psisearch_dbid:
 	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
 
 psisearch_stdin_stdout:
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat out --outfile - - > psisearch-blah.txt
 
 psisearch_clean:
 	rm -f psisearch-*
