@@ -184,9 +184,9 @@ my $soap = SOAP::Lite->proxy(
 		return new SOAP::SOM;
 	}
   );
-# Prefix a more specific user-agent (see RFC2616 section 14.43)
+# Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
 '$Revision$' =~ m/(\d+)/;
-$soap->transport->agent('EBI-NCBI-BLAST-Client/' . $1 .' (' . $OSNAME . ') ' . $soap->transport->agent());
+$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
