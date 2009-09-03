@@ -183,7 +183,7 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-'$Revision: 1312 $' =~ m/(\d+)/;
+'$Revision$' =~ m/(\d+)/;
 $soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
