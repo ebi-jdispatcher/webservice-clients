@@ -47,6 +47,7 @@ use strict;
 use warnings;
 
 # Load libraries
+use English;
 use LWP;
 use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
@@ -192,6 +193,8 @@ sub rest_request {
 
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
+	'$Revision: 1311 $' =~ m/(\d+)/;
+	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
 	$ua->env_proxy;
 
 	# Perform the request
