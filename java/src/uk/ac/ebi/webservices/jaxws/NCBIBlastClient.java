@@ -9,9 +9,14 @@ package uk.ac.ebi.webservices.jaxws;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Arrays; 
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.jaxws.stubs.ncbiblast.*;
@@ -27,6 +32,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 	private JDispatcherService srvProxy = null;
 	/** Object factory for creating objects to be exchanged with the web service. */
 	private ObjectFactory objFactory = new ObjectFactory();
+	/** Client version/revision */
+	private String revision = "$Revision$";
 	/** Tool specific usage message */
 	private static final String usageMsg = "NCBI BLAST\n"
 		+ "==========\n"
@@ -61,6 +68,29 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
 		+ "      --seqrange       : str  : region in query sequence to use for search\n";
+
+	/** Default constructor
+	 * 
+	 */
+	public NCBIBlastClient() {
+		// Set the HTTP user agent string for requests
+		this.setUserAgent();
+	}
+	
+	/** Set the HTTP User-agent header string for the client.
+	 * 
+	 */
+	private void setUserAgent() {
+		printDebugMessage("setUserAgent", "Begin", 1);
+		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		String clientVersion = this.revision.substring(10, this.revision.length() - 2);
+		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
+		if(System.getProperty("http.agent") != null) {
+			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
+		}
+		else System.setProperty("http.agent", clientUserAgent);
+		printDebugMessage("setUserAgent", "End", 1);
+	}
 
 	/** Print usage message. */
 	private static void printUsage() {
@@ -373,6 +403,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 	}
 	
 	public void submit(CommandLine cli) throws IOException, ServiceException {
+		printDebugMessage("submit", "Begin", 1);
 		// Create job submission parameters from command-line
 		InputParameters params = loadParams(cli);
 		String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
@@ -396,8 +427,9 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 				}
 			}
 		}	
+		printDebugMessage("submit", "End", 1);
 	}
-
+	
 	/** Entry point for running as an application.
 	 * 
 	 * @param args list of command-line options
@@ -430,10 +462,11 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("stype", "stype", true, "Sequence type");
 		options.addOption("sequence", "sequence", true, "Query sequence");
 
-		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
-		// Create an instance of the client
-		NCBIBlastClient client = new NCBIBlastClient();
+		CommandLineParser cliParser = new GnuParser(); // Create the command line parser
+		NCBIBlastClient client = null;
 		try {
+			// Create an instance of the client
+			client = new NCBIBlastClient();
 			// Parse the command-line
 			CommandLine cli = cliParser.parse(options, args);
 			// User asked for usage info
@@ -519,7 +552,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Catch all exceptions
 		catch(Exception e) {
 			System.err.println ("ERROR: " + e.getMessage());
-			if(client.getDebugLevel() > 0) {
+			if(client != null && client.getDebugLevel() > 0) {
 				e.printStackTrace();
 			}
 			exitVal = 3;
