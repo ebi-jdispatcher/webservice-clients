@@ -17,7 +17,7 @@ import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.jaxws.stubs.ebeye.*;
 
 /**
- * Java EB-eye client using Apache Axis 1.4.
+ * Java EB-eye client using JAX-WS RI.
  * 
  * See:
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/ebeye">http://www.ebi.ac.uk/Tools/Webservices/services/ebeye</a>
@@ -34,6 +34,8 @@ public class EBeyeClient {
 	private EBISearchService srvProxy = null;
 	/** Object factory to create service data types. */
 	private ObjectFactory objFactory = new ObjectFactory();
+	/** Client version/revision */
+	private String revision = "$Revision$";
 	/** Usage message */
 	private static final String usageMsg = "EB-eye\n"
 		+ "======\n"
@@ -129,6 +131,29 @@ public class EBeyeClient {
 		+ "\n"
 		+ "  http://www.ebi.ac.uk/support/\n" 
 		+ "\n";
+
+	/** Default constructor
+	 * 
+	 */
+	public EBeyeClient() {
+		// Set the HTTP user agent string for requests
+		this.setUserAgent();
+	}
+	
+	/** Set the HTTP User-agent header string for the client.
+	 * 
+	 */
+	private void setUserAgent() {
+		printDebugMessage("setUserAgent", "Begin", 1);
+		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
+		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
+		if(System.getProperty("http.agent") != null) {
+			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
+		}
+		else System.setProperty("http.agent", clientUserAgent);
+		printDebugMessage("setUserAgent", "End", 1);
+	}
 
 	/**
 	 * Print the usage message to STDOUT.

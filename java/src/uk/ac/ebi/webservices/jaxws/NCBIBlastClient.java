@@ -9,13 +9,9 @@ package uk.ac.ebi.webservices.jaxws;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Arrays; 
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
@@ -83,7 +79,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 	private void setUserAgent() {
 		printDebugMessage("setUserAgent", "Begin", 1);
 		// Java web calls use the http.agent property as a prefix to the default user-agent.
-		String clientVersion = this.revision.substring(10, this.revision.length() - 2);
+		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
 		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
 		if(System.getProperty("http.agent") != null) {
 			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));

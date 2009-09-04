@@ -30,6 +30,8 @@ public class EBeyeClient {
 	private String serviceEndPoint = null;
 	/** Service proxy */
 	private EBISearchService_PortType srvProxy = null;
+	/** Client version/revision */
+	private String revision = "$Revision$";
 	/** Usage message */
 	private static final String usageMsg = "EB-eye\n"
 		+ "======\n"

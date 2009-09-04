@@ -24,6 +24,8 @@ import uk.ac.ebi.webservices.axis1.stubs.wublast.*;
 public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
+	/** Client version/revision */
+	private String revision = "$Revision$";
 	/** Tool specific usage message */
 	private static final String usageMsg = "WU-BLAST\n"
 		+ "========\n"
