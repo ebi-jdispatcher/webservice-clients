@@ -200,19 +200,19 @@ ncbiblast_clean:
 	rm -f ncbiblast-*
 
 # PSI-BLAST
-#psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
-#
-#psiblast_file:
-#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
-#
-#psiblast_dbid:
-#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 SWISSPROT:ABCC9_HUMAN
-#
-#psiblast_stdin_stdout:
-#	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
-#
-#psiblast_clean:
-#	rm -f psiblast-*
+psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
+
+psiblast_file:
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+
+psiblast_dbid:
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 SWISSPROT:ABCC9_HUMAN
+
+psiblast_stdin_stdout:
+	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
+
+psiblast_clean:
+	rm -f psiblast-*
 
 # PSI-Search
 psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
