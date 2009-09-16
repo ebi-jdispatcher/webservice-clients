@@ -91,6 +91,7 @@ GetOptions(
 	'listFieldsInformation'       => \$params{'listFieldsInformation'},
 
 	# Generic
+	'help|h'       => \$params{'help'},          # Help/usage message
 	'quiet'        => \$params{'quiet'},         # Decrease output level
 	'verbose'      => \$params{'verbose'},       # Increase output level
 	'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
