@@ -1,3 +1,4 @@
+# $Id$
 # ======================================================================
 #
 # Test sample SOAP::Lite clients run.
@@ -11,7 +12,7 @@ PERL = /ebi/extserv/bin/perl/bin/perl
 EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psisearch tcoffee wublast
+all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
 
 clean: clustalw2_clean ebeye_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
@@ -203,13 +204,13 @@ ncbiblast_clean:
 psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
 
 psiblast_file:
-	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 psiblast_dbid:
-	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 SWISSPROT:ABCC9_HUMAN
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 UNIPROT:ABCC9_HUMAN
 
 psiblast_stdin_stdout:
-	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database swissprot --scores 10 --alignments 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psiblast-blah.txt
 
 psiblast_clean:
 	rm -f psiblast-*
