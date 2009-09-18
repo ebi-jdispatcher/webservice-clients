@@ -59,8 +59,7 @@ use MIME::Base64;
 use Data::Dumper;
 
 # WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/psiblast?wsdl';
-my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/psiblast?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/psiblast?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -1022,7 +1021,8 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
   -h, --psithr        : real : E-value limit for inclusion in PSSM
   -F, --filter        :      : filter the query sequence for low complexity 
                                regions, see --paramDetail filter
-  -m, --alignView     : int  : pairwise alignment format, see --paramDetail align
+  -m, --alignView     : int  : pairwise alignment format, 
+                               see --paramDetail align
   -v, --scores        : int  : number of scores to be reported
   -b, --alignments    : int  : number of alignments to report
   -G, --gapopen       : int  : Gap open penalty
@@ -1034,7 +1034,7 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
       --selectedHits  : file : Selected hits from last iteration for building 
                                search profile (PSSM)
   -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration
-      --multifasta    :      : treat input as a set of fasta formatted sequences
+      --multifasta    :      : treat input as a set of fasta format sequences
 
 [General]
 
