@@ -98,6 +98,12 @@ GetOptions(
 	'multifasta'       => \$params{'multifasta'},         # Multiple fasta input
 
 	# Compatability options, old command-line
+	"opengap=i"    => \$params{'opengap'},    # Open gap penalty
+	"extendgap=i"  => \$params{'extendgap'},  # Gap extension penalty
+	"exp=f"        => \$params{'exp'},        # E-value threshold
+	"expmulti=f"   => \$params{'expmulti'},   # E-value for hit selection
+	"preselseq=s"  => \$params{'preselseq'},  # Selected hits for PSSM
+	"checkpoint=s" => \$params{'checkpoint'}, # PSI-BLAST checkpoint
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -194,10 +200,9 @@ if (
 		|| $params{'resultTypes'}
 		|| $params{'status'}
 		|| $params{'params'}
-		|| $params{'paramDetail'}
-		|| $tool_params{'previousjobid'}
+		|| $params{'paramDetail'}	
 	)
-	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
+	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} || defined($tool_params{'previousjobid'}) ) )
   )
 {
 
@@ -753,23 +758,50 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
-	# Database(s) to search
-	#my (@dbList) = split /[ ,]/, $params{'database'};
-	#for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
-	#	$tool_params{'database'}[$i] =
-	#	  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
-	#}
-	$tool_params{'database'} = $params{'database'};
-
 	# Compatability options, old command-line
-	if(!$tool_params{'alignments'} && $params{'numal'}) {
-		$tool_params{'alignments'} = $params{'numal'};
-	}
 	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
 		$tool_params{'gapopen'} = $params{'opengap'};
 	}
 	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
 		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
+		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+	if(!$tool_params{'expthr'} && $params{'exp'}) {
+		$tool_params{'expthr'} = $params{'exp'};
+	}
+	if(!$tool_params{'psithr'} && $params{'expmulti'}) {
+		$tool_params{'psithr'} = $params{'expmulti'};
+	}
+	if(!$params{'selectedHits'} && $params{'preselseq'}) {
+		$params{'selectedHits'} = $params{'preselseq'};
+	}
+	if(!$params{'cpFile'} && $params{'checkpoint'}) {
+		$params{'cpFile'} = $params{'checkpoint'};
+	}
+
+	# Database(s) to search
+	$tool_params{'database'} = $params{'database'};
+
+	# Selected hit identifier list for building PSSM.
+	if(defined($params{'selectedHits'})) {
+		if(-f $params{'selectedHits'}) {
+			$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'}), '');
+		}
+		else {
+			$tool_params{'selectedHits'} = encode_base64($params{'selectedHits'}, '');
+		}
+	}
+	
+	# PSI-BLAST checkpoint from previous iteration.
+	if(defined($params{'cpfile'})) {
+		if(-f $params{'cpfile'}) {
+			$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ), '');
+		}
+		else {
+			$tool_params{'cpfile'} = encode_base64($params{'cpfile'}, '');
+		}
 	}
 
 	print_debug_message( 'load_params',
@@ -976,48 +1008,53 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
 
 [Required]
 
-  -D, --database     : str  : database(s) to search, space separated. See
-                              --paramDetail database
-      --stype        : str  : query sequence type, see --paramDetail stype
-  seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
+  -D, --database      : str  : database(s) to search, space separated. See
+                               --paramDetail database
+      --stype         : str  : query sequence type, see --paramDetail stype
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
 
-  -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
-  -e, --expthr       : real : 0<E<= 1000. Statistical significance threshold 
-                              for reporting database sequence matches.
-  -x, --psithr       : real : E-value limit for inclusion in PSSM
-  -f, --filter       :      : filter the query sequence for low complexity 
-                              regions, see --paramDetail filter
-  -A, --align        : int  : pairwise alignment format, see --paramDetail align
-  -s, --scores       : int  : number of scores to be reported
-  -n, --alignments   : int  : number of alignments to report
-  -o, --gapopen      : int  : Gap open penalty
-  -x, --gapext       : int  : Gap extension penalty
-  -d, --dropoff      : int  : Drop-off
-      --seqrange     : str  : region within input to use as query
-      --multifasta   :      : treat input as a set of fasta formatted sequences
+  -M, --matrix        : str  : scoring matrix, see --paramDetail matrix
+  -e, --expthr        : real : 0<E<= 1000. Statistical significance threshold 
+                               for reporting database sequence matches.
+  -h, --psithr        : real : E-value limit for inclusion in PSSM
+  -F, --filter        :      : filter the query sequence for low complexity 
+                               regions, see --paramDetail filter
+  -m, --alignView     : int  : pairwise alignment format, see --paramDetail align
+  -v, --scores        : int  : number of scores to be reported
+  -b, --alignments    : int  : number of alignments to report
+  -G, --gapopen       : int  : Gap open penalty
+  -E, --gapext        : int  : Gap extension penalty
+  -X, --dropoff       : int  : Drop-off
+  -Z, --finaldropoff  : int  : Final dropoff score
+      --seqrange      : str  : region within input to use as query
+      --previousjobid : str  : Job Id for last iteration
+      --selectedHits  : file : Selected hits from last iteration for building 
+                               search profile (PSSM)
+  -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration
+      --multifasta    :      : treat input as a set of fasta formatted sequences
 
 [General]
 
-  -h, --help         :      : prints this help text
-      --async        :      : forces to make an asynchronous query
-      --email        : str  : e-mail address
-      --title        : str  : title for job
-      --status       :      : get job status
-      --resultTypes  :      : get available result types for job
-      --polljob      :      : poll for the status of a job
-      --jobid        : str  : jobid that was returned when an asynchronous job 
-                              was submitted.
-      --outfile      : str  : file name for results (default is jobid;
-                              "-" for STDOUT)
-      --outformat    : str  : result format to retrieve
-      --params       :      : list input parameters
-      --paramDetail  : str  : display details for input parameter
-      --quiet        :      : decrease output
-      --verbose      :      : increase output
-      --trace        :      : show SOAP messages being interchanged 
+  -h, --help          :      : prints this help text
+      --async         :      : forces to make an asynchronous query
+      --email         : str  : e-mail address
+      --title         : str  : title for job
+      --status        :      : get job status
+      --resultTypes   :      : get available result types for job
+      --polljob       :      : poll for the status of a job
+      --jobid         : str  : jobid that was returned when an asynchronous job 
+                               was submitted.
+      --outfile       : str  : file name for results (default is jobid;
+                               "-" for STDOUT)
+      --outformat     : str  : result format to retrieve
+      --params        :      : list input parameters
+      --paramDetail   : str  : display details for input parameter
+      --quiet         :      : decrease output
+      --verbose       :      : increase output
+      --trace         :      : show SOAP messages being interchanged
 
 Synchronous job:
 
@@ -1037,6 +1074,25 @@ Asynchronous job:
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
+
+Iterations:
+
+  To generate and refine the profile (PSSM) used to perform the search after 
+  the first iteration the set of hits to be included in the generation of the 
+  PSSM needs to be specified for each iteration. This can be either obtained 
+  from the previous iteration using the job identifier of the iteration, or 
+  be explicit specification of a file containing the list of identifiers. 
+  
+  Iteration 1:
+  $scriptName --email <email> --database <db> <seqFile> [options...]
+  
+  Iteration 2:
+  $scriptName --email <email> --previousjobid <jobId> \\
+    [--selectedHits <selFile>] [options...]
+
+  Iteration 3+:
+  $scriptName --email <email> --previousjobid <jobId> \\
+    [--selectedHits <selFile>] [--cpfile <checkpoint>] [options...]
 
 Further information:
 
