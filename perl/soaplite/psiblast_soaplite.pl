@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_psiblast_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/sss/psiblast_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -1096,7 +1096,7 @@ Iterations:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/psiblast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
