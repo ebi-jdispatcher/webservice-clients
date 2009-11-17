@@ -429,7 +429,7 @@ sub soap_list_fields {
 	print_debug_message( 'soap_list_fields', 'Begin', 1 );
 	my $domain = shift;
 	print_debug_message( 'soap_list_fields', 'domain: ' . $domain, 2 );
-	my $res = $soap->listFields($domain);
+	my $res = $soap->listFields(SOAP::Data->name( 'domain' => $domain) );
 	print_debug_message( 'soap_list_fields', 'End', 1 );
 	return $res->valueof('//arrayOfFieldNames/string');
 }
