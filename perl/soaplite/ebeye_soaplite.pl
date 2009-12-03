@@ -1263,13 +1263,15 @@ sub print_domain_description {
 	$level++;
 	print $indent, $domainDes->{'id'}, ' : ', $domainDes->{'name'}, "\n";
 	if(defined($domainDes->{'subDomains'} && defined($domainDes->{'subDomains'}->{'DomainDescription'}))) {
-		if(ref($domainDes->{'subDomains'}->{'DomainDescription'}) eq 'ARRAY') {
-			foreach my $subDomainDes (@{$domainDes->{'subDomains'}->{'DomainDescription'}}) {
-				&print_domain_description($subDomainDes, $level);
+		if(ref($domainDes->{'subDomains'}) ne '') {
+			if(ref($domainDes->{'subDomains'}->{'DomainDescription'}) eq 'ARRAY') {
+				foreach my $subDomainDes (@{$domainDes->{'subDomains'}->{'DomainDescription'}}) {
+					&print_domain_description($subDomainDes, $level);
+				}
 			}
-		}
-		else {
-			&print_domain_description($domainDes->{'subDomains'}->{'DomainDescription'}, $level);
+			else {
+				&print_domain_description($domainDes->{'subDomains'}->{'DomainDescription'}, $level);
+			}
 		}
 	}
 	print_debug_message( 'print_domains_description', 'End', 21 );
