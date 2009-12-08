@@ -370,7 +370,8 @@ sub soap_get_number_of_results {
 		2 );
 	print_debug_message( 'soap_get_number_of_results',
 		'query_str: ' . $query_str, 2 );
-	my $res = $soap->getNumberOfResults( $domain, $query_str );
+	my $res = $soap->getNumberOfResults( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ), 
+	                                     SOAP::Data->name( 'query' => $query_str )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_number_of_results', 'End', 1 );
 	return $res->valueof('//numberOfResults');
 }
@@ -390,7 +391,10 @@ sub soap_get_results_ids {
 	print_debug_message( 'soap_get_results_ids', 'query: ' . $query,   2 );
 	print_debug_message( 'soap_get_results_ids', 'start: ' . $start,   2 );
 	print_debug_message( 'soap_get_results_ids', 'size: ' . $size,     2 );
-	my $res = $soap->getResultsIds( $domain, $query, $start, $size );
+	my $res = $soap->getResultsIds( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ), 
+								    SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ), 
+								    SOAP::Data->name( 'start' => $start )->attr( { 'xmlns' => $serviceNamespace } ), 
+								    SOAP::Data->name( 'size' => $size )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_results_ids', 'End', 1 );
 	return $res->valueof('//arrayOfIds/string');
 }
@@ -412,7 +416,8 @@ sub soap_get_all_results_ids {
 	my ( $domain, $query ) = @_;
 	print_debug_message( 'soap_get_all_results_ids', 'domain: ' . $domain, 2 );
 	print_debug_message( 'soap_get_all_results_ids', 'query: ' . $query,   2 );
-	my $res = $soap->getAllResultsIds( $domain, $query );
+	my $res = $soap->getAllResultsIds( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ), 
+								       SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_all_results_ids', 'End', 1 );
 	return $res->valueof('//arrayOfIds/string');
 }
@@ -429,7 +434,7 @@ sub soap_list_fields {
 	print_debug_message( 'soap_list_fields', 'Begin', 1 );
 	my $domain = shift;
 	print_debug_message( 'soap_list_fields', 'domain: ' . $domain, 2 );
-	my $res = $soap->listFields(SOAP::Data->name( 'domain' => $domain) );
+	my $res = $soap->listFields( SOAP::Data->name( 'domain' => $domain)->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_list_fields', 'End', 1 );
 	return $res->valueof('//arrayOfFieldNames/string');
 }
@@ -447,7 +452,11 @@ they appear in the "fields" list.
 sub soap_get_results {
 	print_debug_message( 'soap_get_results', 'Begin', 1 );
 	my ( $domain, $query, $fields, $start, $size ) = @_;
-	my $res = $soap->getResults( $domain, $query, $fields, $start, $size );
+	my $res = $soap->getResults( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ), 
+								 SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ),
+								 SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ),
+								 SOAP::Data->name( 'start' => $start)->attr( { 'xmlns' => $serviceNamespace } ),
+								 SOAP::Data->name( 'size' => $size)->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_results', 'End', 1 );
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
@@ -469,7 +478,9 @@ sub soap_get_entry {
 	print_debug_message( 'soap_get_entry', 'domain: ' . $domain,          2 );
 	print_debug_message( 'soap_get_entry', 'entry: ' . $entry,            2 );
 	print_debug_message( 'soap_get_entry', "fields:\n" . Dumper($fields), 2 );
-	my $res = $soap->getEntry( $domain, $entry, $fields );
+	my $res = $soap->getEntry( SOAP::Data->name( 'domain' => $domain)->attr( { 'xmlns' => $serviceNamespace } ),
+							   SOAP::Data->name( 'entry' => $entry)->attr( { 'xmlns' => $serviceNamespace } ), 
+							   SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_entry', 'End', 1 );
 	return $res->valueof('//entryValues/string');
 }
@@ -491,7 +502,9 @@ sub soap_get_entries {
 	print_debug_message( 'soap_get_entries', "entries:\n" . Dumper($entries),
 		2 );
 	print_debug_message( 'soap_get_entries', "fields:\n" . Dumper($fields), 2 );
-	my $res = $soap->getEntries( $domain, $entries, $fields );
+	my $res = $soap->getEntries( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							     SOAP::Data->name( 'entries' => \SOAP::Data->value(soap_to_arrayOfString( $entries ) ) )->attr( { 'xmlns' => $serviceNamespace } ),
+							     SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_entries', 'End', 1 );
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
@@ -514,7 +527,9 @@ sub soap_get_entry_field_urls {
 	print_debug_message( 'soap_get_entry_field_urls', 'entry: ' . $entry,   2 );
 	print_debug_message( 'soap_get_entry_field_urls',
 		"fields:\n" . Dumper($fields), 2 );
-	my $res = $soap->getEntryFieldUrls( $domain, $entry, $fields );
+	my $res = $soap->getEntryFieldUrls( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							            SOAP::Data->name( 'entry' => $entry )->attr( { 'xmlns' => $serviceNamespace } ), 
+							            SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_entry_field_urls', 'End', 1 );
 	return $res->valueof('//entryUrlsValues/string');
 }
@@ -539,7 +554,9 @@ sub soap_get_entries_field_urls {
 		"entries:\n" . Dumper($entries), 2 );
 	print_debug_message( 'soap_get_entries_field_urls',
 		"fields:\n" . Dumper($fields), 2 );
-	my $res = $soap->getEntriesFieldUrls( $domain, $entries, $fields );
+	my $res = $soap->getEntriesFieldUrls( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							              SOAP::Data->name( 'entries' => \SOAP::Data->value(soap_to_arrayOfString( $entries ) ) )->attr( { 'xmlns' => $serviceNamespace } ), 
+							              SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_entries_field_urls', 'End', 1 );
 	return &toNestedArray( '//arrayOfEntryUrlsValues', $res );
 }
@@ -558,7 +575,7 @@ sub soap_get_domains_referenced_in_domain {
 	my $domain = shift;
 	print_debug_message( 'soap_get_domains_referenced_in_domain',
 		'domain: ' . $domain, 2 );
-	my $res = $soap->getDomainsReferencedInDomain($domain);
+	my $res = $soap->getDomainsReferencedInDomain( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_domains_referenced_in_domain', 'End', 1 );
 	return $res->valueof('//arrayOfDomainNames/string');
 }
@@ -580,7 +597,8 @@ sub soap_get_domains_referenced_in_entry {
 		'domain: ' . $domain, 2 );
 	print_debug_message( 'soap_get_domains_referenced_in_entry',
 		'entry: ' . $entry, 2 );
-	my $res = $soap->getDomainsReferencedInEntry( $domain, $entry );
+	my $res = $soap->getDomainsReferencedInEntry( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+												  SOAP::Data->name( 'entry' => $entry )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_domains_referenced_in_entry', 'End', 1 );
 	return $res->valueof('//arrayOfDomainNames/string');
 }
@@ -597,7 +615,7 @@ domain but not included as a domain in the EB-eye.
 sub soap_list_additional_reference_fields {
 	print_debug_message( 'soap_list_additional_reference_fields', 'Begin', 1 );
 	my $domain = shift;
-	my $res    = $soap->listAdditionalReferenceFields($domain);
+	my $res = $soap->listAdditionalReferenceFields( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_list_additional_reference_fields', 'End', 1 );
 	return $res->valueof('//arrayOfFieldNames/string');
 }
@@ -614,7 +632,9 @@ a particular domain entry.
 sub soap_get_referenced_entries {
 	print_debug_message( 'soap_get_referenced_entries', 'Begin', 1 );
 	my ( $domain, $entry, $referencedDomain ) = @_;
-	my $res = $soap->getReferencedEntries( $domain, $entry, $referencedDomain );
+	my $res = $soap->getReferencedEntries( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+										   SOAP::Data->name( 'entry' => $entry )->attr( { 'xmlns' => $serviceNamespace } ),
+										   SOAP::Data->name( 'referencedDomain' => $referencedDomain )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_referenced_entries', 'End', 1 );
 	return $res->valueof('//arrayOfEntryIds/string');
 }
@@ -633,9 +653,10 @@ sub soap_get_referenced_entries_set {
 	print_debug_message( 'soap_get_referenced_entries_set', 'Begin', 1 );
 	my (@retVal) = ();
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
-	my $res =
-	  $soap->getReferencedEntriesSet( $domain, $entries, $referencedDomain,
-		$fields );
+	my $res = $soap->getReferencedEntriesSet( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							                  SOAP::Data->name( 'entries' => \SOAP::Data->value(soap_to_arrayOfString( $entries ) ) )->attr( { 'xmlns' => $serviceNamespace } ), 
+							                  SOAP::Data->name( 'referencedDomain' => $referencedDomain )->attr( { 'xmlns' => $serviceNamespace } ),						                  
+							                  SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	# To support SOAP::Lite 0.60, this uses SOAP::SOM rather than the 
 	# valueof() hash structure.
 	my (@idList) = $res->valueof('//getReferencedEntriesSetResponse/arrayOfEntryValues/EntryReferences/entry');
@@ -673,9 +694,10 @@ identifier and the other values correspond to the fields values.
 sub soap_get_referenced_entries_flat_set {
 	print_debug_message( 'soap_get_referenced_entries_flat_set', 'Begin', 1 );
 	my ( $domain, $entries, $referencedDomain, $fields ) = @_;
-	my $res =
-	  $soap->getReferencedEntriesFlatSet( $domain, $entries, $referencedDomain,
-		$fields );
+	my $res = $soap->getReferencedEntriesFlatSet( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							                      SOAP::Data->name( 'entries' => \SOAP::Data->value(soap_to_arrayOfString( $entries ) ) )->attr( { 'xmlns' => $serviceNamespace } ), 
+							                      SOAP::Data->name( 'referencedDomain' => $referencedDomain )->attr( { 'xmlns' => $serviceNamespace } ),						                  
+							                      SOAP::Data->name( 'fields' => \SOAP::Data->value(soap_to_arrayOfString( $fields ) ) )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_referenced_entries_flat_set', 'End', 1 );
 	return &toNestedArray( '//arrayOfEntryValues', $res );
 }
@@ -742,7 +764,9 @@ Executes a query and returns the number of results found per domain.
 sub soap_get_detailled_number_of_results {
 	print_debug_message( 'soap_get_detailled_number_of_results', 'Begin', 1 );
 	my ( $domain, $query, $flat ) = @_;
-	my $res = $soap->getDetailledNumberOfResults( $domain, $query, $flat );
+	my $res = $soap->getDetailledNumberOfResults( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
+							                      SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ), 
+							                      SOAP::Data->name( 'flat' => $flat )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_detailled_number_of_results', "res:\n" . Dumper($res), 21 );
 	my $retVal = $res->valueof('//detailledNumberOfResults');
 	&_domain_results_to_hash($res, $retVal, '//detailledNumberOfResults');
@@ -796,7 +820,7 @@ particular domain.
 sub soap_list_fields_information {
 	print_debug_message( 'soap_list_fields_information', 'Begin', 1 );
 	my $domain = shift;
-	my $res    = $soap->listFieldsInformation($domain);
+	my $res = $soap->listFieldsInformation( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_list_fields_information', 'End', 1 );
 	return $res->valueof('//arrayOfFieldInformation/FieldInfo');
 }
@@ -1311,14 +1335,16 @@ sub print_domain_result {
 	}
 	$level++;
 	print $indent, $domainResult->{'domainId'}, ' : ', $domainResult->{'numberOfResults'}, "\n";
-	if(defined(	$domainResult->{'subDomainsResults'}) && defined($domainResult->{'subDomainsResults'}->{'DomainResult'}) ) {
-		if(ref($domainResult->{'subDomainsResults'}->{'DomainResult'}) eq 'ARRAY') {
-			foreach my $subDomainResult (@{$domainResult->{'subDomainsResults'}->{'DomainResult'}}) {
-				print_domain_result($subDomainResult, $level);
+	if(defined($domainResult->{'subDomainsResults'} && defined($domainResult->{'subDomainsResults'}->{'DomainResult'}))) {
+		if(ref($domainResult->{'subDomainsResults'}) ne '') {
+			if(ref($domainResult->{'subDomainsResults'}->{'DomainResult'}) eq 'ARRAY') {
+				foreach my $subDomainResult (@{$domainResult->{'subDomainsResults'}->{'DomainResult'}}) {
+					print_domain_result($subDomainResult, $level);
+				}
 			}
-		}
-		else {
-			print_domain_result($domainResult->{'subDomainsResults'}->{'DomainResult'}, $level);
+			else {
+				print_domain_result($domainResult->{'subDomainsResults'}->{'DomainResult'}, $level);
+			}
 		}
 	}
 	print_debug_message( 'print_domain_result', 'End', 1 );
@@ -1344,6 +1370,33 @@ sub print_list_fields_information {
 		print "\n";
 	}
 	print_debug_message( 'print_list_fields_information', 'End', 1 );
+}
+
+=head2 soap_to_arrayOfString()
+
+Converts an array of plain strings in the suitable XML representation for 
+<string xsi:type="xsd:string">x</string>
+<string xsi:type="xsd:string">y</string>
+...
+according to WSDL definition of ArrayOfString
+<xsd:complexType name="ArrayOfString">
+	<xsd:sequence>
+		<xsd:element maxOccurs="unbounded" minOccurs="0" name="string" nillable="true" type="xsd:string"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+  my (@arrayOfString) = soap_to_arrayOfString(@items);
+
+=cut
+
+sub soap_to_arrayOfString {
+	my ( $items ) = @_;
+	
+	my (@stringArray) = ();
+	foreach my $item (@$items) {
+		push ( @stringArray, SOAP::Data->type( 'string' => $item)->name('string') );
+	}
+	return @stringArray;
 }
 
 =head2 usage()
@@ -1434,7 +1487,7 @@ EB-eye
 --getDomainsHierarchy
   Returns the hierarchy of the domains available.
 
---getDetailledNumberOfResult <domain> <query> <flat>
+--getDetailledNumberOfResults <domain> <query> <flat>
   Executes a query and returns the number of results found per domain.
 
 --listFieldsInformation <domain>
