@@ -15,6 +15,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.jaxws.stubs.ebeye.*;
+import uk.ac.ebi.webservices.jaxws.stubs.ncbiblast.JDispatcherService_Service;
 
 /**
  * Java EB-eye client using JAX-WS RI.
@@ -254,15 +255,27 @@ public class EBeyeClient {
 		}
 	}
 
-	/**
-	 * Get an instance of the service proxy to use with other methods.
+	/** Ensure that a service proxy is available to call the web service.
 	 * 
-	 * @throws javax.xml.rpc.ServiceException
+	 * @throws ServiceException
 	 */
-	private void srvProxyConnect() throws javax.xml.rpc.ServiceException {
+	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 2);
-		if (this.srvProxy == null) {
-			EBISearchService_Service service = new EBISearchService_Service();
+		if(this.srvProxy == null) {
+			EBISearchService_Service service = null;
+			if(this.getServiceEndPoint() != null) {
+				try {
+					service = new EBISearchService_Service(new java.net.URL(this.getServiceEndPoint()), new javax.xml.namespace.QName("http://www.ebi.ac.uk/EBISearchService", "EBISearchService"));
+				}
+				catch(java.net.MalformedURLException ex) {
+					System.err.println(ex.getMessage());
+					System.err.println("Warning: problem with specified endpoint URL. Default endpoint used.");
+					service = new EBISearchService_Service();
+				}
+			}
+			else {
+				service = new EBISearchService_Service();
+			}
 			this.srvProxy = service.getEBISearchServiceHttpPort();
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);

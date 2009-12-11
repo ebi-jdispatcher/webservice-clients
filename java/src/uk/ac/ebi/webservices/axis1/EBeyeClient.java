@@ -227,16 +227,41 @@ public class EBeyeClient {
 		}
 	}
 
-	/**
-	 * Get an instance of the service proxy to use with other methods.
+//	/**
+//	 * Get an instance of the service proxy to use with other methods.
+//	 * 
+//	 * @throws javax.xml.rpc.ServiceException
+//	 */
+//	private void srvProxyConnect() throws javax.xml.rpc.ServiceException {
+//		printDebugMessage("srvProxyConnect", "Begin", 2);
+//		if (this.srvProxy == null) {
+//			EBISearchService_Service service = new EBISearchService_ServiceLocator();
+//			this.srvProxy = service.getEBISearchServiceHttpPort();
+//		}
+//		printDebugMessage("srvProxyConnect", "End", 2);
+//	}
+	
+	/** Ensure that a service proxy is available to call the web service.
 	 * 
-	 * @throws javax.xml.rpc.ServiceException
+	 * @throws ServiceException
 	 */
-	private void srvProxyConnect() throws javax.xml.rpc.ServiceException {
+	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 2);
-		if (this.srvProxy == null) {
-			EBISearchService_Service service = new EBISearchService_ServiceLocator();
-			this.srvProxy = service.getEBISearchServiceHttpPort();
+		if(this.srvProxy == null) {
+			EBISearchService_Service service =  new EBISearchService_ServiceLocator();
+			if(this.getServiceEndPoint() != null) {
+				try {
+					this.srvProxy = service.getEBISearchServiceHttpPort(new java.net.URL(this.getServiceEndPoint()));
+				}
+				catch(java.net.MalformedURLException ex) {
+					System.err.println(ex.getMessage());
+					System.err.println("Warning: problem with specified endpoint URL. Default endpoint used.");
+					this.srvProxy = service.getEBISearchServiceHttpPort();					
+				}
+			}
+			else {
+				this.srvProxy = service.getEBISearchServiceHttpPort();
+			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);
 	}
