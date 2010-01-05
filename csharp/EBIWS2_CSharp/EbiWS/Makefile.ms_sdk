@@ -78,4 +78,6 @@ distclean: clean
 	rmdir $(BINDIR)
 
 clean-stubs:
-	del /f $(STUBSRCDIR)\*.*
+	cd $(STUBSRCDIR)
+	del /f /s *.cs
+	del /f /s *.map
