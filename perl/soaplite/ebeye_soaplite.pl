@@ -766,7 +766,7 @@ sub soap_get_detailled_number_of_results {
 	my ( $domain, $query, $flat ) = @_;
 	my $res = $soap->getDetailledNumberOfResults( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ),
 							                      SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ), 
-							                      SOAP::Data->name( 'flat' => $flat )->attr( { 'xmlns' => $serviceNamespace } ) );
+							                      SOAP::Data->name( 'flat' => $flat )->type('xsi:boolean')->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_get_detailled_number_of_results', "res:\n" . Dumper($res), 21 );
 	my $retVal = $res->valueof('//detailledNumberOfResults');
 	&_domain_results_to_hash($res, $retVal, '//detailledNumberOfResults');
