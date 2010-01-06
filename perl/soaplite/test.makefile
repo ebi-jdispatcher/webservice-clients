@@ -38,7 +38,7 @@ clustalw2_clean:
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
 ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
 ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResult ebeye_listFieldsInformation
+ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation
 
 ebeye_listDomains:
 	${PERL} ebeye_soaplite.pl --listDomains
@@ -91,13 +91,13 @@ ebeye_getReferencedEntriesFlatSet:
 ebeye_getDomainsHierarchy:
 	${PERL} ebeye_soaplite.pl --getDomainsHierarchy
 
-ebeye_getDetailledNumberOfResult: ebeye_getDetailledNumberOfResult_flat ebeye_getDetailledNumberOfResult_tree
+ebeye_getDetailledNumberOfResults: ebeye_getDetailledNumberOfResults_flat ebeye_getDetailledNumberOfResults_tree
 
-ebeye_getDetailledNumberOfResult_flat:
-	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResult allebi 'azurin' true
+ebeye_getDetailledNumberOfResults_flat:
+	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResults allebi 'azurin' true
 
-ebeye_getDetailledNumberOfResult_tree:
-	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResult allebi 'azurin' false
+ebeye_getDetailledNumberOfResults_tree:
+	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResults allebi 'azurin' false
 
 ebeye_listFieldsInformation:
 	${PERL} ebeye_soaplite.pl --listFieldsInformation uniprot
