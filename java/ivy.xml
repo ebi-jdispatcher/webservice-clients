@@ -11,10 +11,12 @@
         status="integration">
 	</info>
     <dependencies>
-    	<dependency org="javax.activation" name="activation" rev="1.1.1" />
-    	<dependency org="axis" name="axis" rev="1.4" />
         <dependency org="commons-cli" name="commons-cli" rev="1.2"/>
+    	<!-- Apache Axis 1.x -->
+    	<dependency org="org.apache.axis" name="axis" rev="1.4" />
+    	<dependency org="javax.activation" name="activation" rev="1.1.1" />
     	<dependency org="javax.mail" name="mail" rev="1.4.1" />
+	<!-- JAX-WS -->
 	<!-- <dependency org="com.sun.xml.ws" name="jaxws-rt" rev="2.1.7" /> -->
     </dependencies>
 </ivy-module>
