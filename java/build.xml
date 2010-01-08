@@ -1,5 +1,5 @@
 <!-- Build Java clients for EBI web services. -->
-<project name="EBIWS2-Java" basedir="." default="axis1-jar">
+<project name="EBIWS2-Java" basedir="." default="compile">
 	<property name="src.dir" value="src" />
 	<property name="ws.src.dir" value="${src.dir}/uk/ac/ebi/webservices" />
 	<property name="axis1.stubs.src.dir" value="${ws.src.dir}/axis1/stubs" />
@@ -15,6 +15,7 @@
 
 	<!-- Build all -->
 	<target name="all" depends="axis1,jaxws" />
+	<target name="stubs" depends="axis1-stubs,jaxws-stubs" />
 	<target name="compile" depends="axis1-compile,jaxws-compile" />
 	<target name="jar" depends="axis1-jar,jaxws-jar" />
 	
@@ -240,6 +241,15 @@
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-wublast" />
+		<!-- Remove generated classes to ensure correct target Java version -->
+		<antcall target="jaxws-clean" />
+	</target>
+
+	<!-- Clean-up JAX-WS stub generation created classes -->
+	<target name="jaxws-clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${build.dir}/uk/ac/ebi/webservices/jaxws/stubs" includes="**/*"/>
+		</delete>
 	</target>
 
 	<!-- Generate JAX-WS stubs for each service -->
@@ -276,7 +286,7 @@
 
 	<!-- Compile JAX-WS code into classes -->
 	<target name="jaxws-compile">
-		<javac target="1.6" source="1.6" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/" />
+		<javac target="1.5" source="1.5" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/" />
 	</target>
 
 	<!-- Package JAX-WS jars -->
