@@ -27,14 +27,14 @@
 		<ivy:retrieve />
 	</target>
 
-	<!-- Package dependancies in to an archive -->
-	<target name="package-dependancies">
+	<!-- Package dependencies in to an archive -->
+	<target name="package-dependencies">
 		<zip destfile="${jar.dir}/ebiws-lib.zip" basedir="${basedir}"
 			includes="${lib.dir}/**.jar"
 			 excludes="${lib.dir}/ivy/**, ${lib.dir}/**-sources.jar, ${lib.dir}/**-javadoc.jar" />
 	</target>
 
-	<!-- Clean-up dependancies -->
+	<!-- Clean-up dependencies -->
 	<target name="clean-resolve">
 		<delete verbose="true">
 			<fileset
