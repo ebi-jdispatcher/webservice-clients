@@ -1,5 +1,7 @@
+<!-- $Id$ -->
 <!-- Build Java clients for EBI web services. -->
-<project name="EBIWS2-Java" basedir="." default="compile">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="EBIWS2-Java" basedir="." default="compile">
+	<property name="ant.import.lib.dir" value="lib/ant" />
 	<property name="src.dir" value="src" />
 	<property name="ws.src.dir" value="${src.dir}/uk/ac/ebi/webservices" />
 	<property name="axis1.stubs.src.dir" value="${ws.src.dir}/axis1/stubs" />
@@ -8,10 +10,39 @@
 	<property name="lib.dir" value="lib"/>
 	<property name="jar.dir" value="jar"/>
 
-	<!-- Add all jars in lib/ to classpath -->
+	<!-- Apache Ivy tasks -->
+	<import file="${ant.import.lib.dir}/ant_ivy.xml" />
+	<!-- Apache Axis 1.x tasks -->
+	<import file="${ant.import.lib.dir}/axis1.xml" />
+	<!-- JAX-WS RI tasks -->
+	<import file="${ant.import.lib.dir}/jaxws-ri.xml" />
+
+	<!-- Add jars in library directory to classpath -->
 	<path id="classpath">
-		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
+
+	<!-- Resolve library dependencies using Apache Ivy -->
+	<target name="resolve" description="Retrieve dependencies (Ivy)" depends="init-ivy">
+		<ivy:retrieve />
+	</target>
+
+	<!-- Package dependancies in to an archive -->
+	<target name="package-dependancies">
+		<zip destfile="${jar.dir}/ebiws-lib.zip" basedir="${basedir}"
+			includes="${lib.dir}/**.jar"
+			 excludes="${lib.dir}/ivy/**, ${lib.dir}/**-sources.jar, ${lib.dir}/**-javadoc.jar" />
+	</target>
+
+	<!-- Clean-up dependancies -->
+	<target name="clean-resolve">
+		<delete verbose="true">
+			<fileset
+				dir="${lib.dir}"
+				includes="*.jar"
+			/>
+		</delete>
+	</target>
 
 	<!-- Build all -->
 	<target name="all" depends="axis1,jaxws" />
@@ -27,15 +58,7 @@
 	</target>
 
 	<!-- Get back to distributed/repository state -->
-	<target name="distclean" depends="clean,distclean-lib,distclean-stubs">
-	</target>
-
-	<target name="distclean-lib">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="." includes="lib**.zip"/>
-    	    <fileset dir="${lib.dir}/" includes="*/**"/>
-        	<fileset dir="." includes="${lib.dir}"/>
-	    </delete>
+	<target name="distclean" depends="clean,clean-resolve,distclean-stubs">
 	</target>
 
 	<target name="distclean-stubs">
@@ -43,32 +66,11 @@
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
 
-	<!-- Get dependencies archive, includes Axis 1.4 and Commons-CLI libraries -->
-	<target name="get-dependencies">
-		<get src="http://www.ebi.ac.uk/Tools/webservices/downloads/java/lib-1.4.zip" dest="lib-1.4.zip" />
-	</target>
-
-	<!-- Unpack dependencies archive -->
-	<target name="unpack-dependencies" depends="get-dependencies">
-		<unzip src="lib-1.4.zip" dest="." />
-	</target>
-
 	<!-- Axis 1.x -->
 	<target name="axis1" depends="axis1-jar" />
 	
-	<!-- Generate Axis 1.x stubs from a WSDL -->
-	<target name="genAxis1Stubs">
-		<echo message="${stubPkg}" />
-		<echo message="${wsdlUrl}" />
-		<java classname="org.apache.axis.wsdl.WSDL2Java" classpathref="classpath" fork="yes" dir="${src.dir}">
-			<arg value="-p" />
-			<arg value="${stubPkg}" />
-			<arg value="${wsdlUrl}" />
-		</java>
-	</target>
-
 	<!-- Generate Axis 1.x stubs for all services -->
-	<target name="axis1-stubs" depends="unpack-dependencies">
+	<target name="axis1-stubs" depends="resolve">
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
@@ -168,6 +170,7 @@
 		</jar>
 	</target>
 
+	<!-- Clean-up Axis 1.x generate files -->
 	<target name="axis1-distclean-stubs">
 		<antcall target="axis1-distclean-stubs-clustalw2" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
@@ -214,28 +217,8 @@
 	<!-- JAX-WS -->
 	<target name="jaxws" depends="jaxws-jar" />
 	
-	<!-- Generate JAX-WS stubs from a WSDL -->
-	<!--
-	Uses the wsimport command:
-	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
-	-->
-	<target name="genJaxwsStubs">
-		<echo message="${stubPkg}" />
-		<echo message="${wsdlUrl}" />
-		<exec executable="wsimport">
-			<arg value="-d" />
-			<arg value="${build.dir}" />
-			<arg value="-p" />
-			<arg value="${stubPkg}" />
-			<arg value="-keep" />
-			<arg value="-s" />
-			<arg value="${src.dir}" />
-			<arg value="${wsdlUrl}" />
-		</exec>
-	</target>
-
 	<!-- Generate JAX-WS stubs for all services -->
-	<target name="jaxws-stubs" depends="unpack-dependencies">
+	<target name="jaxws-stubs" depends="resolve">
 		<antcall target="jaxws-stubs-clustalw2" />
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
@@ -342,6 +325,7 @@
 		</jar>
 	</target>
 
+	<!-- Clean-up JAX-WS generated files -->
 	<target name="jaxws-distclean-stubs">
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id$ -->
+<!-- Library dependancies via Apache Ivy -->
+<ivy-module
+  version="2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info
+        organisation="uk.ac.ebi"
+        module="EBIWS"
+        status="integration">
+	</info>
+    <dependencies>
+    	<dependency org="javax.activation" name="activation" rev="1.1.1" />
+    	<dependency org="axis" name="axis" rev="1.4" />
+        <dependency org="commons-cli" name="commons-cli" rev="1.2"/>
+    	<dependency org="javax.mail" name="mail" rev="1.4.1" />
+	<!-- <dependency org="com.sun.xml.ws" name="jaxws-rt" rev="2.1.7" /> -->
+    </dependencies>
+</ivy-module>

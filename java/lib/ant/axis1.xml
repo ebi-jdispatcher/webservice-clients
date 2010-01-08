@@ -1,0 +1,13 @@
+<!-- $Id$ -->
+<project name="axis1">
+	<!-- Generate Axis 1.x stubs from a WSDL -->
+	<target name="genAxis1Stubs">
+		<echo message="${stubPkg}" />
+		<echo message="${wsdlUrl}" />
+		<java classname="org.apache.axis.wsdl.WSDL2Java" classpathref="classpath" fork="yes" dir="${src.dir}">
+			<arg value="-p" />
+			<arg value="${stubPkg}" />
+			<arg value="${wsdlUrl}" />
+		</java>
+	</target>
+</project>

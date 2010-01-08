@@ -35,6 +35,13 @@ be re-generated each time these targets are called.
 
   ant jar
 
+4. Package downloaded dependancies:
+
+  ant package-dependancies
+
+Dependanices are managed using Apache Ivy (http://ant.apache.org/ivy/), and 
+are configured in ivy.xml.
+
 Running Clients
 ---------------
 

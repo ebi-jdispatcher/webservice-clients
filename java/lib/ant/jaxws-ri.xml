@@ -1,0 +1,22 @@
+<!-- $Id$ -->
+<project name="jaxws-ri">
+	<!-- Generate JAX-WS stubs from a WSDL -->
+	<!--
+	Uses the wsimport command:
+	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
+	-->
+	<target name="genJaxwsStubs">
+		<echo message="${stubPkg}" />
+		<echo message="${wsdlUrl}" />
+		<exec executable="wsimport">
+			<arg value="-d" />
+			<arg value="${build.dir}" />
+			<arg value="-p" />
+			<arg value="${stubPkg}" />
+			<arg value="-keep" />
+			<arg value="-s" />
+			<arg value="${src.dir}" />
+			<arg value="${wsdlUrl}" />
+		</exec>
+	</target>
+</project>
