@@ -15,7 +15,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.jaxws.stubs.ebeye.*;
-import uk.ac.ebi.webservices.jaxws.stubs.ncbiblast.JDispatcherService_Service;
 
 /**
  * Java EB-eye client using JAX-WS RI.
