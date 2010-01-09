@@ -10,17 +10,17 @@
 	<property name="lib.dir" value="lib"/>
 	<property name="jar.dir" value="jar"/>
 
+	<!-- Add jars in library directory to classpath -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
 	<!-- Apache Ivy tasks -->
 	<import file="${ant.import.lib.dir}/ant_ivy.xml" />
 	<!-- Apache Axis 1.x tasks -->
 	<import file="${ant.import.lib.dir}/axis1.xml" />
 	<!-- JAX-WS RI tasks -->
 	<import file="${ant.import.lib.dir}/jaxws-ri.xml" />
-
-	<!-- Add jars in library directory to classpath -->
-	<path id="classpath">
-		<fileset dir="${lib.dir}" includes="**/*.jar" />
-	</path>
 
 	<!-- Resolve library dependencies using Apache Ivy -->
 	<target name="resolve" description="Retrieve dependencies (Ivy)" depends="init-ivy">

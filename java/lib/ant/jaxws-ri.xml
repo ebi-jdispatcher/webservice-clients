@@ -16,7 +16,29 @@
 			<arg value="-keep" />
 			<arg value="-s" />
 			<arg value="${src.dir}" />
+			<arg value="-Xnocompile" />
 			<arg value="${wsdlUrl}" />
 		</exec>
 	</target>
+
+	<!--
+	Using the "wsimport" ant task
+	See https://metro.dev.java.net/nonav/1.4/docs/wsimportant.html
+	-->
+	<!-- <target name="genJaxwsStubs">
+                <echo message="${stubPkg}" />
+                <echo message="${wsdlUrl}" />
+	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"
+	classpathref="classpath">
+	</taskdef>
+	<wsimport
+	  destdir="${build.dir}"
+	  package="${stubPkg}"
+	  keep="true"
+	  sourcedestdir="${src.dir}"
+	  xnocompile="true"
+	  verbose="true"
+	  wsdl="${wsdlUrl}"
+	/>
+	</target> -->
 </project>
