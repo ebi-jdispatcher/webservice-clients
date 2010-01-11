@@ -224,15 +224,6 @@
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-wublast" />
-		<!-- Remove generated classes to ensure correct target Java version -->
-		<antcall target="jaxws-clean" />
-	</target>
-
-	<!-- Clean-up JAX-WS stub generation created classes -->
-	<target name="jaxws-clean">
-		<delete includeemptydirs="true">
-			<fileset dir="${build.dir}/uk/ac/ebi/webservices/jaxws/stubs" includes="**/*"/>
-		</delete>
 	</target>
 
 	<!-- Generate JAX-WS stubs for each service -->
