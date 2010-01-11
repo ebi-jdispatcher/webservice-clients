@@ -2,8 +2,9 @@
 <project name="jaxws-ri">
 	<!-- Generate JAX-WS stubs from a WSDL -->
 	<!--
-	Uses the wsimport command:
+	Using the wsimport command:
 	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
+        NB: assumes wsimport is on the current PATH.
 	-->
 	<target name="genJaxwsStubs">
 		<echo message="${stubPkg}" />
@@ -22,8 +23,9 @@
 	</target>
 
 	<!--
-	Using the "wsimport" ant task
+	Using the "wsimport" ant task:
 	See https://metro.dev.java.net/nonav/1.4/docs/wsimportant.html
+        NB: This does not work correctly due to dependency issues.
 	-->
 	<!-- <target name="genJaxwsStubs">
                 <echo message="${stubPkg}" />
