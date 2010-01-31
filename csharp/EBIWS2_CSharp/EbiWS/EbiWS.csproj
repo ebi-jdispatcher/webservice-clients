@@ -35,6 +35,13 @@
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\EBeyeWs\Reference.cs" />
     <Compile Include="EBeyeClient.cs" />
+    <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />
+    <Compile Include="WebReferences\PsiSearchWs\Reference.cs" />
+    <Compile Include="WebReferences\ClustalW2Ws\Reference.cs" />
+    <Compile Include="WebReferences\KalignWs\Reference.cs" />
+    <Compile Include="WebReferences\MafftWs\Reference.cs" />
+    <Compile Include="WebReferences\MuscleWs\Reference.cs" />
+    <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -42,6 +49,13 @@
     <None Include="WebReferences\FastaWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
     <None Include="WebReferences\EBeyeWs\Reference.map" />
+    <None Include="WebReferences\PsiBlastWs\Reference.map" />
+    <None Include="WebReferences\PsiSearchWs\Reference.map" />
+    <None Include="WebReferences\ClustalW2Ws\Reference.map" />
+    <None Include="WebReferences\KalignWs\Reference.map" />
+    <None Include="WebReferences\MafftWs\Reference.map" />
+    <None Include="WebReferences\MuscleWs\Reference.map" />
+    <None Include="WebReferences\TcoffeeWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
