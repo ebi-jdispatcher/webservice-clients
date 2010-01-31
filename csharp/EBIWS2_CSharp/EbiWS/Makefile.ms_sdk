@@ -47,9 +47,16 @@ NcbiBlastClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
+$(STUBSRCDIR)\ClustalW2Ws\Reference.cs \
 $(STUBSRCDIR)\EBeyeWs\Reference.cs \
 $(STUBSRCDIR)\FastaWs\Reference.cs \
+$(STUBSRCDIR)\KalignWs\Reference.cs \
+$(STUBSRCDIR)\MafftWs\Reference.cs \
+$(STUBSRCDIR)\MuscleWs\Reference.cs \
 $(STUBSRCDIR)\NcbiBlastWs\Reference.cs \
+$(STUBSRCDIR)\PsiBlastWs\Reference.cs \
+$(STUBSRCDIR)\PsiSearchWs\Reference.cs \
+$(STUBSRCDIR)\TcoffeeWs\Reference.cs \
 $(STUBSRCDIR)\WuBlastWs\Reference.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(coreSrc) $(stubSrc)
@@ -58,14 +65,36 @@ $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(coreSrc) $(stubSrc)
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
 	$(CSC) $(CSFLAGS) /target:library /out:$@ $(coreSrc) $(stubSrc)
 
+$(STUBSRCDIR)\ClustalW2Ws\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2Ws /out:$@ "$(WSDLBASE)/clustalw2?wsdl"
+
 $(STUBSRCDIR)\EBeyeWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs /out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
 
 $(STUBSRCDIR)\FastaWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).FastaWs /out:$@ "$(WSDLBASE)/fasta?wsdl"
 
+$(STUBSRCDIR)\KalignWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).KalignWs /out:$@ "$(WSDLBASE)/kalign?wsdl"
+
+$(STUBSRCDIR)\MafftWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MafftWs /out:$@ "$(WSDLBASE)/mafft?wsdl"
+
+$(STUBSRCDIR)\MuscleWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MuscleWs /out:$@ "$(WSDLBASE)/muscle?wsdl"
+
 $(STUBSRCDIR)\NcbiBlastWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+
+$(STUBSRCDIR)\PsiBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsiBlastWs /out:$@ "$(WSDLBASE)/psiblast?wsdl"
+
+$(STUBSRCDIR)\PsiSearchWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsiSearchWs /out:$@ "$(WSDLBASE)/psisearch?wsdl"
+
+$(STUBSRCDIR)\TcoffeeWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs /out:$@ "$(WSDLBASE)/tcoffee?wsdl"
+
 $(STUBSRCDIR)\WuBlastWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs /out:$@ "$(WSDLBASE)/wublast?wsdl"
 
