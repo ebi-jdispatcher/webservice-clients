@@ -42,6 +42,13 @@
     <Compile Include="WebReferences\MafftWs\Reference.cs" />
     <Compile Include="WebReferences\MuscleWs\Reference.cs" />
     <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
+    <Compile Include="ClustalW2Client.cs" />
+    <Compile Include="KalignClient.cs" />
+    <Compile Include="MafftClient.cs" />
+    <Compile Include="MuscleClient.cs" />
+    <Compile Include="PsiBlastClient.cs" />
+    <Compile Include="PsiSearchClient.cs" />
+    <Compile Include="TcoffeeClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,6 +1,10 @@
 /* $Id: NcbiBlastClient.cs 1037 2009-06-06 20:35:16Z hpm $
  * ======================================================================
- * jDispatcher SOAP client for NCBI BLAST
+ * JDispatcher SOAP client for NCBI BLAST
+ * 
+ * See:
+ * http://www.ebi.ac.uk/Tools/webservices/services/ncbi_blast_soap
+ * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
 using System.IO;
@@ -8,7 +12,9 @@ using EbiWS.NcbiBlastWs;
 
 namespace EbiWS
 {
-	
+	/// <summary>
+	/// Client for EMBL-EBI NCBI BLAST SOAP web service.
+	/// </summary>
 	public class NcbiBlastClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
@@ -18,7 +24,7 @@ namespace EbiWS
 			set { srvProxy = value; }
 		}
 		private JDispatcherService srvProxy = null;
-		/// <summary>Parameters used for lanching jobs</summary>
+		/// <summary>Parameters used for launching jobs</summary>
 		public InputParameters InParams
 		{
 			get { return inParams; }
@@ -26,9 +32,12 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		
+		// Default constructor. Required for abstract class constructor.
 		public NcbiBlastClient()
 		{
 		}
+
+		// Implementation of abstract method (AbsractWsClient.ServiceProxyConnect()).
 		protected override void ServiceProxyConnect()
 		{
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11);
@@ -46,6 +55,7 @@ namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 
+		// Implementation of abstract method (AbsractWsClient.GetParams()).
 		public override string[] GetParams()
 		{
 			PrintDebugMessage("GetParams", "Begin", 1);
@@ -56,6 +66,15 @@ namespace EbiWS
 			return paramNameList;
 		}
 
+		/// <summary>
+		/// Get detailed information about a named parameter. 
+		/// </summary>
+		/// <param name="paramName">Name of the parameter to get the detailed description of.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>Object describing the parameter.
+		/// A <see cref="wsParameterDetails"/>
+		/// </returns>
 		public wsParameterDetails GetParamDetail(string paramName)
 		{
 			PrintDebugMessage("GetParamDetail", "Begin", 1);
@@ -66,6 +85,7 @@ namespace EbiWS
 			return paramDetail;
 		}
 
+		// Implementation of abstract method (AbsractWsClient.PrintParammDetail()).
 		protected override void PrintParamDetail(string paramName)
 		{
 			PrintDebugMessage("PrintParamDetail", "Begin", 1);
@@ -92,6 +112,7 @@ namespace EbiWS
 			PrintDebugMessage("PrintParamDetail", "End", 1);
 		}
 
+		// Implementation of abstract method (AbsractWsClient.SubmitJob()).
 		/// <summary>Submit a job to the service</summary>
 		public override void SubmitJob()
 		{
@@ -122,6 +143,7 @@ namespace EbiWS
 			return jobId;
 		}
 
+		// Implementation of abstract method (AbsractWsClient.GetStatus()).
 		/// <summary>Get the job status</summary>
 		/// <param name="jobId">Job identifier to get the status of.</param>
 		/// <returns>A string describing the status</returns>
@@ -136,6 +158,15 @@ namespace EbiWS
 			return status;
 		}
 
+		/// <summary>
+		/// Get details of the available result types/formats for a completed job. 
+		/// </summary>
+		/// <param name="jobId">Job identifier
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>An array of result type descriptions.
+		/// A <see cref="wsResultType"/>
+		/// </returns>
 		public wsResultType[] GetResultTypes(string jobId)
 		{
 			PrintDebugMessage("GetResultTypes", "Begin", 2);
@@ -144,6 +175,7 @@ namespace EbiWS
 			return resultTypes;
 		}
 
+		// Implementation of abstract method (AbsractWsClient.PrintResultTypes()).
 		/// <summary>Print a summary of the result types for a job</summary>
 		public override void PrintResultTypes()
 		{
@@ -164,7 +196,8 @@ namespace EbiWS
 			PrintDebugMessage("PrintResultTypes", "End", 1);
 		}
 
-		public byte[] GetResult(string jobId, string format)
+		// Implementation of abstract method (AbsractWsClient.GetResult()).
+		public override byte[] GetResult(string jobId, string format)
 		{
 			PrintDebugMessage("GetResult", "Begin", 1);
 			PrintDebugMessage("GetResult", "jobId: " + jobId, 1);
@@ -175,6 +208,7 @@ namespace EbiWS
 			return result;
 		}
 
+		// Implementation of abstract method (AbsractWsClient.GetResults()).
 		/// <summary>Get the job results</summary>
 		/// <param name="jobId">Job identifier to get the results from.</param>
 		/// <param name="outformat">Selected output format or null for all formats.</param>

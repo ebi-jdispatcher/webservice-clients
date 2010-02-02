@@ -1,21 +1,21 @@
 /* $Id$
  * ======================================================================
- * JDispatcher SOAP client for FASTA
- * 
+ * JDispatcher SOAP client for Kalign
+ *
  * See:
- * http://www.ebi.ac.uk/Tools/webservices/services/fasta_soap
+ * http://www.ebi.ac.uk/Tools/webservices/services/msa/kalign_soap
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.FastaWs;
+using EbiWS.KalignWs;
 
 namespace EbiWS
 {
 	/// <summary>
-	/// Client for EMBL-EBI FASTA SOAP web service.
+	/// Client for EMBL-EBI Kalign SOAP web service.
 	/// </summary>
-	public class FastaClient : EbiWS.AbstractWsClient
+	public class KalignClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
 		public JDispatcherService SrvProxy
@@ -33,7 +33,7 @@ namespace EbiWS
 		private InputParameters inParams = null;
 		
 		// Default constructor. Required for abstract class constructor.
-		public FastaClient()
+		public KalignClient()
 		{
 		}
 		
@@ -220,7 +220,7 @@ namespace EbiWS
 			PrintDebugMessage("GetResults", "outformat: " + outformat, 2);
 			PrintDebugMessage("GetResults", "outFileBase: " + outFileBase, 2);
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
-			// Check status, and wait if not finisheds
+			// Check status, and wait if not finished
 			ClientPoll(jobId);
 			// Use JobId if output file name is not defined
 			if (outFileBase == null) OutFile = jobId;
@@ -274,39 +274,6 @@ namespace EbiWS
 				}
 			}
 			PrintDebugMessage("GetResults", "End", 1);
-		}
-
-		/// <summary>Get entry Ids from job result</summary>
-		/// <param name="jobId">Job identifer for result to get Ids from</param>
-		/// <results>List of entry Ids as a string array</results>
-		public string[] GetIds(string jobId)
-		{
-			PrintDebugMessage("GetIds", "Begin", 1);
-			PrintDebugMessage("GetIds", "jobId: " + jobId, 2);
-			string[] retVal = null;
-			this.ServiceProxyConnect(); // Ensure we have a service proxy
-			// Check status, and wait if not finished
-			ClientPoll(jobId);
-			// Get the Ids
-			byte[] content = GetResult(jobId, "ids");
-			System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-			String tempStr = enc.GetString(content);
-			char[] sepList = { '\n' };
-			retVal = tempStr.Split(sepList);
-			PrintDebugMessage("GetIds", "got " + retVal.Length + " Ids", 2);
-			PrintDebugMessage("GetIds", "End", 1);
-			return retVal;
-		}
-
-		/// <summary>Print entry Ids from job result</summary>
-		/// <param name="jobId">Job identifer for result to get Ids from</param>
-		public void PrintGetIds()
-		{
-			PrintDebugMessage("PrintGetIds", "Begin", 1);
-			PrintDebugMessage("PrintGetIds", "JobId: " + JobId, 2);
-			string[] idList = GetIds(JobId);
-			foreach (string id in idList) Console.WriteLine(id);
-			PrintDebugMessage("PrintGetIds", "End", 1);
 		}
 	}
 }

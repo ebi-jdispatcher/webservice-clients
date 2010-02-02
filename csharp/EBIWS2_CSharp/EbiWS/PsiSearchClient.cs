@@ -1,21 +1,21 @@
 /* $Id$
  * ======================================================================
- * JDispatcher SOAP client for FASTA
+ * JDispatcher SOAP client for PSI-Search
  * 
  * See:
- * http://www.ebi.ac.uk/Tools/webservices/services/fasta_soap
+ * http://www.ebi.ac.uk/Tools/webservices/services/psisearch_soap
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.FastaWs;
+using EbiWS.PsiSearchWs;
 
 namespace EbiWS
 {
 	/// <summary>
-	/// Client for EMBL-EBI FASTA SOAP web service.
+	/// Client for EMBL-EBI PSI-Search SOAP web service.
 	/// </summary>
-	public class FastaClient : EbiWS.AbstractWsClient
+	public class PsiSearchClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
 		public JDispatcherService SrvProxy
@@ -33,7 +33,7 @@ namespace EbiWS
 		private InputParameters inParams = null;
 		
 		// Default constructor. Required for abstract class constructor.
-		public FastaClient()
+		public PsiSearchClient()
 		{
 		}
 		
@@ -220,7 +220,7 @@ namespace EbiWS
 			PrintDebugMessage("GetResults", "outformat: " + outformat, 2);
 			PrintDebugMessage("GetResults", "outFileBase: " + outFileBase, 2);
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
-			// Check status, and wait if not finisheds
+			// Check status, and wait if not finished
 			ClientPoll(jobId);
 			// Use JobId if output file name is not defined
 			if (outFileBase == null) OutFile = jobId;

@@ -1,6 +1,10 @@
 /* $Id: AbstractWsClient.cs 1039 2009-06-06 20:36:34Z hpm $
  * ======================================================================
- * Common structure and methods for jDispatcher SOAP clients
+ * Common structure and methods for JDispatcher SOAP clients.
+ * 
+ * See:
+ * http://www.ebi.ac.uk/Tools/webservices/
+ * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
 using System.IO;
@@ -10,7 +14,7 @@ using System.Text;
 namespace EbiWS
 {
 	/// <summary>
-	/// Abstract desfinition of a client to the EBI tool Web Services.
+	/// Abstract definition of a client to the EMBL-EBI tool Web Services.
 	/// </summary>
 	public abstract class AbstractWsClient
 	{
@@ -542,6 +546,17 @@ Asynchronous job:
 		/// Print a list of the available result types for the current job.
 		/// </summary>
 		public abstract void PrintResultTypes();
+		
+		/// <summary>
+		/// Get results for a job, of the specified type.
+		/// </summary>
+		/// <param name="jobId">Job identifier.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="format">Required result format name.
+		/// A <see cref="System.String"/>
+		/// </param>
+		public abstract byte[] GetResult(string jobId, string format);
 		
 		/// <summary>
 		/// Get results for a job, of the specified type.

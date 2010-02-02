@@ -190,9 +190,10 @@ namespace EbiWS {
 					SrvProxy = new EBISearchService();
 					SrvProxy.Url = ServiceEndPoint;
 				}
-				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " + SrvProxy.Url, 12);
+				ServiceEndPoint = SrvProxy.Url;
+				PrintDebugMessage("ServiceProxyConnect", "ServiceEndPoint: " + ServiceEndPoint, 12);
+				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			}
-			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 

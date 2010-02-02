@@ -36,9 +36,16 @@ EbiWS.dll: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
 EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
 
 coreSrc = AbstractWsClient.cs \
+ClustalW2Client.cs \
 EBeyeClient.cs \
 FastaClient.cs \
+KalignClient.cs \
+MafftClient.cs \
+MuscleClient.cs \
 NcbiBlastClient.cs \
+PsiBlastClient.cs \
+PsiSearchClient.cs \
+TcoffeeClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
