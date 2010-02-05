@@ -16,35 +16,34 @@ namespace EbiWS
 ==========
 
 Rapid sequence database search programs utilizing the BLAST algorithm
-
-For more detailed help information refer to
-http://www.ebi.ac.uk/Tools/blastall/help.html
-
+    
 [Required]
 
-  -p, --program        : str  : BLAST program to use: see --paramDetail program
-  -D, --database       : str  : database(s) to search, space seperated: see
-                                --paramDetail database
-      --stype          : str  : query sequence type
-  seqFile              : file : query sequence (""-"" for STDIN)
+  -p, --program      : str  : BLAST program to use, see --paramDetail program
+  -D, --database     : str  : database(s) to search, space separated. See
+                              --paramDetail database
+      --stype        : str  : query sequence type, see --paramDetail stype
+  seqFile            : file : query sequence (""-"" for STDIN, @filename for
+                              identifier list file)
 
 [Optional]
 
-  -m, --matrix         : str  : scoring matrix, see --paramDetail matrix
-  -e, --exp            : real : 0<E<= 1000. Statistical significance threshold
-                                for reporting database sequence matches.
-  -f, --filter         :      : low complexity sequence filter, see
-                                --paramDetail filter
-  -A, --align          : int  : alignment format, see --paramDetail align
-  -s, --scores         : int  : maximum number of scores to report
-  -n, --alignments     : int  : maximum number of alignments to report
-  -u, --match          : int  : score for a match (BLASTN only)
-  -v, --mismatch       : int  : score for a missmatch (BLASTN only)
-  -o, --gapopen        : int  : gap open penalty
-  -x, --gapext         : int  : gap extension penalty
-  -d, --dropoff        : int  : drop-off score
-  -g, --gapalign       :      : optimise gapped alignments
-      --seqrange       : str  : region in query sequence to use for search
+  -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -e, --exp          : real : 0<E<=1000. Statistical significance threshold 
+                              for reporting database sequence matches.
+  -e, --viewfilter   :      : display the filtered query sequence
+  -f, --filter       : str  : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -A, --align        : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores       : int  : number of scores to be reported
+  -b, --alignments   : int  : number of alignments to report
+  -S, --sensitivity  : str  : sensitivity of the search, 
+                              see --paramDetail sensitivity
+  -t, --sort         : str  : sort order for hits, see --paramDetail sort
+  -T, --stats        : str  : statistical model, see --paramDetail stats
+  -d, --strand       : str  : DNA strand to search with,
+                              see --paramDetail strand
+  -c, --topcombon    : str  : consistent sets of HSPs
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -128,13 +127,11 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 			InParams.stype = "protein";
 			InParams.program = null;
 			InParams.database = null;
-			InParams.matrix = "BLOSUM62";
 			InParams.exp = "10";
 			InParams.alignments = 50;
 			InParams.alignmentsSpecified = true;
 			InParams.scores = 50;
 			InParams.scoresSpecified = true;
-			InParams.filter = "F";
 			for (int i = 0; i < args.Length; i++)
 			{
 				PrintDebugMessage("parseCommand", "arg: " + args[i], 2);
@@ -255,6 +252,11 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						goto case "--database";
 					case "/D":
 						goto case "--database";
+					case "--stype": // Query sequence type
+						InParams.stype = args[++i];
+						break;
+					case "/stype":
+						goto case "--stype";
 					case "--matrix": // Scoring matrix
 						InParams.matrix = args[++i];
 						Action = "submit";
@@ -269,14 +271,20 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						InParams.exp = args[++i];
 						Action = "submit";
 						break;
-					case "-E":
+					case "-e":
 						goto case "--exp";
 					case "/exp":
 						goto case "--exp";
-					case "/E":
+					case "/e":
 						goto case "--exp";
-					case "--filter": // Low complexity filter
-						InParams.filter = "1"; // Set true
+					case "--viewfilter": // Report filtered sequence in output
+						InParams.viewfilter = true;
+						InParams.viewfilterSpecified = true;
+						break;
+					case "/viewfilter":
+						goto case "--viewfilter";
+					case "--filter": // Low complexity filter name
+						InParams.filter = args[++i];
 						Action = "submit";
 						break;
 					case "-f":
@@ -287,12 +295,18 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						goto case "--filter";
 					case "--align": // Alignment format
 						InParams.align = Convert.ToInt32(args[++i]);
+						InParams.alignSpecified = true;
 						Action = "submit";
 						break;
 					case "/align":
 						goto case "--align";
+					case "-A":
+						goto case "--align";
+					case "/A":
+						goto case "--align";
 					case "--scores": // Maximum number of scores to report
 						InParams.scores = Convert.ToInt32(args[++i]);
+						InParams.scoresSpecified = true;
 						Action = "submit";
 						break;
 					case "-s":
@@ -303,11 +317,16 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						goto case "--scores";
 					case "--alignments": // Maximum number of alignments to report
 						InParams.alignments = Convert.ToInt32(args[++i]);
+						InParams.alignmentsSpecified = true;
 						Action = "submit";
 						break;
 					case "/alignments":
 						goto case "--alignments";
-					case "--numal":
+					case "-b":
+						goto case "--alignments";
+					case "/b":
+						goto case "--alignments";
+					case "--numal": // Compatibility option
 						goto case "--alignments";
 					case "/numal":
 						goto case "--alignments";
@@ -315,7 +334,50 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						goto case "--alignments";
 					case "/n":
 						goto case "--alignments";
-
+					case "--sensitivity": // Search sensitivity
+						InParams.sensitivity = args[++i];
+						break;
+					case "/sensitivity":
+						goto case "--sensitivity";
+					case "-S":
+						goto case "--sensitivity";
+					case "/S":
+						goto case "--sensitivity";
+					case "--sort": // Sort order for hits
+						InParams.sort = args[++i];
+						break;
+					case "/sort":
+						goto case "--sort";
+					case "-t":
+						goto case "--sort";
+					case "/t":
+						goto case "--sort";
+					case "--stats": // Statistical model
+						InParams.stats = args[++i];
+						break;
+					case "/stats":
+						goto case "--stats";
+					case "-T":
+						goto case "--stats";
+					case "/T":
+						goto case "--stats";
+					case "--strand": // Query strand for nucleotide searches
+						InParams.strand = args[++i];
+						break;
+					case "/strand":
+						goto case "--strand";
+					case "-d":
+						goto case "--strand";
+					case "/d":
+						goto case "--strand";
+					case "--topcombon": // consistent sets of HSPs
+						InParams.topcombon = args[++i];
+						break;
+					case "/topcombon":
+						goto case "--topcombon";
+					case "-c":
+						goto case "--topcombon";
+					
 						// Input data/sequence option
 					case "--sequence": // Input sequence
 						i++;
