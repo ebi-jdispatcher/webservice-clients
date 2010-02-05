@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class ClustalW2CliClient : EbiWS.ClustalW2Client
 	{
-		// TODO: usage message
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"ClustalW 2
 ==========

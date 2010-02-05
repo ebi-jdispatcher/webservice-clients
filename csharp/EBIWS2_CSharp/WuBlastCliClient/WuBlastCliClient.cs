@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class WuBlastCliClient : EbiWS.WuBlastClient
 	{
-		// TODO: update for WU-BLAST service options
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"WU-BLAST
 ==========

@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class MuscleCliClient : EbiWS.MuscleClient
 	{
-		// TODO: usage message
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"MUSCLE
 ======

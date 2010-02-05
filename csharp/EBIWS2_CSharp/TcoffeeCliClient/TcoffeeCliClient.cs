@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class TcoffeeCliClient : EbiWS.TcoffeeClient
 	{
-		// TODO: usage message
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"T-COFFEE
 =======

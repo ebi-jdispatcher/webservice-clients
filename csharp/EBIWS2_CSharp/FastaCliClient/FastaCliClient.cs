@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class FastaCliClient : EbiWS.FastaClient
 	{
-		// TODO: update options for FASTA service.
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"FASTA
 ==========

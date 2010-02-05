@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class MafftCliClient : EbiWS.MafftClient
 	{
-		// TODO: usage message
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"MAFFT
 =====

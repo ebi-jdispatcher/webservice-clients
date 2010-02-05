@@ -10,7 +10,6 @@ namespace EbiWS
 {
 	class KalignCliClient : EbiWS.KalignClient
 	{
-		// TODO: usage message
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"Kalign
 ======
