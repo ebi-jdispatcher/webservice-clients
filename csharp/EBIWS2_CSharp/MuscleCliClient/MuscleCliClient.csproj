@@ -5,9 +5,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{751556E8-97FA-4828-8489-1653DB90CF56}</ProjectGuid>
+    <ProjectGuid>{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AssemblyName>ClustalW2CliClient</AssemblyName>
+    <AssemblyName>MuscleCliClient</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,7 +29,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClustalW2CliClient.cs" />
+    <Compile Include="MuscleCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

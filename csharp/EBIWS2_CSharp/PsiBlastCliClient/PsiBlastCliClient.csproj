@@ -5,9 +5,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{751556E8-97FA-4828-8489-1653DB90CF56}</ProjectGuid>
+    <ProjectGuid>{85F8B007-D263-4D3A-838D-23798E1F32A3}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AssemblyName>ClustalW2CliClient</AssemblyName>
+    <AssemblyName>PsiBlastCliClient</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,7 +29,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClustalW2CliClient.cs" />
+    <Compile Include="PsiBlastCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

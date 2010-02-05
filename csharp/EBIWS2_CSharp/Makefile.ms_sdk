@@ -6,13 +6,23 @@
 # ======================================================================
 
 all: EbiWS \
+ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
+KalignCliClient\bin\Release\KalignCliClient.exe \
+MafftCliClient\bin\Release\MafftCliClient.exe \
+MuscleCliClient\bin\Release\MuscleCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
+PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
+PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
+TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe
 
 EbiWS\bin\Release\EbiWS.dll:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk
+
+ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk
 
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -20,22 +30,54 @@ EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk
 
+KalignCliClient\bin\Release\KalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MafftCliClient\bin\Release\MafftCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MuscleCliClient\bin\Release\MuscleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk
+
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk
+
+TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk
 
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
 clean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk clean
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd TcoffeeBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 
 distclean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean

@@ -1,0 +1,54 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# MUSCLE client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: MuscleCliClient
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### MUSCLE command-line client ###
+
+MuscleCliClient: $(DEBUGBINDIR)\MuscleCliClient.exe $(RELEASEBINDIR)\MuscleCliClient.exe
+
+$(DEBUGBINDIR)\MuscleCliClient.exe: $(DEBUGBINDIR) MuscleCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\MuscleCliClient.exe: $(RELEASEBINDIR) MuscleCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

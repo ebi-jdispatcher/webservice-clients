@@ -10,13 +10,23 @@ all: build
 ### Build ###
 build: \
 build-EbiWS \
+build-ClustalW2CliClient \
 build-EBeyeCliClient \
 build-FastaCliClient \
+build-KalignCliClient \
+build-MafftCliClient \
+build-MuscleCliClient \
 build-NcbiBlastCliClient \
+build-PsiBlastCliClient \
+build-PsiSearchCliClient \
+build-TcoffeeCliClient \
 build-WuBlastCliClient
 
 build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
+
+build-ClustalW2CliClient: build-EbiWS
+	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono
 
 build-EBeyeCliClient: build-EbiWS
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
@@ -24,8 +34,26 @@ build-EBeyeCliClient: build-EbiWS
 build-FastaCliClient: build-EbiWS
 	cd FastaCliClient && $(MAKE) -f Makefile.mono
 
+build-KalignCliClient: build-EbiWS
+	cd KalignCliClient && $(MAKE) -f Makefile.mono
+
+build-MafftCliClient: build-EbiWS
+	cd MafftCliClient && $(MAKE) -f Makefile.mono
+
+build-MuscleCliClient: build-EbiWS
+	cd MuscleCliClient && $(MAKE) -f Makefile.mono
+
 build-NcbiBlastCliClient: build-EbiWS
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono
+
+build-PsiBlastCliClient: build-EbiWS
+	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono
+
+build-PsiSearchCliClient: build-EbiWS
+	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono
+
+build-TcoffeeCliClient: build-EbiWS
+	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono
 
 build-WuBlastCliClient: build-EbiWS
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono
@@ -34,13 +62,23 @@ build-WuBlastCliClient: build-EbiWS
 
 clean: \
 clean-EbiWS \
+clean-ClustalW2CliClient \
 clean-EBeyeCliClient \
 clean-FastaCliClient \
+clean-KalignCliClient \
+clean-MafftCliClient \
+clean-MuscleCliClient \
 clean-NcbiBlastCliClient \
+clean-PsiBlastCliClient \
+clean-PsiSearchCliClient \
+clean-TcoffeeCliClient \
 clean-WuBlastCliClient
 
 clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
+
+clean-ClustalW2CliClient:
+	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono) clean
 
 clean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono) clean
@@ -48,8 +86,26 @@ clean-EBeyeCliClient:
 clean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono) clean
 
+clean-KalignCliClient:
+	cd KalignCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-MafftCliClient:
+	cd MafftCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-MuscleCliClient:
+	cd MuscleCliClient && $(MAKE) -f Makefile.mono) clean
+
 clean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-PsiBlastCliClient:
+	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-PsiSearchCliClient:
+	cd PsiSearchBlastCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-TcoffeeCliClient:
+	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono) clean
 
 clean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono clean
@@ -58,13 +114,23 @@ clean-WuBlastCliClient:
 
 distclean: \
 distclean-EbiWS \
+distclean-ClustalW2CliClient \
 distclean-EBeyeCliClient \
 distclean-FastaCliClient \
+distclean-KalignCliClient \
+distclean-MafftCliClient \
+distclean-MuscleCliClient \
 distclean-NcbiBlastCliClient \
+distclean-PsiBlastCliClient \
+distclean-PsiSearchCliClient \
+distclean-TcoffeeCliClient \
 distclean-WuBlastCliClient
 
 distclean-EbiWS:
 	cd EbiWS && $(MAKE) distclean
+
+distclean-ClustalW2CliClient:
+	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
@@ -72,8 +138,26 @@ distclean-EBeyeCliClient:
 distclean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-KalignCliClient:
+	cd KalignCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-MafftCliClient:
+	cd MafftCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-MuscleCliClient:
+	cd MuscleCliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PsiBlastCliClient:
+	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PsiSearchCliClient:
+	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-TcoffeeCliClient:
+	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono distclean
