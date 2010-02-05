@@ -5,15 +5,32 @@
 #
 # ======================================================================
 
-MERGE = $$HOME/bin/monomerge.exe
+#MERGE = $$HOME/bin/monomerge.exe
+MERGE = mono /ebi/extserv/bin/monomerge/mono-merge.exe
 
 projectDir =  ../EBIWS2_CSharp
 
-all: EbiWS.dll EBeyeCliClient.exe FastaCliClient.exe NcbiBlastCliClient.exe WuBlastCliClient.exe
+all: \
+EbiWS.dll \
+ClustalW2CliClient.exe \
+EBeyeCliClient.exe \
+FastaCliClient.exe \
+KalignCliClient.exe \
+MafftCliClient.exe \
+MuscleCliClient.exe \
+NcbiBlastCliClient.exe \
+PsiBlastCliClient.exe \
+PsiSearchCliClient.exe \
+TcoffeeCliClient.exe \
+WuBlastCliClient.exe
 
 EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
 	cp ${projectDir}/EbiWS/bin/Release/$@ $@
 	chmod -x $@
+
+ClustalW2CliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/ClustalW2CliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
 
 EBeyeCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EBeyeCliClient/bin/Release/$@ EbiWS.dll
@@ -23,8 +40,32 @@ FastaCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/FastaCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+KalignCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/KalignCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+MafftCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/MafftCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+MuscleCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/MuscleCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 NcbiBlastCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/NcbiBlastCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+PsiBlastCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PsiBlastCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+PsiSearchCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PsiSearchCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+TcoffeeCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/TcoffeeCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 WuBlastCliClient.exe: EbiWS.dll
