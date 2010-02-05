@@ -117,4 +117,4 @@ distclean: clean
 	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/
 
 clean-stubs:
-	rm -rf $(STUBSRCDIR)/*
+	rm -rf $(STUBSRCDIR)/*/*.cs
