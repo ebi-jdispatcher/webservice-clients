@@ -41,9 +41,16 @@ $(RELEASEBINDIR): $(BINDIR)
 EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
 
 coreSrc = AbstractWsClient.cs \
+ClustalW2Client.cs \
 EBeyeClient.cs \
 FastaClient.cs \
+KalignClient.cs \
+MafftClient.cs \
+MuscleClient.cs \
 NcbiBlastClient.cs \
+PsiBlastClient.cs \
+PsiSearchClient.cs \
+TcoffeeClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
