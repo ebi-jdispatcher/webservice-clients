@@ -72,23 +72,34 @@ my $numOpts = scalar(@ARGV);
 my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
+my %tool_params = ( );
 GetOptions(
 
 	# Tool specific options
-	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
-	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
-	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
-	'expthr|E=f'     => \$tool_params{'expthr'},     # E-value threshold for search
-	'psithr=f'       => \$tool_params{'psithr'},     # E-value threshold for PSSM
-	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
-	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
-	'sequence=s'     => \$params{'sequence'},        # Query sequence file or DB:ID
-	'database=s'     => \$tool_params{'database'},   # Database to search
+	'matrix|s=s'      => \$tool_params{'matrix'},     # Scoring matrix
+	'gapopen|f=i'     => \$tool_params{'gapopen'},    # Gap creation penalty
+	'gapext|g=i'      => \$tool_params{'gapext'},     # Gap extension penalty
+	'expthr|E=f'      => \$tool_params{'expthr'},     # E-value threshold for search
+	'psithr=f'        => \$tool_params{'psithr'},     # E-value threshold for PSSM
+	'scores|b=i'      => \$tool_params{'scores'},     # Number of scores
+	'alignments|d=i'  => \$tool_params{'alignments'}, # Number of alignments
+	'sequence=s'      => \$params{'sequence'},        # Query sequence file or DB:ID
+	'database=s'      => \$params{'database'},        # Database to search
 	'previousjobid=s' => \$tool_params{'previousjobid'}, # Job Id for last iteration
 	'selectedHits=s'  => \$params{'selectedHits'},   # Selected hits for building PSSM
 	'cpfile=s'        => \$params{'cpfile'},         # PSI-BLAST checkpoint
-	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
+	'multifasta'      => \$params{'multifasta'},     # Multiple fasta input
+
+	# Compatability options, old command-line
+	"D=s"           => \$params{'database'},   # Database to search
+	"m=s"           => \$params{'matrix'},     # Scoring matrix to use
+	"opengap|o=i"   => \$params{'opengap'},    # Open gap penalty
+	"extendgap|e=i" => \$params{'extendgap'},  # Gap extension penalty
+	"exp|E=f"       => \$params{'exp'},        # E-value threshold
+	"expmulti|x=f"  => \$params{'expmulti'},   # E-value threshold for PSSM
+	"align|A=i"     => \$params{'numal'},      # Number of alignments
+	"preselseq=s"   => \$params{'preselseq'},  # Selected hits for PSSM
+	"checkpoint=s"  => \$params{'checkpoint'}, # Checkpoint file
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -725,14 +736,56 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
-	# Selected hit identifier list.
-	if(defined($params{'selectedHits'}) && -f $params{'selectedHits'}) {
-		$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'}), '');
+	# Compatability options, old command-line
+	if(!$tool_params{'matrix'} && $params{'matrix'}) {
+		$tool_params{'matrix'} = $params{'matrix'};
+	}
+	if(!$tool_params{'alignments'} && $params{'numal'}) {
+		$tool_params{'alignments'} = $params{'numal'};
+	}
+	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
+		$tool_params{'gapopen'} = $params{'opengap'};
+	}
+	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
+		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+	if(!$tool_params{'gapext'} && $params{'extendgap'}) {
+		$tool_params{'gapext'} = $params{'extendgap'};
+	}
+	if(!$tool_params{'expthr'} && $params{'exp'}) {
+		$tool_params{'expthr'} = $params{'exp'};
+	}
+	if(!$tool_params{'psithr'} && $params{'expmulti'}) {
+		$tool_params{'psithr'} = $params{'expmulti'};
+	}
+	if(!$params{'selectedHits'} && $params{'preselseq'}) {
+		$params{'selectedHits'} = $params{'preselseq'};
+	}
+	if(!$params{'cpFile'} && $params{'checkpoint'}) {
+		$params{'cpFile'} = $params{'checkpoint'};
+	}
+
+	# Database(s) to search
+	$tool_params{'database'} = $params{'database'};
+
+	# Selected hit identifier list for building PSSM.
+	if(defined($params{'selectedHits'})) {
+		if(-f $params{'selectedHits'}) {
+			$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'}), '');
+		}
+		else {
+			$tool_params{'selectedHits'} = encode_base64($params{'selectedHits'}, '');
+		}
 	}
 	
 	# PSI-BLAST checkpoint from previous iteration.
-	if(defined($params{'cpfile'}) && -f $params{'cpfile'}) {
-		$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ), '');
+	if(defined($params{'cpfile'})) {
+		if(-f $params{'cpfile'}) {
+			$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ), '');
+		}
+		else {
+			$tool_params{'cpfile'} = encode_base64($params{'cpfile'}, '');
+		}
 	}
 
 	print_debug_message( 'load_params',
@@ -940,7 +993,8 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
 [Required]
 
       --database      : str  : database to search, see --paramDetail database
-  seqFile             : file : query sequence ("-" for STDIN)
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
 
@@ -955,6 +1009,7 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
       --selectedHits  : str  : file containing list of hits selected to 
                                create PSSM.
       --cpfile        : str  : checkpoint file, ASN.1 binary
+      --multifasta    :      : treat input as a set of fasta format sequences
 
 [General]
 
@@ -994,6 +1049,25 @@ Asynchronous job:
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
+
+Iterations:
+
+  To generate and refine the profile (PSSM) used to perform the search after 
+  the first iteration the set of hits to be included in the generation of the 
+  PSSM needs to be specified for each iteration. This can be either obtained 
+  from the previous iteration using the job identifier of the iteration, or 
+  be explicit specification of a file containing the list of identifiers. 
+  
+  Iteration 1:
+  $scriptName --email <email> --database <db> <seqFile> [options...]
+  
+  Iteration 2:
+  $scriptName --email <email> --previousjobid <jobId> \\
+    [--selectedHits <selFile>] [options...]
+
+  Iteration 3+:
+  $scriptName --email <email> --previousjobid <jobId> \\
+    [--selectedHits <selFile>] [--cpfile <checkpoint>] [options...]
 
 Further information:
 
