@@ -72,7 +72,7 @@ my $numOpts = scalar(@ARGV);
 my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
+my %tool_params = ('stype' => 'protein');
 GetOptions(
 
 	# Tool specific options
@@ -88,7 +88,7 @@ GetOptions(
 	'finaldropoff|Z=i' => \$tool_params{'finaldropoff'},  # Final dropoff score
 	'gapopen|G=i'      => \$tool_params{'gapopen'},       # Open gap penalty
 	'gapext|E=i'       => \$tool_params{'gapext'},        # Gap extension penality
-	'stype=s'          => \$tool_params{'stype'},         # Sequence type
+	'stype=s'          => \$tool_params{'stype'},         # Sequence type (protein)
 	'seqrange=s'       => \$tool_params{'seqrange'},      # Query subsequence
 	'sequence|i=s'     => \$params{'sequence'},           # Query sequence
 	'previousjobid=s'  => \$tool_params{'previousjobid'}, # Job Id for last iteration
@@ -1009,7 +1009,6 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
 
   -D, --database      : str  : database(s) to search, space separated. See
                                --paramDetail database
-      --stype         : str  : query sequence type, see --paramDetail stype
   seqFile             : file : query sequence ("-" for STDIN, \@filename for
                                identifier list file)
 
