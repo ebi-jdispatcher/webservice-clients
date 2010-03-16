@@ -10,8 +10,8 @@ namespace EbiWS
 {
 	class PsiBlastCliClient : EbiWS.PsiBlastClient
 	{
-		/// <summary>Tool specific usage</summary>
-		private string usageMsg = @"NCBI PSI-BLAST
+		/// <summary>Tool specific options for usage</summary>
+		private string usageMsg0 = @"NCBI PSI-BLAST
 ==============
 
 Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
@@ -44,7 +44,35 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
       --selectedHits  : file : Selected hits from last iteration for building 
                                search profile (PSSM)
   -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration
-      --multifasta    :      : treat input as a set of fasta format sequences
+";
+		/// <summary>Additional tool details</summary>
+		private string usageMsg1 = @"Iterations:
+
+  To generate and refine the profile (PSSM) used to perform the search after 
+  the first iteration the set of hits to be included in the generation of the 
+  PSSM needs to be specified for each iteration. This can be either obtained 
+  from the previous iteration using the job identifier of the iteration, or 
+  be explicit specification of a file containing the list of identifiers. 
+  
+  Iteration 1:
+  PsiBlastCliClient.exe --email <email> --database <db> <seqFile> [options...]
+  
+  Iteration 2:
+  PsiBlastCliClient.exe --email <email> --previousjobid <jobId> \
+    [--selectedHits <selFile>] [options...]
+
+  Iteration 3+:
+  PsiBlastCliClient.exe --email <email> --previousjobid <jobId> \
+    [--selectedHits <selFile>] [--cpfile <checkpoint>] [options...]
+
+Further information:
+
+http://www.ebi.ac.uk/Tools/webservices/services/sss/psiblast_soap
+http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/dot_net/csharp
+
+Support/Feedback:
+
+http://www.ebi.ac.uk/support/
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -113,8 +141,9 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
 		private void PrintUsageMessage()
 		{
 			PrintDebugMessage("PrintUsageMessage", "Begin", 1);
-			Console.WriteLine(usageMsg);
+			Console.WriteLine(usageMsg0);
 			PrintGenericOptsUsage();
+			Console.WriteLine(usageMsg1);
 			PrintDebugMessage("PrintUsageMessage", "End", 1);
 		}
 
