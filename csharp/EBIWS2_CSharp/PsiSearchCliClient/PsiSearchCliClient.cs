@@ -10,9 +10,9 @@ namespace EbiWS
 {
 	class PsiSearchCliClient : EbiWS.PsiSearchClient
 	{
-		/// <summary>Tool specific usage</summary>
-		private string usageMsg = @"PSI-Search
-==============
+		/// <summary>Tool specific options usage</summary>
+		private string usageMsg0 = @"PSI-Search
+==========
 
 Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
 
@@ -34,6 +34,36 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
       --selectedHits  : str  : file containing list of hits selected to 
                                create PSSM.
       --cpfile        : str  : checkpoint file, ASN.1 binary
+";
+		/// <summary>Additional usage information</summary>
+		private string usageMsg1 = @"
+Iterations:
+
+  To generate and refine the profile (PSSM) used to perform the search after 
+  the first iteration the set of hits to be included in the generation of the 
+  PSSM needs to be specified for each iteration. This can be either obtained 
+  from the previous iteration using the job identifier of the iteration, or 
+  be explicit specification of a file containing the list of identifiers. 
+  
+  Iteration 1:
+  PsiSearchCliClient.exe --email <email> --database <db> <seqFile> [options...]
+  
+  Iteration 2:
+  PsiSearchCliClient.exe --email <email> --previousjobid <jobId> \
+    [--selectedHits <selFile>] [options...]
+
+  Iteration 3+:
+  PsiSearchCliClient.exe --email <email> --previousjobid <jobId> \
+    [--selectedHits <selFile>] [--cpfile <checkpoint>] [options...]
+
+Further information:
+
+http://www.ebi.ac.uk/Tools/webservices/services/sss/psisearch_soap
+http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/dot_net/csharp
+
+Support/Feedback:
+
+http://www.ebi.ac.uk/support/
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -102,8 +132,9 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
 		private void PrintUsageMessage()
 		{
 			PrintDebugMessage("PrintUsageMessage", "Begin", 1);
-			Console.WriteLine(usageMsg);
+			Console.WriteLine(usageMsg0);
 			PrintGenericOptsUsage();
+			Console.WriteLine(usageMsg1);
 			PrintDebugMessage("PrintUsageMessage", "End", 1);
 		}
 
