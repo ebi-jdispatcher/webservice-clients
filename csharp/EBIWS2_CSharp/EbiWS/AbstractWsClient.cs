@@ -7,6 +7,7 @@
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -217,8 +218,10 @@ Asynchronous job:
 		{
 			PrintDebugMessage("ObjectValueToString", "Begin", 31);
 			StringBuilder strBuilder = new StringBuilder();
-			strBuilder.Append(ObjectFieldsToString(obj));
-			strBuilder.Append(ObjectPropertiesToString(obj));
+			if(obj != null) {
+				strBuilder.Append(ObjectFieldsToString(obj));
+				strBuilder.Append(ObjectPropertiesToString(obj));
+			}
 			PrintDebugMessage("ObjectValueToString", "End", 31);
 			return strBuilder.ToString();
 		}
@@ -238,7 +241,7 @@ Asynchronous job:
 			Type objType = obj.GetType();
 			PrintDebugMessage("ObjectFieldsToString", "objType: " + objType, 33);
 			foreach(FieldInfo info in objType.GetFields()) {
-				PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name, 33);
+				PrintDebugMessage("ObjectFieldsToString", "info: " + info.Name + " (" + info.FieldType.FullName + ")", 33);
 				if (info.FieldType.IsArray)
 				{
 					strBuilder.Append(info.Name + ":\n");
@@ -267,23 +270,41 @@ Asynchronous job:
 		{
 			PrintDebugMessage("ObjectPropertiesToString", "Begin", 31);
 			StringBuilder strBuilder = new StringBuilder();
+			if(obj == null) {
+				return "null";
+			}
 			Type objType = obj.GetType();
+			if (objType == null) {
+				return "unknown";
+			}
 			PrintDebugMessage("ObjectPropertiesToString", "objType: " + objType, 32);
 			foreach (PropertyInfo info in objType.GetProperties())
 			{
-				PrintDebugMessage("ObjectPropertiesToString", "info: " + info.Name, 32);
+				PrintDebugMessage("ObjectPropertiesToString", "info: " + info.Name + " (" + info.PropertyType.FullName + ")", 32);
 				if (info.PropertyType.IsArray)
 				{
-					strBuilder.Append(info.Name + ":\n");
-					foreach (Object subObj in (Object[])info.GetValue(obj, null))
+					//PrintDebugMessage("ObjectPropertiesToString", "info: obj"+info.GetValue(obj, null), 33);
+					IList objArray = info.GetValue(obj, null) as IList;
+					//Object[] objArray = (Object[])info.GetValue(obj, null);
+					if(objArray != null && objArray.Count > 0) {
+						PrintDebugMessage("ObjectPropertiesToString", "Array: "+objArray.Count, 33);
+						strBuilder.Append(info.Name + ":\n");
+						foreach (Object subObj in objArray)
+						{
+							if(subObj != null) strBuilder.Append("\t" + subObj);
+						}
+					}
+					else
 					{
-						strBuilder.Append("\t" + subObj);
+						strBuilder.Append(info.Name + ": <null>\n");
 					}
 				}
 				else
 				{
+					PrintDebugMessage("ObjectPropertiesToString", "Object: "+obj, 33);
 					strBuilder.Append(info.Name + ": " + info.GetValue(obj, null) + "\n");
 				}
+				PrintDebugMessage("ObjectPropertiesToString", strBuilder.ToString(), 33);
 			}
 			PrintDebugMessage("ObjectPropertiesToString", "End", 31);
 			return strBuilder.ToString();

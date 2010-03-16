@@ -133,6 +133,7 @@ namespace EbiWS
 			PrintDebugMessage("RunApp", "Begin", 1);
 			PrintDebugMessage("RunApp", "email: " + email, 2);
 			PrintDebugMessage("RunApp", "title: " + title, 2);
+			PrintDebugMessage("RunApp", "input: " + input, 2);
 			PrintDebugMessage("RunApp", "input:\n" + ObjectValueToString(input), 2);
 			string jobId = null;
 			this.ServiceProxyConnect(); // Ensure we have a service proxy

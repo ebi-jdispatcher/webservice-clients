@@ -20,7 +20,6 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
 
   -D, --database      : str  : database(s) to search, space separated. See
                                --paramDetail database
-      --stype         : str  : query sequence type, see --paramDetail stype
   seqFile             : file : query sequence (""-"" for STDIN, \@filename for
                                identifier list file)
 
