@@ -74,7 +74,13 @@
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
+		<antcall target="axis1-stubs-kalign" />
+		<antcall target="axis1-stubs-mafft" />
+		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-ncbiblast" />
+		<antcall target="axis1-stubs-psiblast" />
+		<antcall target="axis1-stubs-psisearch" />
+		<antcall target="axis1-stubs-tcoffee" />
 		<antcall target="axis1-stubs-wublast" />
 	</target>
 
@@ -97,10 +103,46 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-kalign">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.kalign" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-mafft">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.mafft" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-muscle">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.muscle" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/muscle?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-ncbiblast">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ncbiblast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-psiblast">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psiblast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-psisearch">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psisearch" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-tcoffee">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.tcoffee" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/tcoffee?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-wublast">
