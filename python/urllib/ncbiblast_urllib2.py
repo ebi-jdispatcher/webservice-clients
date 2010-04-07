@@ -36,7 +36,7 @@ parser.add_option('-p', '--program', help='program to run')
 parser.add_option('-D', '--database', help='database to search')
 parser.add_option('--stype', default='protein', help='query sequence type')
 parser.add_option('-m', '--matrix', help='scoring matrix')
-parser.add_option('-E', '--exp', type='float', help='E-value threshold')
+parser.add_option('-E', '--exp', help='E-value threshold')
 parser.add_option('-f', '--filter', action="store_true", help='low complexity sequence filter')
 parser.add_option('-n', '--alignments', type='int', help='maximum number of alignments')
 parser.add_option('-s', '--scores', type='int', help='maximum number of scores')
@@ -87,9 +87,13 @@ def printDebugMessage(functionName, message, level):
 def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
-    reqH = urllib2.urlopen(url)
-    result = reqH.read()
-    reqH.close()
+    try:
+        reqH = urllib2.urlopen(url)
+        result = reqH.read()
+        reqH.close()
+    except urllib2.HTTPError, ex:
+        print ex.read()
+        raise
     printDebugMessage('restRequest', 'End', 11)
     return result
 
@@ -158,9 +162,13 @@ def serviceRun(email, title, params):
     # Concatenate the two parts.
     requestData += databaseData
     printDebugMessage('serviceRun', 'requestData: ' + requestData, 2)
-    reqH = urllib2.urlopen(requestUrl, requestData)
-    jobId = reqH.read()
-    reqH.close()    
+    try:
+        reqH = urllib2.urlopen(requestUrl, requestData)
+        jobId = reqH.read()
+        reqH.close()    
+    except urllib2.HTTPError, ex:
+        print ex.read()
+        raise
     printDebugMessage('serviceRun', 'jobId: ' + jobId, 2)
     printDebugMessage('serviceRun', 'End', 1)
     return jobId
