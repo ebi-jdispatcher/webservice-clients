@@ -51,17 +51,17 @@
 	<target name="jar" depends="axis1-jar,jaxws-jar" description="Package clients into jars." />
 	
 	<!-- Clean-up build directory -->
-	<target name="clean">
-		<delete includeemptydirs="true" description="Delete compiled classes">
+	<target name="clean" description="Delete compiled classes">
+		<delete includeemptydirs="true">
 			<fileset dir="${build.dir}" includes="**/*"/>
 		</delete>
 	</target>
 
 	<!-- Get back to distributed/repository state -->
-	<target name="distclean" depends="clean,clean-resolve,distclean-stubs">
+	<target name="distclean" depends="clean,clean-resolve,distclean-stubs" description="Remove downloaded, generated and compiled code, classes and jars">
 	</target>
 
-	<target name="distclean-stubs" description="Remove downloaded, generated and compiled code, classes and jars">
+	<target name="distclean-stubs" description="Delete generated stubs">
 		<antcall target="axis1-distclean-stubs" />
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
@@ -601,11 +601,11 @@
 	    </delete>
 	</target>
 
-	<!-- TODO: Test clients -->
-	<target name="axis1-test" depends="axis1-jar">
+	<!-- TODO: Client tests -->
+	<!--target name="axis1-test" depends="axis1-jar">
 		<ant dir="test" inheritAll="false" />
 	</target>
 	<target name="jaxws-test" depends="jaxws-jar">
 		<ant dir="test" inheritAll="false" />
-	</target>
+	</target -->
 </project>
