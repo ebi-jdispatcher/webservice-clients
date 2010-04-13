@@ -4,9 +4,10 @@
 	<!--
 	Using the wsimport command:
 	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
-        NB: assumes wsimport is on the current PATH.
+	NB: assumes wsimport is on the current PATH. This is usually the case with Java 6.
 	-->
-	<target name="genJaxwsStubs">
+	<target name="genJaxwsStubs"
+		description="JAX-WS RI: generate stubs from a WSDL using wsimport command">
 		<echo message="${stubPkg}" />
 		<echo message="${wsdlUrl}" />
 		<exec executable="wsimport">
@@ -25,22 +26,23 @@
 	<!--
 	Using the "wsimport" ant task:
 	See https://metro.dev.java.net/nonav/1.4/docs/wsimportant.html
-        NB: This does not work correctly due to dependency issues.
+	NB: This does not work correctly due to dependency issues.
 	-->
-	<!-- <target name="genJaxwsStubs">
-                <echo message="${stubPkg}" />
-                <echo message="${wsdlUrl}" />
-	<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"
-	classpathref="classpath">
-	</taskdef>
-	<wsimport
-	  destdir="${build.dir}"
-	  package="${stubPkg}"
-	  keep="true"
-	  sourcedestdir="${src.dir}"
-	  xnocompile="true"
-	  verbose="true"
-	  wsdl="${wsdlUrl}"
-	/>
-	</target> -->
+	<!-- target name="genJaxwsStubs"
+		description="JAX-WS RI: generate stubs from a WSDL using wsimport ant task">
+		<echo message="${stubPkg}" />
+		<echo message="${wsdlUrl}" />
+		<taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport"
+			classpathref="classpath">
+		</taskdef>
+		<wsimport
+			destdir="${build.dir}"
+			package="${stubPkg}"
+			keep="true"
+			sourcedestdir="${src.dir}"
+			xnocompile="true"
+			verbose="true"
+			wsdl="${wsdlUrl}"
+		/>
+	</target -->
 </project>
