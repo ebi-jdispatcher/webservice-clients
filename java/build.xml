@@ -1,6 +1,6 @@
 <!-- $Id$ -->
-<!-- Build Java clients for EBI web services. -->
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="EBIWS2-Java" basedir="." default="compile">
+	<description>Sample Java clients for EMBL-EBI tool web services.</description>
 	<property name="ant.import.lib.dir" value="lib/ant" />
 	<property name="src.dir" value="src" />
 	<property name="ws.src.dir" value="${src.dir}/uk/ac/ebi/webservices" />
@@ -28,14 +28,14 @@
 	</target>
 
 	<!-- Package dependencies in to an archive -->
-	<target name="package-dependencies">
+	<target name="package-dependencies" description="Generate archive of dependencies from lib.dir.">
 		<zip destfile="${jar.dir}/ebiws-lib.zip" basedir="${basedir}"
 			includes="${lib.dir}/**.jar"
 			 excludes="${lib.dir}/ivy/**, ${lib.dir}/**-sources.jar, ${lib.dir}/**-javadoc.jar" />
 	</target>
 
 	<!-- Clean-up dependencies -->
-	<target name="clean-resolve">
+	<target name="clean-resolve" description="Delete dependencies from lib.dir.">
 		<delete verbose="true">
 			<fileset
 				dir="${lib.dir}"
@@ -45,14 +45,14 @@
 	</target>
 
 	<!-- Build all -->
-	<target name="all" depends="axis1,jaxws" />
-	<target name="stubs" depends="axis1-stubs,jaxws-stubs" />
-	<target name="compile" depends="axis1-compile,jaxws-compile" />
-	<target name="jar" depends="axis1-jar,jaxws-jar" />
+	<target name="all" depends="axis1,jaxws" description="Build all targets." />
+	<target name="stubs" depends="axis1-stubs,jaxws-stubs" description="Generate all stubs." />
+	<target name="compile" depends="axis1-compile,jaxws-compile" description="Compile all clients." />
+	<target name="jar" depends="axis1-jar,jaxws-jar" description="Package clients into jars." />
 	
 	<!-- Clean-up build directory -->
 	<target name="clean">
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" description="Delete compiled classes">
 			<fileset dir="${build.dir}" includes="**/*"/>
 		</delete>
 	</target>
@@ -61,16 +61,16 @@
 	<target name="distclean" depends="clean,clean-resolve,distclean-stubs">
 	</target>
 
-	<target name="distclean-stubs">
+	<target name="distclean-stubs" description="Remove downloaded, generated and compiled code, classes and jars">
 		<antcall target="axis1-distclean-stubs" />
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
 
 	<!-- Axis 1.x -->
-	<target name="axis1" depends="axis1-jar" />
+	<target name="axis1" depends="axis1-jar" description="Axis 1.x: generate stubs and build SOAP clients" />
 	
 	<!-- Generate Axis 1.x stubs for all services -->
-	<target name="axis1-stubs" depends="resolve">
+	<target name="axis1-stubs" depends="resolve" description="Axis 1.x: generate code stubs for SOAP clients">
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
@@ -81,71 +81,78 @@
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
 		<antcall target="axis1-stubs-tcoffee" />
+		<antcall target="axis1-stubs-wsdbfetch" />
 		<antcall target="axis1-stubs-wublast" />
 	</target>
 
 	<!-- Generate Axis 1.x stubs for each service -->
-	<target name="axis1-stubs-clustalw2">
+	<target name="axis1-stubs-clustalw2" description="Axis 1.x: generate stubs for ClustalW2 (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-ebeye">
+	<target name="axis1-stubs-ebeye" description="Axis 1.x: generate stubs for EB-eye">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ebeye" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-fasta">
+	<target name="axis1-stubs-fasta" description="Axis 1.x: generate stubs for FASTA (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fasta" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-kalign">
+	<target name="axis1-stubs-kalign" description="Axis 1.x: generate stubs for Kalign (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.kalign" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-mafft">
+	<target name="axis1-stubs-mafft" description="Axis 1.x: generate stubs for MAFFT (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.mafft" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-muscle">
+	<target name="axis1-stubs-muscle" description="Axis 1.x: generate stubs for MUSCLE (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.muscle" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/muscle?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-ncbiblast">
+	<target name="axis1-stubs-ncbiblast" description="Axis 1.x: generate stubs for NCBI BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ncbiblast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-psiblast">
+	<target name="axis1-stubs-psiblast" description="Axis 1.x: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psiblast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psiblast?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-psisearch">
+	<target name="axis1-stubs-psisearch" description="Axis 1.x: generate stubs for PSI-Search (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psisearch" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-tcoffee">
+	<target name="axis1-stubs-tcoffee" description="Axis 1.x: generate stubs for T-COFFEE (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.tcoffee" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/tcoffee?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-wublast">
+	<target name="axis1-stubs-wsdbfetch" description="Axis 1.x: generate stubs for WSDbfetch (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.wsdbfetch" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-wublast" description="Axis 1.x: generate stubs for WU-BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.wublast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wublast?wsdl" />
@@ -153,23 +160,23 @@
 	</target>
 
 	<!-- Compile Axis 1.x code into classes -->
-	<target name="axis1-compile">
+	<target name="axis1-compile" description="Axis 1.x: compile SOAP clients">
 		<javac target="1.4" source="1.4" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/" />
 	</target>
 
 	<!-- Package Axis 1.x jars -->
-	<target name="axis1-jar" depends="axis1-compile">
+	<target name="axis1-jar" depends="axis1-compile" description="Axis 1.x: package clients into jars">
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
+		<!-- jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar>
+		</jar -->
 		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EBeyeClient.** uk/ac/ebi/webservices/axis1/stubs/ebeye/**">
@@ -190,6 +197,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- Kalign -->
+		<!-- MAFFT -->
+		<!-- MUSCLE -->
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
@@ -200,6 +210,19 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- PSI-BLAST -->
+		<!-- PSI-Search -->
+		<!-- T-COFFEE -->
+		<!-- jar destfile="${jar.dir}/WSDbfetch_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/WSDbfetchClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wsdbfetch/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.WSDbfetchClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar -->
 		<jar destfile="${jar.dir}/WUBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/**">
@@ -213,43 +236,99 @@
 	</target>
 
 	<!-- Clean-up Axis 1.x generate files -->
-	<target name="axis1-distclean-stubs">
+	<target name="axis1-distclean-stubs" description="Axis 1.x: remove generated stubs">
 		<antcall target="axis1-distclean-stubs-clustalw2" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-fasta" />
+		<antcall target="axis1-distclean-stubs-kalign" />
+		<antcall target="axis1-distclean-stubs-mafft" />
+		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
+		<antcall target="axis1-distclean-stubs-psiblast" />
+		<antcall target="axis1-distclean-stubs-psisearch" />
+		<antcall target="axis1-distclean-stubs-tcoffee" />
+		<antcall target="axis1-distclean-stubs-wsdbfetch" />
 		<antcall target="axis1-distclean-stubs-wublast" />
 	</target>
 	
-	<target name="axis1-distclean-stubs-clustalw2">
+	<target name="axis1-distclean-stubs-clustalw2" description="Axis 1.x: remove ClustalW2 (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2" />
 	    </delete>
 	</target>
 
-	<target name="axis1-distclean-stubs-ebeye">
+	<target name="axis1-distclean-stubs-ebeye" description="Axis 1.x: remove EB-eye stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
 
-	<target name="axis1-distclean-stubs-fasta">
+	<target name="axis1-distclean-stubs-fasta" description="Axis 1.x: remove FASTA (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/fasta" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fasta" />
 	    </delete>
 	</target>
 
-	<target name="axis1-distclean-stubs-ncbiblast">
+	<target name="axis1-distclean-stubs-kalign" description="Axis 1.x: remove Kalign (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/kalign" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="kalign" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-mafft" description="Axis 1.x: remove MAFFT (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/mafft" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="mafft" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-muscle" description="Axis 1.x: remove MUSCLE (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/muscle" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="muscle" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-ncbiblast" description="Axis 1.x: remove NCBI BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ncbiblast" />
 	    </delete>
 	</target>
 
-	<target name="axis1-distclean-stubs-wublast">
+	<target name="axis1-distclean-stubs-psiblast" description="Axis 1.x: remove PSI-BLAST (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/psiblast" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="psiblast" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-psisearch" description="Axis 1.x: remove PSI-Search (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/psisearch" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="psisearch" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-tcoffee" description="Axis 1.x: remove T-COFFEE (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/tcoffee" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="tcoffee" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-wsdbfetch" description="Axis 1.x: remove WSDbfetch (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/wsdbfetch" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="wsdbfetch" />
+	    </delete>
+	</target>
+	
+	<target name="axis1-distclean-stubs-wublast" description="Axis 1.x: remove WU-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/wublast" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="wublast" />
@@ -257,25 +336,32 @@
 	</target>
 	
 	<!-- JAX-WS -->
-	<target name="jaxws" depends="jaxws-jar" />
+	<target name="jaxws" depends="jaxws-jar" description="JAX-WS RI: generate stubs and build SOAP clients" />
 	
 	<!-- Generate JAX-WS stubs for all services -->
-	<target name="jaxws-stubs" depends="resolve">
+	<target name="jaxws-stubs" depends="resolve" description="JAX-WS RI: generate code stubs for SOAP clients">
 		<antcall target="jaxws-stubs-clustalw2" />
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
+		<antcall target="jaxws-stubs-kalign" />
+		<antcall target="jaxws-stubs-mafft" />
+		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-ncbiblast" />
+		<antcall target="jaxws-stubs-psiblast" />
+		<antcall target="jaxws-stubs-psisearch" />
+		<antcall target="jaxws-stubs-tcoffee" />
+		<antcall target="jaxws-stubs-wsdbfetch" />
 		<antcall target="jaxws-stubs-wublast" />
 	</target>
 
 	<!-- Generate JAX-WS stubs for each service -->
-	<target name="jaxws-stubs-clustalw2">
+	<target name="jaxws-stubs-clustalw2" description="JAX-WS RI: generate stubs for ClustalW2 (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
 		</antcall>
 	</target>
-	<target name="jaxws-stubs-ebeye">
+	<target name="jaxws-stubs-ebeye" description="JAX-WS RI: generate stubs for EB-eye">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ebeye" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
@@ -287,10 +373,52 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fasta?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-kalign">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.kalign" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
+		</antcall>
+	</target>
+		<target name="jaxws-stubs-mafft">
+			<antcall target="genJaxwsStubs">
+				<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mafft" />
+				<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+			</antcall>
+		</target>
+	<target name="jaxws-stubs-muscle">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.muscle" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/muscle?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-ncbiblast">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ncbiblast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-psiblast">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psiblast" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-psisearch">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psisearch" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-tcoffee">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.tcoffee" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/tcoffee?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-wsdbfetch">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.wsdbfetch" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-wublast">
@@ -310,14 +438,14 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
+		<!-- jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar>
+		</jar -->
 		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
@@ -336,6 +464,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- Kalign -->
+		<!-- MAFFT -->
+		<!-- MUSCLE -->
 		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
@@ -346,6 +477,19 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- PSI-BLAST -->
+		<!-- PSI-Search -->
+		<!-- T-COFFEE -->
+		<!-- jar destfile="${jar.dir}/WSDbfetch_JAXWS.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/jaxws/WSDbfetchClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/wsdbfetch/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.WSDbfetchClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar -->
 		<jar destfile="${jar.dir}/WUBlast_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/wublast/**">
@@ -363,7 +507,13 @@
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
+		<antcall target="jaxws-distclean-stubs-kalign" />
+		<antcall target="jaxws-distclean-stubs-mafft" />
+		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
+		<antcall target="jaxws-distclean-stubs-psiblast" />
+		<antcall target="jaxws-distclean-stubs-psisearch" />
+		<antcall target="jaxws-distclean-stubs-tcoffee" />
 		<antcall target="jaxws-distclean-stubs-wublast" />
 	</target>
 	
@@ -388,10 +538,59 @@
 	    </delete>
 	</target>
 
+	<target name="jaxws-distclean-stubs-kalign">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/kalign" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="kalign" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-mafft">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/mafft" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mafft" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-muscle">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/muscle" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="muscle" />
+	    </delete>
+	</target>
+
 	<target name="jaxws-distclean-stubs-ncbiblast">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-psiblast">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/psiblast" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psiblast" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-psisearch">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/psisearch" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psisearch" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-tcoffee">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/tcoffee" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="tcoffee" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-wsdbfetch">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/wsdbfetch" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="wsdbfetch" />
 	    </delete>
 	</target>
 
