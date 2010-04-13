@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * jDispatcher FASTA SOAP web service Java client using Axis 1.4.
+ * JDispatcher FASTA (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -14,12 +14,15 @@ import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.fasta.*;
 
-/** jDispatcher FASTA SOAP web service Java client.
+/** <p>JDispatcher FASTA (SOAP) web service Java client using Apache Axis 
+ * 1.x.</p>
  * 
- * See:
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/fasta">http://www.ebi.ac.uk/Tools/Webservices/services/fasta</a>
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/clients/fasta">http://www.ebi.ac.uk/Tools/Webservices/clients/fasta</a>
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
+ * <p>See:</p>
+ * <ul>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
+ * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
+ * </ul>
  */
 public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Service proxy */
@@ -28,12 +31,9 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	private String revision = "$Revision$";
 	/** Tool specific usage message */
 	private static final String usageMsg = "FASTA\n"
-		+ "==========\n"
-		+ "   \n"
+		+ "=====\n"
+		+ "\n"
 		+ "Rapid sequence database search programs utilizing the FASTA algorithm\n"
-		+ "    \n"
-		+ "For more detailed help information refer to \n"
-		+ "http://www.ebi.ac.uk/Tools/fasta/help.html\n"
 		+ "\n"
 		+ "[Required]\n"
 		+ "\n"
@@ -63,6 +63,31 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "                               see --paramDetail stats\n"
 		+ "  -R, --dbrange       : str  : define a subset database by sequence length\n"
 		+ "  -S, --seqrange      : str  : search with a region of the query\n";
+
+	/** Default constructor.
+	 */
+	public FastaClient() {
+		// Set the HTTP user agent string for (java.net) requests.
+		this.setUserAgent();
+	}
+	
+	/** <p>Set the HTTP User-agent header string for the client.</p>
+	 * 
+	 * <p><b>Note</b>: this affects all java.net based requests, but not the 
+	 * Axis requests. The user-agent used by Axis is set from the 
+	 * /org/apache/axis/i18n/resource.properties file included in the JAR.</p>
+	 */
+	private void setUserAgent() {
+		printDebugMessage("setUserAgent", "Begin", 1);
+		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
+		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
+		if(System.getProperty("http.agent") != null) {
+			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
+		}
+		else System.setProperty("http.agent", clientUserAgent);
+		printDebugMessage("setUserAgent", "End", 1);
+	}
 
 	/** Print usage message. */
 	private static void printUsage() {

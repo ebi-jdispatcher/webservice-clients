@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * JDispatcher NCBI BLAST (SOAP) web service Java client using Axis 1.4.
+ * JDispatcher NCBI BLAST (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -14,11 +14,15 @@ import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.ncbiblast.*;
 
-/** JDispatcher NCBI BLAST (SOAP) web service Java client using Apache Axis 1.4.
+/** <p>JDispatcher NCBI BLAST (SOAP) web service Java client using Apache 
+ * Axis 1.x.</p>
  * 
- * See:
- * <a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap</a>
- * <a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a>
+ * <p>See:</p>
+ * <ul>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
+ * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
+ * </ul>
  */
 public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Proxy object for web service. */
