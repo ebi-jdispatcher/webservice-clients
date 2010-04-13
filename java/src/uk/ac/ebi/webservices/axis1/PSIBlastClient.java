@@ -343,9 +343,9 @@ public class PSIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("D")) params.setDatabase(line.getOptionValue("D"));
 		if (line.hasOption("M")) params.setMatrix(line.getOptionValue("M"));
 		if (line.hasOption("e")) params.setExpthr(new Double(line.getOptionValue("e")));
-		else params.setExpthr(10.0);
+		else params.setExpthr(new Double(10.0));
 		if (line.hasOption("h")) params.setPsithr(new Double(line.getOptionValue("h")));
-		else params.setPsithr(0.001);
+		else params.setPsithr(new Double(0.001));
 		if (line.hasOption("F")) params.setFilter(line.getOptionValue("F"));
 		if (line.hasOption("m")) params.setAlignView(new Integer(line.getOptionValue("m"))); 
 		if (line.hasOption("v")) params.setScores(new Integer(line.getOptionValue("v")));
