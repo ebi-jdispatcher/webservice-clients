@@ -548,7 +548,7 @@ public class WSDbfetchClient {
 			else if (cli.getArgs()[0].equals("fetchData") && cli.getArgs().length > 1) {
 				String query = cli.getArgs()[1];
 				String formatName = (cli.getArgs().length > 2) ? cli.getArgs()[2] : "default";
-				String styleName = (cli.getArgs().length > 3) ? cli.getArgs()[3] : "default";
+				String styleName = (cli.getArgs().length > 3) ? cli.getArgs()[3] : "raw";
 				dbfetch.printFetchData(query, formatName, styleName);
 			}
 			// fetchBatch <db> <ids> [format [style]]
@@ -556,7 +556,7 @@ public class WSDbfetchClient {
 				String dbName = cli.getArgs()[1];
 				String idListStr = cli.getArgs()[2];
 				String formatName = (cli.getArgs().length > 3) ? cli.getArgs()[3] : "default";
-				String styleName = (cli.getArgs().length > 4) ? cli.getArgs()[4] : "default";
+				String styleName = (cli.getArgs().length > 4) ? cli.getArgs()[4] : "raw";
 				dbfetch.printFetchBatch(dbName, idListStr, formatName, styleName);
 			}
 			// Unknown option
@@ -566,7 +566,7 @@ public class WSDbfetchClient {
 			}
 		} catch (Exception ex) {
 			System.err.println("ERROR: " + ex.getMessage());
-			if (dbfetch.getOutputLevel() > 0) {
+			if (dbfetch.getOutputLevel() > 1) {
 				ex.printStackTrace();
 			}
 			exitVal = 1;
