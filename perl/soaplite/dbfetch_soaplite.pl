@@ -55,7 +55,6 @@ use SOAP::Lite;
 use LWP::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-use MIME::Base64;
 use Data::Dumper;
 
 # WSDL URL for service
