@@ -145,7 +145,7 @@ my $soap = SOAP::Lite->proxy(
 $soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
-# Pocess command-line and perfom action
+# Process command-line and perfom action
 # List supported databases
 if ( $ARGV[0] eq 'getSupportedDBs' ) {
 	&print_supported_dbs();
@@ -222,7 +222,7 @@ Get the list of supported databases.
 sub soap_get_supported_dbs {
 	print_debug_message( 'soap_get_supported_dbs', 'Begin', 1 );
 	my $supported_dbs_xml = $soap->getSupportedDBs();
-	my (@supported_dbs) = $supported_dbs_xml->valueof('//getSupportedDBsReturn/getSupportedDBsReturn');
+	my (@supported_dbs) = $supported_dbs_xml->valueof('//getSupportedDBsReturn');
 	print_debug_message( 'soap_get_supported_dbs', 'End', 1 );
 	return @supported_dbs;
 }
@@ -255,7 +255,7 @@ Get the list of supported formats for each database.
 sub soap_get_supported_formats {
 	print_debug_message( 'soap_get_supported_formats', 'Begin', 1 );
 	my $supported_formats_xml = $soap->getSupportedFormats();
-	my (@supported_formats) = $supported_formats_xml->valueof('//getSupportedFormatsReturn/getSupportedFormatsReturn');
+	my (@supported_formats) = $supported_formats_xml->valueof('//getSupportedFormatsReturn');
 	print_debug_message( 'soap_get_supported_formats', 'End', 1 );
 	return @supported_formats;
 }
@@ -288,7 +288,7 @@ Get the list of supported styles for each database.
 sub soap_get_supported_styles {
 	print_debug_message( 'soap_get_supported_styles', 'Begin', 1 );
 	my $supported_styles_xml = $soap->getSupportedStyles();
-	my (@supported_styles) = $supported_styles_xml->valueof('//getSupportedStylesReturn/getSupportedStylesReturn');
+	my (@supported_styles) = $supported_styles_xml->valueof('//getSupportedStylesReturn');
 	print_debug_message( 'soap_get_supported_styles', 'End', 1 );
 	return @supported_styles;
 }
@@ -322,7 +322,7 @@ sub soap_get_db_formats {
 	print_debug_message( 'soap_get_db_formats', 'Begin', 1 );
 	my $dbName = shift;
 	my $supported_formats_xml = $soap->getDbFormats(SOAP::Data->name( 'db' => $dbName ));
-	my (@supported_formats) = $supported_formats_xml->valueof('//getDbFormatsReturn/getDbFormatsReturn');
+	my (@supported_formats) = $supported_formats_xml->valueof('//getDbFormatsReturn');
 	print_debug_message( 'soap_get_db_formats', 'End', 1 );
 	return @supported_formats;
 }
@@ -361,7 +361,7 @@ sub soap_get_format_styles {
 		SOAP::Data->name( 'db' => $dbName ),
 		SOAP::Data->name( 'format' => $formatName )
 	);
-	my (@supported_styles) = $supported_styles_xml->valueof('//getFormatStylesReturn/getFormatStylesReturn');
+	my (@supported_styles) = $supported_styles_xml->valueof('//getFormatStylesReturn');
 	print_debug_message( 'soap_get_format_styles', 'End', 1 );
 	return @supported_styles;
 }
@@ -440,7 +440,7 @@ sub soap_fetch_batch {
 	my $styleName = shift;
 	my $result_xml = $soap->fetchBatch(
 		SOAP::Data->name( 'db' => $dbName ),
-		SOAP::Data->name( 'id' => $idListStr ),
+		SOAP::Data->name( 'ids' => $idListStr ),
 		SOAP::Data->name( 'format' => $formatName ),
 		SOAP::Data->name( 'style' => $styleName )
 	);
