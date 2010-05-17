@@ -297,7 +297,8 @@ class EbiWsAppl
     req = GetResultTypes.new()
     req.jobId = jobId
     res = soap.getResultTypes(req)
-    resultTypes = res.resultTypes['type']
+	# 'type' is a restricted attribute name, so a work-around is required to access this attribute
+    resultTypes = res.resultTypes.instance_variable_get(:@type)
     printDebugMessage('getResultTypes', 'End', 1)
     return resultTypes
   end
@@ -327,7 +328,8 @@ class EbiWsAppl
     req.type = type
     req.parameters = params
     res = soap.getResult(req)
-    resultData = Base64.decode64(res.output)
+	# As a work-around, we need to double decode
+    resultData = Base64.decode64(Base64.decode64(res.output))
     printDebugMessage('getResult', 'End', 1)
     return resultData
   end
