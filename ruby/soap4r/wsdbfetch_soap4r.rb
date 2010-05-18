@@ -4,7 +4,7 @@
 # WSDbfetch document/literal SOAP service Ruby client.
 #
 # Tested with:
-#   SOAP4R 1.5.8 and Ruby 1.8.7 (Ubuntu 8.04 LTS)
+#   SOAP4R 1.5.5 and Ruby 1.8.6 (Ubuntu 8.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/dbfetch
