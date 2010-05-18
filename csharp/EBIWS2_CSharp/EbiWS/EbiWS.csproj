@@ -49,6 +49,7 @@
     <Compile Include="PsiBlastClient.cs" />
     <Compile Include="PsiSearchClient.cs" />
     <Compile Include="TcoffeeClient.cs" />
+    <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -63,6 +64,7 @@
     <None Include="WebReferences\MafftWs\Reference.map" />
     <None Include="WebReferences\MuscleWs\Reference.map" />
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
+    <None Include="WebReferences\WSDbfetchWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
