@@ -10,7 +10,7 @@
 # Tested with:
 #   PHP 5.0.4 (CentOS 4)
 #   PHP 5.1.6 (CentOS 5)
-#   PHP ?? (Ubuntu 8.04 LTS)
+#   PHP 5.2.4 (Ubuntu 8.04 LTS)
 #   PHP 5.3.2 (Ubuntu 10.04 LTS)
 #
 # See:
