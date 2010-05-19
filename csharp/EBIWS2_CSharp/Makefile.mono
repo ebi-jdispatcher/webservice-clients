@@ -136,7 +136,7 @@ distclean-WSDbfetchCliClient \
 distclean-WuBlastCliClient
 
 distclean-EbiWS:
-	cd EbiWS && $(MAKE) distclean
+	cd EbiWS && $(MAKE) -f Makefile.mono distclean
 
 distclean-ClustalW2CliClient:
 	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono distclean
