@@ -8,6 +8,7 @@
     <ProjectGuid>{751556E8-97FA-4828-8489-1653DB90CF56}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>ClustalW2CliClient</AssemblyName>
+    <RootNamespace>ClustalW2CliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

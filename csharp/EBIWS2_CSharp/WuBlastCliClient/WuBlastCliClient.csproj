@@ -8,6 +8,7 @@
     <ProjectGuid>{FE29CBE8-005F-46A1-BE67-00086BB8E715}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>WuBlastCliClient</AssemblyName>
+    <RootNamespace>WuBlastCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

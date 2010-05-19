@@ -8,6 +8,7 @@
     <ProjectGuid>{E5841FA4-2F08-424A-8560-4325709B6D67}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>PsiSearchCliClient</AssemblyName>
+    <RootNamespace>PsiSearchCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

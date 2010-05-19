@@ -8,6 +8,7 @@
     <ProjectGuid>{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>FastaCliClient</AssemblyName>
+    <RootNamespace>FastaCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

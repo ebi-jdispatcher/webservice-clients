@@ -8,6 +8,7 @@
     <ProjectGuid>{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>NcbiBlastCliClient</AssemblyName>
+    <RootNamespace>NcbiBlastCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

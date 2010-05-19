@@ -8,6 +8,7 @@
     <ProjectGuid>{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>MuscleCliClient</AssemblyName>
+    <RootNamespace>MuscleCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

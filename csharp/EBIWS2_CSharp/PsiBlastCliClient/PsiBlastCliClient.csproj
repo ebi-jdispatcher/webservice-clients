@@ -8,6 +8,7 @@
     <ProjectGuid>{85F8B007-D263-4D3A-838D-23798E1F32A3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>PsiBlastCliClient</AssemblyName>
+    <RootNamespace>PsiBlastCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

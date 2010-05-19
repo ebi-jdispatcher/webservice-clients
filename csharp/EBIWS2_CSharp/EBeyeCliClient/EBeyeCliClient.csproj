@@ -8,6 +8,7 @@
     <ProjectGuid>{3346535B-FAF4-4D17-AE64-9B681139FD73}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>EBeyeCliClient</AssemblyName>
+    <RootNamespace>EBeyeCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

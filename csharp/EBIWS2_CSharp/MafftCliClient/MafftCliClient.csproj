@@ -8,6 +8,7 @@
     <ProjectGuid>{50438295-6245-4945-8E55-0023B4F277F6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>MafftCliClient</AssemblyName>
+    <RootNamespace>MafftCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

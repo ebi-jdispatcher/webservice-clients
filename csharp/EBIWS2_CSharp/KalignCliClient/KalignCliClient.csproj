@@ -8,6 +8,7 @@
     <ProjectGuid>{07FF5EF6-0DD5-47F1-99AD-AD57F759A2D5}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>KalignCliClient</AssemblyName>
+    <RootNamespace>KalignCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

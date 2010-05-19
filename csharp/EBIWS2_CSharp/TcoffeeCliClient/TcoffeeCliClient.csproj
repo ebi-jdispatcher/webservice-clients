@@ -8,6 +8,7 @@
     <ProjectGuid>{7A5BD7CE-7018-416E-897F-9D831DE4FED6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>TcoffeeCliClient</AssemblyName>
+    <RootNamespace>TcoffeeCliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
