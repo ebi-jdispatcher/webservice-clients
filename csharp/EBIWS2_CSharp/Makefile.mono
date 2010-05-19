@@ -20,6 +20,7 @@ build-NcbiBlastCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
 build-TcoffeeCliClient \
+build-WSDbfetchCliClient \
 build-WuBlastCliClient
 
 build-EbiWS:
@@ -55,6 +56,9 @@ build-PsiSearchCliClient: build-EbiWS
 build-TcoffeeCliClient: build-EbiWS
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono
 
+build-WSDbfetchCliClient: build-EbiWS
+	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono
+
 build-WuBlastCliClient: build-EbiWS
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono
 
@@ -72,6 +76,7 @@ clean-NcbiBlastCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
 clean-TcoffeeCliClient \
+clean-WSDbfetchCliClient \
 clean-WuBlastCliClient
 
 clean-EbiWS:
@@ -107,6 +112,9 @@ clean-PsiSearchCliClient:
 clean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono) clean
 
+clean-WSDbfetchCliClient:
+	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -124,6 +132,7 @@ distclean-NcbiBlastCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
 distclean-TcoffeeCliClient \
+distclean-WSDbfetchCliClient \
 distclean-WuBlastCliClient
 
 distclean-EbiWS:
@@ -158,6 +167,9 @@ distclean-PsiSearchCliClient:
 
 distclean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-WSDbfetchCliClient:
+	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-WuBlastCliClient:
 	cd WuBlastCliClient && $(MAKE) -f Makefile.mono distclean

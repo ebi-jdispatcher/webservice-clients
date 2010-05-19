@@ -51,6 +51,7 @@ NcbiBlastClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
 TcoffeeClient.cs \
+WSDbfetchClient.cs \
 WuBlastClient.cs
 
 stubSrc = \

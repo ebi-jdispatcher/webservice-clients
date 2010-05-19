@@ -16,6 +16,7 @@ NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
+WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe \
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe
 
 EbiWS\bin\Release\EbiWS.dll:
@@ -51,6 +52,9 @@ PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe: EbiWS\bin\Release\EbiWS.d
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk
 
+WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk
+
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -66,6 +70,7 @@ clean:
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd TcoffeeBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 
 distclean:
@@ -80,4 +85,5 @@ distclean:
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean

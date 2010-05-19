@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiSearchCliClient", "PsiSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2CliClient", "ClustalW2CliClient\ClustalW2CliClient.csproj", "{751556E8-97FA-4828-8489-1653DB90CF56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSDbfetchCliClient", "WSDbfetchCliClient\WSDbfetchCliClient.csproj", "{503C3DEB-B994-4B9A-9AD4-76653994206A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50438295-6245-4945-8E55-0023B4F277F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50438295-6245-4945-8E55-0023B4F277F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50438295-6245-4945-8E55-0023B4F277F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,7 +87,6 @@ Global
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		version = 0.1
 		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.csproj
 	EndGlobalSection
 EndGlobal

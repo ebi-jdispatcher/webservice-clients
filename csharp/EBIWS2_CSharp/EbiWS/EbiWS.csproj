@@ -8,6 +8,7 @@
     <ProjectGuid>{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>EbiWS</AssemblyName>
+    <RootNamespace>EbiWS</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,6 +51,7 @@
     <Compile Include="PsiSearchClient.cs" />
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
+    <Compile Include="WSDbfetchClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
