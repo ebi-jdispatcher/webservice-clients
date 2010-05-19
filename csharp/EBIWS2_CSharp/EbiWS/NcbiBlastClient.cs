@@ -1,4 +1,4 @@
-/* $Id: NcbiBlastClient.cs 1037 2009-06-06 20:35:16Z hpm $
+/* $Id$
  * ======================================================================
  * JDispatcher SOAP client for NCBI BLAST
  * 

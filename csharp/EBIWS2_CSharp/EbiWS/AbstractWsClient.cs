@@ -1,4 +1,4 @@
-/* $Id: AbstractWsClient.cs 1039 2009-06-06 20:36:34Z hpm $
+/* $Id$
  * ======================================================================
  * Common structure and methods for JDispatcher SOAP clients.
  * 
