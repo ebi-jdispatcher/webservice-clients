@@ -22,6 +22,7 @@ NcbiBlastCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
 TcoffeeCliClient.exe \
+WSDbfetchCliClient.exe \
 WuBlastCliClient.exe
 
 EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
@@ -66,6 +67,10 @@ PsiSearchCliClient.exe: EbiWS.dll
 
 TcoffeeCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/TcoffeeCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+WSDbfetchCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/WSDbfetchCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 WuBlastCliClient.exe: EbiWS.dll
