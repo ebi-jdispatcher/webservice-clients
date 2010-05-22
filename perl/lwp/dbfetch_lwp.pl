@@ -51,7 +51,8 @@ use English;
 use LWP;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-use YAML;
+#use YAML;
+use YAML::Syck;
 use Data::Dumper;
 
 # Base URL for service
@@ -184,7 +185,8 @@ sub rest_get_meta_information {
     my $url = $baseUrl . '/dbfetch.databases?style=yaml';
     my $response_str = &rest_request($url);
     my $dbfetch_info = Load($response_str);
-    #print Dumper($dbfetch_info);
+    print_debug_message( 'rest_get_meta_information', 
+			 "dbfetch_info:\n" . Dumper($dbfetch_info), 11 );
     print_debug_message( 'rest_get_meta_information', 'End', 1 );
     return $dbfetch_info;
 }
@@ -201,8 +203,9 @@ sub rest_get_supported_dbs {
 	print_debug_message( 'rest_get_supported_dbs', 'Begin', 1 );
 	my $dbfetch_info = &rest_get_meta_information();
 	my (@retArray) = ();
-	foreach my $db_info (@{$dbfetch_info->{'databases'}}) {
-	    push(@retArray, $db_info->{'databaseName'});
+	foreach my $db_name (sort(keys(%$dbfetch_info))) {
+	    my $db_info = $dbfetch_info->{$db_name};
+	    push(@retArray, $db_info->{'name'});
 	}
 	print_debug_message( 'rest_get_supported_dbs', 'End', 1 );
 	return @retArray;
@@ -237,10 +240,11 @@ sub rest_get_supported_formats {
 	print_debug_message( 'rest_get_supported_formats', 'Begin', 1 );
 	my $dbfetch_info = &rest_get_meta_information();
 	my (@retArray) = ();
-	foreach my $db_info (@{$dbfetch_info->{'databases'}}) {
-	    my $tmpStr = $db_info->{'databaseName'} . "\t";
-	    foreach my $format (@{$db_info->{'formats'}}) {
-		$tmpStr .= $format->{'formatName'} . ',';
+	foreach my $db_name (sort(keys(%$dbfetch_info))) {
+	    my $db_info = $dbfetch_info->{$db_name};
+	    my $tmpStr = $db_info->{'name'} . "\t";
+	    foreach my $format (@{$db_info->{'formatInfoList'}}) {
+		$tmpStr .= $format->{'name'} . ',';
 	    }
 	    $tmpStr =~ s/,$//;
 	    push(@retArray, $tmpStr);
@@ -278,12 +282,13 @@ sub rest_get_supported_styles {
 	print_debug_message( 'rest_get_supported_styles', 'Begin', 1 );
 	my $dbfetch_info = &rest_get_meta_information();
 	my (@retArray) = ();
-	foreach my $db_info (@{$dbfetch_info->{'databases'}}) {
-	    my $tmpStr = $db_info->{'databaseName'} . "\t";
+	foreach my $db_name (sort(keys(%$dbfetch_info))) {
+	    my $db_info = $dbfetch_info->{$db_name};
+	    my $tmpStr = $db_info->{'name'} . "\t";
 	    my %styleHash = ();
-	    foreach my $format (@{$db_info->{'formats'}}) {
-		foreach my $style (@{$format->{'styles'}}) {
-		    $styleHash{$style->{'styleName'}} = $style->{'styleName'};
+	    foreach my $format (@{$db_info->{'formatInfoList'}}) {
+		foreach my $styleName (@{$format->{'styleNames'}}) {
+		    $styleHash{$styleName} = $styleName;
 		}
 	    }
 	    foreach my $styleName (sort(keys(%styleHash))) {
@@ -296,7 +301,7 @@ sub rest_get_supported_styles {
 	return (@retArray);
 }
 
-=head2
+=head2 print_get_supported_styles()
 
 Print list of supported database and style names.
 
@@ -313,23 +318,140 @@ sub print_get_supported_styles {
     print_debug_message( 'print_get_supported_styles', 'End', 1 );
 }
 
+=head2 rest_get_db_formats()
+
+Get list of available formats for a database.
+
+  my (@formatNameList) = &rest_get_db_formats($dbName);
+
+=cut
+
 sub rest_get_db_formats {
+    print_debug_message( 'rest_get_db_formats', 'Begin', 1 );
+    my $dbName = shift;
+    my $dbfetch_info = &rest_get_meta_information();
+    my (@retArray) = ();
+    if($dbfetch_info->{$dbName}) {
+	my $db_info = $dbfetch_info->{$dbName};
+	foreach my $format (@{$db_info->{'formatInfoList'}}) {
+	    push(@retArray, $format->{'name'});
+	}
+    }
+    print_debug_message( 'rest_get_db_formats', 'End', 1 );
+    return (@retArray);
 }
+
+=head2 print_get_db_formats()
+
+Print list of available formats for a database.
+
+  &print_get_db_formats($dbName);
+
+=cut
 
 sub print_get_db_formats {
+    print_debug_message( 'print_get_db_formats', 'Begin', 1 );
+    my (@format_array) = &rest_get_db_formats(@_);
+    foreach my $format (@format_array) {
+	print $format, "\n";
+    }
+    print_debug_message( 'print_get_db_formats', 'End', 1 );
 }
+
+=head2 rest_get_format_styles()
+
+Get list of styles for a format of a database.
+
+  my (@styleNameList) = &rest_get_format_styles($dbName, $formatName);
+
+=cut
 
 sub rest_get_format_styles {
+    print_debug_message('rest_get_format_styles', 'Begin', 1);
+    my $dbName = shift;
+    my $formatName = shift;
+    my $dbfetch_info = &rest_get_meta_information();
+    my (@retArray) = ();
+    if($dbfetch_info->{$dbName}) {
+	my $db_info = $dbfetch_info->{$dbName};
+	foreach my $format (@{$db_info->{'formatInfoList'}}) {
+	    if($formatName eq  $format->{'name'}) {
+	       @retArray = @{$format->{'styleNames'}};
+	    }
+	}
+    }
+    print_debug_message('rest_get_format_styles', 'End', 1);
+    return (@retArray);
 }
+
+=head2 print_get_format_styles()
+
+Print list of available style names for a format of a database.
+
+  &print_get_format_styles($dbName, $formatName);
+
+=cut
 
 sub print_get_format_styles {
+    print_debug_message( 'print_get_format_styles', 'Begin', 1 );
+    my (@style_array) = &rest_get_format_styles(@_);
+    foreach my $style (@style_array) {
+	print $style, "\n";
+    }
+    print_debug_message( 'print_get_format_styles', 'End', 1 );
 }
+
+=head2 rest_fetch_data()
+
+Fetch an entry.
+
+  my $entryStr = &rest_fetch_data($query, $formatName, $styleName);
+
+=cut
 
 sub rest_fetch_data {
+    print_debug_message( 'rest_fetch_data', 'Begin', 1 );
+    my $query = shift;
+    my $formatName = 'default';
+    $formatName = shift if(scalar(@_) > 0);
+    my $styleName = 'raw';
+    $styleName = shift if(scalar(@_) > 0);
+    my @queryPart = split(/:/, $query);
+    my $dbName = 'default';
+    my $id;
+    if(scalar(@queryPart) > 1) {
+	$dbName = $queryPart[0];
+	$id = $queryPart[1];
+    }
+    else {
+	$id = $query;
+    }
+    my $response_str = &rest_fetch_batch($dbName, $id, $formatName, $styleName);
+    print_debug_message( 'rest_fetch_data', 'End', 1 );
+    return $response_str;
 }
 
+=head2 print_fetch_data()
+
+Print an entry.
+
+  &print_fetch_data($query, $formatName, $styleName);
+
+=cut
+
 sub print_fetch_data {
+    print_debug_message( 'print_fetch_data', 'Begin', 1 );
+    print &rest_fetch_data(@_);
+    print_debug_message( 'print_fetch_data', 'End', 1 );
 }
+
+=head2 rest_fetch_batch()
+
+Fetch a set of entries.
+
+  my $entriesStr = &rest_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+
+=cut
 
 sub rest_fetch_batch {
     print_debug_message( 'rest_fetch_batch', 'Begin', 1 );
@@ -337,11 +459,19 @@ sub rest_fetch_batch {
     $url .= '/' . shift if(scalar(@_) > 0);
     $url .= '/' . shift if(scalar(@_) > 0);
     $url .= '?style=' . shift if(scalar(@_) > 0);
-    print $url, "\n";
+    print_debug_message( 'rest_fetch_batch', 'url: ' . $url, 11 );
     my $response_str = &rest_request($url);
     print_debug_message( 'rest_fetch_batch', 'End', 1 );
     return $response_str;
 }
+
+=head2 print_fetch_batch()
+
+Print a set of entries.
+
+  &print_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+
+=cut
 
 sub print_fetch_batch {
     print_debug_message( 'print_fetch_batch', 'Begin', 1 );
@@ -380,6 +510,39 @@ sub usage {
 	print STDERR <<EOF
 WSDbfetch
 =========
+
+Usage:
+  $scriptName <method> [arguments...] [--baseUrl <baseUrl>]
+
+A number of methods are available:
+
+  getSupportedDBs - list available databases
+  getSupportedFormats - list available databases with formats
+  getSupportedStyles - list available databases with styles
+  getDbFormats - list formats for a specifed database
+  getFormatStyles - list styles for a specified database and format
+  fetchData - retrive an database entry. See below for details of arguments.
+  fetchBatch - retrive database entries. See below for details of arguments.
+
+Fetching an entry: fetchData
+
+  $scriptName fetchData <dbName:id> [format [style]]
+
+  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT)
+  format     format to retrive (e.g. uniprot)
+  style      style to retrive (e.g. raw)
+
+
+Fetching entries: fetchBatch
+
+  $scriptName fetchBatch <dbName> <idList> [format [style]]
+
+  dbName     database name (e.g. UNIPROT)
+  idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
+             Maximum of 200 IDs or accessions. "-" for STDIN.
+  format     format to retrive (e.g. uniprot)
+  style      style to retrive (e.g. raw)
+
 Support/Feedback:
 
   http://www.ebi.ac.uk/support/
