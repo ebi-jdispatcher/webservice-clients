@@ -164,7 +164,7 @@ $serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
 &print_debug_message( 'MAIN', 'endpoint: ' . $serviceEndpoint,   11 );
 &print_debug_message( 'MAIN', 'namespace: ' . $serviceNamespace, 11 );
 
-# Create the service interface, setting the fault handler to throw exceptions
+# Create the main service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
 	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
@@ -186,7 +186,8 @@ my $soap = SOAP::Lite->proxy(
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
 '$Revision$' =~ m/(\d+)/;
-$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
+my $userAgentStr = "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent();
+$soap->transport->agent($userAgentStr);
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
@@ -274,7 +275,7 @@ Get a list of tool parameter names.
 
 sub soap_get_parameters {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $ret = $soap->getParameters(undef);
+	my $ret = $soap->getParameters();
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return $ret->valueof('//parameters/id');
 }
