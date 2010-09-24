@@ -376,7 +376,9 @@ sub rest_get_format_styles {
 	my $db_info = $dbfetch_info->{$dbName};
 	foreach my $format (@{$db_info->{'formatInfoList'}}) {
 	    if($formatName eq  $format->{'name'}) {
-	       @retArray = @{$format->{'styleNames'}};
+	    	foreach my $styleInfo (@{$format->{'styleInfoList'}}) {
+	    		push(@retArray, $styleInfo->{'name'});
+	    	}
 	    }
 	}
     }
