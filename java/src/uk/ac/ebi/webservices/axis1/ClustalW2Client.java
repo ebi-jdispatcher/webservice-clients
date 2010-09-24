@@ -83,7 +83,8 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -x, --gapext       : real : gap extension penalty\n"
 		+ "  -y, --gapdist      : int  : gap seperation penalty\n"
 		+ "  -i, --iteration    : str  : iteration strategy, see --paramDetail iteration\n" 
-		+ "  -N, --numiter      : int  : maximum number of iterations\n";
+		+ "  -N, --numiter      : int  : maximum number of iterations\n"
+		+ "      --clustering   : str  : clustering method for guide tree\n";
 
 	/** Default constructor.
 	 */
@@ -381,6 +382,7 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("y")) params.setGapdist(new Integer(line.getOptionValue("y")));
 		if (line.hasOption("i")) params.setIteration(line.getOptionValue("i"));
 		if (line.hasOption("N")) params.setNumiter(new Integer(line.getOptionValue("N")));
+		if (line.hasOption("clustering")) params.setClustering(line.getOptionValue("clustering"));
 		if (line.hasOption("o")) params.setOutput(line.getOptionValue("o"));
 		if (line.hasOption("r")) params.setOutorder(line.getOptionValue("r"));
 		printDebugMessage("loadParams", "End", 1);
@@ -419,6 +421,7 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("y", "gapdist", true, "Gap separation penalty (multi)");
 		options.addOption("i", "iteration", true, "Iteration type");
 		options.addOption("N", "numiter", true, "Number of iterations");
+		options.addOption("clustering", true, "Clustering method for guide tree");
 		options.addOption("o", "output", true, "Alignment format");
 		options.addOption("r", "outorder", true, "Order of sequences in alignment");
 		options.addOption("sequence", true, "Input sequences/alignment");
