@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * JDispatcher PSI-BLAST (SOAP) web service Java client using Axis 1.x.
+ * JDispatcher PSI-Search (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -493,7 +493,7 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar WSNCBIBlast.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar PSISearch_Axis1.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);
