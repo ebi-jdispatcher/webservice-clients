@@ -377,7 +377,7 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("dnamatrix")) params.setDnamatrix(line.getOptionValue("dnamatrix"));
 		if (line.hasOption("g")) params.setGapopen(new Integer(line.getOptionValue("g")));
-		if (line.hasOption("noendgaps")) params.setNoendgaps(true);
+		if (line.hasOption("noendgaps")) params.setNoendgaps(new Boolean(true));
 		if (line.hasOption("x")) params.setGapext(new Float(line.getOptionValue("x")));
 		if (line.hasOption("y")) params.setGapdist(new Integer(line.getOptionValue("y")));
 		if (line.hasOption("i")) params.setIteration(line.getOptionValue("i"));
