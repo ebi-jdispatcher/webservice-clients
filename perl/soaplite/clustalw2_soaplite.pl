@@ -95,6 +95,7 @@ GetOptions(
     'gapdist|y=i'   => \$tool_params{'gapdist'},   # Gap separation penalty (multi)
     'iteration|i=s' => \$tool_params{'iteration'}, # Iteration type
     'numiter|N=i'   => \$tool_params{'numiter'},   # Number of iterations
+    'clustering=s'  => \$tool_params{'clustering'}, # Clustering method for guide tree
     'output|o=s'    => \$tool_params{'output'},    # Alignment format
     'outorder|r=s'  => \$tool_params{'outorder'},  # Order of sequences in alignment
     'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
@@ -125,7 +126,7 @@ GetOptions(
 	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
@@ -860,7 +861,7 @@ ClustalW2
 
 General purpose multiple sequence alignment program for DNA or protein.
 
-ClustalW usea a progressive alignment approach that consists of three stages:
+ClustalW uses a progressive alignment approach that consists of three stages:
 
 1. Pairwise (fast or slow) alignment of input sequences.
 2. Generation of a guide tree from the pairwise alignments.
@@ -909,6 +910,7 @@ added to the alignment.
   -y, --gapdist      : int  : gap seperation penalty
   -i, --iteration    : str  : iteration strategy, see --paramDetail iteration 
   -N, --numiter      : int  : maximum number of iterations
+      --clustering   : str  : clustering method for guide tree
 
 [General]
 
