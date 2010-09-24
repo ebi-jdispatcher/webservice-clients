@@ -11,8 +11,8 @@ EMAIL = email@example.org
 #EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 fasta kalign mafft muscle ncbiblast psiblast tcoffee wublast
-# psisearch prank
+all: clustalw2 fasta kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
+# TODO: dbfetch prank
 
 clean: clustalw2_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
@@ -34,6 +34,32 @@ clustalw2_align_stdin_stdout:
 clustalw2_clean:
 	rm -f clustalw2-*
 
+# dbfetch
+dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
+
+dbfetch_getSupportedDBs:
+	${PERL} dbfetch_lwp.pl getSupportedDBs > dbfetch-getSupportedDBs.txt
+
+dbfetch_getSupportedFormats:
+	${PERL} dbfetch_lwp.pl getSupportedFormats > dbfetch-getSupportedFormats.txt
+
+dbfetch_getSupportedStyles:
+	${PERL} dbfetch_lwp.pl getSupportedStyles > dbfetch-getSupportedStyles.txt
+
+dbfetch_getDbFormats:
+	${PERL} dbfetch_lwp.pl getDbFormats uniprotkb > dbfetch-getDbFormats.txt
+
+dbfetch_getFormatStyles:
+	${PERL} dbfetch_lwp.pl getFormatStyles uniprotkb default > dbfetch-getFormatStyles.txt
+
+dbfetch_fetchData:
+	${PERL} dbfetch_lwp.pl fetchData 'uniprotkb:wap_rat' > dbfetch-fetchData.txt
+
+dbfetch_fetchBatch:
+	${PERL} dbfetch_lwp.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' > dbfetch-fetchBatch.txt
+
+dbfetch_clean:
+	rm -f dbfetch-*
 # FASTA
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_multifasta_file
 
@@ -173,16 +199,19 @@ psisearch_param_detail:
 	${PERL} psisearch_lwp.pl --paramDetail matrix
 
 psisearch_file:
-	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 psisearch_dbid:
-	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 UNIPROT:ABCC9_HUMAN
 
 psisearch_stdin_stdout:
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psisearch-blah.txt
 
 psisearch_clean:
 	rm -f psisearch-*
+
+# TODO PRANK
+prank:
 
 # T-Coffee
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
