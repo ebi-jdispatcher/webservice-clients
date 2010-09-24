@@ -11,8 +11,8 @@ EMAIL = email@example.org
 #EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 fasta kalign mafft muscle ncbiblast tcoffee wublast
-#psiblast psisearch 
+all: clustalw2 fasta kalign mafft muscle ncbiblast psiblast tcoffee wublast
+# psisearch prank
 
 clean: clustalw2_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
@@ -143,37 +143,43 @@ ncbiblast_clean:
 	rm -f ncbiblast-*
 
 # PSI-BLAST
-#psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
-#
-#psiblast_file:
-#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 ../test/SWISSPROT_ABCC9_HUMAN.fasta
-#
-#psiblast_dbid:
-#	${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 SWISSPROT:ABCC9_HUMAN
-#
-#psiblast_stdin_stdout:
-#	cat ../test/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast.pl --email ${EMAIL} --database swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psiblast-blah.txt
+psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout
+
+psiblast_params:
+	${PERL} psiblast_lwp.pl --params
+
+psiblast_param_detail:
+	${PERL} psiblast_lwp.pl --paramDetail matrix
+
+psiblast_file:
+	${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+psiblast_dbid:
+	${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 UNIPROT:ABCC9_HUMAN
+
+psiblast_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psiblast-blah.txt
 
 psiblast_clean:
 	rm -f psiblast-*
 
 # PSI-Search
-#psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
-#
-#psisearch_params:
-#	${PERL} psisearch_lwp.pl --params
-#
-#psisearch_param_detail:
-#	${PERL} psisearch_lwp.pl --paramDetail matrix
-#
-#psisearch_file:
-#	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
-#
-#psisearch_dbid:
-#	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
-#
-#psisearch_stdin_stdout:
-#	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
+psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
+
+psisearch_params:
+	${PERL} psisearch_lwp.pl --params
+
+psisearch_param_detail:
+	${PERL} psisearch_lwp.pl --paramDetail matrix
+
+psisearch_file:
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+psisearch_dbid:
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 UNIPROT:ABCC9_HUMAN
+
+psisearch_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat tooloutput --outfile - - > psisearch-blah.txt
 
 psisearch_clean:
 	rm -f psisearch-*
