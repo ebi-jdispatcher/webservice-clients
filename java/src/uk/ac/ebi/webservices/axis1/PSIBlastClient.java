@@ -63,6 +63,34 @@ public class PSIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+"      --selectedHits  : file : Selected hits from last iteration for building\n" 
 		+"                               search profile (PSSM)\n"
 		+"  -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration\n";
+	/** Additional usage information for iterations */
+	private static final String iterationMsg = "Iterations:\n"
+		+ "\n"
+		+ "  To generate and refine the profile (PSSM) used to perform the search after\n" 
+		+ "  the first iteration the set of hits to be included in the generation of the\n"
+		+ "  PSSM needs to be specified for each iteration. This can be either obtained\n"
+		+ "  from the previous iteration using the job identifier of the iteration, or\n"
+		+ "  be explicit specification of a file containing the list of identifiers.\n"
+		+ "\n"
+		+ "  Iteration 1:\n"
+		+ "  java -jar <jarFile>  --email <email> --database <db> <seqFile> [options...]\n"
+		+ "\n"
+		+ "  Iteration 2:\n"
+		+ "  java -jar <jarFile> --email <email> --previousjobid <jobId> \\ \n"
+		+ "    [--selectedHits <selFile>] [options...]\n"
+		+ "\n"
+		+ "  Iteration 3+:\n"
+		+ "  java -jar <jarFile> --email <email> --previousjobid <jobId> \\ \n"
+		+ "    [--selectedHits <selFile>] [--cpfile <checkpoint>] [options...]\n";
+	/** Documentation and help */
+	private static final String docAndHelpMsg = "Further information:\n"
+		+ "\n"
+		+ "  http://www.ebi.ac.uk/Tools/webservices/services/sss/psiblast_soap\n"
+		+ "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n"
+		+ "\n"
+		+ "Support/Feedback:\n"
+		+ "\n"
+		+ "  http://www.ebi.ac.uk/support/\n";
 
 	/** Default constructor.
 	 */
@@ -93,6 +121,8 @@ public class PSIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	private static void printUsage() {
 		System.out.println(usageMsg);
 		printGenericOptsUsage();
+		System.out.println(iterationMsg);
+		System.out.println(docAndHelpMsg);
 	}
 	
 	/** Ensure that a service proxy is available to call the web service.
