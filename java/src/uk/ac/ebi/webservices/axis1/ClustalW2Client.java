@@ -364,7 +364,6 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Tool specific options
 		if (line.hasOption("l")) params.setAlignment(line.getOptionValue("l"));
 		if (line.hasOption("type")) params.setType(line.getOptionValue("type"));
-		else params.setType("protein");
 		if (line.hasOption("k")) params.setKtup(new Integer(line.getOptionValue("k")));
 		if (line.hasOption("w")) params.setWindow(new Integer(line.getOptionValue("w")));
 		if (line.hasOption("s")) params.setScore(line.getOptionValue("s"));
