@@ -197,7 +197,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- jar destfile="${jar.dir}/Kalign_Axis1.jar"
+		<jar destfile="${jar.dir}/Kalign_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/KalignClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/kalign/**">
 			<manifest>
@@ -206,8 +206,8 @@
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar -->
-		<!-- jar destfile="${jar.dir}/Mafft_Axis1.jar"
+		</jar>
+		<jar destfile="${jar.dir}/Mafft_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MafftClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mafft/**">
 			<manifest>
@@ -216,8 +216,8 @@
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar -->
-		<!-- jar destfile="${jar.dir}/Muscle_Axis1.jar"
+		</jar>
+		<jar destfile="${jar.dir}/Muscle_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MuscleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/muscle/**">
 			<manifest>
@@ -226,7 +226,7 @@
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar -->
+		</jar>
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
@@ -257,7 +257,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- jar destfile="${jar.dir}/Tcoffee_Axis1.jar"
+		<jar destfile="${jar.dir}/Tcoffee_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/TcoffeeClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/tcoffee/**">
 			<manifest>
@@ -266,7 +266,7 @@
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar -->
+		</jar>
 		<jar destfile="${jar.dir}/WSDbfetch_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/WSDbfetchClient.** uk/ac/ebi/webservices/axis1/stubs/wsdbfetch/**">
