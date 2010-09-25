@@ -31,20 +31,20 @@ public class MuscleClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	private String revision = "$Revision$";
 	/** Tool specific usage for help. */
 	private static final String usageMsg = "MUSCLE\n"
-+ "======\n"
-+ "\n"
-+ "General purpose multiple sequence alignment program for DNA or proteins.\n"
-+ "    \n"
-+ "[Required]\n"
-+ "\n"
-+ "  seqFile            : file : sequences to align (\"-\" for STDIN)\n"
-+ "\n"
-+ "[Optional]\n"
-+ "\n"
-+ "  -f, --format       : str  : alignment format, see --paramDetail format\n"
-+ "  -t, --tree         : str  : tree type, see --paramDetail tree\n"
-+ "  -r, --order        : str  : sequence order in alignment, \n"
-+ "                              see --paramDetail order\n";
+		+ "======\n"
+		+ "\n"
+		+ "General purpose multiple sequence alignment program for DNA or proteins.\n"
+		+ "    \n"
+		+ "[Required]\n"
+		+ "\n"
+		+ "  seqFile            : file : sequences to align (\"-\" for STDIN)\n"
+		+ "\n"
+		+ "[Optional]\n"
+		+ "\n"
+		+ "  -f, --format       : str  : alignment format, see --paramDetail format\n"
+		+ "  -t, --tree         : str  : tree type, see --paramDetail tree\n"
+		+ "  -r, --order        : str  : sequence order in alignment, \n"
+		+ "                              see --paramDetail order\n";
 
 	/** Default constructor.
 	 */
