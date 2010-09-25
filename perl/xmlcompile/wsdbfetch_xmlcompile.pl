@@ -79,7 +79,7 @@ GetOptions(
 	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 my $numOpts = scalar(@ARGV);
 
 # Debug mode: XML::Compile::SOAP version

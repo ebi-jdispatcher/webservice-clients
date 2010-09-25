@@ -105,7 +105,7 @@ GetOptions(
 
 # Adjust output level for options
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,

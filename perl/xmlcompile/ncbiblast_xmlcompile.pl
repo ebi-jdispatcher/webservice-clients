@@ -110,7 +110,7 @@ GetOptions(
 	'WSDL=s'        => \$WSDL,                     # WSDL URL for service
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 
 # Debug mode: XML::Compile::SOAP version
 &print_debug_message( 'MAIN',

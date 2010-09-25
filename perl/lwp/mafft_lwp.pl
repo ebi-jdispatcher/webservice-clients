@@ -111,7 +111,7 @@ GetOptions(
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 
 # Debug mode: LWP version
 &print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
