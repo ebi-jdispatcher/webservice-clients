@@ -327,7 +327,7 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("m")) params.setStype(line.getOptionValue("m"));
 		if (line.hasOption("f")) params.setFormat(line.getOptionValue("f"));
 		if (line.hasOption("g")) params.setGapopen(new Float(line.getOptionValue("g")));
-		if (line.hasOption("e")) params.setGapext(new Float(line.getOptionValue("x")));
+		if (line.hasOption("e")) params.setGapext(new Float(line.getOptionValue("e")));
 		if (line.hasOption("t")) params.setTermgap(new Float(line.getOptionValue("t")));
 		if (line.hasOption("b")) params.setBonus(new Float(line.getOptionValue("b")));
 		printDebugMessage("loadParams", "End", 1);
