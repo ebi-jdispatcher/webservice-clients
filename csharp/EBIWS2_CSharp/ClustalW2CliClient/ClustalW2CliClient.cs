@@ -65,6 +65,7 @@ added to the alignment.
   -y, --gapdist      : int  : gap seperation penalty
   -i, --iteration    : str  : iteration strategy, see --paramDetail iteration 
   -N, --numiter      : int  : maximum number of iterations
+      --clustering   : str  : clustering method for guide tree
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -409,6 +410,11 @@ added to the alignment.
 					goto case "--numiter";
 				case "/N":
 					goto case "--numiter";
+				case "--clustering": // Clustering method for guide tree
+					InParams.clustering = args[++i];
+					break;
+				case "/clustering":
+					goto case "--clustering";
 
 						// Input data/sequence option
 					case "--sequence": // Input sequence
