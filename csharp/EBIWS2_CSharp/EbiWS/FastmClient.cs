@@ -33,7 +33,7 @@ namespace EbiWS
 		private InputParameters inParams = null;
 		
 		// Default constructor. Required for abstract class constructor.
-		public FastaClient()
+		public FastmClient()
 		{
 		}
 		
