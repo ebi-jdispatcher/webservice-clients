@@ -1038,7 +1038,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
