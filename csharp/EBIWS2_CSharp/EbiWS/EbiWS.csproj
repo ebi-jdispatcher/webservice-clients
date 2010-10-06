@@ -52,6 +52,8 @@
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WSDbfetchClient.cs" />
+    <Compile Include="WebReferences\FastmWs\Reference.cs" />
+    <Compile Include="FastmClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -67,6 +69,7 @@
     <None Include="WebReferences\MuscleWs\Reference.map" />
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
+    <None Include="WebReferences\FastmWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
