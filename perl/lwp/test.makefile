@@ -11,7 +11,7 @@ EMAIL = email@example.org
 #EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 fasta kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
+all: clustalw2 fasta fastm kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
 # TODO: dbfetch prank
 
 clean: clustalw2_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
@@ -60,6 +60,7 @@ dbfetch_fetchBatch:
 
 dbfetch_clean:
 	rm -f dbfetch-*
+
 # FASTA
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_multifasta_file
 
@@ -86,6 +87,24 @@ fasta_multifasta_file:
 
 fasta_clean:
 	rm -f fasta-*
+
+# FASTM
+fastm: fastm_params fastm_param_detail fastm_file fastm_stdin_stdout
+
+fastm_params:
+	${PERL} fastm_lwp.pl --params
+
+fastm_param_detail:
+	${PERL} fastm_lwp.pl --paramDetail program
+
+fastm_file:
+	${PERL} fastm_lwp.pl --email ${EMAIL} --program fastm --database uniprotkb_swissprot --expupperlim 1.0 --scores 10 --alignments 10 --stype protein ../test_data/peptides.fasta
+
+fastm_stdin_stdout:
+	cat ../test_data/peptides.fasta | ${PERL} fastm_lwp.pl --email ${EMAIL} --program fastm --database uniprotkb_swissprot --expupperlim 1.0 --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > fastm-blah.txt
+
+fastm_clean:
+	rm -f fastm-*
 
 # Kalign
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
