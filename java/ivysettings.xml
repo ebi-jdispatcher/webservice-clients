@@ -1,0 +1,27 @@
+<ivysettings>
+	<settings defaultResolver="default"/>
+	<resolvers>
+		<url name="jboss" m2compatible="true">
+			<artifact pattern="http://repository.jboss.com/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		</url>
+		<url name="java.net.1" m2compatible="true">
+			<artifact pattern="http://download.java.net/maven/1/[organization]/jars/[module]-[revision].[ext]" />
+		</url>
+		<url name="java.net.2" m2compatible="true">
+			<artifact pattern="http://download.java.net/maven/2/[organization]/[module]/[revision]/[module]-[revision].[ext]" />
+		</url>
+	</resolvers>
+	<include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+	<include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
+	<include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+	<resolvers>
+		<chain name="main" dual="true">
+			<resolver ref="shared"/>
+			<resolver ref="public"/>
+			<resolver ref="jboss"/>
+			<resolver ref="java.net.1"/>
+			<resolver ref="java.net.2"/>
+		</chain>
+	</resolvers>
+	<include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+</ivysettings>
