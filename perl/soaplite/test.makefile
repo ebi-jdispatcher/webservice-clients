@@ -5,14 +5,15 @@
 #
 # ======================================================================
 
-#PERL = perl
-PERL = /ebi/extserv/bin/perl/bin/perl
+PERL = perl
+#PERL = /ebi/extserv/bin/perl/bin/perl
 #PERL = /sw/arch/bin/perl
-#EMAIL = email@example.org
-EMAIL = support@ebi.ac.uk
+EMAIL = email@example.org
+#EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 ebeye fasta kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
+all: clustalw2 ebeye fasta fastm kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
+# TODO: dbfetch prank
 
 clean: clustalw2_clean ebeye_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
@@ -124,6 +125,24 @@ fasta_stdin_stdout:
 
 fasta_clean:
 	rm -f fasta-*
+
+# FASTM
+fastm: fastm_params fastm_param_detail fastm_file fastm_stdin_stdout
+
+fastm_params:
+	${PERL} fastm_soaplite.pl --params
+
+fastm_param_detail:
+	${PERL} fastm_soaplite.pl --paramDetail program
+
+fastm_file:
+	${PERL} fastm_soaplite.pl --email ${EMAIL} --program fastm --database uniprotkb_swissprot --expupperlim 1.0 --scores 10 --alignments 10 --stype protein ../test_data/peptides.fasta
+
+fastm_stdin_stdout:
+	cat ../test_data/peptides.fasta | ${PERL} fastm_soaplite.pl --email ${EMAIL} --program fastm --database uniprotkb_swissprot --expupperlim 1.0 --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > fastm-blah.txt
+
+fastm_clean:
+	rm -f fastm-*
 
 # Kalign
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
