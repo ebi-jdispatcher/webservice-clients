@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2CliClient", "Clust
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSDbfetchCliClient", "WSDbfetchCliClient\WSDbfetchCliClient.csproj", "{503C3DEB-B994-4B9A-9AD4-76653994206A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastmCliClient", "FastmCliClient\FastmCliClient.csproj", "{7BBCBB66-7185-446F-B4B0-08CBB721C87E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{7A5BD7CE-7018-416E-897F-9D831DE4FED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A5BD7CE-7018-416E-897F-9D831DE4FED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A5BD7CE-7018-416E-897F-9D831DE4FED6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
