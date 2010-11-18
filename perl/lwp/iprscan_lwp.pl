@@ -65,22 +65,23 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params  = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-    'appl=s'    => \$params{'appl'},         # Signature methods.
-    'nogoterms'     => \$params{'nogoterms'}, # Disable Gene Ontology terms.
-    'nocrc'         => \$params{'nocrc'},     # Disable CRC look-up.
-    'sequence=s'    => \$params{'sequence'},  # Input sequence(s).
+	'appl=s'     => \$params{'appl'},          # Signature methods.
+	'nogoterms'  => \$params{'nogoterms'},     # Disable Gene Ontology terms.
+	'nocrc'      => \$params{'nocrc'},         # Disable CRC look-up.
+	'sequence=s' => \$params{'sequence'},      # Input sequence(s).
+	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Compatability options (old command-line)
-    'app=s'    => \$params{'app'},     # Signature methods.
-    'crc'      => \$params{'crc'},     # Enable CRC look-up.
-    'goterms'  => \$params{'goterms'}, # Enable GO terms.
+	'app=s'   => \$params{'app'},              # Signature methods.
+	'crc'     => \$params{'crc'},              # Enable CRC look-up.
+	'goterms' => \$params{'goterms'},          # Enable GO terms.
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -101,11 +102,10 @@ GetOptions(
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
 # Debug mode: LWP version
-&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
-	1 );
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1 );
 
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
@@ -185,6 +185,7 @@ else {
 
 	# Default: single sequence/identifier.
 	else {
+
 		# Load the sequence data and submit.
 		&submit_job( &load_data() );
 	}
@@ -212,7 +213,7 @@ sub rest_request {
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
 	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
 
 	# Perform the request
@@ -223,7 +224,10 @@ sub rest_request {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -312,7 +316,10 @@ sub rest_run {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 
 	# The job id is returned
@@ -690,30 +697,32 @@ sub load_params {
 
 	# Compatability options
 	# --app vs. --appl
-	if(!defined($params{'appl'}) && defined($params{'app'})) {
+	if ( !defined( $params{'appl'} ) && defined( $params{'app'} ) ) {
 		$params{'appl'} = $params{'app'};
 	}
+
 	# --crc vs. --nocrc
-	if($params{'nocrc'}) {
+	if ( $params{'nocrc'} ) {
 		$tool_params{'nocrc'} = 'true';
 	}
-	elsif($params{'crc'}) {
+	elsif ( $params{'crc'} ) {
 		$tool_params{'nocrc'} = 'false';
 	}
+
 	# --goterms vs. --nogoterms
-	if($params{'nogoterms'}) {
+	if ( $params{'nogoterms'} ) {
 		$tool_params{'goterms'} = 'false';
 	}
-	elsif($params{'goterms'}) { 
+	elsif ( $params{'goterms'} ) {
 		$tool_params{'goterms'} = 'true';
 	}
-	
+
 	# Signature methods to use.
-	if(defined($params{'appl'})) {
+	if ( defined( $params{'appl'} ) ) {
 		my (@applList) = split /[ ,]/, $params{'appl'};
 		$tool_params{'appl'} = \@applList;
 	}
-	
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -982,3 +991,4 @@ Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut
+
