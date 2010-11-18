@@ -4,17 +4,17 @@
 #
 # ======================================================================
 
-PERL = perl
-#PERL = /ebi/extserv/bin/perl/bin/perl
+#PERL = perl
+PERL = /ebi/extserv/bin/perl/bin/perl
 #PERL = /sw/arch/bin/perl
-EMAIL = email@example.org
-#EMAIL = support@ebi.ac.uk
+#EMAIL = email@example.org
+EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 fasta fastm kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
+all: clustalw2 fasta fastm iprscan kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
 # TODO: dbfetch prank
 
-clean: clustalw2_clean fasta_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
+clean: clustalw2_clean fasta_clean fastm_clean iprscan_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
 
 # ClustalW 2.0.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
@@ -105,6 +105,33 @@ fastm_stdin_stdout:
 
 fastm_clean:
 	rm -f fastm-*
+
+# InterProScan
+iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_multifasta_file
+
+iprscan_params:
+	${PERL} iprscan_lwp.pl --params
+
+iprscan_param_detail:
+	${PERL} iprscan_lwp.pl --paramDetail appl
+
+iprscan_file:
+	${PERL} iprscan_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+iprscan_dbid:
+	${PERL} iprscan_lwp.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+
+iprscan_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan-blah.txt
+
+iprscan_id_list_file:
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+iprscan_multifasta_file:
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+iprscan_clean:
+	rm -f iprscan-*
 
 # Kalign
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
