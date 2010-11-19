@@ -52,7 +52,7 @@ namespace EbiWS
 					SrvProxy.Url = ServiceEndPoint;
 				}
 				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " + SrvProxy.Url, 12);
-				SetProxyUserAgent();
+				SetProxyUserAgent(); // Set user-agent for client.
 			}
 			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
@@ -60,9 +60,12 @@ namespace EbiWS
 		
 		// Set User-agent for web service proxy.
 		private void SetProxyUserAgent() {
-			String clientVersion = revision.Substring(10, (revision.Length - 11));
+			PrintDebugMessage("SetProxyUserAgent", "Begin", 11);
+			String clientVersion = revision.Substring(11, (revision.Length - 13));
 			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.Platform.ToString() + "; " + SrvProxy.UserAgent + ")";
+			PrintDebugMessage("SetProxyUserAgent", "userAgent: " + userAgent, 12);
 			SrvProxy.UserAgent = userAgent;
+			PrintDebugMessage("SetProxyUserAgent", "End", 11);
 		}
 		
 		// Implementation of abstract method (AbsractWsClient.GetParams()).
