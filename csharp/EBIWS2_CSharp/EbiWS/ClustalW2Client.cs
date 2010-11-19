@@ -31,6 +31,8 @@ namespace EbiWS
 			set { inParams = value; }
 		}
 		private InputParameters inParams = null;
+		// Client object revision.
+		private string revision = "$Revision$";
 		
 		// Default constructor. Required for abstract class constructor.
 		public ClustalW2Client()
@@ -50,11 +52,19 @@ namespace EbiWS
 					SrvProxy.Url = ServiceEndPoint;
 				}
 				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " + SrvProxy.Url, 12);
+				SetProxyUserAgent();
 			}
 			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
-
+		
+		// Set User-agent for web service proxy.
+		private void SetProxyUserAgent() {
+			String clientVersion = revision.Substring(10, (revision.Length - 11));
+			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.Platform.ToString() + "; " + SrvProxy.UserAgent + ")";
+			SrvProxy.UserAgent = userAgent;
+		}
+		
 		// Implementation of abstract method (AbsractWsClient.GetParams()).
 		public override string[] GetParams()
 		{
