@@ -55,6 +55,7 @@
     <Compile Include="WebReferences\FastmWs\Reference.cs" />
     <Compile Include="FastmClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
+    <Compile Include="IPRScanClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
