@@ -75,6 +75,7 @@
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
+		<antcall target="axis1-stubs-iprscan" />
 		<antcall target="axis1-stubs-kalign" />
 		<antcall target="axis1-stubs-mafft" />
 		<antcall target="axis1-stubs-muscle" />
@@ -109,6 +110,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fastm" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-iprscan" description="Axis 1.x: generate stubs for InterProScan (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.iprscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-kalign" description="Axis 1.x: generate stubs for Kalign (SOAP)">
@@ -214,6 +221,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/IPRScan_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.IPRScanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Kalign_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/KalignClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/kalign/**">
@@ -312,6 +329,7 @@
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
+		<antcall target="axis1-distclean-stubs-iprscan" />
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
 		<antcall target="axis1-distclean-stubs-muscle" />
@@ -348,6 +366,13 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fastm" />
+	    </delete>
+	</target>
+
+	<target name="axis1-distclean-stubs-iprscan" description="Axis 1.x: remove InterProScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/iprscan" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="iprscan" />
 	    </delete>
 	</target>
 
@@ -423,6 +448,7 @@
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-fastm" />
+		<antcall target="jaxws-stubs-iprscan" />
 		<antcall target="jaxws-stubs-kalign" />
 		<antcall target="jaxws-stubs-mafft" />
 		<antcall target="jaxws-stubs-muscle" />
@@ -457,6 +483,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.fastm" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-iprscan" description="JAX-WS RI: generate stubs for InterProScan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.iprscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-kalign" description="JAX-WS RI: generate stubs for Kalign (SOAP)">
@@ -551,6 +583,7 @@
 			</manifest>
 		</jar -->
 		<!-- FASTM -->
+		<!-- InterProScan -->
 		<!-- Kalign -->
 		<!-- MAFFT -->
 		<!-- MUSCLE -->
@@ -595,6 +628,7 @@
 		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-fastm" />
+		<antcall target="jaxws-distclean-stubs-iprscan" />
 		<antcall target="jaxws-distclean-stubs-kalign" />
 		<antcall target="jaxws-distclean-stubs-mafft" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
@@ -630,6 +664,13 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fastm" />
+	    </delete>
+	</target>
+
+	<target name="jaxws-distclean-stubs-iprscan" description="JAX-WS RI: remove InterProScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/iprscan" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="iprscan" />
 	    </delete>
 	</target>
 
