@@ -31,7 +31,9 @@ namespace EbiWS
 			set { inParams = value; }
 		}
 		private InputParameters inParams = null;
-		
+		// Client object revision.
+		private string revision = "$Revision$";
+
 		// Default constructor. Required for abstract class constructor.
 		public WuBlastClient()
 		{
@@ -50,11 +52,28 @@ namespace EbiWS
 					SrvProxy.Url = ServiceEndPoint;
 				}
 				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " + SrvProxy.Url, 12);
+				SetProxyUserAgent(); // Set user-agent for client.
 			}
 			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 
+		// Set User-agent for web service proxy.
+		private void SetProxyUserAgent() {
+			PrintDebugMessage("SetProxyUserAgent", "Begin", 11);
+			String clientVersion = revision.Substring(11, (revision.Length - 13));
+			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.ToString();
+			if(SrvProxy.UserAgent.Contains("(")) { // MS .NET
+				userAgent += ") " + SrvProxy.UserAgent;
+			}
+			else { // Mono
+				userAgent += "; " + SrvProxy.UserAgent + ")";
+			}
+			PrintDebugMessage("SetProxyUserAgent", "userAgent: " + userAgent, 12);
+			SrvProxy.UserAgent = userAgent;
+			PrintDebugMessage("SetProxyUserAgent", "End", 11);
+		}
+		
 		// Implementation of abstract method (AbsractWsClient.GetParams()).
 		public override string[] GetParams()
 		{

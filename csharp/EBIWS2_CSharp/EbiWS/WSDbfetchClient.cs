@@ -52,6 +52,8 @@ namespace EbiWS {
 			set { srvProxy = value; }
 		}
 		private WSDBFetchDoclitServerService srvProxy = null;
+		// Client object revision.
+		private string revision = "$Revision$";
 		
 		/// <summary>
 		/// Default constructor.
@@ -193,10 +195,27 @@ namespace EbiWS {
 				ServiceEndPoint = SrvProxy.Url;
 				PrintDebugMessage("ServiceProxyConnect", "ServiceEndPoint: " + ServiceEndPoint, 12);
 				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
+				SetProxyUserAgent(); // Set user-agent for client.
 			}
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 
+		// Set User-agent for web service proxy.
+		private void SetProxyUserAgent() {
+			PrintDebugMessage("SetProxyUserAgent", "Begin", 11);
+			String clientVersion = revision.Substring(11, (revision.Length - 13));
+			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.ToString();
+			if(SrvProxy.UserAgent.Contains("(")) { // MS .NET
+				userAgent += ") " + SrvProxy.UserAgent;
+			}
+			else { // Mono
+				userAgent += "; " + SrvProxy.UserAgent + ")";
+			}
+			PrintDebugMessage("SetProxyUserAgent", "userAgent: " + userAgent, 12);
+			SrvProxy.UserAgent = userAgent;
+			PrintDebugMessage("SetProxyUserAgent", "End", 11);
+		}
+		
 		
 		/// <summary>
 		/// Get list of database names from sevice.
