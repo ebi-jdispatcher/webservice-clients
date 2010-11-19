@@ -336,10 +336,10 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			String[] dbList = line.getOptionValue("app").split(" ,+");
 			params.setAppl(dbList);
 		}
-		if (line.hasOption("crc")) params.setNocrc(false);
-		else if (line.hasOption("nocrc")) params.setNocrc(true);
-		if (line.hasOption("goterms")) params.setGoterms(true);
-		else if (line.hasOption("nogoterms")) params.setGoterms(false);
+		if (line.hasOption("crc")) params.setNocrc(new Boolean(false));
+		else if (line.hasOption("nocrc")) params.setNocrc(new Boolean(true));
+		if (line.hasOption("goterms")) params.setGoterms(new Boolean(true));
+		else if (line.hasOption("nogoterms")) params.setGoterms(new Boolean(false));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
