@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSDbfetchCliClient", "WSDbf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastmCliClient", "FastmCliClient\FastmCliClient.csproj", "{7BBCBB66-7185-446F-B4B0-08CBB721C87E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPRScanCliClient", "IPRScanCliClient\IPRScanCliClient.csproj", "{EA080EC1-4E33-461C-9117-49525BCCDD84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.ActiveCfg = Release|Any CPU
