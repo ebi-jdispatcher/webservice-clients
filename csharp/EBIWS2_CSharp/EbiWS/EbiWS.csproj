@@ -54,6 +54,7 @@
     <Compile Include="WSDbfetchClient.cs" />
     <Compile Include="WebReferences\FastmWs\Reference.cs" />
     <Compile Include="FastmClient.cs" />
+    <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,6 +71,7 @@
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
     <None Include="WebReferences\FastmWs\Reference.map" />
+    <None Include="WebReferences\IPRScanWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
