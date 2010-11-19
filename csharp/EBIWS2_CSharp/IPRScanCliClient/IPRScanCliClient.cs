@@ -12,18 +12,20 @@ namespace EbiWS
 	{
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"InterProScan
-=======
+============
+
+Identify protein family, domain and signal signatures in a protein sequence.
 
 [Required]
 
-  seqFile            : file : sequences to align (""-"" for STDIN)
+  seqFile            : file : query sequence (""-"" for STDIN)
 
 [Optional]
 
-  -m, --matrix       : str  : Protein scoring matrix,
-                              see --paramDetail matrix
-  -r, --order        : str  : order of sequences in alignment, 
-                              see --paramDetail outorder
+      --appl         : str  : Comma separated list of signature methods to run,
+                              see --paramDetail appl. 
+      --nocrc        : bool : disable lookup in InterProScan matches (slower).
+      --goterms      : bool : retrieve GO terms for matched InterPro signatures.
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -195,7 +197,8 @@ namespace EbiWS
 
 						// Tool specific options
 				case "--appl": // Signature methods
-					InParams.matrix = args[++i];
+					char[] sepList = { ' ', ',' };
+					InParams.appl = args[++i].Split(sepList);
 					break;
 				case "/appl":
 					goto case "--appl";
@@ -210,14 +213,17 @@ namespace EbiWS
 					goto case "--goterms";
 				case "--nogoterms":
 					InParams.goterms = false;
+					break;
 				case "/nogoterms":
 					goto case "--nogoterms";
 				case "--crc":
 					InParams.nocrc = false;
+					break;
 				case "/crc":
 					goto case "--crc";
 				case "--nocrc":
 					InParams.nocrc = true;
+					break;
 				case "/nocrc":
 					goto case "--nocrc";
 
