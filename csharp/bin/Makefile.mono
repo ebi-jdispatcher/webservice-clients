@@ -16,6 +16,7 @@ ClustalW2CliClient.exe \
 EBeyeCliClient.exe \
 FastaCliClient.exe \
 FastmCliClient.exe \
+IPRScanCliClient.exe \
 KalignCliClient.exe \
 MafftCliClient.exe \
 MuscleCliClient.exe \
@@ -44,6 +45,10 @@ FastaCliClient.exe: EbiWS.dll
 
 FastmCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/FastmCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+IPRScanCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/IPRScanCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 KalignCliClient.exe: EbiWS.dll
