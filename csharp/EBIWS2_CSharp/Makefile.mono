@@ -14,6 +14,7 @@ build-ClustalW2CliClient \
 build-EBeyeCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
+build-IPRScanCliClient \
 build-KalignCliClient \
 build-MafftCliClient \
 build-MuscleCliClient \
@@ -38,6 +39,9 @@ build-FastaCliClient: build-EbiWS
 
 build-FastmCliClient: build-EbiWS
 	cd FastmCliClient && $(MAKE) -f Makefile.mono
+
+build-IPRScanCliClient: build-EbiWS
+	cd IPRScanCliClient && $(MAKE) -f Makefile.mono
 
 build-KalignCliClient: build-EbiWS
 	cd KalignCliClient && $(MAKE) -f Makefile.mono
@@ -74,6 +78,7 @@ clean-ClustalW2CliClient \
 clean-EBeyeCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
+clean-IPRScanCliClient \
 clean-KalignCliClient \
 clean-MafftCliClient \
 clean-MuscleCliClient \
@@ -98,6 +103,9 @@ clean-FastaCliClient:
 
 clean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono) clean
+
+clean-IPRScanCliClient:
+	cd IPRScanCliClient && $(MAKE) -f Makefile.mono) clean
 
 clean-KalignCliClient:
 	cd KalignCliClient && $(MAKE) -f Makefile.mono) clean
@@ -134,6 +142,7 @@ distclean-ClustalW2CliClient \
 distclean-EBeyeCliClient \
 distclean-FastaCliClient \
 distclean-FastmCliClient \
+distclean-IPRScanCliClient \
 distclean-KalignCliClient \
 distclean-MafftCliClient \
 distclean-MuscleCliClient \
@@ -158,6 +167,9 @@ distclean-FastaCliClient:
 
 distclean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-IPRScanCliClient:
+	cd IPRScanCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-KalignCliClient:
 	cd KalignCliClient && $(MAKE) -f Makefile.mono distclean

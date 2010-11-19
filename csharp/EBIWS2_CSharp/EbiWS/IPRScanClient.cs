@@ -32,7 +32,7 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		// Client object revision.
-		private string revision = "$Revision: 1636 $";
+		private string revision = "$Revision$";
 
 		// Default constructor. Required for abstract class constructor.
 		public IPRScanClient()

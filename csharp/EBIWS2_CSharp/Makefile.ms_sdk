@@ -10,6 +10,7 @@ ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
+IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
@@ -34,6 +35,9 @@ FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 FastmCliClient\bin\Release\FastmCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk
+
+IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk
 
 KalignCliClient\bin\Release\KalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -68,6 +72,7 @@ clean:
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -84,6 +89,7 @@ distclean:
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
