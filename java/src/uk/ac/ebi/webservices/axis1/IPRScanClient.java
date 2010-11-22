@@ -343,6 +343,31 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
+	
+	public void submitJobFromCli(CommandLine cli, String inputSeq) throws ServiceException, IOException {
+		// Create job submission parameters from command-line
+		InputParameters params = this.loadParams(cli);
+		params.setSequence(inputSeq);
+		// Submit the job
+		String email = null, title = null;
+		if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
+		if (cli.hasOption("title")) title = cli.getOptionValue("title"); 
+		String jobid = this.runApp(email, title, params);
+		// For asynchronous mode
+		if (cli.hasOption("async")) {
+			System.out.println(jobid); // Output the job id.
+			System.err.println("To get status: java -jar Fasta_Axis1.jar --status --jobid " + jobid);
+		} else {
+			// In synchronous mode try to get the results
+			this.printProgressMessage(jobid, 1);
+			String[] resultFilenames = this.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
+			for(int i = 0; i < resultFilenames.length; i++) {
+				if(resultFilenames[i] != null) {
+					System.out.println("Wrote file: " + resultFilenames[i]);
+				}
+			}
+		}	
+	}
 
 	/** Entry point for running as an application.
 	 * 
@@ -356,6 +381,7 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		Options options = new Options();
 		// Common options for EBI clients
 		addGenericOptions(options);
+		options.addOption("multifasta", "multifasta", false, "Multiple fasta sequence input");
 		// Application specific options
 		options.addOption("appl", "appl", true, "Signature methods");
 		options.addOption("app", "app", true, "Signature methods");
@@ -432,31 +458,43 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 					exitVal = 2;
 				}
 			}
-			// Submit a job
+			// Job submission
 			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
-				// Create job submission parameters from command-line
-				InputParameters params = client.loadParams(cli);
+				// Input sequence, data file or entry identifier.
 				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
-				params.setSequence(new String(client.loadData(dataOption)));
-				// Submit the job
-				String email = null, title = null;
-				if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
-				if (cli.hasOption("title")) title = cli.getOptionValue("title"); 
-				String jobid = client.runApp(email, title, params);
-				// For asynchronous mode
-				if (cli.hasOption("async")) {
-					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar Fasta_Axis1.jar --status --jobid " + jobid);
-				} else {
-					// In synchronous mode try to get the results
-					client.printProgressMessage(jobid, 1);
-					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-					for(int i = 0; i < resultFilenames.length; i++) {
-						if(resultFilenames[i] != null) {
-							System.out.println("Wrote file: " + resultFilenames[i]);
-						}
+				// Multi-fasta sequence input.
+				if(cli.hasOption("multifasta")) {
+					client.printDebugMessage("main", "Mode: multifasta", 11);
+					client.setFastaInputFile(dataOption);
+					// Loop over input sequences, submitting each one.
+					String fastaSeq = null;
+					fastaSeq = client.nextFastaSequence();
+					client.printDebugMessage("main", "fastaSeq: " + fastaSeq, 11);
+					while(fastaSeq != null) {
+						client.submitJobFromCli(cli, fastaSeq);
+						fastaSeq = client.nextFastaSequence();
 					}
-				}	
+					client.closeFastaFile();
+				}
+				// Entry identifier list.
+				else if(dataOption.startsWith("@")) {
+					client.printDebugMessage("main", "Mode: Id list", 11);
+					client.setIdentifierListFile(dataOption.substring(1));
+					// Loop over input sequences, submitting each one.
+					String id = null;
+					id = client.nextIdentifier();
+					while(id != null) {
+						client.printProgressMessage("ID: " + id, 1);
+						client.submitJobFromCli(cli, id);
+						id = client.nextIdentifier();
+					}
+					client.closeIdentifierListFile();
+				}
+				// Submit a job
+				else {
+					client.printDebugMessage("main", "Mode: sequence", 11);
+					client.submitJobFromCli(cli, new String(client.loadData(dataOption)));
+				}
 			}
 			// Unknown action
 			else {

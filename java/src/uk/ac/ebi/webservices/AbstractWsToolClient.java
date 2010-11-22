@@ -4,14 +4,17 @@
  * ====================================================================== */
 package uk.ac.ebi.webservices;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
@@ -31,6 +34,12 @@ public abstract class AbstractWsToolClient {
 	private int debugLevel = 0;
 	/** Maximum interval between polling events (ms). */
 	private int maxCheckInterval = 60000;
+	/** Temporary line for fasta sequence parsing. */
+	private String tmpFastaLine = null;
+	/** Buffered reader for fasta sequence input. */
+	private BufferedReader fastaInputReader = null;
+	/** Buffered reader for identifier list input. */
+	private BufferedReader identifierListReader = null;
 	/** URL for service endpoint. */
 	private String serviceEndPoint = null;
 	/** Generic options message. */
@@ -461,4 +470,95 @@ public abstract class AbstractWsToolClient {
 	 * @throws javax.xml.rpc.ServiceException
 	 */
 	abstract public String[] getResults(String jobid, String outfile, String outformat) throws IOException, ServiceException;
+	
+	/** Set input fasta format sequence data file.
+	 * 
+	 * @param fastaFileName Name of the file.
+	 * @throws FileNotFoundException 
+	 */
+	public void setFastaInputFile(String fastaFileName) throws FileNotFoundException {
+		this.setFastaInputFile(new File(fastaFileName));
+	}
+	
+	/** Set input fasta format sequence file.
+	 * 
+	 * @param fastaFile Input file.
+	 * @throws FileNotFoundException
+	 */
+	public void setFastaInputFile(File fastaFile) throws FileNotFoundException {
+		Reader inputReader = null;
+		inputReader = new FileReader(fastaFile);
+		this.fastaInputReader = new BufferedReader(inputReader);
+	}
+	
+	/** Get next fasta sequence from input sequence file.
+	 * 
+	 * @return Fasta input sequence from file.
+	 * @throws IOException
+	 */
+	public String nextFastaSequence() throws IOException {
+		String retVal = null;
+		// Read lines until one begins with '>'.
+		while(this.fastaInputReader.ready() &&
+				(this.tmpFastaLine == null || !this.tmpFastaLine.startsWith(">"))) {
+			this.tmpFastaLine = this.fastaInputReader.readLine();
+		}
+		// Read fasta header line.
+		if(this.tmpFastaLine.startsWith(">")) {
+			this.printProgressMessage("Sequence: " + tmpFastaLine, 1);
+			StringBuffer tmpFastaSeq = new StringBuffer();
+			tmpFastaSeq.append(tmpFastaLine).append("\n");
+			// Read lines until EOF or a line begins with '>'.
+			this.tmpFastaLine = this.fastaInputReader.readLine();
+			while(this.fastaInputReader.ready() &&
+					(this.tmpFastaLine == null || !this.tmpFastaLine.startsWith(">"))) {
+				this.tmpFastaLine = this.fastaInputReader.readLine();
+				if(!tmpFastaLine.startsWith(">")) {
+					tmpFastaSeq.append(tmpFastaLine).append("\n");
+				}
+			}
+			retVal = tmpFastaSeq.toString();
+		}
+		return retVal;
+	}
+	
+	/** Close the input fasta sequence file.
+	 * 
+	 * @throws IOException
+	 */
+	public void closeFastaFile() throws IOException {
+		this.fastaInputReader.close();
+		this.fastaInputReader = null;
+	}
+	
+	public void setIdentifierListFile(String fileName) throws FileNotFoundException {
+		setIdentifierListFile(new File(fileName));
+	}
+	
+	public void setIdentifierListFile(File file) throws FileNotFoundException {
+		Reader inputReader = null;
+		inputReader = new FileReader(file);
+		this.identifierListReader = new BufferedReader(inputReader);
+	}
+	
+	public String nextIdentifier() throws IOException {
+		String retVal = null;
+		// Read lines until EOF or a line contains a ':'.
+		String tmpLine = this.identifierListReader.readLine();
+		while(this.identifierListReader.ready() &&
+				(tmpLine == null || !(tmpLine.indexOf(':') > 0))) {
+			this.printDebugMessage("nextIdentifier", "tmpLine: " + tmpLine, 12);
+			tmpLine = this.identifierListReader.readLine();
+		}
+		this.printDebugMessage("nextIdentifier", "tmpLine: " + tmpLine, 12);
+		if(tmpLine.indexOf(':') > 0) {
+			retVal = tmpLine;
+		}
+		return retVal;
+	}
+	
+	public void closeIdentifierListFile() throws IOException {
+		this.identifierListReader.close();
+		this.identifierListReader = null;
+	}
 }
