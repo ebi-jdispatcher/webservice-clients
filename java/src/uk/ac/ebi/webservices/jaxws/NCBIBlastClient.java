@@ -65,7 +65,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
 		+ "      --seqrange       : str  : region in query sequence to use for search\n"
-		+ "      --multifasta    :      : treat input as a set of fasta formatted sequences\n";
+		+ "      --multifasta     :      : treat input as a set of fasta formatted \n"
+		+ "                                sequences\n";
 
 	/** Default constructor
 	 * 
