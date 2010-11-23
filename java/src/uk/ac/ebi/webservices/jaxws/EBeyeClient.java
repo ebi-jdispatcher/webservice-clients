@@ -6,10 +6,14 @@ package uk.ac.ebi.webservices.jaxws;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.xml.rpc.ServiceException;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -36,6 +40,8 @@ public class EBeyeClient {
 	private ObjectFactory objFactory = new ObjectFactory();
 	/** Client version/revision */
 	private String revision = "$Revision$";
+	/** Client user-agent string. */
+	private String clientUserAgent = null;
 	/** Usage message */
 	private static final String usageMsg = "EB-eye\n"
 		+ "======\n"
@@ -140,19 +146,30 @@ public class EBeyeClient {
 		this.setUserAgent();
 	}
 	
-	/** Set the HTTP User-agent header string for the client.
-	 * 
+	/** Set the HTTP User-agent header string for Java web calls (java.net).
 	 */
 	private void setUserAgent() {
 		printDebugMessage("setUserAgent", "Begin", 1);
-		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		// Java web calls (java.net) use the http.agent property as a prefix to the default user-agent.
 		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
-		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
+		this.clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
 		if(System.getProperty("http.agent") != null) {
 			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
 		}
 		else System.setProperty("http.agent", clientUserAgent);
 		printDebugMessage("setUserAgent", "End", 1);
+	}
+	
+	/** Set the HTTP User-Agent for web services requests via the JAX-WS service proxy.
+	 */
+	private void setPortUserAgent() {
+		printDebugMessage("setPortUserAgent", "Begin", 1);
+		if(this.clientUserAgent != null && this.clientUserAgent.length() > 0) {
+			((BindingProvider)this.srvProxy).getRequestContext().put(
+				MessageContext.HTTP_REQUEST_HEADERS,
+			    Collections.singletonMap("User-Agent",Collections.singletonList(this.clientUserAgent)));
+		}
+		printDebugMessage("setPortUserAgent", "End", 1);
 	}
 
 	/**
@@ -276,6 +293,7 @@ public class EBeyeClient {
 				service = new EBISearchService_Service();
 			}
 			this.srvProxy = service.getEBISearchServiceHttpPort();
+			this.setPortUserAgent();
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);
 	}
