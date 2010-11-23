@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Reader;
@@ -47,7 +48,7 @@ public abstract class AbstractWsToolClient {
 	+ "\n"
 	+ "      --params         :      : list tool parameters\n"
 	+ "      --paramDetail    : str  : information about a parameter\n"
-	+ "      --email          : str  : e-mail address\n"
+	+ "      --email          : str  : e-mail address, required to submit job\n"
 	+ "      --title          : str  : title for the job\n"
 	+ "      --async          :      : perform an asynchronous submission\n"
 	+ "      --jobid          : str  : job identifier\n"
@@ -71,15 +72,25 @@ public abstract class AbstractWsToolClient {
 	+ "Asynchronous job:\n"
 	+ "\n"
 	+ "  Use this if you want to retrieve the results at a later time. The results \n"
-	+ "  are stored for up to 24 hours. \n"
+	+ "  are stored for up to 7 days.\n"
 	+ "  Usage: java -jar <jarFile> --async --email <your@email> [options...] seqFile\n"
 	+ "  Returns: jobid\n"
 	+ "\n"
-	+ "  Use the jobid to query for the status of the job. If the job is finished, \n"
-	+ "  it also returns the results/errors.\n"
-	+ "  Usage: java -jar <jarFile> --polljob --jobid <jobId> [--outfile string]\n"
-	+ "  Returns: string indicating the status of the job and if applicable, results \n"
-	+ "  as an attachment.\n";
+	+ "  Use the jobid to query for the status of the job.\n"
+	+ "  Usage: java -jar <jarFile> --status --jobid <jobId>\n"
+	+ "  Returns: string indicating the status of the job.\n"
+	+ "\n"
+	+ "  If the job is finished, get the available result types.\n"
+	+ "  Usage: java -jar <jarFile> --resultTypes --jobid <jobId>\n"
+	+ "  Returns: details of the available results for the job.\n"
+	+ "\n"
+	+ "  If the job is finished get the results.\n"
+	+ "  Usage:\n"
+	+ "   java -jar <jarFile> --polljob --jobid <jobId>\n"
+	+ "   java -jar <jarFile> --polljob --jobid <jobId> --outformat <format>\n"
+	+ "  Returns: results in the requested format, or if not specified all \n"
+	+ "  formats. By default the output file(s) are named after the job, to \n"
+	+ "  specify a name for the file(s) use the --outfile option.\n";
 
 	/** Add genetic option to command-line parser.
 	 * 
@@ -477,21 +488,21 @@ public abstract class AbstractWsToolClient {
 	 * @throws FileNotFoundException 
 	 */
 	public void setFastaInputFile(String fastaFileName) throws FileNotFoundException {
-		this.setFastaInputFile(new File(fastaFileName));
-	}
-	
-	/** Set input fasta format sequence file.
-	 * 
-	 * @param fastaFile Input file.
-	 * @throws FileNotFoundException
-	 */
-	public void setFastaInputFile(File fastaFile) throws FileNotFoundException {
 		Reader inputReader = null;
-		inputReader = new FileReader(fastaFile);
+		if(fastaFileName.equals("-")) { // STDIN
+			inputReader = new InputStreamReader(System.in);
+		}
+		else { // File
+			inputReader = new FileReader(fastaFileName);
+		}
 		this.fastaInputReader = new BufferedReader(inputReader);
 	}
 	
 	/** Get next fasta sequence from input sequence file.
+	 * 
+	 * NB: Assumes files contains correctly formated input sequences,
+	 * i.e. are in fasta sequence format, and that the file contains only
+	 * fasta formated sequences. For a more generic solution see BioJava.
 	 * 
 	 * @return Fasta input sequence from file.
 	 * @throws IOException
@@ -531,16 +542,29 @@ public abstract class AbstractWsToolClient {
 		this.fastaInputReader = null;
 	}
 	
+	/** Set the identifier list input file.
+	 *  
+	 * @param fileName Name of the identifier list file.
+	 * @throws FileNotFoundException
+	 */
 	public void setIdentifierListFile(String fileName) throws FileNotFoundException {
-		setIdentifierListFile(new File(fileName));
-	}
-	
-	public void setIdentifierListFile(File file) throws FileNotFoundException {
 		Reader inputReader = null;
-		inputReader = new FileReader(file);
+		if(fileName.equals("-")) { // STDIN
+			inputReader = new InputStreamReader(System.in);
+		}
+		else { // File
+			inputReader = new FileReader(fileName);
+		}
 		this.identifierListReader = new BufferedReader(inputReader);
 	}
 	
+	/** Get the next identifier from the identifier list file.
+	 * 
+	 * NB: Assumes identifiers are in DB:ID format.
+	 * 
+	 * @return An identifier.
+	 * @throws IOException
+	 */
 	public String nextIdentifier() throws IOException {
 		String retVal = null;
 		// Read lines until EOF or a line contains a ':'.
@@ -557,6 +581,10 @@ public abstract class AbstractWsToolClient {
 		return retVal;
 	}
 	
+	/** Close the identifier list input file.
+	 * 
+	 * @throws IOException
+	 */
 	public void closeIdentifierListFile() throws IOException {
 		this.identifierListReader.close();
 		this.identifierListReader = null;
