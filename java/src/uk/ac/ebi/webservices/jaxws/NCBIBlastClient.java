@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Arrays; 
-
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.jaxws.stubs.ncbiblast.*;
@@ -36,8 +35,9 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "   \n"
 		+ "Rapid sequence database search programs utilizing the BLAST algorithm\n"
 		+ "    \n"
-		+ "For more detailed help information refer to \n"
-		+ "http://www.ebi.ac.uk/Tools/blastall/help.html\n"
+		+ "For more information see:\n"
+		+ "- http://www.ebi.ac.uk/Tools/sss/ncbiblast\n"
+		+ "- http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap\n"
 		+ "\n"
 		+ "[Required]\n"
 		+ "\n"
@@ -45,7 +45,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -D, --database       : str  : database(s) to search, space seperated: see\n"
 		+ "                                --paramDetail database\n"
 		+ "      --stype          : str  : query sequence type\n"
-		+ "  seqFile              : file : query sequence (\"-\" for STDIN)\n"
+		+ "  seqFile              : file : query sequence (\"-\" for STDIN, @filename for \n"
+		+ "                                identifier list file)\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
@@ -63,7 +64,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -x, --gapext         : int  : gap extension penalty\n"
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
-		+ "      --seqrange       : str  : region in query sequence to use for search\n";
+		+ "      --seqrange       : str  : region in query sequence to use for search\n"
+		+ "      --multifasta    :      : treat input as a set of fasta formatted sequences\n";
 
 	/** Default constructor
 	 * 
@@ -398,32 +400,48 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		return params;
 	}
 	
-	public void submit(CommandLine cli) throws IOException, ServiceException {
-		printDebugMessage("submit", "Begin", 1);
+	/**
+	 * Submit a job using the command-line information to construct the input.
+	 * 
+	 * @param cli
+	 *            Command-line parameters.
+	 * @param inputSeq
+	 *            Data input.
+	 * @throws ServiceException
+	 * @throws IOException
+	 */
+	public void submitJobFromCli(CommandLine cli, String inputSeq)
+			throws ServiceException, IOException {
+		printDebugMessage("submitJobFromCli", "Begin", 1);
 		// Create job submission parameters from command-line
-		InputParameters params = loadParams(cli);
-		String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
-		params.setSequence(objFactory.createInputParametersSequence(new String(loadData(dataOption))));
+		InputParameters params = this.loadParams(cli);
+		params.setSequence(objFactory.createInputParametersSequence(inputSeq));
 		// Submit the job
 		String email = null, title = null;
-		if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
-		if (cli.hasOption("title")) title = cli.getOptionValue("title"); 
-		String jobid = runApp(email, title, params);
+		if (cli.hasOption("email"))
+			email = cli.getOptionValue("email");
+		if (cli.hasOption("title"))
+			title = cli.getOptionValue("title");
+		String jobid = this.runApp(email, title, params);
 		// For asynchronous mode
 		if (cli.hasOption("async")) {
 			System.out.println(jobid); // Output the job id.
-			System.err.println("To get status: java -jar WSNCBIBlast.jar --status --jobid " + jobid);
+			System.err
+					.println("To get status: java -jar NCBIBlast_Axis1.jar --status --jobid "
+							+ jobid);
 		} else {
 			// In synchronous mode try to get the results
-			printProgressMessage(jobid, 1);
-			String[] resultFilenames = getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-			for(int i = 0; i < resultFilenames.length; i++) {
-				if(resultFilenames[i] != null) {
+			this.printProgressMessage(jobid, 1);
+			String[] resultFilenames = this
+					.getResults(jobid, cli.getOptionValue("outfile"), cli
+							.getOptionValue("outformat"));
+			for (int i = 0; i < resultFilenames.length; i++) {
+				if (resultFilenames[i] != null) {
 					System.out.println("Wrote file: " + resultFilenames[i]);
 				}
 			}
-		}	
-		printDebugMessage("submit", "End", 1);
+		}
+		printDebugMessage("submitJobFromCli", "Begin", 1);
 	}
 	
 	/** Entry point for running as an application.
@@ -438,6 +456,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		Options options = new Options();
 		// Common options for EBI clients
 		addGenericOptions(options);
+		options.addOption("multifasta", "multifasta", false,
+		"Multiple fasta sequence input");
 		// Application specific options
 		options.addOption("ids", "ids", false, "Get list of identifiers from result");
 		options.addOption("p", "program", true, "Program to use");
@@ -532,7 +552,52 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			}
 			// Submit a job
 			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
-				client.submit(cli);
+				// Input sequence, data file or entry identifier.
+				String dataOption = (cli.hasOption("sequence")) ? cli
+						.getOptionValue("sequence") : cli.getArgs()[0];
+				// Multi-fasta sequence input.
+				if (cli.hasOption("multifasta")) {
+					client.printDebugMessage("main", "Mode: multifasta", 11);
+					int numSeq = 0;
+					client.setFastaInputFile(dataOption);
+					// Loop over input sequences, submitting each one.
+					String fastaSeq = null;
+					fastaSeq = client.nextFastaSequence();
+					client.printDebugMessage("main", "fastaSeq: " + fastaSeq,
+							12);
+					while (fastaSeq != null) {
+						numSeq++;
+						client.submitJobFromCli(cli, fastaSeq);
+						fastaSeq = client.nextFastaSequence();
+					}
+					client.closeFastaFile();
+					client.printProgressMessage("Processed " + numSeq
+							+ " input sequences", 2);
+				}
+				// Entry identifier list.
+				else if (dataOption.startsWith("@")) {
+					client.printDebugMessage("main", "Mode: Id list", 11);
+					int numId = 0;
+					client.setIdentifierListFile(dataOption.substring(1));
+					// Loop over input sequences, submitting each one.
+					String id = null;
+					id = client.nextIdentifier();
+					while (id != null) {
+						numId++;
+						client.printProgressMessage("ID: " + id, 1);
+						client.submitJobFromCli(cli, id);
+						id = client.nextIdentifier();
+					}
+					client.closeIdentifierListFile();
+					client.printProgressMessage("Processed " + numId
+							+ " input identifiers", 2);
+				}
+				// Submit a job
+				else {
+					client.printDebugMessage("main", "Mode: sequence", 11);
+					client.submitJobFromCli(cli, new String(client
+							.loadData(dataOption)));
+				}
 			}
 			// Unknown action
 			else {
