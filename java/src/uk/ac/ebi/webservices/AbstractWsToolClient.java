@@ -575,7 +575,7 @@ public abstract class AbstractWsToolClient {
 			tmpLine = this.identifierListReader.readLine();
 		}
 		this.printDebugMessage("nextIdentifier", "tmpLine: " + tmpLine, 12);
-		if(tmpLine.indexOf(':') > 0) {
+		if(tmpLine != null && tmpLine.indexOf(':') > 0) {
 			retVal = tmpLine;
 		}
 		return retVal;
