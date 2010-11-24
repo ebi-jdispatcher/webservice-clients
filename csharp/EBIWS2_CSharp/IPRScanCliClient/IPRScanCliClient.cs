@@ -16,9 +16,14 @@ namespace EbiWS
 
 Identify protein family, domain and signal signatures in a protein sequence.
 
+For more information see:
+- http://www.ebi.ac.uk/Tools/pfa/iprscan
+- http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap
+
 [Required]
 
-  seqFile            : file : query sequence (""-"" for STDIN)
+  seqFile            : file : query sequence (""-"" for STDIN, @filename for
+                              identifier list file)
 
 [Optional]
 
@@ -28,6 +33,8 @@ Identify protein family, domain and signal signatures in a protein sequence.
       --nocrc        :      : disable lookup in InterProScan matches (slower).
       --goterms      :      : enable retrieval og GO terms.
       --nogoterms    :      : disable retrieval GO terms.
+      --multifasta   :      : treat input as a set of fasta formatted 
+                              sequences.
 ";
 
 		/// <summary>Execution entry point</summary>
