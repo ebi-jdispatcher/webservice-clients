@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.PsiSearchWs;
+using EbiWS.PsiSearchWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {

@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.ClustalW2Ws;
+using EbiWS.ClustalW2Ws; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {

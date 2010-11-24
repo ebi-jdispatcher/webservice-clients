@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using EbiWS.EBeyeWs;
+using EbiWS.EBeyeWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS {
 	/// <summary>EB-eye web services C# client.</summary>

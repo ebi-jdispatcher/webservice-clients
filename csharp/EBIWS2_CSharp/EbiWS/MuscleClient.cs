@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.MuscleWs;
+using EbiWS.MuscleWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {

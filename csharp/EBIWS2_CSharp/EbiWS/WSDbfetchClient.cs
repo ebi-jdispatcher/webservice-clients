@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using EbiWS.WSDbfetchWs;
+using EbiWS.WSDbfetchWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS {
 	/// <summary>WSDbfetch web services C# client.</summary>

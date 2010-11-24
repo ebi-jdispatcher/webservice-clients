@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.TcoffeeWs;
+using EbiWS.TcoffeeWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {

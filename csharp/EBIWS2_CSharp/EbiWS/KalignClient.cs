@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.KalignWs;
+using EbiWS.KalignWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {

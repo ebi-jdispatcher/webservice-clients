@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.PsiBlastWs;
+using EbiWS.PsiBlastWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {
