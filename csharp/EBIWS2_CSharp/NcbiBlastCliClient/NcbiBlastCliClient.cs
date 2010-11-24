@@ -16,8 +16,9 @@ namespace EbiWS
 
 Rapid sequence database search programs utilizing the BLAST algorithm
 
-For more detailed help information refer to
-http://www.ebi.ac.uk/Tools/blastall/help.html
+For more information see:
+- http://www.ebi.ac.uk/Tools/sss/ncbiblast
+- http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
 
 [Required]
 
@@ -44,6 +45,8 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
   -d, --dropoff        : int  : drop-off score
   -g, --gapalign       :      : optimise gapped alignments
       --seqrange       : str  : region in query sequence to use for search
+      --multifasta     :      : treat input as a set of fasta formatted 
+                                sequences.
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -74,7 +77,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -222,6 +225,11 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+				case "--multifasta":
+					this.multifasta = true;
+					break;
+				case "/multifasta":
+					goto case "--multifasta";
 
 						// Tool specific options
 					case "--program": // BLAST program
@@ -364,7 +372,7 @@ http://www.ebi.ac.uk/Tools/blastall/help.html
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}
