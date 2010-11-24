@@ -123,6 +123,8 @@ namespace EbiWS
 			set{action = value;}
 		}
 		private string action = "unknown";
+		private StreamReader sequenceFileReader = null;
+		private StreamReader identifierFileReader = null;
 		/// <summary>
 		/// Usage message for generic options.
 		/// </summary>
@@ -475,6 +477,74 @@ Asynchronous job:
 				Console.WriteLine("Wrote: {0}", fileName);
 			}
 			PrintDebugMessage("WriteTextFile", "End", 1);
+		}
+		
+		protected void SetSequenceFile(string fileName) {
+			PrintDebugMessage("SetSequenceFile", "Begin", 11);
+			PrintDebugMessage("SetSequenceFile", "fileName: " + fileName, 12);
+			this.sequenceFileReader = new StreamReader(fileName);
+			PrintDebugMessage("SetSequenceFile", "End", 11);
+		}
+		
+		protected string NextSequence() {
+			PrintDebugMessage("NextSequence", "Begin", 11);
+			string retVal = null;
+			string line = null;
+			// Skip to start of fasta sequence.
+			while(!this.sequenceFileReader.Peek().Equals('>')) {
+				line = this.sequenceFileReader.ReadLine();
+				PrintDebugMessage("NextSequence", "line: " + line, 12);
+				if(line == null) break;
+			}
+			if(this.sequenceFileReader.Peek().Equals('>')) {
+				line = this.sequenceFileReader.ReadLine();
+				PrintProgressMessage(line, 1);
+				retVal = line + Environment.NewLine;
+				while(!this.sequenceFileReader.Peek().Equals('>') && (line = this.sequenceFileReader.ReadLine()) != null) {
+					PrintDebugMessage("NextSequence", "line: " + line, 12);
+					retVal += line + Environment.NewLine;
+				}
+			}
+			PrintDebugMessage("NextSequence", "retVal:" + Environment.NewLine + retVal, 12);
+			PrintDebugMessage("NextSequence", "End", 11);
+			return retVal;
+		}
+		
+		protected void CloseSequenceFile() {
+			PrintDebugMessage("CloseSequenceFile", "Begin", 11);
+			this.sequenceFileReader.Close();
+			this.sequenceFileReader = null;
+			PrintDebugMessage("CloseSequenceFile", "End", 11);
+		}
+		
+		protected void SetIdentifierFile(string fileName) {
+			PrintDebugMessage("SetIdentifierFile", "Begin", 11);
+			PrintDebugMessage("SetIdentifierFile", "fileName: " + fileName, 12);
+			this.identifierFileReader = new StreamReader(fileName);
+			PrintDebugMessage("SetIdentifierFile", "Begin", 11);
+		}
+		
+		protected string NextIdentifier() {
+			PrintDebugMessage("NextIdentifier", "Begin", 11);
+			string retVal = null;
+			string line = null;
+			while((line = this.identifierFileReader.ReadLine()) != null) {
+				PrintProgressMessage(line, 1);
+				if(line.Contains(":")) {
+					retVal = line.Trim();
+					break;
+				}
+			}
+			PrintDebugMessage("NextIdentifier", "retVal: " + retVal, 12);
+			PrintDebugMessage("NextIdentifier", "End", 11);
+			return retVal;
+		}
+		
+		protected void CloseIdentifierFile() {
+			PrintDebugMessage("CloseIdentifierFile", "Begin", 11);
+			this.identifierFileReader.Close();
+			this.identifierFileReader = null;
+			PrintDebugMessage("CloseIdentifierFile", "End", 11);
 		}
 
 		/// <summary>

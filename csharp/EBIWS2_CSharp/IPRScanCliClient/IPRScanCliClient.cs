@@ -24,8 +24,10 @@ Identify protein family, domain and signal signatures in a protein sequence.
 
       --appl         : str  : Comma separated list of signature methods to run,
                               see --paramDetail appl. 
-      --nocrc        : bool : disable lookup in InterProScan matches (slower).
-      --goterms      : bool : retrieve GO terms for matched InterPro signatures.
+      --crc          :      : enable lookup in InterProScan matches (faster).
+      --nocrc        :      : disable lookup in InterProScan matches (slower).
+      --goterms      :      : enable retrieval og GO terms.
+      --nogoterms    :      : disable retrieval GO terms.
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -55,8 +57,8 @@ Identify protein family, domain and signal signatures in a protein sequence.
 					case "paramDetail": // Parameter detail
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
-					case "submit": // Submit a job
-						wsApp.SubmitJob();
+					case "submit": // Submit job
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -102,6 +104,10 @@ Identify protein family, domain and signal signatures in a protein sequence.
 		{
 			PrintDebugMessage("ParseCommand", "Begin", 1);
 			InParams = new InputParameters();
+			// Scan through command-line arguments to find options.
+			// TODO: evaluate using command-line parsing library, such as
+			// NDesk.Options (http://www.ndesk.org/Options) or Mono.Options
+			// (http://tirania.org/blog/archive/2008/Oct-14.html) instead.
 			for (int i = 0; i < args.Length; i++)
 			{
 				PrintDebugMessage("parseCommand", "arg: " + args[i], 2);
@@ -194,6 +200,11 @@ Identify protein family, domain and signal signatures in a protein sequence.
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+				case "--multifasta":
+					this.multifasta = true;
+					break;
+				case "/multifasta":
+					goto case "--multifasta";
 
 						// Tool specific options
 				case "--appl": // Signature methods
@@ -206,7 +217,7 @@ Identify protein family, domain and signal signatures in a protein sequence.
 					goto case "--appl";
 				case "/app":
 					goto case "--appl";
-				case "--goterms": // GO terms in result.
+				case "--goterms": // Enable GO terms in result.
 					InParams.goterms = true;
 					break;
 				case "/goterms":
@@ -214,14 +225,14 @@ Identify protein family, domain and signal signatures in a protein sequence.
 				case "--nogoterms":
 					InParams.goterms = false;
 					break;
-				case "/nogoterms":
+				case "/nogoterms": // Disable GO terms in result.
 					goto case "--nogoterms";
-				case "--crc":
+				case "--crc": // Enable InterPro Matches look-up.
 					InParams.nocrc = false;
 					break;
 				case "/crc":
 					goto case "--crc";
-				case "--nocrc":
+				case "--nocrc": // Disable InterPro Matches look-up.
 					InParams.nocrc = true;
 					break;
 				case "/nocrc":
@@ -240,7 +251,7 @@ Identify protein family, domain and signal signatures in a protein sequence.
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}

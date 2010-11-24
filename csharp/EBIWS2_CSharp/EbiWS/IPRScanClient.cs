@@ -8,7 +8,7 @@
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.IPRScanWs;
+using EbiWS.IPRScanWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {
@@ -31,6 +31,8 @@ namespace EbiWS
 			set { inParams = value; }
 		}
 		private InputParameters inParams = null;
+		/// <summary>Multiple fasta formatted sequences as input.</summary>
+		protected Boolean multifasta = false;
 		// Client object revision.
 		private string revision = "$Revision$";
 
@@ -129,6 +131,38 @@ namespace EbiWS
 				}
 			}
 			PrintDebugMessage("PrintParamDetail", "End", 1);
+		}
+		
+		/// <summary>Submit job(s) to the service.</summary>
+		protected void SubmitJobs() {
+			PrintDebugMessage("SubmitJobs", "Begin", 1);
+			// Three modes...
+			// 1. Multiple fasta sequence input.
+			if(this.multifasta) {
+				SetSequenceFile(InParams.sequence);
+				string inSeq = null;
+				while((inSeq = NextSequence()) != null) {
+					InParams.sequence = inSeq;
+					SubmitJob();
+				}
+				CloseSequenceFile();
+			}
+			// 2. Entry identifier list input.
+			else if(InParams.sequence.StartsWith("@")) {
+				SetIdentifierFile(InParams.sequence.Substring(1));
+				string inId = null;
+				while((inId = NextIdentifier()) != null) {
+					InParams.sequence = inId;
+					SubmitJob();
+				}
+				CloseIdentifierFile();
+			}
+			// 3. Simple sequence input.
+			else {
+				InParams.sequence = LoadData(InParams.sequence);
+				SubmitJob();
+			}
+			PrintDebugMessage("SubmitJobs", "End", 1);
 		}
 
 		// Implementation of abstract method (AbsractWsClient.SubmitJob()).
@@ -242,8 +276,8 @@ namespace EbiWS
 			// Check status, and wait if not finished
 			ClientPoll(jobId);
 			// Use JobId if output file name is not defined
-			if (outFileBase == null) OutFile = jobId;
-			else OutFile = outFileBase;
+			string tmpOutFile = jobId;
+			if (outFileBase != null) tmpOutFile = outFileBase;
 			// Get list of data types
 			wsResultType[] resultTypes = GetResultTypes(jobId);
 			PrintDebugMessage("GetResults", "resultTypes: " + resultTypes.Length + " available", 2);
@@ -261,14 +295,14 @@ namespace EbiWS
 				// Text data
 				if (selResultType.mediaType.StartsWith("text"))
 				{
-					if (OutFile == "-") WriteTextFile(OutFile, res);
-					else WriteTextFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
+					if (tmpOutFile == "-") WriteTextFile(tmpOutFile, res);
+					else WriteTextFile(tmpOutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
 				}
 				// Binary data
 				else
 				{
-					if (OutFile == "-") WriteBinaryFile(OutFile, res);
-					else WriteBinaryFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
+					if (tmpOutFile == "-") WriteBinaryFile(tmpOutFile, res);
+					else WriteBinaryFile(tmpOutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
 				}
 			}
 			else
@@ -281,14 +315,14 @@ namespace EbiWS
 					// Text data
 					if (resultType.mediaType.StartsWith("text"))
 					{
-						if (OutFile == "-") WriteTextFile(OutFile, res);
-						else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						if (tmpOutFile == "-") WriteTextFile(tmpOutFile, res);
+						else WriteTextFile(tmpOutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
 					}
 					// Binary data
 					else
 					{
-						if (OutFile == "-") WriteBinaryFile(OutFile, res);
-						else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						if (tmpOutFile == "-") WriteBinaryFile(tmpOutFile, res);
+						else WriteBinaryFile(tmpOutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
 					}
 				}
 			}
