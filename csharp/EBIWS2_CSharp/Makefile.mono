@@ -93,40 +93,40 @@ clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
 
 clean-ClustalW2CliClient:
-	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono) clean
+	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EBeyeCliClient:
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono) clean
+	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-FastaCliClient:
-	cd FastaCliClient && $(MAKE) -f Makefile.mono) clean
+	cd FastaCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-FastmCliClient:
-	cd FastmCliClient && $(MAKE) -f Makefile.mono) clean
+	cd FastmCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-IPRScanCliClient:
-	cd IPRScanCliClient && $(MAKE) -f Makefile.mono) clean
+	cd IPRScanCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-KalignCliClient:
-	cd KalignCliClient && $(MAKE) -f Makefile.mono) clean
+	cd KalignCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-MafftCliClient:
-	cd MafftCliClient && $(MAKE) -f Makefile.mono) clean
+	cd MafftCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-MuscleCliClient:
-	cd MuscleCliClient && $(MAKE) -f Makefile.mono) clean
+	cd MuscleCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-NcbiBlastCliClient:
-	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono) clean
+	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-PsiBlastCliClient:
-	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono) clean
+	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-PsiSearchCliClient:
-	cd PsiSearchBlastCliClient && $(MAKE) -f Makefile.mono) clean
+	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-TcoffeeCliClient:
-	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono) clean
+	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-WSDbfetchCliClient:
 	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono clean
