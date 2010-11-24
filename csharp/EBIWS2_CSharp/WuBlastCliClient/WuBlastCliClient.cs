@@ -15,7 +15,11 @@ namespace EbiWS
 ==========
 
 Rapid sequence database search programs utilizing the BLAST algorithm
-    
+ 
+For more information see:
+- http://www.ebi.ac.uk/Tools/sss/wublast
+- http://www.ebi.ac.uk/Tools/webservices/services/sss/wublast_soap
+                
 [Required]
 
   -p, --program      : str  : BLAST program to use, see --paramDetail program
@@ -43,6 +47,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -d, --strand       : str  : DNA strand to search with,
                               see --paramDetail strand
   -c, --topcombon    : str  : consistent sets of HSPs
+      --multifasta   :      : treat input as a set of fasta formatted 
+                              sequences.
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -73,7 +79,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -228,6 +234,11 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+				case "--multifasta":
+					this.multifasta = true;
+					break;
+				case "/multifasta":
+					goto case "--multifasta";
 
 						// Tool specific options
 					case "--program": // BLAST program
@@ -390,7 +401,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}

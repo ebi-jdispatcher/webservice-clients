@@ -16,8 +16,9 @@ namespace EbiWS
 
 Rapid sequence database search programs utilizing the FASTA algorithm
 
-For more detailed help information refer to
-http://www.ebi.ac.uk/Tools/fasta/help.html
+For more information see:
+- http://www.ebi.ac.uk/Tools/sss/fasta
+- http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap
                 
 [Required]
 
@@ -25,7 +26,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
       --database      : str  : database(s) to search, space seperated: see
                                --paramDetail database
       --stype         : str  : query sequence type
-  seqFile             : file : query sequence (""-"" for STDIN)
+  seqFile             : file : query sequence (""-"" for STDIN, @filename for
+                               identifier list file)
 
 [Optional]
 
@@ -47,6 +49,8 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
                                see --paramDetail stats
   -M, --dbrange       : str  : define a subset database by sequence length
       --seqrange      : str  : search with a region of the query (START-END)
+      --multifasta    :      : treat input as a set of fasta formatted 
+                               sequences.
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -77,7 +81,7 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -227,6 +231,11 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+				case "--multifasta":
+					this.multifasta = true;
+					break;
+				case "/multifasta":
+					goto case "--multifasta";
 
 						// Tool specific options
 					case "--program": // FASTA program
@@ -431,7 +440,7 @@ http://www.ebi.ac.uk/Tools/fasta/help.html
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}
