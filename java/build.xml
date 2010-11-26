@@ -71,6 +71,7 @@
 	
 	<!-- Generate Axis 1.x stubs for all services -->
 	<target name="axis1-stubs" depends="resolve" description="Axis 1.x: generate code stubs for SOAP clients">
+		<antcall target="axis1-stubs-clustalo" />
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
@@ -80,6 +81,7 @@
 		<antcall target="axis1-stubs-mafft" />
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-ncbiblast" />
+		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
 		<antcall target="axis1-stubs-tcoffee" />
@@ -88,6 +90,12 @@
 	</target>
 
 	<!-- Generate Axis 1.x stubs for each service -->
+	<target name="axis1-stubs-clustalo" description="Axis 1.x: generate stubs for ClustalO (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalo" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalo?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-clustalw2" description="Axis 1.x: generate stubs for ClustalW2 (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2" />
@@ -142,6 +150,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-prank" description="Axis 1.x: generate stubs for PRANK (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.prank" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-psiblast" description="Axis 1.x: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psiblast" />
@@ -183,6 +197,7 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
+		<!-- ClustalO -->
 		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
@@ -271,6 +286,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- PRANK -->
 		<jar destfile="${jar.dir}/PSIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/**">
@@ -325,6 +341,7 @@
 
 	<!-- Clean-up Axis 1.x generate files -->
 	<target name="axis1-distclean-stubs" description="Axis 1.x: remove generated stubs">
+		<antcall target="axis1-distclean-stubs-clustalo" />
 		<antcall target="axis1-distclean-stubs-clustalw2" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-fasta" />
@@ -334,104 +351,104 @@
 		<antcall target="axis1-distclean-stubs-mafft" />
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
+		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
 		<antcall target="axis1-distclean-stubs-tcoffee" />
 		<antcall target="axis1-distclean-stubs-wsdbfetch" />
 		<antcall target="axis1-distclean-stubs-wublast" />
 	</target>
-	
+
+	<target name="axis1-distclean-stubs-clustalo" description="Axis 1.x: remove ClustalO (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/clustalo" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalo" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-clustalw2" description="Axis 1.x: remove ClustalW2 (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-ebeye" description="Axis 1.x: remove EB-eye stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-fasta" description="Axis 1.x: remove FASTA (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/fasta" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fasta" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-fastm" description="Axis 1.x: remove FASTM (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fastm" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-iprscan" description="Axis 1.x: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/iprscan" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="iprscan" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-kalign" description="Axis 1.x: remove Kalign (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/kalign" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="kalign" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-mafft" description="Axis 1.x: remove MAFFT (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/mafft" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="mafft" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-muscle" description="Axis 1.x: remove MUSCLE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/muscle" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="muscle" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-ncbiblast" description="Axis 1.x: remove NCBI BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ncbiblast" />
 	    </delete>
 	</target>
-
+	<target name="axis1-distclean-stubs-prank" description="Axis 1.x: remove PRANK (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/prank" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="prank" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-psiblast" description="Axis 1.x: remove PSI-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/psiblast" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="psiblast" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-psisearch" description="Axis 1.x: remove PSI-Search (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/psisearch" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-tcoffee" description="Axis 1.x: remove T-COFFEE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/tcoffee" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="tcoffee" />
 	    </delete>
 	</target>
-
 	<target name="axis1-distclean-stubs-wsdbfetch" description="Axis 1.x: remove WSDbfetch (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/wsdbfetch" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="wsdbfetch" />
 	    </delete>
 	</target>
-	
 	<target name="axis1-distclean-stubs-wublast" description="Axis 1.x: remove WU-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/wublast" includes="*/**" />
@@ -444,6 +461,7 @@
 	
 	<!-- Generate JAX-WS stubs for all services -->
 	<target name="jaxws-stubs" depends="resolve" description="JAX-WS RI: generate code stubs for SOAP clients">
+		<antcall target="jaxws-stubs-clustalo" />
 		<antcall target="jaxws-stubs-clustalw2" />
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
@@ -453,6 +471,7 @@
 		<antcall target="jaxws-stubs-mafft" />
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-ncbiblast" />
+		<antcall target="jaxws-stubs-prank" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
 		<antcall target="jaxws-stubs-tcoffee" />
@@ -461,6 +480,12 @@
 	</target>
 
 	<!-- Generate JAX-WS stubs for each service -->
+	<target name="jaxws-stubs-clustalo" description="JAX-WS RI: generate stubs for ClustalO (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalo" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalo?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-clustalw2" description="JAX-WS RI: generate stubs for ClustalW2 (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2" />
@@ -515,6 +540,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-prank" description="JAX-WS RI: generate stubs for PRANK (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.prank" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-psiblast" description="JAX-WS RI: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psiblast" />
@@ -556,14 +587,8 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- jar destfile="${jar.dir}/ClustalW2_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/clustalw2/**">
-			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.ClustalW2Client"/>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Date" value="${TODAY}"/>
-				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
-			</manifest>
-		</jar -->
+		<!-- ClustalO -->
+		<!-- ClustalW2 -->
 		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
@@ -572,18 +597,18 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- jar destfile="${jar.dir}/Fasta_JAXWS.jar"
+		<!-- FASTA -->
+		<!-- FASTM -->
+		<jar destfile="${jar.dir}/IPRScan_JAXWS.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/jaxws/FastaClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/fasta/**">
+			includes="uk/ac/ebi/webservices/jaxws/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/iprscan/**">
 			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.FastaClient"/>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.IPRScanClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
-		</jar -->
-		<!-- FASTM -->
-		<!-- InterProScan -->
+		</jar>
 		<!-- Kalign -->
 		<!-- MAFFT -->
 		<!-- MUSCLE -->
@@ -597,6 +622,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- PRANK -->
 		<!-- PSI-BLAST -->
 		<!-- PSI-Search -->
 		<!-- T-COFFEE -->
@@ -610,20 +636,12 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- jar destfile="${jar.dir}/WUBlast_JAXWS.jar"
-			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/jaxws/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/wublast/**">
-			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.WUBlastClient"/>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Date" value="${TODAY}"/>
-				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
-			</manifest>
-		</jar -->
+		<!-- WU-BLAST -->
 	</target>
 
 	<!-- Clean-up JAX-WS generated files -->
 	<target name="jaxws-distclean-stubs" description="JAX-WS RI: remove generated stubs">
+		<antcall target="jaxws-distclean-stubs-clustalo" />
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
@@ -633,103 +651,103 @@
 		<antcall target="jaxws-distclean-stubs-mafft" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
+		<antcall target="jaxws-distclean-stubs-prank" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
 		<antcall target="jaxws-distclean-stubs-psisearch" />
 		<antcall target="jaxws-distclean-stubs-tcoffee" />
 		<antcall target="jaxws-distclean-stubs-wublast" />
 	</target>
 	
+	<target name="jaxws-distclean-stubs-clustalo" description="JAX-WS RI: remove ClustalO (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/clustalo" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalo" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-clustalw2" description="JAX-WS RI: remove ClustalW2 (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-ebeye" description="JAX-WS RI: remove EB-eye stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-fasta" description="JAX-WS RI: remove FASTA (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/fasta" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fasta" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-fastm" description="JAX-WS RI: remove FASTM (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fastm" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-iprscan" description="JAX-WS RI: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/iprscan" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="iprscan" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-kalign" description="JAX-WS RI: remove Kalign (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/kalign" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="kalign" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-mafft" description="JAX-WS RI: remove MAFFT (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/mafft" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mafft" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-muscle" description="JAX-WS RI: remove MUSCLE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/muscle" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="muscle" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-ncbiblast" description="JAX-WS RI: remove NCBI BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ncbiblast" />
 	    </delete>
 	</target>
-
+	<target name="jaxws-distclean-stubs-prank" description="JAX-WS RI: remove PRANK (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/prank" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="prank" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-psiblast" description="JAX-WS RI: remove PSI-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/psiblast" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psiblast" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-psisearch" description="JAX-WS RI: remove PSI-Search (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/psisearch" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-tcoffee" description="JAX-WS RI: remove T-COFFEE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/tcoffee" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="tcoffee" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-wsdbfetch" description="JAX-WS RI: remove WSDbfetch (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/wsdbfetch" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="wsdbfetch" />
 	    </delete>
 	</target>
-
 	<target name="jaxws-distclean-stubs-wublast" description="JAX-WS RI: remove WU-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/wublast" includes="*/**" />
