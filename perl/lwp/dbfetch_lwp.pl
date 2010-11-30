@@ -28,6 +28,9 @@ For further information see:
 =over
 
 =item *
+L<http://www.ebi.ac.uk/Tools/dbfetch>
+
+=item *
 L<http://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest>
 
 =item *
@@ -56,7 +59,7 @@ use YAML::Syck;
 use Data::Dumper;
 
 # Base URL for service
-my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/dbfetch/dbfetch';
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
 
 # Output level
 my $outputLevel = 1;
