@@ -64,16 +64,17 @@ class NcbiBlastCliClient extends NcbiBlastClient {
   
   function submit($options) {
     $this->printDebugMessage('submit', 'Begin', 1);
-    if(!$options['params']['match_scores'] &&
-       ($options['match'] && $options['mismatch'])) {
+    if(!isset($options['params']['match_scores']) &&
+       (isset($options['match']) && isset($options['mismatch']))) {
       $options['params']['match_scores'] = $options['match'] . ',' . $options['mismatch'];
     }
+    if(!isset($options['title'])) $options['title'] = '';
     $jobId = $this->run(
 			$options['email'],
 			$options['title'],
 			$options['params']);
     // Async submission
-    if($options['async'] || $options['outputLevel'] > 0) {
+    if($options['async'] || (isset($options['outputLevel']) && $options['outputLevel'] > 0)) {
       echo "$jobId\n";
     }
     // Sync submission... get results
@@ -105,7 +106,7 @@ class NcbiBlastCliClient extends NcbiBlastClient {
     $this->clientPoll($options['jobId']);
     // Get the result types
     $resultTypeList = $this->getResultTypes($options['jobId']);
-    if($options['outfile']) {
+    if(isset($options['outfile'])) {
       $baseName = $options['outfile'];
     } else {
       $baseName = $options['jobId'];
@@ -113,7 +114,7 @@ class NcbiBlastCliClient extends NcbiBlastClient {
     foreach($resultTypeList as $resultType) {
       $result = '';
       $filename = $baseName . '.' . $resultType->identifier . '.' . $resultType->fileSuffix;
-      if($options['input']['outformat']) {
+      if(isset($options['input']['outformat'])) {
 	if(strcmp($options['input']['outformat'], $resultType->identifier) == 0) {
 	  $result = $this->getResult($options['jobId'], $resultType->identifier);
 	}
