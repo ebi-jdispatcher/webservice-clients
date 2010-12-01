@@ -110,7 +110,6 @@ EOF
   // Output a submission form
   function printForm() {
     $this->printDebugMessage('printForm', 'Begin', 1);
-    $stypeStr = $this->paramDetailToStr('stype');
     $databaseStr =  $this->paramDetailToStr('appl', TRUE);
     
     print <<<EOF
@@ -118,7 +117,7 @@ EOF
 <p>E-mail: <input type="text" name="email" />&nbsp;
 Job title: <input type="text" name="title" /></p>
 
-<p>$stypeStr<br />
+<p>
 <a href="?paramDetail=sequence">Sequence</a>:<br />
 <textarea name="sequence" rows="5" cols="80">
 </textarea></p>
