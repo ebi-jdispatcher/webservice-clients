@@ -1,101 +1,25 @@
 <?php
 # $Id$
 # ======================================================================
-# WSDbfetch document/literal SOAP service PHP command-line client using 
-# PHP SOAP.
+# PHP WSDbfetch document/literal SOAP service command-line client.
+#
+# Uses PHP SOAP.
 #
 # Note: this is a command-line program, call using:
 #  php wsdbfetch_cli_php_soap.php [options...]
 #
 # Tested with:
-#   PHP 5.0.4 (CentOS 4)
 #   PHP 5.1.6 (CentOS 5)
-#   PHP 5.2.4 (Ubuntu 8.04 LTS)
 #   PHP 5.3.2 (Ubuntu 10.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/dbfetch
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
+# Load WSDbfetch client library
+require_once('wsdbfetch_lib_php_soap.php');
 
-class WSDbfetchClient {
-  // Service WSDL URL.
-  private $wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl';
-  // Service proxy
-  private $srvProxy;
-  // HTTP proxy details
-  private $httpProxy;
-  // Trace flag
-  public $trace = FALSE;
-  // Debug level
-  public $debugLevel = 0;
-  
-  // Debug message
-  protected function printDebugMessage($method, $message, $level) {
-    if($level <= $this->debugLevel) {
-      // Plain text
-      if(array_key_exists('argc', $GLOBALS)) print "[$method] $message\n";
-      // HTML
-      else print "<p>[$method] $message</p>\n";
-    }
-  }
-  
-  // Set HTTP proxy details
-  function setHttpProxy($host, $port=8080) {
-    $this->printDebugMessage('setHttpProxy', 'Begin', 1);
-    $this->httpProxy = array('proxy_host' => $host,
-			     'proxy_port' => $port);
-    $this->printDebugMessage('setHttpProxy', 'End', 1);
-  }
-  
-  // Set WSDL to an alternative server
-  function setWsdlUrl($wsdlUrl) {
-    $this->printDebugMessage('setWsdlUrl', 'Begin', 1);
-    $this->printDebugMessage('setWsdlUrl', 'wsdlUrl: ' . $wsdlUrl, 2);
-    $this->wsdlUrl = $wsdlUrl;
-    $this->printDebugMessage('setWsdlUrl', 'End', 1);
-  }
-  
-  // Get a service proxy
-  function serviceProxyConnect() {
-    $this->printDebugMessage('serviceProxyConnect', 'Begin', 3);
-    // CHeck for SoapClient
-    if(!class_exists('SoapClient')) {
-      throw new Exception('SoapClient class cannot be found.');
-    }
-    // Get service proxy
-    if($this->srvProxy == null) {
-      $options = array('trace' => $this->trace);
-      if(isset($this->httpProxy)) {
-	$options['proxy_host'] = $this->httpProxy['proxy_host'];
-	$options['proxy_port'] = $this->httpProxy['proxy_port'];
-      }
-      $this->srvProxy = new SoapClient($this->wsdlUrl,
-				       $options);
-    }
-    $this->printDebugMessage('serviceProxyConnect', 'End', 3);
-  }
- 
-  // Print SOAP messages exchanged between client and server.
-  function soapTrace() {
-    $this->printDebugMessage('soapTrace', 'Begin', 12);
-    if($this->srvProxy != null) {
-      echo "REQUEST:\n" . $this->srvProxy->__getLastRequest() . "\n";
-      echo "RESPONSE:\n" . $this->srvProxy->__getLastResponse() . "\n";
-    }
-    $this->printDebugMessage('soapTrace', 'End', 12);
-  }
-  
-  // Get list of available databases.
-  function soapGetSupportedDBs() {
-    $this->printDebugMessage('soapGetSupportedDBs', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->getSupportedDBs();
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapGetSupportedDBs', 'End', 2);
-    return $result->getSupportedDBsReturn;
-  }
-  
+class WSDbfetchCliClient extends WSDbfetchClient {
   // Print list of available databases.
   function printGetSupportedDBs() {
     $this->printDebugMessage('printGetSupportedDBs', 'Begin', 1);
@@ -106,16 +30,6 @@ class WSDbfetchClient {
     $this->printDebugMessage('printGetSupportedDBs', 'End', 1);
   }
 
-  // Get list of available databases and formats.
-  function soapGetSupportedFormats() {
-    $this->printDebugMessage('soapGetSupportedFormats', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->getSupportedFormats();
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapGetSupportedFormats', 'End', 2);
-    return $result->getSupportedFormatsReturn;
-  }
-  
   // Print list of available databases and formats.
   function printGetSupportedFormats() {
     $this->printDebugMessage('printGetSupportedFormats', 'Begin', 1);
@@ -124,16 +38,6 @@ class WSDbfetchClient {
       echo $item . "\n";
     }
     $this->printDebugMessage('printGetSupportedFormats', 'End', 1);
-  }
-
-  // Get list of available databases and styles.
-  function soapGetSupportedStyles() {
-    $this->printDebugMessage('soapGetSupportedStyles', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->getSupportedStyles();
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapGetSupportedStyles', 'End', 2);
-    return $result->getSupportedStylesReturn;
   }
   
   // Print list of available databases and styles.
@@ -146,16 +50,6 @@ class WSDbfetchClient {
     $this->printDebugMessage('printGetSupportedStyles', 'End', 1);
   }
 
-  // Get list of available formats for a database.
-  function soapGetDbFormats($dbName) {
-    $this->printDebugMessage('soapGetDbFormats', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->getDbFormats(array('db' => $dbName));
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapGetDbFormats', 'End', 2);
-    return $result->getDbFormatsReturn;
-  }
-  
   // Print list of available formats for a database.
   function printGetDbFormats($dbName) {
     $this->printDebugMessage('printGetDbFormats', 'Begin', 1);
@@ -166,19 +60,6 @@ class WSDbfetchClient {
     $this->printDebugMessage('printGetDbFormats', 'End', 1);
   }
 
-  // Get list of available styles for a format of a database.
-  function soapGetFormatStyles($dbName, $formatName) {
-    $this->printDebugMessage('soapGetFormatStyles', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->getFormatStyles(array(
-						     'db' => $dbName,
-						     'format' => $formatName
-						     ));
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapGetFormatStyles', 'End', 2);
-    return $result->getFormatStylesReturn;
-  }
-  
   // Print list of available styles for a format of a database.
   function printGetFormatStyles($dbName, $formatName) {
     $this->printDebugMessage('printGetFormatStyles', 'Begin', 1);
@@ -187,20 +68,6 @@ class WSDbfetchClient {
       echo $item . "\n";
     }
     $this->printDebugMessage('printGetFormatStyles', 'End', 1);
-  }
-
-  // Get an entry.
-  function soapFetchData($query, $formatName, $styleName) {
-    $this->printDebugMessage('soapFetchData', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->fetchData(array(
-					       'query' => $query,
-					       'format' => $formatName,
-					       'style' => $styleName
-					       ));
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapFetchData', 'End', 2);
-    return $result->fetchDataReturn;
   }
   
   // Print an entry.
@@ -211,21 +78,6 @@ class WSDbfetchClient {
     $this->printDebugMessage('printFetchData', 'End', 1);
   }
 
-  // Get a set of entries.
-  function soapFetchBatch($dbName, $idListStr, $formatName, $styleName) {
-    $this->printDebugMessage('soapFetchBatch', 'Begin', 2);
-    $this->serviceProxyConnect();
-    $result = $this->srvProxy->fetchBatch(array(
-						'db' => $dbName,
-						'ids' => $idListStr,
-						'format' => $formatName,
-						'style' => $styleName
-						));
-    if($this->trace) $this->soapTrace();
-    $this->printDebugMessage('soapFetchBatch', 'End', 2);
-    return $result->fetchBatchReturn;
-  }
-  
   // Print a set of entries.
   function printFetchBatch($dbName, $idListStr, $formatName, $styleName) {
     $this->printDebugMessage('printFetchBatch', 'Begin', 1);
@@ -233,7 +85,6 @@ class WSDbfetchClient {
     echo $result . "\n";
     $this->printDebugMessage('printFetchBatch', 'End', 1);
   }
-
 }
 
 try {
@@ -247,7 +98,7 @@ try {
   }
 
   // Get service proxy
-  $client = new WSDbfetchClient();
+  $client = new WSDbfetchCliClient();
   // HTTP proxy config.
   //$client->setHttpProxy($proxy_host, $proxy_port);
 
