@@ -43,6 +43,16 @@ class WSDbfetchClient {
 			     'proxy_port' => $port);
     $this->printDebugMessage('setHttpProxy', 'End', 1);
   }
+
+  // Get HTTP User-agent string.
+  function getUserAgent() {
+    $this->printDebugMessage('getUserAgent', 'Begin', 2);
+    $clientVersion = trim(substr('$Revision$', 11), ' $');
+    $userAgent = 'EBI-Sample-Client/' . '0' . ' PHP-SOAP/' . phpversion();
+    $this->printDebugMessage('getUserAgent', 'User-agent: ' . $userAgent, 2);
+    $this->printDebugMessage('getUserAgent', 'End', 2);
+    return $userAgent;
+  }
   
   // Set WSDL to an alternative server
   function setWsdlUrl($wsdlUrl) {
@@ -61,7 +71,11 @@ class WSDbfetchClient {
     }
     // Get service proxy
     if($this->srvProxy == null) {
-      $options = array('trace' => $this->trace);
+      $userAgent = $this->getUserAgent();
+      $options = array(
+		       'trace' => $this->trace,
+		       'user_agent' => $userAgent
+		       );
       if(isset($this->httpProxy)) {
 	$options['proxy_host'] = $this->httpProxy['proxy_host'];
 	$options['proxy_port'] = $this->httpProxy['proxy_port'];
