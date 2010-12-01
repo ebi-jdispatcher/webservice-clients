@@ -48,7 +48,10 @@ class WSDbfetchClient {
   function getUserAgent() {
     $this->printDebugMessage('getUserAgent', 'Begin', 2);
     $clientVersion = trim(substr('$Revision$', 11), ' $');
-    $userAgent = 'EBI-Sample-Client/' . '0' . ' PHP-SOAP/' . phpversion();
+    if($clientVersion == '') $clientVersion = '0';
+    $uname  = posix_uname();
+    $userAgent = 'EBI-Sample-Client/' . $clientVersion . 
+      ' (' . get_class($this) . '; ' . $uname['sysname'] . ') PHP-SOAP/' . phpversion();
     $this->printDebugMessage('getUserAgent', 'User-agent: ' . $userAgent, 2);
     $this->printDebugMessage('getUserAgent', 'End', 2);
     return $userAgent;
@@ -65,16 +68,15 @@ class WSDbfetchClient {
   // Get a service proxy
   function serviceProxyConnect() {
     $this->printDebugMessage('serviceProxyConnect', 'Begin', 3);
-    // CHeck for SoapClient
+    // Check for SoapClient
     if(!class_exists('SoapClient')) {
       throw new Exception('SoapClient class cannot be found.');
     }
     // Get service proxy
     if($this->srvProxy == null) {
-      $userAgent = $this->getUserAgent();
       $options = array(
 		       'trace' => $this->trace,
-		       'user_agent' => $userAgent
+		       'user_agent' => $this->getUserAgent()
 		       );
       if(isset($this->httpProxy)) {
 	$options['proxy_host'] = $this->httpProxy['proxy_host'];
