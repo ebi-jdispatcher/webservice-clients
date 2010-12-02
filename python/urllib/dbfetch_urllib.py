@@ -12,7 +12,6 @@ baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Load libraries
 import os, sys, urllib2, xmltramp
-import pprint
 from optparse import OptionParser
 
 # Output level
@@ -124,7 +123,6 @@ def getSupportedDbs():
     dbList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        #pprint.pprint(dbInfo.name)
         dbList.append(str(dbInfo.name))
     printDebugMessage('getSupportedDbs', 'End', 1)
     return dbList
