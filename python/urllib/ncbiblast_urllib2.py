@@ -83,12 +83,30 @@ def printDebugMessage(functionName, message, level):
     if(level <= debugLevel):
         print >>sys.stderr, '[' + functionName + '] ' + message
 
+# User-agent for request.
+def getUserAgent():
+    printDebugMessage('getUserAgent', 'Begin', 11)
+    urllib_agent = 'Python-urllib/%s' % sys.version[:3]
+    clientRevision = '$Revision$'
+    clientVersion = '0'
+    if len(clientRevision) > 11:
+        clientVersion = clientRevision[11:-2]
+    user_agent = 'EBI-Sample-Client/' + clientVersion
+    user_agent += ' (' + os.path.basename( __file__ ) + '; ' + os.name + ')'
+    user_agent += ' ' + urllib_agent
+    printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
+    printDebugMessage('getUserAgent', 'End', 11)
+    return user_agent
+
 # Wrapper for a REST (HTTP GET) request
 def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
     try:
-        reqH = urllib2.urlopen(url)
+        user_agent = getUserAgent()
+        http_headers = { 'User-Agent' : user_agent }
+        req = urllib2.Request(url, None, http_headers)
+        reqH = urllib2.urlopen(req)
         result = reqH.read()
         reqH.close()
     except urllib2.HTTPError, ex:
