@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # $Id$
 # ======================================================================
-# WSDbfetch (REST) using urllib2.
+# WSDbfetch (REST) using urllib2 and xmltramp 
+# (http://www.aaronsw.com/2002/xmltramp/).
+#
+# Tested with:
+#  Python 2.5.2 (Ubuntu 8.04 LTS)
+#  Python 2.6.5 (Ubuntu 10.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest
@@ -11,7 +16,7 @@
 baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Load libraries
-import os, sys, urllib2, xmltramp
+import platform, os, sys, urllib2, xmltramp
 from optparse import OptionParser
 
 # Output level
@@ -21,31 +26,20 @@ debugLevel = 0
 
 # Usage message
 usage = """
-  %prog <method> [arguments...] [--trace]
-
-A number of methods are available:
-
-  fetchData - retrieve an database entry. See below for details of arguments.
-  fetchBatch - retrieve database entries. See below for details of arguments.
-
-Fetching an entry: fetchData
-
-  dbfetch.pl fetchData <dbName:id> [format [style]]
-
-  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT)
-  format     format to retrieve (e.g. uniprot)
-
-Fetching entries: fetchBatch
-
-  dbfetch.pl fetchBatch <dbName> <idList> [format [style]]
-
-  dbName     database name (e.g. UNIPROT)
-  idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
-             Maximum of 200 IDs or accessions.
-  format     format to retrieve (e.g. uniprot)"""
-
+  %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
+  %prog fetchData <dbName:id> [formatName [styleName]] [options...]
+  %prog getDbFormats <dbName> [options...]
+  %prog getFormatStyles <dbName> <formatName> [options...]
+  %prog getSupportedDBs [options...]
+  %prog getSupportedFormats [options...]
+  %prog getSupportedStyles [options...]"""
+description = """Fetch database entries using entry identifiers. For more information on dbfetch 
+refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+epilog = """For further information about the WSDbfetch (SOAP) web service, see 
+http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
 parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
@@ -81,9 +75,11 @@ def getUserAgent():
     clientVersion = '0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
-    user_agent = 'EBI-Sample-Client/' + clientVersion
-    user_agent += ' (' + os.path.basename( __file__ ) + '; ' + os.name + ')'
-    user_agent += ' ' + urllib_agent
+    user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+        clientVersion, os.path.basename( __file__ ), 
+        platform.python_version(), platform.system(),
+        urllib_agent
+    )
     printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
     printDebugMessage('getUserAgent', 'End', 11)
     return user_agent
