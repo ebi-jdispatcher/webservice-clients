@@ -14,14 +14,13 @@
 wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl'
 
 # Load libraries
-import os
-import sys
-import time
-import warnings
-from optparse import OptionParser
-from suds.client import Client
+import base64, platform, os, suds, sys, urllib2
 import logging
+from suds import WebFault
+from suds.client import Client
+from optparse import OptionParser
 
+# Setup logging
 logging.basicConfig(level=logging.INFO)
 
 # Output level
@@ -30,9 +29,20 @@ outputLevel = 1
 debugLevel = 0
 
 # Usage message
-usage = "Usage: %prog [options...] [seqFile]"
+usage = """
+  %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
+  %prog fetchData <dbName:id> [formatName [styleName]] [options...]
+  %prog getDbFormats <dbName> [options...]
+  %prog getFormatStyles <dbName> <formatName> [options...]
+  %prog getSupportedDBs [options...]
+  %prog getSupportedFormats [options...]
+  %prog getSupportedStyles [options...]"""
+description = """Fetch database entries using entry identifiers. For more information on dbfetch 
+refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+epilog = """For further information about the WSDbfetch (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
 parser.add_option('--trace', action="store_true", help='show SOAP messages')
@@ -52,24 +62,6 @@ if options.quiet:
 if options.debugLevel:
     debugLevel = options.debugLevel
 
-# If required enable SOAP message trace
-if options.trace:
-    logging.getLogger('suds.client').setLevel(logging.DEBUG)
-
-# Create the service interface
-dbfetch = Client(wsdlUrl)
-if outputLevel > 1:
-    print dbfetch
-
-# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
-proxyOpts = dict()
-if os.environ.has_key('http_proxy'):
-    proxyOpts['http'] = os.environ['http_proxy'].replace('http://', '')
-elif os.environ.has_key('HTTP_PROXY'):
-    proxyOpts['http'] = os.environ['HTTP_PROXY'].replace('http://', '')
-if 'http' in proxyOpts:
-    client.set_options(proxy=proxyOpts)
-
 # Debug print
 def printDebugMessage(functionName, message, level):
     if(level <= debugLevel):
@@ -77,7 +69,7 @@ def printDebugMessage(functionName, message, level):
 
 # Get list of supported database names.
 def soapGetSupportedDBs():
-    dbList = dbfetch.service.getSupportedDBs()
+    dbList = dbfetch.getSupportedDBs()
     return dbList
 
 # Print list of supported database names.
@@ -88,7 +80,7 @@ def printGetSupportedDBs():
 
 # Get list of supported database and format names.
 def soapGetSupportedFormats():
-    dbList = dbfetch.service.getSupportedFormats()
+    dbList = dbfetch.getSupportedFormats()
     return dbList
 
 # Print list of supported database and format names.
@@ -99,7 +91,7 @@ def printGetSupportedFormats():
 
 # Get list of supported database and style names.
 def soapGetSupportedStyles():
-    dbList = dbfetch.service.getSupportedStyles()
+    dbList = dbfetch.getSupportedStyles()
     return dbList
 
 # Print list of supported database and style names.
@@ -110,7 +102,7 @@ def printGetSupportedStyles():
 
 # Get list of formats available for a database.
 def soapGetDbFormats(dbName):
-    formatList = dbfetch.service.getDbFormats(dbName)
+    formatList = dbfetch.getDbFormats(dbName)
     return formatList
 
 # Print list of formats available for a database.
@@ -121,7 +113,7 @@ def printGetDbFormats(dbName):
 
 # Get list of available styles for a format of a database.
 def soapGetFormatStyles(dbName, formatName):
-    styleList = dbfetch.service.getFormatStyles(dbName, formatName)
+    styleList = dbfetch.getFormatStyles(dbName, formatName)
     return styleList
 
 # Print list of available styles for a format of a database.
@@ -132,7 +124,7 @@ def printGetFormatStyles(dbName, formatName):
 
 # Fetch an entry.
 def soapFetchData(query, formatName, styleName):
-    entryStr = dbfetch.service.fetchData(query, formatName, styleName)
+    entryStr = dbfetch.fetchData(query, formatName, styleName)
     return entryStr
 
 # Print an entry.
@@ -142,13 +134,47 @@ def printFetchData(query, formatName, styleName):
 
 # Fetch a set of entries.
 def soapFetchBatch(dbName, idListStr, formatName, styleName):
-    entriesStr = dbfetch.service.fetchBatch(dbName, idListStr, formatName, styleName)
+    entriesStr = dbfetch.fetchBatch(dbName, idListStr, formatName, styleName)
     return entriesStr
 
 # Print a set of entries.
 def printFetchBatch(dbName, idListStr, formatName, styleName):
     entriesStr = soapFetchBatch(dbName, idListStr, formatName, styleName)
     print entriesStr
+
+# If required enable SOAP message trace
+if options.trace:
+    logging.getLogger('suds.client').setLevel(logging.DEBUG)
+
+# Create the service interface
+printDebugMessage('main', 'WSDL: ' + options.WSDL, 1)
+client = Client(options.WSDL)
+if outputLevel > 1:
+    print client
+dbfetch = client.service
+
+# Set the client user-agent.
+clientRevision = '$Revision$'
+clientVersion = '0'
+if len(clientRevision) > 11:
+    clientVersion = clientRevision[11:-2] 
+userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) suds/%s Python-urllib/%s' % (
+    clientVersion, os.path.basename( __file__ ),
+    platform.python_version(), platform.system(),
+    suds.__version__, urllib2.__version__
+)
+printDebugMessage('main', 'userAgent: ' + userAgent, 1)
+httpHeaders = {'User-agent': userAgent}
+client.set_options(headers=httpHeaders)
+
+# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
+proxyOpts = dict()
+if os.environ.has_key('http_proxy'):
+    proxyOpts['http'] = os.environ['http_proxy'].replace('http://', '')
+elif os.environ.has_key('HTTP_PROXY'):
+    proxyOpts['http'] = os.environ['HTTP_PROXY'].replace('http://', '')
+if 'http' in proxyOpts:
+    client.set_options(proxy=proxyOpts)
 
 # Perform actions.
 if len(args) < 1:
