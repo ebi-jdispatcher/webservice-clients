@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # ======================================================================
-# jDispatcher NCBI BLAST Python client.
+# NCBI BLAST (SOAP) Python client using ZSI 2.0.
 #
 # Tested with:
-#   Python 2.5.2 with ZSI 2.0
-#   Python 2.6.2 with ZSI 2.0 (Ubuntu 9.04)
+#   Python 2.5.2 with ZSI 2.0 (Ubuntu 8.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
@@ -14,18 +13,23 @@
 #  wsdl2py -u http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl
 # ======================================================================
 # Load libraries
-import os
-import sys
-import time
+import os, sys, time
 from optparse import OptionParser
 # Load stubs
 from ncbiblast_services import *
 
-# Usage message
-usage = "%prog [options...] [seqFile]"
+# Number of option arguments.
+numOpts = len(sys.argv)
 
+# Usage message
+usage = "Usage: %prog [options...] [seqFile]"
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
+epilog = """For further information about the NCBI BLAST (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap.
+"""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # General options
 parser.add_option('--params', action="store_true", help='Get parameter list')
 parser.add_option('--paramDetail', help='Get parameter details')
@@ -145,7 +149,6 @@ def run(email, title, params):
         req._parameters._gapalign = params['gapalign']
     if params.has_key('sequence'):
         req._parameters._sequence = params['sequence']
-    print req._parameters
     msg = srvProxy.run(req)
     return msg._jobId
 
@@ -204,8 +207,13 @@ def readFile(filename):
     fh.close()
     return data
 
-if options.params:
+# No options... print help.
+if numOpts < 2:
+    parser.print_help()
+# List parameters
+elif options.params:
     printParameters()
+# Get parameter details
 elif options.paramDetail:
     printParameterDetails(options.paramDetail)
 # Get status
