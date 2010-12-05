@@ -5,7 +5,8 @@
 #
 # Tested with:
 #   Python 2.5.1 with SOAPpy 0.11.3
-#   Python 2.6.2 with SOAPpy 0.12.0 (Ubuntu 9.04)
+#   Python 2.5.2 with SOAPpy 0.12.0 (Ubuntu 8.04 LTS)
+#   Python 2.6.5 with SOAPpy 0.12.0 (Ubuntu 10.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
@@ -15,10 +16,7 @@
 wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries
-import os
-import sys
-import base64
-import time
+import base64, platform, os, SOAPpy, sys, time
 import warnings
 from SOAPpy import WSDL
 from optparse import OptionParser
@@ -32,11 +30,18 @@ checkInterval = 3
 outputLevel = 1
 # Debug level
 debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
+epilog = """For further information about the NCBI BLAST (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap.
+"""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
 parser.add_option('-p', '--program', help='program to run')
 parser.add_option('-D', '--database', help='database to search')
@@ -70,19 +75,7 @@ parser.add_option('--verbose', action='store_true', help='increase output level'
 parser.add_option('--trace', action="store_true", help='show SOAP messages')
 parser.add_option('--WSDL', default=wsdlUrl, help='WSDL URL for service')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
-
 (options, args) = parser.parse_args()
-
-# Create the service interface
-server = WSDL.Proxy(options.WSDL)
-# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
-if os.environ.has_key('http_proxy'):
-    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
-elif os.environ.has_key('HTTP_PROXY'):
-    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
-else:
-    http_proxy_conf = None
-server.soapproxy.http_proxy = http_proxy_conf
 
 # Increase output level
 if options.verbose:
@@ -95,11 +88,6 @@ if options.quiet:
 # Debug level
 if options.debugLevel:
     debugLevel = options.debugLevel
-
-# If required enable SOAP message trace
-if options.trace:
-    server.soapproxy.config.dumpSOAPOut = 1
-    server.soapproxy.config.dumpSOAPIn = 1
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -194,8 +182,51 @@ def readFile(filename):
     printDebugMessage('readFile', 'End', 1)
     return data
 
+# Set the client user-agent.
+clientRevision = '$Revision$'
+clientVersion = '0'
+if len(clientRevision) > 11:
+    clientVersion = clientRevision[11:-2] 
+userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+    clientVersion, os.path.basename( __file__ ),
+    platform.python_version(), platform.system(),
+    SOAPpy.Client.SOAPUserAgent()
+)
+# Function to return User-agent.
+def SOAPUserAgent():
+    return userAgent
+# Redefine default User-agent function to return custom User-agent.
+SOAPpy.Client.SOAPUserAgent = SOAPUserAgent
+printDebugMessage('main', 'User-agent: ' + SOAPpy.Client.SOAPUserAgent(), 1)
+
+# Create the service interface
+printDebugMessage('main', 'WSDL: ' + options.WSDL, 1)
+server = WSDL.Proxy(options.WSDL)
+
+# Fix message namespace (not set from the WSDL).
+for method in server.methods:
+    if server.methods[method].namespace == None:
+        server.methods[method].namespace = 'http://soap.jdispatcher.ebi.ac.uk'
+
+# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
+if os.environ.has_key('http_proxy'):
+    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
+elif os.environ.has_key('HTTP_PROXY'):
+    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
+else:
+    http_proxy_conf = None
+server.soapproxy.http_proxy = http_proxy_conf
+
+# If required enable SOAP message trace
+if options.trace:
+    server.soapproxy.config.dumpSOAPOut = 1
+    server.soapproxy.config.dumpSOAPIn = 1
+
+# No options... print help.
+if numOpts < 2:
+    parser.print_help()
 # List parameters
-if options.params:
+elif options.params:
     for paramName in serviceGetParameters()['id']:
         print paramName
 # Get parameter details
