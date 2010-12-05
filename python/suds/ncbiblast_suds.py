@@ -15,7 +15,6 @@ wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries
 import base64, platform, os, suds, sys, time, urllib2
-#import warnings
 import logging
 from suds import WebFault
 from suds.client import Client
