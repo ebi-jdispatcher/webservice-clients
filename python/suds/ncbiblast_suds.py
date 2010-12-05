@@ -14,11 +14,8 @@
 wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries
-import os
-import sys
-import base64
-import time
-import warnings
+import base64, platform, os, suds, sys, time, urllib2
+#import warnings
 import logging
 from suds import WebFault
 from suds.client import Client
@@ -71,22 +68,7 @@ parser.add_option('--verbose', action='store_true', help='increase output level'
 parser.add_option('--trace', action="store_true", help='show SOAP messages')
 parser.add_option('--WSDL', default=wsdlUrl, help='WSDL URL for service')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
-
 (options, args) = parser.parse_args()
-
-# Create the client
-client = Client(options.WSDL)
-server = client.service
-
-# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
-if os.environ.has_key('http_proxy'):
-    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
-    proxy = dict(http=http_proxy_conf)
-    client.set_options(proxy=proxy)
-elif os.environ.has_key('HTTP_PROXY'):
-    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
-    proxy = dict(http=http_proxy_conf)
-    client.set_options(proxy=proxy)
 
 # Increase output level
 if options.verbose:
@@ -99,10 +81,6 @@ if options.quiet:
 # Debug level
 if options.debugLevel:
     debugLevel = options.debugLevel
-
-# If required enable SOAP message trace
-if options.trace:
-    logging.getLogger('suds.client').setLevel(logging.DEBUG);
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -196,6 +174,39 @@ def readFile(filename):
     fh.close()
     printDebugMessage('readFile', 'End', 1)
     return data
+
+# Create the client
+printDebugMessage('main', 'WSDL: ' + options.WSDL, 1)
+client = Client(options.WSDL)
+server = client.service
+
+# Set the client user-agent.
+clientRevision = '$Revision$'
+clientVersion = '0'
+if len(clientRevision) > 11:
+    clientVersion = clientRevision[11:-2] 
+userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) suds/%s Python-urllib/%s' % (
+    clientVersion, os.path.basename( __file__ ),
+    platform.python_version(), platform.system(),
+    suds.__version__, urllib2.__version__
+)
+printDebugMessage('main', 'userAgent: ' + userAgent, 1)
+httpHeaders = {'User-agent': userAgent}
+client.set_options(headers=httpHeaders)
+
+# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
+if os.environ.has_key('http_proxy'):
+    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
+    proxy = dict(http=http_proxy_conf)
+    client.set_options(proxy=proxy)
+elif os.environ.has_key('HTTP_PROXY'):
+    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
+    proxy = dict(http=http_proxy_conf)
+    client.set_options(proxy=proxy)
+
+# If required enable SOAP message trace
+if options.trace:
+    logging.getLogger('suds.client').setLevel(logging.DEBUG);
 
 # List parameters
 if options.params:
