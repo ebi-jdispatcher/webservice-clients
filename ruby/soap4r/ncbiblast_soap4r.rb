@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # $Id$
 # ======================================================================
-# NCBI BLAST SOAP web service Ruby client using soap4r.
+# NCBI BLAST (SOAP) Ruby client using soap4r.
 #
 # Tested with:
 #   SOAP4R 1.5.5 and Ruby 1.8.6 (Ubuntu 8.04 LTS)
