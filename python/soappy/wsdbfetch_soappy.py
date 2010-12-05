@@ -14,9 +14,7 @@
 wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl'
 
 # Load libraries
-import os
-import sys
-import time
+import platform, os, SOAPpy, sys
 import warnings
 from optparse import OptionParser
 from SOAPpy import WSDL
@@ -30,39 +28,20 @@ outputLevel = 1
 debugLevel = 0
 
 # Usage message
-usage = """Usage:
-  %prog <method> [arguments...] [options...]
-
-A number of methods are available:
-
-  getSupportedDBs - list available databases
-  getSupportedFormats - list available databases with formats
-  getSupportedStyles - list available databases with styles
-  getDbFormats - list formats for a specifed database
-  getFormatStyles - list styles for a specified database and format
-  fetchData - retrive an database entry. See below for details of arguments.
-  fetchBatch - retrive database entries. See below for details of arguments.
-
-Fetching an entry: fetchData
-
-  $scriptName fetchData <dbName:id> [format [style]]
-
-  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT)
-  format     format to retrive (e.g. uniprot)
-  style      style to retrive (e.g. raw)
-
-Fetching entries: fetchBatch
-
-  $scriptName fetchBatch <dbName> <idList> [format [style]]
-
-  dbName     database name (e.g. UNIPROT)
-  idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
-             Maximum of 200 IDs or accessions. "-" for STDIN.
-  format     format to retrive (e.g. uniprot)
-  style      style to retrive (e.g. raw)"""
-
+usage = """
+  %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
+  %prog fetchData <dbName:id> [formatName [styleName]] [options...]
+  %prog getDbFormats <dbName> [options...]
+  %prog getFormatStyles <dbName> <formatName> [options...]
+  %prog getSupportedDBs [options...]
+  %prog getSupportedFormats [options...]
+  %prog getSupportedStyles [options...]"""
+description = """Fetch database entries using entry identifiers. For more information on dbfetch 
+refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+epilog = """For further information about the WSDbfetch (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
 parser.add_option('--trace', action="store_true", help='show SOAP messages')
@@ -81,22 +60,6 @@ if options.quiet:
 # Debug level
 if options.debugLevel:
     debugLevel = options.debugLevel
-
-# Create the service interface
-dbfetch = WSDL.Proxy(options.WSDL)
-# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
-if os.environ.has_key('http_proxy'):
-    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
-elif os.environ.has_key('HTTP_PROXY'):
-    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
-else:
-    http_proxy_conf = None
-dbfetch.soapproxy.http_proxy = http_proxy_conf
-
-# If required enable SOAP message trace
-if options.trace:
-    dbfetch.soapproxy.config.dumpSOAPOut = 1
-    dbfetch.soapproxy.config.dumpSOAPIn = 1
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -177,6 +140,41 @@ def soapFetchBatch(dbName, idListStr, formatName, styleName):
 def printFetchBatch(dbName, idListStr, formatName, styleName):
     entriesStr = soapFetchBatch(dbName, idListStr, formatName, styleName)
     print entriesStr
+
+# Set the client user-agent.
+clientRevision = '$Revision: 1692 $'
+clientVersion = '0'
+if len(clientRevision) > 11:
+    clientVersion = clientRevision[11:-2] 
+userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+    clientVersion, os.path.basename( __file__ ),
+    platform.python_version(), platform.system(),
+    SOAPpy.Client.SOAPUserAgent()
+)
+# Function to return User-agent.
+def SOAPUserAgent():
+    return userAgent
+# Redefine default User-agent function to return custom User-agent.
+SOAPpy.Client.SOAPUserAgent = SOAPUserAgent
+printDebugMessage('main', 'User-agent: ' + SOAPpy.Client.SOAPUserAgent(), 1)
+
+# Create the service interface
+printDebugMessage('main', 'WSDL: ' + options.WSDL, 1)
+dbfetch = WSDL.Proxy(options.WSDL)
+
+# Configure HTTP proxy from OS environment (e.g. http_proxy="http://proxy.example.com:8080")
+if os.environ.has_key('http_proxy'):
+    http_proxy_conf = os.environ['http_proxy'].replace('http://', '')
+elif os.environ.has_key('HTTP_PROXY'):
+    http_proxy_conf = os.environ['HTTP_PROXY'].replace('http://', '')
+else:
+    http_proxy_conf = None
+dbfetch.soapproxy.http_proxy = http_proxy_conf
+
+# If required enable SOAP message trace
+if options.trace:
+    dbfetch.soapproxy.config.dumpSOAPOut = 1
+    dbfetch.soapproxy.config.dumpSOAPIn = 1
 
 # Perform actions.
 if len(args) < 1:
