@@ -14,7 +14,7 @@
 wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl'
 
 # Load libraries
-import base64, platform, os, suds, sys, urllib2
+import platform, os, suds, sys, urllib2
 import logging
 from suds import WebFault
 from suds.client import Client
