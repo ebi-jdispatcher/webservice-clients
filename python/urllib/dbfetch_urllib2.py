@@ -70,7 +70,7 @@ def printDebugMessage(functionName, message, level):
 # User-agent for request.
 def getUserAgent():
     printDebugMessage('getUserAgent', 'Begin', 11)
-    urllib_agent = 'Python-urllib/%s' % sys.version[:3]
+    urllib_agent = 'Python-urllib/%s' % urllib2.__version__
     clientRevision = '$Revision$'
     clientVersion = '0'
     if len(clientRevision) > 11:
