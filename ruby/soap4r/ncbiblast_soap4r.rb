@@ -170,7 +170,7 @@ excludeOpts = {
 }
 
 # Wrapping class for working with the application
-class EbiWsAppl
+class EbiWsNcbiBlast
   # Accessor methods for attributes
   attr_reader :timeout, :outputLevel, :debugLevel
 
@@ -380,6 +380,26 @@ class EbiWsAppl
   end
 
   private
+
+  # Set the User-agent for client requests.
+  # Note: this assumes details about the internals of SOAP4R.
+  def soapUserAgent(soap)
+    printDebugMessage('soapUserAgent', 'Begin', 11)
+    clientRevision = '$Revision$'
+    clientVersion = '0'
+    if clientRevision.length > 11
+       clientVersion = clientRevision[11..-3]
+    end
+    userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
+    if soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
+       userAgent += soap.proxy.streamhandler.client.instance_variable_get('@agent')
+       printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
+	soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
+    end
+    printDebugMessage('soapUserAgent', 'End', 11)
+  end
+  
+  # Get a SOAP proxy object to access the service.
   def soapConnect
     printDebugMessage('soapConnect', 'Begin', 11)
     # Create the service proxy
@@ -387,6 +407,12 @@ class EbiWsAppl
     soap.options["protocol.http.connect_timeout"] = @timeout
     soap.options["protocol.http.receive_timeout"] = @timeout
     soap.wiredump_dev = STDOUT if @trace
+    # Try to set a user-agent.
+    begin
+	soapUserAgent(soap)
+    rescue
+      printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+    end
     printDebugMessage('soapConnect', 'End', 11)
     return soap
   end
@@ -426,7 +452,7 @@ begin
   else
     timeout = 120
   end
-  ebiWsApp = EbiWsAppl.new(argHash['outputLevel'], argHash['debugLevel'], argHash['trace'], timeout)
+  ebiWsApp = EbiWsNcbiBlast.new(argHash['outputLevel'], argHash['debugLevel'], argHash['trace'], timeout)
   
   # Help info
   if argHash['help'] || numArgs == 0
