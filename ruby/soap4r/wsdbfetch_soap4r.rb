@@ -255,7 +255,7 @@ class EbiWsDbfetch
     clientRevision = '$Revision$'
     clientVersion = '0'
     if clientRevision.length > 11
-       clientVersion = clientRevision[11,-2]
+       clientVersion = clientRevision[11..-3]
     end
     userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
     if soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
@@ -275,7 +275,11 @@ class EbiWsDbfetch
     soap.options["protocol.http.receive_timeout"] = @timeout
     soap.wiredump_dev = STDOUT if @trace
     # Try to set a user-agent.
-    soapUserAgent(soap)
+    begin
+	soapUserAgent(soap)
+    rescue
+      printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+    end
     printDebugMessage('soapConnect', 'End', 11)
     return soap
   end
