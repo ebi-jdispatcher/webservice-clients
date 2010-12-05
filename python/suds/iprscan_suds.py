@@ -37,7 +37,7 @@ usage = "Usage: %prog [options...] [seqFile]"
 description = """Identify protein family, domain and signal signatures in a 
 protein sequence using InterProScan. For more information on InterProScan 
 refer to http://www.ebi.ac.uk/Tools/pfa/iprscan"""
-epilog = """For further information about the InterProScan (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_rest.
+epilog = """For further information about the InterProScan (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap.
 """
 version = "$Id$"
 # Process command-line options
@@ -206,9 +206,10 @@ elif os.environ.has_key('HTTP_PROXY'):
 if options.trace:
     logging.getLogger('suds.client').setLevel(logging.DEBUG);
 
-# List parameters
+# No options... print help.
 if numOpts < 2:
     parser.print_help()
+# List parameters
 elif options.params:
     for paramName in serviceGetParameters()['id']:
         print paramName

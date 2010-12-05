@@ -30,11 +30,18 @@ checkInterval = 3
 outputLevel = 1
 # Debug level
 debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
+epilog = """For further information about the NCBI BLAST (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap.
+"""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
 parser.add_option('-p', '--program', help='program to run')
 parser.add_option('-D', '--database', help='database to search')
@@ -208,8 +215,11 @@ elif os.environ.has_key('HTTP_PROXY'):
 if options.trace:
     logging.getLogger('suds.client').setLevel(logging.DEBUG);
 
+# No options... print help.
+if numOpts < 2:
+    parser.print_help()
 # List parameters
-if options.params:
+elif options.params:
     for paramName in serviceGetParameters()['id']:
         print paramName
 # Get parameter details
