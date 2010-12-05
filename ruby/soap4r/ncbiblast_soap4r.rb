@@ -4,6 +4,8 @@
 # NCBI BLAST SOAP web service Ruby client using soap4r.
 #
 # Tested with:
+#   SOAP4R 1.5.5 and Ruby 1.8.6 (Ubuntu 8.04 LTS)
+#   SOAP4R 1.5.5 and Ruby 1.8.7 (Ubuntu 10.04 LTS)
 #   SOAP4R 1.5.8 and Ruby 1.8.7
 #
 # See:
@@ -24,7 +26,7 @@ def printUsage(returnCode)
 NCBI BLAST
 ==========
    
-Rapid sequence database search programs utilising the BLAST algorithm
+Rapid sequence database search programs utilising the BLAST algorithm.
 
 [Required]
 
@@ -93,7 +95,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/ncbiblast/
+  http://www.ebi.ac.uk/Tools/sss/ncbiblast/
   http://www.ebi.ac.uk/Tools/webservices/sss/ncbi_blast_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 END_OF_STRING
@@ -196,8 +198,10 @@ class EbiWsAppl
     if(2 <= @debugLevel)
       p res
     end
+    # 'id' is a restricted attribute name, so a work-around is required to access this attribute
+    params = res.parameters.instance_variable_get(:@id)
     printDebugMessage('getParams', 'End', 1)
-    return res.parameters['id']
+    return params
   end
   
   # Print list of parameter names
@@ -228,11 +232,11 @@ class EbiWsAppl
   def printParamDetail(paramName)
     printDebugMessage('printParamDetail', 'Begin', 1)
     paramDetail = getParamDetail(paramName)
-    puts paramDetail.name + "\t" + paramDetail['type']
+    puts paramDetail.name + "\t" + paramDetail.instance_variable_get(:@type)
     puts paramDetail.description
     paramDetail.values.value.each { |value|
       print value.value
-      if(value.defaultValue == 'true')
+      if(value.defaultValue)
         print "\tdefault"
       end
       puts
