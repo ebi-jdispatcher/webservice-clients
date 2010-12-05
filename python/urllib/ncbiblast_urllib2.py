@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # $Id$
 # ======================================================================
-# NCBI BLAST REST service, Python client using urllib2 and 
+# NCBI BLAST (REST) Python client using urllib2 and 
 # xmltramp (http://www.aaronsw.com/2002/xmltramp/).
 #
 # Tested with:
-#   Python 2.6.2 (Ubuntu 9.04)
+#  Python 2.5.2 (Ubuntu 8.04 LTS)
+#  Python 2.6.5 (Ubuntu 10.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
@@ -15,9 +16,7 @@
 baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
 
 # Load libraries
-import os, re, sys, time, urllib, urllib2
-import xmltramp
-import pprint
+import platform, os, re, sys, time, urllib, urllib2, xmltramp
 from optparse import OptionParser
 
 # Set interval for checking status
@@ -26,11 +25,18 @@ checkInterval = 10
 outputLevel = 1
 # Debug level
 debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
+epilog = """For further information about the NCBI BLAST (SOAP) web service, see 
+http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap."""
+version = "$Id$"
 # Process command-line options
-parser = OptionParser(usage=usage)
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
 parser.add_option('-p', '--program', help='program to run')
 parser.add_option('-D', '--database', help='database to search')
@@ -86,14 +92,16 @@ def printDebugMessage(functionName, message, level):
 # User-agent for request.
 def getUserAgent():
     printDebugMessage('getUserAgent', 'Begin', 11)
-    urllib_agent = 'Python-urllib/%s' % sys.version[:3]
+    urllib_agent = 'Python-urllib/%s' % urllib2.__version__
     clientRevision = '$Revision$'
     clientVersion = '0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
-    user_agent = 'EBI-Sample-Client/' + clientVersion
-    user_agent += ' (' + os.path.basename( __file__ ) + '; ' + os.name + ')'
-    user_agent += ' ' + urllib_agent
+    user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+        clientVersion, os.path.basename( __file__ ),
+        platform.python_version(), platform.system(),
+        urllib_agent
+    )
     printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
     printDebugMessage('getUserAgent', 'End', 11)
     return user_agent
@@ -291,8 +299,11 @@ def readFile(filename):
     printDebugMessage('readFile', 'End', 1)
     return data
 
+# No options... print help.
+if numOpts < 2:
+    parser.print_help()
 # List parameters
-if options.params:
+elif options.params:
     printGetParameters()
 # Get parameter details
 elif options.paramDetail:
