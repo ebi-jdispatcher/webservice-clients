@@ -768,8 +768,8 @@ sub load_params {
 		my (@applList) = split /[ ,]/, $params{'appl'};
 		$tool_params{'appl'}{'string'} = \@applList;
 	}
-	else {
-		$tool_params{'appl'}{'string'} = [];
+	else { # XML::Compile::SOAP 0.78 needs empty list
+		$tool_params{'appl'} = {};
 	}
 	&print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
