@@ -766,10 +766,10 @@ sub load_params {
 	# Signature methods to use.
 	if ( defined( $params{'appl'} ) ) {
 		my (@applList) = split /[ ,]/, $params{'appl'};
-		for ( my $i = 0 ; $i < scalar(@applList) ; $i++ ) {
-			$tool_params{'appl'}[$i] =
-		  		SOAP::Data->type( 'string' => $applList[$i] )->name('string');
-		}
+		$tool_params{'appl'}{'string'} = \@applList;
+	}
+	else {
+		$tool_params{'appl'}{'string'} = [];
 	}
 	&print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
