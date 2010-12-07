@@ -114,8 +114,6 @@ foreach my $soapOp ( $soapSrv->operations ) {
 	# XML::Compile::SOAP 2.x
 	if ( $XML::Compile::SOAP::VERSION > 1.99 ) {
 		&print_debug_message( 'MAIN', 'Operation: ' . $soapOp->name, 12 );
-
-		# Allow nil elements to be skipped (needed for submission)
 		$soapOps{ $soapOp->name } = $soapSrv->compileClient( $soapOp->name );
 	}
 
