@@ -20,6 +20,7 @@ require 'rexml/document' # XML parsing
 
 # Usage message
 def printUsage(returnCode)
+  scriptName = 'ncbiblast_net_http.rb'
   puts <<END_OF_STRING
 NCBI BLAST
 ==========
@@ -39,7 +40,7 @@ Rapid sequence database search programs utilising the BLAST algorithm
   -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
   -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
                              for reporting database sequence matches.
-  -f, --filter      :      : filter the query sequence for low complexity 
+  -f, --filter      : str  : filter the query sequence for low complexity 
                              regions, see --paramDetail filter
   -A, --align       : int  : pairwise alignment format, see --paramDetail align
   -s, --scores      : int  : number of scores to be reported
@@ -74,91 +75,30 @@ Rapid sequence database search programs utilising the BLAST algorithm
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
-  Usage: ncbiblast_net_http.rb --email <your\@email> [options...] seqFile
+  Usage: #{scriptName} --email <your\@email> [options...] seqFile
   Returns: results as an attachment
 
 Asynchronous job:
 
   Use this if you want to retrieve the results at a later time. The results 
   are stored for up to 24 hours.  
-  Usage: ncbiblast_net_http.rb --async --email <your\@email> [options...] seqFile
+  Usage: #{scriptName} --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished, 
   it also returns the results/errors.
-  Usage: ncbiblast_net_http.rb --polljob --jobid <jobId> [--outfile string]
+  Usage: #{scriptName} --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/ncbiblast/
+  http://www.ebi.ac.uk/Tools/sss/ncbiblast/
   http://www.ebi.ac.uk/Tools/webservices/sss/ncbi_blast_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/ruby
 END_OF_STRING
   exit(returnCode)
 end
-
-# Process command-line options
-optParser = GetoptLong.new(
-# Generic options
-['--help', '-h', GetoptLong::NO_ARGUMENT],
-['--params', GetoptLong::NO_ARGUMENT],
-['--paramDetail', GetoptLong::REQUIRED_ARGUMENT],
-['--email', GetoptLong::REQUIRED_ARGUMENT],
-['--title', GetoptLong::REQUIRED_ARGUMENT],
-['--async', GetoptLong::NO_ARGUMENT],
-['--jobid', GetoptLong::REQUIRED_ARGUMENT],
-['--status', GetoptLong::NO_ARGUMENT],
-['--resultTypes', GetoptLong::NO_ARGUMENT],
-['--polljob', GetoptLong::NO_ARGUMENT],
-['--outformat', GetoptLong::REQUIRED_ARGUMENT],
-['--outfile', GetoptLong::REQUIRED_ARGUMENT],
-['--quiet', GetoptLong::NO_ARGUMENT],
-['--verbose', GetoptLong::NO_ARGUMENT],
-['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
-['--timeout', GetoptLong::REQUIRED_ARGUMENT],
-
-# Tool specific options
-['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
-['--database', '-D', GetoptLong::REQUIRED_ARGUMENT],
-['--matrix', '-m', GetoptLong::REQUIRED_ARGUMENT],
-['--exp', '-E', GetoptLong::REQUIRED_ARGUMENT],
-['--filter', '-f', GetoptLong::NO_ARGUMENT],
-['--align', '-A', GetoptLong::REQUIRED_ARGUMENT],
-['--scores', '-s', GetoptLong::REQUIRED_ARGUMENT],
-['--alignments', '-n', GetoptLong::REQUIRED_ARGUMENT],
-['--dropoff', '-d', GetoptLong::REQUIRED_ARGUMENT],
-['--match_scores', GetoptLong::REQUIRED_ARGUMENT],
-['--match', '-u', GetoptLong::REQUIRED_ARGUMENT],
-['--mismatch', '-v', GetoptLong::REQUIRED_ARGUMENT],
-['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
-['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
-['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
-['--stype', GetoptLong::REQUIRED_ARGUMENT],
-['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
-['--sequence', GetoptLong::REQUIRED_ARGUMENT]
-)
-
-# Options to exclude from the options passed to launch the app
-excludeOpts = {
-  'help' => 1,
-  'params' => 1,
-  'paramDetail' => 1,
-  'email' => 1,
-  'title' => 1,
-  'async' => 1,
-  'jobid' => 1,
-  'status' => 1,
-  'resultTypes' => 1,
-  'polljob' => 1,
-  'outformat' => 1,
-  'outfile' => 1,
-  'quiet' => 1,
-  'verbose' => 1,
-  'debugLevel' => 1,
-  'timeout' => 1,
-}
 
 # Wrapping class for working with the application
 class EbiWsNcbiBlast
@@ -177,6 +117,13 @@ class EbiWsNcbiBlast
   def printDebugMessage(methodName, message, level)
     if(level <= @debugLevel)
       puts '[' + methodName + '] ' + message
+    end
+  end
+  
+  # Print output message
+  def printOutputMessage(message, level)
+    if(level <= @outputLevel)
+      puts message
     end
   end
   
@@ -203,13 +150,12 @@ class EbiWsNcbiBlast
     # Create a HTTP connection
     httpConn = Net::HTTP.new(uri.host, uri.port)
     # Get the resource
-    userAgent = getUserAgent()
     if uri.query
       path = "#{uri.path}?#{uri.query}"
     else
       path = uri.path
     end
-    resp, data = httpConn.get(path, {'User-agent' => userAgent})
+    resp, data = httpConn.get(path, {'User-agent' => getUserAgent()})
     printDebugMessage('restRequest', 'data: ' + data, 21)
     printDebugMessage('restRequest', 'End', 11)
     return data
@@ -287,10 +233,10 @@ class EbiWsNcbiBlast
         post_data += "&#{key}=" + CGI::escape(val)
       end
     end
-    # Submit the job
+    # Submit the job (POST)
     uri = URI.parse(submitUrl)
     httpConn = Net::HTTP.new(uri.host, uri.port)
-    resp, jobId = httpConn.post(uri.path, post_data)
+    resp, jobId = httpConn.post(uri.path, post_data, {'User-agent' => getUserAgent()})
     printDebugMessage('run', 'End', 1)
     return jobId
   end
@@ -317,7 +263,7 @@ class EbiWsNcbiBlast
     status = 'PENDING'
     while(status == 'PENDING' || status == 'RUNNING') do
       status = getStatus(jobId)
-      puts status
+      printOutputMessage(status, 1)
       sleep(5) if(status == 'PENDING' || status == 'RUNNING')
     end
     printDebugMessage('clientPoll', 'End', 1)
@@ -377,9 +323,13 @@ class EbiWsNcbiBlast
     }
     if(selResultType)
       printDebugMessage('getResultFile', 'selResultType: ' + selResultType.elements['identifier'].text, 2)
-      outFileName = "#{outFileBase}.#{selResultType.elements['identifier'].text}.#{selResultType.elements['fileSuffix'].text}"
-      writeResultFile(jobId, selResultType.elements['identifier'].text, outFileName)
-      puts "Wrote #{outFileName}"
+      if outFileBase != '-'
+        outFileName = "#{outFileBase}.#{selResultType.elements['identifier'].text}.#{selResultType.elements['fileSuffix'].text}"
+        writeResultFile(jobId, selResultType.elements['identifier'].text, outFileName)
+        puts "Wrote #{outFileName}"
+      else
+        puts getResult(jobId, outFormat, nil)
+      end
     end
     printDebugMessage('getResultFile', 'End', 1)
   end
@@ -399,6 +349,73 @@ class EbiWsNcbiBlast
     printDebugMessage('getResultFiles', 'End', 1)
   end    
 end
+
+# Remember the number of command-line arguments before processing.
+numArgs = ARGV.length
+# Output level (--quiet & --verbose)
+outputLevel = 1
+
+# Process command-line options
+optParser = GetoptLong.new(
+                           # Generic options
+                           ['--help', '-h', GetoptLong::NO_ARGUMENT],
+                           ['--params', GetoptLong::NO_ARGUMENT],
+                           ['--paramDetail', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--email', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--title', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--async', GetoptLong::NO_ARGUMENT],
+                           ['--jobid', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--status', GetoptLong::NO_ARGUMENT],
+                           ['--resultTypes', GetoptLong::NO_ARGUMENT],
+                           ['--polljob', GetoptLong::NO_ARGUMENT],
+                           ['--outformat', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--outfile', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--quiet', GetoptLong::NO_ARGUMENT],
+                           ['--verbose', GetoptLong::NO_ARGUMENT],
+                           ['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--timeout', GetoptLong::REQUIRED_ARGUMENT],
+                           
+                           # Tool specific options
+                           ['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--database', '-D', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--matrix', '-m', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--exp', '-E', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--filter', '-f', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--align', '-A', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--scores', '-s', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--alignments', '-n', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--dropoff', '-d', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--match_scores', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--match', '-u', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--mismatch', '-v', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
+                           ['--stype', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--sequence', GetoptLong::REQUIRED_ARGUMENT]
+                           )
+
+# Options to exclude from the options passed to launch the app
+excludeOpts = {
+  'help' => 1,
+  'params' => 1,
+  'paramDetail' => 1,
+  'email' => 1,
+  'title' => 1,
+  'async' => 1,
+  'jobid' => 1,
+  'status' => 1,
+  'resultTypes' => 1,
+  'polljob' => 1,
+  'outformat' => 1,
+  'outfile' => 1,
+  'quiet' => 1,
+  'verbose' => 1,
+  'debugLevel' => 1,
+  'timeout' => 1,
+  'gapalign' => 1
+}
 
 # Process command line options
 begin
@@ -430,10 +447,13 @@ begin
   else
     timeout = 120
   end
-  ebiWsApp = EbiWsNcbiBlast.new(argHash['outputLevel'], argHash['debugLevel'], timeout)
+  # Adjust output level.
+  outputLevel += 1 if(argHash['verbose'])
+  outputLevel -= 1 if(argHash['quiet'])
+  ebiWsApp = EbiWsNcbiBlast.new(outputLevel, argHash['debugLevel'], timeout)
   
   # Help info
-  if argHash['help']
+  if argHash['help'] || numArgs == 0
     printUsage(0)
 
   # Get list of parameter names
@@ -446,7 +466,7 @@ begin
 
   # Job based actions
   elsif argHash['jobid']
-    puts "JobID: " + argHash['jobid']
+    printOutputMessage("JobID: " + argHash['jobid'], 1)
     # Get job status
     if argHash['status'] 
       ebiWsApp.printStatus(argHash['jobid'])
@@ -474,13 +494,20 @@ begin
     if(ARGV[0])
       params['sequence'] = ARGV[0]
     end
+    # Convert database into list.
     if(params['database'])
       params['database'] = params['database'].split(/[ ,]+/)
     end
+    # Handle boolean options
+    if argHash['gapalign']
+      params['gapalign'] = '0'
+    else
+      params['gapalign'] = '1'
+    end
     jobId = ebiWsApp.run(argHash['email'], argHash['title'], params)
     # In synchronous mode can now get results otherwise print the jobId
-    puts 'JobId: ' + jobId
     if !argHash['async']
+      ebiWsApp.printOutputMessage('JobId: ' + jobId, 1)
       if !argHash['outfile']
         argHash['outfile'] = jobId
       end
@@ -489,6 +516,8 @@ begin
       else
         ebiWsApp.getResultFiles(jobId, argHash['outfile'])
       end
+    else
+      ebiWsApp.printOutputMessage('JobId: ' + jobId, 0)
     end
 
   # Unsupported combination of options (or no options)
