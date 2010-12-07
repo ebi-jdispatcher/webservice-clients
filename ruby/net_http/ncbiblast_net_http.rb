@@ -4,7 +4,8 @@
 # NCBI BLAST REST web service Ruby client using net/http.
 #
 # Tested with:
-#   Ruby 1.8.7
+#   Ruby 1.8.6 (Ubuntu 8.04 LTS)
+#   Ruby 1.8.7 (Ubuntu 10.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/sss/ncbi_blast_rest
