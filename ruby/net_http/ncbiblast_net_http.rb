@@ -160,7 +160,7 @@ excludeOpts = {
 }
 
 # Wrapping class for working with the application
-class EbiWsAppl
+class EbiWsNcbiBlast
   # Accessor methods for attributes
   attr_reader :timeout, :outputLevel, :debugLevel, :baseUrl
 
@@ -179,6 +179,20 @@ class EbiWsAppl
     end
   end
   
+  # Get the User-agent for client requests.
+  def getUserAgent()
+    printDebugMessage('getUserAgent', 'Begin', 11)
+    clientRevision = '$Revision$'
+    clientVersion = '0'
+    if clientRevision.length > 11
+       clientVersion = clientRevision[11..-3]
+    end
+    userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
+    printDebugMessage('getUserAgent', "userAgent: #{userAgent}", 11)
+    printDebugMessage('getUserAgent', 'End', 11)
+    return userAgent
+  end
+
   # Perform an HTTP GET request
   def restRequest(url)
     printDebugMessage('restRequest', 'Begin', 11)
@@ -188,11 +202,18 @@ class EbiWsAppl
     # Create a HTTP connection
     httpConn = Net::HTTP.new(uri.host, uri.port)
     # Get the resource
-    resp, data = httpConn.get(uri.path)
+    userAgent = getUserAgent()
+    if uri.query
+      path = "#{uri.path}?#{uri.query}"
+    else
+      path = uri.path
+    end
+    resp, data = httpConn.get(path, {'User-agent' => userAgent})
+    printDebugMessage('restRequest', 'data: ' + data, 21)
     printDebugMessage('restRequest', 'End', 11)
     return data
   end
-  
+
   # Get list of input parameters
   def getParameters()
     printDebugMessage('getParameters', 'Begin', 1)
@@ -408,7 +429,7 @@ begin
   else
     timeout = 120
   end
-  ebiWsApp = EbiWsAppl.new(argHash['outputLevel'], argHash['debugLevel'], timeout)
+  ebiWsApp = EbiWsNcbiBlast.new(argHash['outputLevel'], argHash['debugLevel'], timeout)
   
   # Help info
   if argHash['help']
