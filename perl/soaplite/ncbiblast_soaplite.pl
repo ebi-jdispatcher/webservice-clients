@@ -13,16 +13,10 @@ Tested with:
 =over
 
 =item *
-L<SOAP::Lite> 0.60 and Perl 5.8.3
+L<SOAP::Lite> 0.69 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.69 and Perl 5.8.8
-
-=item *
-L<SOAP::Lite> 0.71 and Perl 5.8.8
-
-=item *
-L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =back
 
