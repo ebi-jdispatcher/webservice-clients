@@ -22,6 +22,7 @@ require 'iprscanDriver.rb' # Generated stubs
 
 # Usage message
 def printUsage(returnCode)
+  scriptName = 'iprscan_soap4r.rb'
   puts <<END_OF_STRING
 InterProScan
 ============
@@ -64,19 +65,19 @@ Identify protein family, domain and signal signatures in a protein sequence.
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
-  Usage: iprscan_soap4r.rb --email <your\@email> [options...] seqFile
+  Usage: #{scriptName} --email <your\@email> [options...] seqFile
   Returns: results as an attachment
 
 Asynchronous job:
 
   Use this if you want to retrieve the results at a later time. The results 
   are stored for up to 24 hours.  
-  Usage: iprscan_soap4r.rb --async --email <your\@email> [options...] seqFile
+  Usage: #{scriptName} --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished, 
   it also returns the results/errors.
-  Usage: iprscan_soap4r.rb --polljob --jobid <jobId> [--outfile string]
+  Usage: #{scriptName} --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results 
   as an attachment.
 
