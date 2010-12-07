@@ -957,7 +957,7 @@ InterProScan
 Identify protein family, domain and signal signatures in a protein sequence.
 
 For more information on InterProScan refer to 
-http://www.ebi.ac.uk/InterProScan/help.html
+http://www.ebi.ac.uk/Tools/pfa/iprscan
 
 [Required]
 
