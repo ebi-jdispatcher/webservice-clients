@@ -33,13 +33,13 @@ usage = "Usage: %prog [options...] [seqFile]"
 description = """Identify protein family, domain and signal signatures in a 
 protein sequence using InterProScan. For more information on InterProScan 
 refer to http://www.ebi.ac.uk/Tools/pfa/iprscan"""
-epilog = """For further information about the InterProScan (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap.
-"""
+epilog = """For further information about the InterProScan (SOAP) web service, see 
+http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap."""
 version = "$Id$"
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
-parser.add_option('--appl', help='signature methods to use')
+parser.add_option('--appl', help='signature methods to use, see --paramDetail appl')
 parser.add_option('--crc', action="store_true", help='enable InterProScan Matches look-up (faster)')
 parser.add_option('--nocrc', action="store_true", help='disable InterProScan Matches look-up (slower)')
 parser.add_option('--goterms', action="store_true", help='enable inclusion of GO terms')

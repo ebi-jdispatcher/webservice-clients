@@ -43,7 +43,7 @@ version = "$Id$"
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
-parser.add_option('--appl', help='signature methods to use')
+parser.add_option('--appl', help='signature methods to use, see --paramDetail appl')
 parser.add_option('--crc', action="store_true", help='enable InterProScan Matches look-up (faster)')
 parser.add_option('--nocrc', action="store_true", help='disable InterProScan Matches look-up (slower)')
 parser.add_option('--goterms', action="store_true", help='enable inclusion of GO terms')
