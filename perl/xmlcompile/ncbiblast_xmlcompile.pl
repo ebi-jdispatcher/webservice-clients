@@ -13,10 +13,10 @@ Tested with:
 =over
 
 =item *
-L<XML::Compile::SOAP> 0.77, L<XML::Compile> 0.94 and Perl 5.8.8 (Ubuntu 8.10)
+L<XML::Compile::SOAP> 0.78, L<XML::Compile> 0.96 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
-L<XML::Compile::SOAP> 2.04, L<XML::Compile> 1.05 and Perl 5.10.0 (Ubuntu 9.04)
+L<XML::Compile::SOAP> 2.19, L<XML::Compile> 1.19 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =back
 
@@ -89,6 +89,7 @@ GetOptions(
 	"stype=s" => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
 	"seqrange=s" => \$tool_params{'seqrange'},    # Query subsequence to use
 	"sequence=s" => \$params{'sequence'},         # Query sequence file or DB:ID
+	'multifasta' => \$params{'multifasta'},       # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -206,7 +207,26 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	&submit_job( &load_data() );
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
 
 =head1 FUNCTIONS
@@ -600,6 +620,88 @@ sub submit_job {
 	&print_debug_message( 'submit_job', 'End', 1 );
 }
 
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/\w+/ ) {
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	open( my $LISTFILE, '<', $filename )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
+}
+
 =head2 load_data()
 
 Load sequence data, from file or direct specification of input data with 
@@ -860,7 +962,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -D, --database    : str  : database(s) to search, space separated. See
                              --paramDetail database
       --stype       : str  : query sequence type, see --paramDetail stype
-  seqFile           : file : query sequence ("-" for STDIN)
+  seqFile           : file : query sequence ("-" for STDIN, \@filename for
+                             identifier list file)
 
 [Optional]
 
@@ -879,6 +982,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -d, --dropoff	    : int  : Drop-off
   -g, --gapalign    :      : Optimise gapped alignments
       --seqrange    : str  : region within input to use as query
+      --multifasta  :      : treat input as a set of fasta formatted sequences
 
 [General]
 
