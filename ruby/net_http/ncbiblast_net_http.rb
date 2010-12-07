@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # $Id$
 # ======================================================================
-# NCBI BLAST REST web service Ruby client using net/http.
+# NCBI BLAST (REST) sample Ruby client using net/http and REXML.
 #
 # Tested with:
 #   Ruby 1.8.6 (Ubuntu 8.04 LTS)
