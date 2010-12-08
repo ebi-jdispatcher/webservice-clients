@@ -27,12 +27,55 @@ class NcbiBlastClient {
     }
   }
 
+  // Get user-agent string for client.
+  function getUserAgent() {
+    $this->printDebugMessage('getUserAgent', 'Begin', 2);
+    $clientVersion = trim(substr('$Revision$', 11), ' $');
+    if($clientVersion == '') $clientVersion = '0';
+    $uname  = posix_uname();
+    $userAgent = 'EBI-Sample-Client/' . $clientVersion . 
+      ' (' . get_class($this) . '; ' . $uname['sysname'] . ') PHP/' . phpversion();
+    $this->printDebugMessage('getUserAgent', 'User-agent: ' . $userAgent, 2);
+    $this->printDebugMessage('getUserAgent', 'End', 2);
+    return $userAgent;
+  }
+
   // Set the base URL to an alternative server
   function setBaseUrl($baseUrl) {
     $this->printDebugMessage('setBaseUrl', 'Begin', 1);
     $this->printDebugMessage('setBaseUrl', 'baseUrl: ' . $baseUrl, 2);
     $this->baseUrl = $baseUrl;
     $this->printDebugMessage('setBaseUrl', 'End', 1);
+  }
+
+  // Perform an HTTP GET request.
+  function httpGet($url) {
+    $this->printDebugMessage('httpGet', 'Begin', 11);
+    $contextOpts = array('http' => array(
+					 'method' => 'GET',
+					 'header' => 'User-agent: ' . $this->getUserAgent() . "\r\n"
+					 )
+			 );
+    $context = stream_context_create($contextOpts);
+    $retVal = file_get_contents($url, false, $context);
+    $this->printDebugMessage('httpGet', 'End', 11);
+    return $retVal;
+  }
+
+  // Perform an HTTP POST request.
+  function httpPost($url, $postdata) {
+    $this->printDebugMessage('httpPost', 'Begin', 11);
+    $opts = array('http' => array(
+				  'method'  => 'POST',
+				  'header'  => 'Content-type: application/x-www-form-urlencoded' . "\r\n" .
+				  'User-agent: ' . $this->getUserAgent() . "\r\n",
+				  'content' => $postdata
+				  )
+		  );
+    $context  = stream_context_create($opts);
+    $retVal = file_get_contents($url, false, $context);
+    $this->printDebugMessage('httpPost', 'End', 11);
+    return $retVal;
   }
 
   // Get list of tool parameter names
@@ -42,7 +85,7 @@ class NcbiBlastClient {
     $paramsUrl = $this->baseUrl . '/parameters/';
     $this->printDebugMessage('getParameters', 'paramsUrl: ' . $paramsUrl, 2);
     // Get the document from the URL
-    $xmlDoc = file_get_contents($paramsUrl);
+    $xmlDoc = $this->httpGet($paramsUrl);
     $doc = new SimpleXMLElement($xmlDoc);
     $this->printDebugMessage('getParameters', 'End', 1);
     // Return the list of parameter names
@@ -58,7 +101,7 @@ class NcbiBlastClient {
     $paramUrl = $this->baseUrl . '/parameterdetails/' . $parameterId;
     $this->printDebugMessage('getParameterDetails', 'paramUrl: ' . $paramUrl, 2);
     // Get the document from the URL
-    $xmlDoc = file_get_contents($paramUrl);
+    $xmlDoc = $this->httpGet($paramUrl);
     $doc = new SimpleXMLElement($xmlDoc);
     $this->printDebugMessage('getParameterDetails', 'End', 1);
     return $doc;
@@ -77,16 +120,8 @@ class NcbiBlastClient {
     foreach($dbList as $db) {
       $postdata .= '&database=' . urlencode($db);
     }
-    $opts = array('http' =>
-		  array(
-			'method'  => 'POST',
-			'header'  => 'Content-type: application/x-www-form-urlencoded',
-			'content' => $postdata
-			)
-		  );
-    $context  = stream_context_create($opts);
     $runUrl = $this->baseUrl . '/run/';
-    $jobId = file_get_contents($runUrl, FALSE, $context);
+    $jobId = $this->httpPost($runUrl, $postdata);
     $this->printDebugMessage('run', 'jobId: ' . $jobId, 2);
     $this->printDebugMessage('run', 'End', 1);
     return $jobId;
@@ -100,7 +135,7 @@ class NcbiBlastClient {
     $statusUrl = $this->baseUrl . '/status/' . $jobId;
     $this->printDebugMessage('getStatus', 'statusUrl: ' . $statusUrl, 2);
     // Get the document from the URL
-    $doc = file_get_contents($statusUrl);
+    $doc = $this->httpGet($statusUrl);
     $this->printDebugMessage('getStatus', 'End', 1);
     return $doc;
   }
@@ -113,7 +148,7 @@ class NcbiBlastClient {
     $typesUrl = $this->baseUrl . '/resulttypes/' . $jobId;
     $this->printDebugMessage('getResultTypes', 'typesUrl: ' . $typesUrl, 2);
     // Get the document from the URL
-    $xmlDoc = file_get_contents($typesUrl);
+    $xmlDoc = $this->httpGet($typesUrl);
     $doc = new SimpleXMLElement($xmlDoc);
     $this->printDebugMessage('getResultTypes', 'End', 1);
     return $doc->type;
@@ -128,7 +163,7 @@ class NcbiBlastClient {
     $resultUrl = $this->baseUrl . '/result/' . $jobId . '/' . $type;
     $this->printDebugMessage('getResult', 'resultUrl: ' . $resultUrl, 2);
     // Get the document from the URL
-    $doc = file_get_contents($resultUrl);
+    $doc = $this->httpGet($resultUrl);
     $this->printDebugMessage('getResult', 'End', 1);
     return $doc;
   }

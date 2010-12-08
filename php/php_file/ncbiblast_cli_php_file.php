@@ -63,9 +63,12 @@ class NcbiBlastCliClient extends NcbiBlastClient {
   
   function submit($options) {
     $this->printDebugMessage('submit', 'Begin', 1);
-    if(!$options['params']['match_scores'] &&
-       ($options['match'] && $options['mismatch'])) {
+    if(!array_key_exists('match_scores', $options['params']) &&
+       (array_key_exists('match', $options) && array_key_exists('mismatch', $options))) {
       $options['params']['match_scores'] = $options['match'] . ',' . $options['mismatch'];
+    }
+    if(!array_key_exists('title', $options)) {
+      $options['title'] = '';
     }
     $jobId = $this->run(
 			$options['email'],
@@ -104,7 +107,7 @@ class NcbiBlastCliClient extends NcbiBlastClient {
     $this->clientPoll($options['jobId']);
     // Get the result types
     $resultTypeList = $this->getResultTypes($options['jobId']);
-    if($options['outfile']) {
+    if(array_key_exists('outfile', $options)) {
       $baseName = $options['outfile'];
     } else {
       $baseName = $options['jobId'];
@@ -112,7 +115,7 @@ class NcbiBlastCliClient extends NcbiBlastClient {
     foreach($resultTypeList as $resultType) {
       $result = '';
       $filename = $baseName . '.' . $resultType->identifier . '.' . $resultType->fileSuffix;
-      if($options['input']['outformat']) {
+      if(array_key_exists('input', $options) && array_key_exists('outformat', $options['input'])) {
 	if(strcmp($options['input']['outformat'], $resultType->identifier) == 0) {
 	  $result = $this->getResult($options['jobId'], $resultType->identifier);
 	}
@@ -193,6 +196,7 @@ function parseCommandLine($argList) {
   $options = array(
     'action' => 'unknown',
     'async' => FALSE,
+    'outputLevel' => 1,
     'params' => array(),
   );
   for($i=0; $i<count($argList); $i++) {
