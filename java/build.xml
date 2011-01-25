@@ -73,6 +73,8 @@
 	<target name="axis1-stubs" depends="resolve" description="Axis 1.x: generate code stubs for SOAP clients">
 		<antcall target="axis1-stubs-clustalo" />
 		<antcall target="axis1-stubs-clustalw2" />
+		<antcall target="axis1-stubs-clustalw2phylogeny" />
+		<antcall target="axis1-stubs-dbclustal" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
@@ -80,6 +82,7 @@
 		<antcall target="axis1-stubs-kalign" />
 		<antcall target="axis1-stubs-mafft" />
 		<antcall target="axis1-stubs-muscle" />
+		<antcall target="axis1-stubs-mview" />
 		<antcall target="axis1-stubs-ncbiblast" />
 		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-psiblast" />
@@ -100,6 +103,18 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-clustalw2phylogeny" description="Axis 1.x: generate stubs for ClustalW2 Phylogeny (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2phylogeny" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2_phylogeny?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-dbclustal" description="Axis 1.x: generate stubs for DbClustal (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.dbclustal" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dbclustal?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-ebeye" description="Axis 1.x: generate stubs for EB-eye">
@@ -142,6 +157,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.muscle" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/muscle?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-mview" description="Axis 1.x: generate stubs for MView (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.mview" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mview?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-ncbiblast" description="Axis 1.x: generate stubs for NCBI BLAST (SOAP)">
@@ -206,6 +227,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- ClustalW2 Phylogeny -->
+		<!-- DbClustal -->
 		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EBeyeClient.** uk/ac/ebi/webservices/axis1/stubs/ebeye/**">
@@ -276,6 +299,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- MView -->
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
@@ -343,6 +367,8 @@
 	<target name="axis1-distclean-stubs" description="Axis 1.x: remove generated stubs">
 		<antcall target="axis1-distclean-stubs-clustalo" />
 		<antcall target="axis1-distclean-stubs-clustalw2" />
+		<antcall target="axis1-distclean-stubs-clustalw2phylogeny" />
+		<antcall target="axis1-distclean-stubs-dbclustal" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
@@ -350,6 +376,7 @@
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
 		<antcall target="axis1-distclean-stubs-muscle" />
+		<antcall target="axis1-distclean-stubs-mview" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
 		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
@@ -369,6 +396,18 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-clustalw2phylogeny" description="Axis 1.x: remove ClustalW2 Phylogeny (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/clustalw2phylogeny" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2phylogeny" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-dbclustal" description="Axis 1.x: remove DbClustal (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/dbclustal" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="dbclustal" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-ebeye" description="Axis 1.x: remove EB-eye stubs">
@@ -411,6 +450,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/muscle" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="muscle" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-mview" description="Axis 1.x: remove MView (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/mview" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="mview" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-ncbiblast" description="Axis 1.x: remove NCBI BLAST (SOAP) stubs">
@@ -463,6 +508,8 @@
 	<target name="jaxws-stubs" depends="resolve" description="JAX-WS RI: generate code stubs for SOAP clients">
 		<antcall target="jaxws-stubs-clustalo" />
 		<antcall target="jaxws-stubs-clustalw2" />
+		<antcall target="jaxws-stubs-clustalw2phylogeny" />
+		<antcall target="jaxws-stubs-dbclustal" />
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-fastm" />
@@ -470,6 +517,7 @@
 		<antcall target="jaxws-stubs-kalign" />
 		<antcall target="jaxws-stubs-mafft" />
 		<antcall target="jaxws-stubs-muscle" />
+		<antcall target="jaxws-stubs-mview" />
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-prank" />
 		<antcall target="jaxws-stubs-psiblast" />
@@ -490,6 +538,18 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-clustalw2phylogeny" description="JAX-WS RI: generate stubs for ClustalW2 Phylogeny (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalw2phylogeny" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2_phylogeny?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-dbclustal" description="JAX-WS RI: generate stubs for DbClustal (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.dbclustal" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dbclustal?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-ebeye" description="JAX-WS RI: generate stubs for EB-eye">
@@ -522,16 +582,22 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
 		</antcall>
 	</target>
-		<target name="jaxws-stubs-mafft" description="JAX-WS RI: generate stubs for MAFFT (SOAP)">
-			<antcall target="genJaxwsStubs">
-				<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mafft" />
-				<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
-			</antcall>
-		</target>
+	<target name="jaxws-stubs-mafft" description="JAX-WS RI: generate stubs for MAFFT (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mafft" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-muscle" description="JAX-WS RI: generate stubs for MUSCLE (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.muscle" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/muscle?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-mview" description="JAX-WS RI: generate stubs for MView (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mview" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mview?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-ncbiblast" description="JAX-WS RI: generate stubs for NCBI BLAST (SOAP)">
@@ -589,6 +655,8 @@
 		</tstamp>
 		<!-- ClustalO -->
 		<!-- ClustalW2 -->
+		<!-- ClustalW2 Phylogeny -->
+		<!-- DbClustal -->
 		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
@@ -612,6 +680,7 @@
 		<!-- Kalign -->
 		<!-- MAFFT -->
 		<!-- MUSCLE -->
+		<!-- MView -->
 		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
@@ -643,6 +712,8 @@
 	<target name="jaxws-distclean-stubs" description="JAX-WS RI: remove generated stubs">
 		<antcall target="jaxws-distclean-stubs-clustalo" />
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
+		<antcall target="jaxws-distclean-stubs-clustalw2phylogeny" />
+		<antcall target="jaxws-distclean-stubs-dbclustal" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-fastm" />
@@ -650,6 +721,7 @@
 		<antcall target="jaxws-distclean-stubs-kalign" />
 		<antcall target="jaxws-distclean-stubs-mafft" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
+		<antcall target="jaxws-distclean-stubs-mview" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
 		<antcall target="jaxws-distclean-stubs-prank" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
@@ -668,6 +740,18 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/clustalw2" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-clustalw2phylogeny" description="JAX-WS RI: remove ClustalW2 Phylogeny (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/clustalw2phylogeny" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2phylogeny" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-dbclustal" description="JAX-WS RI: remove DbClustal (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/dbclustal" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="dbclustal" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-ebeye" description="JAX-WS RI: remove EB-eye stubs">
@@ -710,6 +794,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/muscle" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="muscle" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-mview" description="JAX-WS RI: remove MView (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/mview" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mview" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-ncbiblast" description="JAX-WS RI: remove NCBI BLAST (SOAP) stubs">
