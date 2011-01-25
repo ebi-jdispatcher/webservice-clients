@@ -76,39 +76,39 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'tree|T=s' => \$tool_params{'tree'}, # Tree format
-	'kimura|K'       => \$tool_params{'kimura'},        # Kimura distance correction
-	'tossgaps|I'    => \$tool_params{'tossgaps'},      # Ignore positions with gaps
-	'clustering|C=s' => \$tool_params{'clustering'},    # Clustering method
-	'pim|P' => \$tool_params{'pim'}, # % identity matrix.
-    'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
+	'tree|T=s'   => \$tool_params{'tree'},        # Tree format
+	'kimura|K'   => \$tool_params{'kimura'},      # Kimura distance correction
+	'tossgaps|I' => \$tool_params{'tossgaps'},    # Ignore positions with gaps
+	'clustering|C=s' => \$tool_params{'clustering'}, # Clustering method
+	'pim|P'          => \$tool_params{'pim'},        # % identity matrix.
+	'sequence=s'     => \$params{'sequence'},        # Input sequences/alignment
 
 	# Compatability options, old command-line
-	'outputtree|t=s' => \$params{'outputtree'},    # Phylogenetic tree format
+	'outputtree|t=s' => \$params{'outputtree'},      # Phylogenetic tree format
 
 	# Generic options
-	'email=s'       => \$params{'email'},          # User e-mail address
-	'title=s'       => \$params{'title'},          # Job title
-	'outfile=s'     => \$params{'outfile'},        # Output file name
-	'outformat=s'   => \$params{'outformat'},      # Output file type
-	'jobid=s'       => \$params{'jobid'},          # JobId
-	'help|h'        => \$params{'help'},           # Usage help
-	'async'         => \$params{'async'},          # Asynchronous submission
-	'polljob'       => \$params{'polljob'},        # Get results
-	'resultTypes'   => \$params{'resultTypes'},    # Get result types
-	'status'        => \$params{'status'},         # Get status
-	'params'        => \$params{'params'},         # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
-	'quiet'         => \$params{'quiet'},          # Decrease output level
-	'verbose'       => \$params{'verbose'},        # Increase output level
-	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
-	'trace'         => \$params{'trace'},          # SOAP message debug
-	'endpoint=s'    => \$params{'endpoint'},       # SOAP service endpoint
-	'namespace=s'   => \$params{'namespace'},      # SOAP service namespace
-	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
+	'email=s'       => \$params{'email'},            # User e-mail address
+	'title=s'       => \$params{'title'},            # Job title
+	'outfile=s'     => \$params{'outfile'},          # Output file name
+	'outformat=s'   => \$params{'outformat'},        # Output file type
+	'jobid=s'       => \$params{'jobid'},            # JobId
+	'help|h'        => \$params{'help'},             # Usage help
+	'async'         => \$params{'async'},            # Asynchronous submission
+	'polljob'       => \$params{'polljob'},          # Get results
+	'resultTypes'   => \$params{'resultTypes'},      # Get result types
+	'status'        => \$params{'status'},           # Get status
+	'params'        => \$params{'params'},           # List input parameters
+	'paramDetail=s' => \$params{'paramDetail'},      # Get details for parameter
+	'quiet'         => \$params{'quiet'},            # Decrease output level
+	'verbose'       => \$params{'verbose'},          # Increase output level
+	'debugLevel=i'  => \$params{'debugLevel'},       # Debug output level
+	'trace'         => \$params{'trace'},            # SOAP message debug
+	'endpoint=s'    => \$params{'endpoint'},         # SOAP service endpoint
+	'namespace=s'   => \$params{'namespace'},        # SOAP service namespace
+	'WSDL=s'        => \$WSDL,                       # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
@@ -169,9 +169,11 @@ my $soap = SOAP::Lite->proxy(
 		return new SOAP::SOM;
 	}
   );
+
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
 '$Revision$' =~ m/(\d+)/;
-$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
+$soap->transport->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) "
+	  . $soap->transport->agent() );
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
@@ -220,6 +222,7 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
+
 	# Load the sequence data and submit.
 	&submit_job( &load_data() );
 }
@@ -415,12 +418,13 @@ since repeating data structures are encoded using arrays by the service.
 sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
-	my $wsdlStr = get($WSDL); # Get WSDL using LWP.
-	# Extract service endpoint.
+	my $wsdlStr  = get($WSDL);    # Get WSDL using LWP.
+	                              # Extract service endpoint.
 	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
 		&print_debug_message( 'from_wsdl', 'endpoint: ' . $2, 2 );
 		push( @retVal, $2 );
 	}
+
 	# Extract namespace.
 	if ( $wsdlStr =~
 		m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
@@ -636,10 +640,10 @@ sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
 	# Compatability options, old command-line
-	if(!$tool_params{'tree'} && $params{'outputtree'}) {
+	if ( !$tool_params{'tree'} && $params{'outputtree'} ) {
 		$tool_params{'tree'} = $params{'outputtree'};
 	}
-	
+
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
@@ -848,11 +852,11 @@ Generate a phylogentic tree from a multiple sequence alignment.
 
 [Optional]
 
-  -t, --tree         : str  : output tree format, see --paramDetails tree      
+  -t, --tree         : str  : output tree format, see --paramDetail tree      
   -K, --kimura       :      : use Kimura\'s distance correction   
   -I, --tossgaps     :      : exclude columns containing gaps
-  -C, --clustering   : str  : clustering method, see --paramDetails clustering
-  -P, --pim          :      : output percentage identity matrix
+  -C, --clustering   : str  : clustering method, see --paramDetail clustering
+  -P, --pim          :      : enable percentage identity matrix
 
 [General]
 
@@ -890,8 +894,8 @@ Asynchronous job:
   Use the jobid to query for the status of the job. If the job is finished, 
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
-  as an attachment.
+  Returns: string indicating the status of the job and if applicable, the job 
+  results.
 
 Further information:
 
