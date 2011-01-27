@@ -449,7 +449,7 @@ public class ClustalW2PhylogenyClient extends uk.ac.ebi.webservices.AbstractWsTo
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar ClustalW2_Axis1.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar ClustalW2Phylogeny_Axis1.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);
