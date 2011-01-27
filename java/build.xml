@@ -235,7 +235,14 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- DbClustal -->
+		<jar destfile="${jar.dir}/DbClustal_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/DbClustalClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DbClustalClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EBeyeClient.** uk/ac/ebi/webservices/axis1/stubs/ebeye/**">
@@ -306,7 +313,14 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- MView -->
+		<jar destfile="${jar.dir}/MView_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/MViewClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MViewClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
