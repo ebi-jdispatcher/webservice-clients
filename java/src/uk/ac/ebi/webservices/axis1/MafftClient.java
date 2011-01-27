@@ -19,7 +19,7 @@ import uk.ac.ebi.webservices.axis1.stubs.mafft.*;
  * 
  * <p>See:</p>
  * <ul>
- * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/mafft_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/mafft_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/msa/mafft_soap">http://www.ebi.ac.uk/Tools/webservices/services/msa/mafft_soap</a></li>
  * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
