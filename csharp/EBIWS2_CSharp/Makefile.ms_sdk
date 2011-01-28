@@ -7,6 +7,7 @@
 
 all: EbiWS \
 ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
+ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
@@ -26,6 +27,9 @@ EbiWS\bin\Release\EbiWS.dll:
 
 ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk
+
+ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk
 
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -69,6 +73,7 @@ WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 clean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -86,6 +91,7 @@ clean:
 distclean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean

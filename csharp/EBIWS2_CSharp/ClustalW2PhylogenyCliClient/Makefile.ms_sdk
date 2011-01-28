@@ -1,0 +1,54 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# ClustalW2 Phylogeny client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: ClustalW2PhylogenyCliClient
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### ClustalW2 Phylogeny command-line client ###
+
+ClustalW2PhylogenyCliClient: $(DEBUGBINDIR)\ClustalW2PhylogenyCliClient.exe $(RELEASEBINDIR)\ClustalW2PhylogenyCliClient.exe
+
+$(DEBUGBINDIR)\ClustalW2PhylogenyCliClient.exe: $(DEBUGBINDIR) ClustalW2PhylogenyCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\ClustalW2PhylogenyCliClient.exe: $(RELEASEBINDIR) ClustalW2PhylogenyCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

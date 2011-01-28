@@ -37,6 +37,7 @@ EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
 
 coreSrc = AbstractWsClient.cs \
 ClustalW2Client.cs \
+ClustalW2PhylogenyClient.cs \
 EBeyeClient.cs \
 FastaClient.cs \
 FastmClient.cs \

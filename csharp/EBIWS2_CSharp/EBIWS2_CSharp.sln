@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastmCliClient", "FastmCliC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPRScanCliClient", "IPRScanCliClient\IPRScanCliClient.csproj", "{EA080EC1-4E33-461C-9117-49525BCCDD84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2PhylogenyCliClient", "ClustalW2PhylogenyCliClient\ClustalW2PhylogenyCliClient.csproj", "{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
