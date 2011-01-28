@@ -1,4 +1,4 @@
-/* $Id: ClustalW2Client.cs 1666 2010-11-24 14:41:33Z hpm $
+/* $Id$
  * ======================================================================
  * JDispatcher SOAP client for ClustalW2 Phylogeny (SOAP)
  *
@@ -32,7 +32,7 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		// Client object revision.
-		private string revision = "$Revision: 1666 $";
+		private string revision = "$Revision$";
 		
 		// Default constructor. Required for abstract class constructor.
 		public ClustalW2PhylogenyClient()
