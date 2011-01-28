@@ -56,6 +56,8 @@
     <Compile Include="FastmClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
+    <Compile Include="WebReferences\ClustalW2PhylogenyWs\Reference.cs" />
+    <Compile Include="ClustalW2PhylogenyClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -73,6 +75,7 @@
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
     <None Include="WebReferences\FastmWs\Reference.map" />
     <None Include="WebReferences\IPRScanWs\Reference.map" />
+    <None Include="WebReferences\ClustalW2PhylogenyWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
