@@ -58,6 +58,8 @@
     <Compile Include="IPRScanClient.cs" />
     <Compile Include="WebReferences\ClustalW2PhylogenyWs\Reference.cs" />
     <Compile Include="ClustalW2PhylogenyClient.cs" />
+    <Compile Include="WebReferences\DbClustalWs\Reference.cs" />
+    <Compile Include="WebReferences\MViewWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,6 +78,8 @@
     <None Include="WebReferences\FastmWs\Reference.map" />
     <None Include="WebReferences\IPRScanWs\Reference.map" />
     <None Include="WebReferences\ClustalW2PhylogenyWs\Reference.map" />
+    <None Include="WebReferences\DbClustalWs\Reference.map" />
+    <None Include="WebReferences\MViewWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
