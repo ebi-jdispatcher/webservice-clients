@@ -344,26 +344,26 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("type")) params.setType(line.getOptionValue("type"));
+		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("informat")) params.setInformat(line.getOptionValue("informat"));
 		if (line.hasOption("outformat")) params.setOutformat(line.getOptionValue("outformat"));
 		if (line.hasOption("htmlmarkup")) params.setHtmlmarkup(line.getOptionValue("htmlmarkup"));
 		if (line.hasOption("pcid")) params.setPcid(line.getOptionValue("pcid"));
-		if (line.hasOption("alignment")) params.setAlignment("on");
-		else if (line.hasOption("noalignment")) params.setAlignment("off");
-		if (line.hasOption("ruler")) params.setRuler("on");
-		else if (line.hasOption("noruler")) params.setRuler("off");
+		if (line.hasOption("alignment")) params.setAlignment(new Boolean(true));
+		else if (line.hasOption("noalignment")) params.setAlignment(new Boolean(false));
+		if (line.hasOption("ruler")) params.setRuler(new Boolean(true));
+		else if (line.hasOption("noruler")) params.setRuler(new Boolean(false));
 		if(line.hasOption("width")) params.setWidth(new Integer(line.getOptionValue("width")));
 		if(line.hasOption("coloring")) params.setColoring(line.getOptionValue("coloring"));
 		if(line.hasOption("colormap")) params.setColormap(line.getOptionValue("colormap"));
 		if(line.hasOption("groupmap")) params.setGroupmap(line.getOptionValue("groupmap"));
-		if (line.hasOption("consensus")) params.setConsensus("on");
-		else if (line.hasOption("consensus")) params.setConsensus("off");
+		if (line.hasOption("consensus")) params.setConsensus(new Boolean(true));
+		else if (line.hasOption("consensus")) params.setConsensus(new Boolean(false));
 		if(line.hasOption("concoloring")) params.setConcoloring(line.getOptionValue("concoloring"));
 		if(line.hasOption("concolormap")) params.setConcolormap(line.getOptionValue("concolormap"));
 		if(line.hasOption("congroupmap")) params.setCongroupmap(line.getOptionValue("congroupmap"));
-		if (line.hasOption("congaps")) params.setCongaps("on");
-		else if (line.hasOption("congaps")) params.setCongaps("off");
+		if (line.hasOption("congaps")) params.setCongaps(new Boolean(true));
+		else if (line.hasOption("congaps")) params.setCongaps(new Boolean(false));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -381,7 +381,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("type", true, "Sequence type");
+		options.addOption("stype", true, "Sequence type");
 		options.addOption("informat", true, "input alignment format");
 		options.addOption("outformat", true, "output alignment format");
 		options.addOption("htmlmarkup", true, "HTML markup type");

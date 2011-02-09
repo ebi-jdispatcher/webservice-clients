@@ -322,7 +322,10 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("database")) params.setDatabase(line.getOptionValue("database"));
+		if (line.hasOption("database")) {
+			String[] dbList = line.getOptionValue("database").split(" +,");
+			params.setDatabase(dbList);
+		}
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
