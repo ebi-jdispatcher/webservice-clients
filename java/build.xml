@@ -76,6 +76,10 @@
 		<antcall target="axis1-stubs-clustalw2phylogeny" />
 		<antcall target="axis1-stubs-dbclustal" />
 		<antcall target="axis1-stubs-ebeye" />
+		<antcall target="axis1-stubs-emboss_matcher" />
+		<antcall target="axis1-stubs-emboss_needle" />
+		<antcall target="axis1-stubs-emboss_stretcher" />
+		<antcall target="axis1-stubs-emboss_water" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
 		<antcall target="axis1-stubs-iprscan" />
@@ -121,6 +125,30 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ebeye" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_matcher" description="Axis 1.x: generate stubs for EMBOSS matcher (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.matcher" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_matcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_needle" description="Axis 1.x: generate stubs for EMBOSS needle (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.needle" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_stretcher" description="Axis 1.x: generate stubs for EMBOSS stretcher (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.stretcher" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_stretcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_water" description="Axis 1.x: generate stubs for EMBOSS water (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.water" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_water?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-fasta" description="Axis 1.x: generate stubs for FASTA (SOAP)">
@@ -253,6 +281,10 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- EMBOSS matcher -->
+		<!-- EMBOSS needle -->
+		<!-- EMBOSS stretcher -->
+		<!-- EMBOSS water -->
 		<jar destfile="${jar.dir}/Fasta_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/FastaClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/**">
@@ -391,6 +423,10 @@
 		<antcall target="axis1-distclean-stubs-clustalw2phylogeny" />
 		<antcall target="axis1-distclean-stubs-dbclustal" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
+		<antcall target="axis1-distclean-stubs-emboss_matcher" />
+		<antcall target="axis1-distclean-stubs-emboss_needle" />
+		<antcall target="axis1-distclean-stubs-emboss_stretcher" />
+		<antcall target="axis1-distclean-stubs-emboss_water" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
 		<antcall target="axis1-distclean-stubs-iprscan" />
@@ -435,6 +471,30 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_matcher" description="Axis 1.x: remove EMBOSS matcher stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/matcher" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="matcher" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_needle" description="Axis 1.x: remove EMBOSS needle stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/needle" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="needle" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_stretcher" description="Axis 1.x: remove EMBOSS stretcher stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/stretcher" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="stretcher" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_water" description="Axis 1.x: remove EMBOSS water stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/water" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="water" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-fasta" description="Axis 1.x: remove FASTA (SOAP) stubs">
@@ -532,6 +592,10 @@
 		<antcall target="jaxws-stubs-clustalw2phylogeny" />
 		<antcall target="jaxws-stubs-dbclustal" />
 		<antcall target="jaxws-stubs-ebeye" />
+		<antcall target="jaxws-stubs-emboss_matcher" />
+		<antcall target="jaxws-stubs-emboss_needle" />
+		<antcall target="jaxws-stubs-emboss_stretcher" />
+		<antcall target="jaxws-stubs-emboss_water" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-fastm" />
 		<antcall target="jaxws-stubs-iprscan" />
@@ -577,6 +641,30 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ebeye" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_matcher" description="JAX-WS RI: generate stubs for EMBOSS matcher (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.matcher" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_matcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_needle" description="JAX-WS RI: generate stubs for EMBOSS needle (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.needle" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_stretcher" description="JAX-WS RI: generate stubs for EMBOSS stretcher (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.stretcher" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_stretcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_water" description="JAX-WS RI: generate stubs for EMBOSS water (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.water" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_water?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-fasta" description="JAX-WS RI: generate stubs for FASTA (SOAP)">
@@ -686,6 +774,10 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- EMBOSS matcher -->
+		<!-- EMBOSS needle -->
+		<!-- EMBOSS stretcher -->
+		<!-- EMBOSS water -->
 		<!-- FASTA -->
 		<!-- FASTM -->
 		<jar destfile="${jar.dir}/IPRScan_JAXWS.jar"
@@ -736,6 +828,10 @@
 		<antcall target="jaxws-distclean-stubs-clustalw2phylogeny" />
 		<antcall target="jaxws-distclean-stubs-dbclustal" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />
+		<antcall target="jaxws-distclean-stubs-emboss_matcher" />
+		<antcall target="jaxws-distclean-stubs-emboss_needle" />
+		<antcall target="jaxws-distclean-stubs-emboss_stretcher" />
+		<antcall target="jaxws-distclean-stubs-emboss_water" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-fastm" />
 		<antcall target="jaxws-distclean-stubs-iprscan" />
@@ -779,6 +875,30 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ebeye" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_matcher" description="JAX-WS RI: remove EMBOSS matcher (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/matcher" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="matcher" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_needle" description="JAX-WS RI: remove EMBOSS needle (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/needle" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="needle" />
+	    </delete>
+	</target>
+   	<target name="jaxws-distclean-stubs-emboss_stretcher" description="JAX-WS RI: remove EMBOSS stretcher (SOAP) stubs">
+   	    <delete includeemptydirs="true" quiet="true">
+   	        <fileset dir="${jaxws.stubs.src.dir}/emboss/stretcher" includes="*/**" />
+   	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="stretcher" />
+   	    </delete>
+   	</target>
+	<target name="jaxws-distclean-stubs-emboss_water" description="JAX-WS RI: remove EMBOSS water (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/water" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="water" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-fasta" description="JAX-WS RI: remove FASTA (SOAP) stubs">
