@@ -12,6 +12,7 @@ projectDir =  ../EBIWS2_CSharp
 
 all: \
 EbiWS.dll \
+ClustalW2PhylogenyCliClient.exe \
 ClustalW2CliClient.exe \
 EBeyeCliClient.exe \
 FastaCliClient.exe \
@@ -33,6 +34,10 @@ EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
 
 ClustalW2CliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/ClustalW2CliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+ClustalW2PhylogenyCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/ClustalW2PhylogenyCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EBeyeCliClient.exe: EbiWS.dll
