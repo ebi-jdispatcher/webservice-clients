@@ -43,7 +43,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "      --type         : str  : sequence type, see --paramDetail type\n"
+		+ "      --stype        : str  : sequence type, see --paramDetail stype\n"
 		+ "      --informat     : str  : input alignment format, see \n"
 		+ "                              --paramDetail informat\n"
 		+ "      --outformat    : str  : output alignment format, see \n"
