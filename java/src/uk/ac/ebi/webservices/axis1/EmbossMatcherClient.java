@@ -31,20 +31,23 @@ public class EmbossMatcherClient extends uk.ac.ebi.webservices.AbstractWsToolCli
 	private String revision = "$Revision$";
 	/** Tool specific usage for help. */
 	private static final String usageMsg = "EMBOSS matcher\n"
-		+ "=========\n"
+		+ "==============\n"
+		+ "\n"
+		+ "Local pairwise sequence alignment using EMBOSS matcher.\n"
 		+ "\n"    
 		+ "[Required]\n"
 		+ "\n"
-		+ "      --asequence  : file : first sequence to align\n"
-		+ "      --bsequence  : file : second sequence to align\n"
+		+ "      --asequence     : file : first sequence to align\n"
+		+ "      --bsequence     : file : second sequence to align\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "      --stype      : str  : sequence type, see --paramDetail stype\n"
-		+ "  -m, --matrix     : str  : scoring matrix, see --paramDetail matrix\n"
-		+ "  -g, --gapopen    : real : gap open penalty\n"
-		+ "  -x, --gapext     : real : gap extension penalty\n"
-		+ "  -o, --format     : str  : output alignment format, see --paramDetail format\n";
+		+ "      --stype         : str  : sequence type, see --paramDetail stype\n"
+		+ "  -m, --matrix        : str  : scoring matrix, see --paramDetail matrix\n"
+		+ "  -g, --gapopen       : int  : gap open penalty\n"
+		+ "  -x, --gapext        : int  : gap extension penalty\n"
+		+ "  -a, --alternatives  : int  : number of alignments to output\n"
+		+ "  -o, --format        : str  : output alignment format, see --paramDetail format\n";
 
 	/** Default constructor.
 	 */
@@ -322,10 +325,11 @@ public class EmbossMatcherClient extends uk.ac.ebi.webservices.AbstractWsToolCli
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		// TODO if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
+		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("g")) params.setGapopen(new Integer(line.getOptionValue("g")));
 		if (line.hasOption("x")) params.setGapext(new Integer(line.getOptionValue("x")));
+		if (line.hasOption("a")) params.setAlternatives(new Integer(line.getOptionValue("a")));
 		if (line.hasOption("o")) params.setFormat(line.getOptionValue("o"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
@@ -345,9 +349,10 @@ public class EmbossMatcherClient extends uk.ac.ebi.webservices.AbstractWsToolCli
 		addGenericOptions(options);
 		// Application specific options
 		options.addOption("stype", true, "Sequence type");
-		options.addOption("m", "matrix", true, "Protein scoring matrix (multi)");
-		options.addOption("g", "gapopen", true, "Gap creation penalty (multi)");
-		options.addOption("x", "gapext", true, "Gap extension penalty (multi)");
+		options.addOption("m", "matrix", true, "Protein scoring matrix");
+		options.addOption("g", "gapopen", true, "Gap creation penalty");
+		options.addOption("x", "gapext", true, "Gap extension penalty");
+		options.addOption("a", "alternatives", true, "Number of alternative alignments");
 		options.addOption("o", "format", true, "Output alignment format");
 		options.addOption("asequence", true, "First input sequence");
 		options.addOption("bsequence", true, "Second input sequence");
