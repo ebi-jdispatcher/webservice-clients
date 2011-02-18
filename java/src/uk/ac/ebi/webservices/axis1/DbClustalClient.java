@@ -39,12 +39,12 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "[Required]\n"
 		+ "\n"
 		+ "      --sequence       : file : query sequence used in BLAST search\n"
-		+ "      --database       : str  : database searched by BLAST\n"
-		+ "      --upblastfile    : file : BLAST report output\n"
+		+ "      --blastreport    : file : BLAST report output\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "      --upidlistfile   : file : list of BLAST hit identifiers\n";
+		+ "      --upidlistfile   : file : list of BLAST hit identifiers\n"
+		+ "      --outformat      : str  : output alignment format, see --paramDetail outformat\n";
 
 	/** Default constructor.
 	 */
@@ -322,10 +322,7 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("database")) {
-			String[] dbList = line.getOptionValue("database").split(" +,");
-			params.setDatabase(dbList);
-		}
+		if (line.hasOption("outformat")) params.setOutformat(line.getOptionValue("outformat"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -343,8 +340,8 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("database", true, "Database searched");
-		options.addOption("upblastfile", true, "BLAST report");
+		options.addOption("outformat", true, "Output alignment format");
+		options.addOption("blastreport", true, "BLAST report");
 		options.addOption("upidlistfile", true, "Identifier list");
 		options.addOption("sequence", true, "Query sequence");
 
@@ -425,13 +422,13 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 					dataOption = cli.getOptionValue("sequence");
 					params.setSequence(new String(client.loadData(dataOption)));
 				}
-				if(cli.hasOption("upblastfile")) { // BLAST report
-					dataOption = cli.getOptionValue("upblastfile");
-					params.setUpblastfile(client.loadData(dataOption));
+				if(cli.hasOption("blastreport")) { // BLAST report
+					dataOption = cli.getOptionValue("blastreport");
+					params.setBlastreport(new String(client.readFile(new File(dataOption))));
 				}
 				if(cli.hasOption("upidlistfile")) { // Hit identifier list.
 					dataOption = cli.getOptionValue("upidlistfile");
-					params.setUpidlistfile(client.loadData(dataOption));
+					params.setUpidlistfile(client.readFile(new File(dataOption)));
 				}
 				// Submit the job
 				String email = null, title = null;
