@@ -84,6 +84,7 @@
 		<antcall target="axis1-stubs-fastm" />
 		<antcall target="axis1-stubs-iprscan" />
 		<antcall target="axis1-stubs-kalign" />
+		<antcall target="axis1-stubs-lalign" />
 		<antcall target="axis1-stubs-mafft" />
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-mview" />
@@ -173,6 +174,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.kalign" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-lalign" description="Axis 1.x: generate stubs for lalign (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.lalign" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/lalign?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-mafft" description="Axis 1.x: generate stubs for MAFFT (SOAP)">
@@ -325,6 +332,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- lalign -->
 		<jar destfile="${jar.dir}/Mafft_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MafftClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mafft/**">
@@ -431,6 +439,7 @@
 		<antcall target="axis1-distclean-stubs-fastm" />
 		<antcall target="axis1-distclean-stubs-iprscan" />
 		<antcall target="axis1-distclean-stubs-kalign" />
+		<antcall target="axis1-distclean-stubs-lalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
@@ -521,6 +530,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="kalign" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-lalign" description="Axis 1.x: remove lalign (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/lalign" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="lalign" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-mafft" description="Axis 1.x: remove MAFFT (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/mafft" includes="*/**" />
@@ -600,6 +615,7 @@
 		<antcall target="jaxws-stubs-fastm" />
 		<antcall target="jaxws-stubs-iprscan" />
 		<antcall target="jaxws-stubs-kalign" />
+		<antcall target="jaxws-stubs-lalign" />
 		<antcall target="jaxws-stubs-mafft" />
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-mview" />
@@ -689,6 +705,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.kalign" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/kalign?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-lalign" description="JAX-WS RI: generate stubs for lalign (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.lalign" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/lalign?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-mafft" description="JAX-WS RI: generate stubs for MAFFT (SOAP)">
@@ -791,6 +813,7 @@
 			</manifest>
 		</jar>
 		<!-- Kalign -->
+		<!-- lalign -->
 		<!-- MAFFT -->
 		<!-- MUSCLE -->
 		<!-- MView -->
@@ -836,6 +859,7 @@
 		<antcall target="jaxws-distclean-stubs-fastm" />
 		<antcall target="jaxws-distclean-stubs-iprscan" />
 		<antcall target="jaxws-distclean-stubs-kalign" />
+		<antcall target="jaxws-distclean-stubs-lalign" />
 		<antcall target="jaxws-distclean-stubs-mafft" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-mview" />
@@ -923,6 +947,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/kalign" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="kalign" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-lalign" description="JAX-WS RI: remove align (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/lalign" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="lalign" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-mafft" description="JAX-WS RI: remove MAFFT (SOAP) stubs">
