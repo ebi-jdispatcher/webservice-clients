@@ -282,7 +282,7 @@ public abstract class AbstractWsToolClient {
 		printDebugMessage("readFile", "Begin", 1);
 		printDebugMessage("readFile", "file: " + file.getPath() + File.pathSeparator + file.getName(), 2);
 		if(!file.exists()) {
-			throw new FileNotFoundException(file.getName());
+			throw new FileNotFoundException(file.getName() + " does not exist");
 		}
 		InputStream is = new FileInputStream(file);
 		byte[] bytes = readStream(is);
@@ -308,7 +308,7 @@ public abstract class AbstractWsToolClient {
 			offset += numRead;
 		}
 		if (offset < bytes.length) {
-			throw new IOException("...");
+			throw new IOException("Unable to read to end of stream");
 		}
 		printDebugMessage("readStream", "read " + bytes.length + " bytes", 2);
 		printDebugMessage("readStream", "End", 1);
