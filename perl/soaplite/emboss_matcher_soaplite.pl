@@ -909,7 +909,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/msa/emboss_matcher_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_matcher_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
