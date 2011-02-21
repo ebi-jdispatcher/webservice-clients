@@ -42,7 +42,7 @@ public class LalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		// TODO + "      --stype         : str  : sequence type, see --paramDetail stype\n"
+		+ "      --stype         : str  : sequence type, see --paramDetail stype\n"
 		+ "  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix\n"
 		+ "  -r, --match_scores  : str  : match/missmatch scores for nucleotide scoring\n"
 		+ "  -f, --gapopen       : int  : penalty for gap opening\n"
@@ -328,7 +328,7 @@ public class LalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		// TODO if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
+		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("s")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("r")) params.setMatch_scores(line.getOptionValue("r"));
 		if (line.hasOption("f")) params.setGapopen(new Integer(line.getOptionValue("g")));
