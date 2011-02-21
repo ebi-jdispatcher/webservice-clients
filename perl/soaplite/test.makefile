@@ -122,8 +122,36 @@ emboss_matcher_clean:
 	rm -f emboss_matcher-*
 
 # EMBOSS needle
+emboss_needle: emboss_needle_param_detail emboss_needle_dbid
+# TODO: emboss_needle_params emboss_needle_file
+
+emboss_needle_params:
+	${PERL} emboss_needle_soaplite.pl --params
+
+emboss_needle_param_detail:
+	${PERL} emboss_needle_soaplite.pl --paramDetail matrix
+
+emboss_needle_dbid:
+	${PERL} emboss_needle_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_needle_clean:
+	rm -f emboss_needle-*
 
 # EMBOSS stretcher
+emboss_stretcher: emboss_stretcher_param_detail emboss_stretcher_dbid
+# TODO: emboss_stretcher_params emboss_stretcher_file
+
+emboss_stretcher_params:
+	${PERL} emboss_stretcher_soaplite.pl --params
+
+emboss_stretcher_param_detail:
+	${PERL} emboss_stretcher_soaplite.pl --paramDetail matrix
+
+emboss_stretcher_dbid:
+	${PERL} emboss_stretcher_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_stretcher_clean:
+	rm -f emboss_stretcher-*
 
 # EMBOSS water
 emboss_water: emboss_water_param_detail emboss_water_dbid
