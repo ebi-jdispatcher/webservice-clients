@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-emboss_matcher_soaplite.pl
+emboss_water_soaplite.pl
 
 =head1 DESCRIPTION
 
-EMBOSS matcher (SOAP) web service Perl client using L<SOAP::Lite>.
+EMBOSS water (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 
@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_matcher_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_water_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -59,7 +59,7 @@ use MIME::Base64;
 use Data::Dumper;
 
 # WSDL URL for service
-my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/emboss_matcher?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/emboss_water?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -78,10 +78,9 @@ GetOptions(
 	# Tool specific options
     'stype=s'        => \$tool_params{'stype'},      # Sequence type: DNA or protein
     'matrix|m=s'     => \$tool_params{'matrix'},    # Scoring matrix
-    'gapopen|g=i'    => \$tool_params{'gapopen'},   # Gap creation penalty
-    'gapext|x=i'     => \$tool_params{'gapext'},    # Gap extension penalty
-    'alternatives|a=i' => \$tool_params{'alternatives'}, # Alternative alignments
-    'format|o=s'       => \$tool_params{'format'},    # Alignment format
+    'gapopen|g=f'    => \$tool_params{'gapopen'},   # Gap creation penalty
+    'gapext|x=f'     => \$tool_params{'gapext'},    # Gap extension penalty
+    'format|o=s'     => \$tool_params{'format'},    # Alignment format
     'asequence=s'    => \$params{'asequence'},       # First input sequence
     'bsequence=s'    => \$params{'bsequence'},       # Second input sequence
 
@@ -849,10 +848,10 @@ Print program usage.
 
 sub usage {
 	print STDERR <<EOF
-EMBOSS matcher
-==============
+EMBOSS water
+============
 
-Local pairwise sequence alignment using EMBOSS matcher.
+Local pairwise sequence alignment using EMBOSS water.
 
 [Required]
 
@@ -863,9 +862,8 @@ Local pairwise sequence alignment using EMBOSS matcher.
 
       --stype         : str  : sequence type, see --paramDetail stype
   -m, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -g, --gapopen       : int  : gap open penalty
-  -x, --gapext        : int  : gap extension penalty
-  -a, --alternatives  : int  : number of alignments to output
+  -g, --gapopen       : real : gap open penalty
+  -x, --gapext        : real : gap extension penalty
   -o, --format        : str  : output alignment format, see --paramDetail format
 
 [General]
@@ -909,7 +907,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/msa/emboss_matcher_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_water_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

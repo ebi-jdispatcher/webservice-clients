@@ -6,8 +6,8 @@
 # ======================================================================
 
 #PERL = perl
-#PERL = /ebi/extserv/bin/perl/bin/perl
-PERL = /sw/arch/bin/perl
+PERL = /ebi/extserv/bin/perl/bin/perl
+#PERL = /sw/arch/bin/perl
 #EMAIL = email@example.org
 EMAIL = support@ebi.ac.uk
 
@@ -104,6 +104,42 @@ ebeye_listFieldsInformation:
 	${PERL} ebeye_soaplite.pl --listFieldsInformation uniprot
 
 ebeye_clean:
+
+# EMBOSS matcher
+emboss_matcher: emboss_matcher_param_detail emboss_matcher_dbid
+# TODO: emboss_matcher_params emboss_matcher_file
+
+emboss_matcher_params:
+	${PERL} emboss_matcher_soaplite.pl --params
+
+emboss_matcher_param_detail:
+	${PERL} emboss_matcher_soaplite.pl --paramDetail matrix
+
+emboss_matcher_dbid:
+	${PERL} emboss_matcher_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_matcher_clean:
+	rm -f emboss_matcher-*
+
+# EMBOSS needle
+
+# EMBOSS stretcher
+
+# EMBOSS water
+emboss_water: emboss_water_param_detail emboss_water_dbid
+# TODO: emboss_water_params emboss_water_file
+
+emboss_water_params:
+	${PERL} emboss_water_soaplite.pl --params
+
+emboss_water_param_detail:
+	${PERL} emboss_water_soaplite.pl --paramDetail matrix
+
+emboss_water_dbid:
+	${PERL} emboss_water_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_water_clean:
+	rm -f emboss_water-*
 
 # FASTA
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout
