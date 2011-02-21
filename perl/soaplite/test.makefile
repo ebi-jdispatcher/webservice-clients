@@ -254,6 +254,22 @@ kalign_stdin_stdout:
 kalign_clean:
 	rm -f kalign-*
 
+# lalign
+lalign: lalign_param_detail lalign_dbid
+# TODO: lalign_params lalign_file
+
+lalign_params:
+	${PERL} lalign_soaplite.pl --params
+
+lalign_param_detail:
+	${PERL} lalign_soaplite.pl --paramDetail matrix
+
+lalign_dbid:
+	${PERL} lalign_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+lalign_clean:
+	rm -f lalign-*
+
 # MAFFT
 mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
 
