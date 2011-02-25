@@ -60,6 +60,11 @@
     <Compile Include="ClustalW2PhylogenyClient.cs" />
     <Compile Include="WebReferences\DbClustalWs\Reference.cs" />
     <Compile Include="WebReferences\MViewWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossMatcherWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossNeedleWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossStretcherWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossWaterWs\Reference.cs" />
+    <Compile Include="WebReferences\LalignWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -80,6 +85,11 @@
     <None Include="WebReferences\ClustalW2PhylogenyWs\Reference.map" />
     <None Include="WebReferences\DbClustalWs\Reference.map" />
     <None Include="WebReferences\MViewWs\Reference.map" />
+    <None Include="WebReferences\EmbossMatcherWs\Reference.map" />
+    <None Include="WebReferences\EmbossNeedleWs\Reference.map" />
+    <None Include="WebReferences\EmbossStretcherWs\Reference.map" />
+    <None Include="WebReferences\EmbossWaterWs\Reference.map" />
+    <None Include="WebReferences\LalignWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
