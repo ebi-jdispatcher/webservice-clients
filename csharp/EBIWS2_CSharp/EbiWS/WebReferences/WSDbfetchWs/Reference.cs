@@ -33,9 +33,17 @@ namespace EbiWS.WSDbfetchWs {
         
         private System.Threading.SendOrPostCallback getSupportedStylesOperationCompleted;
         
+        private System.Threading.SendOrPostCallback getDatabaseInfoListOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback getDatabaseInfoOperationCompleted;
+        
         private System.Threading.SendOrPostCallback getDbFormatsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback getFormatInfoOperationCompleted;
+        
         private System.Threading.SendOrPostCallback getFormatStylesOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback getStyleInfoOperationCompleted;
         
         private System.Threading.SendOrPostCallback fetchDataOperationCompleted;
         
@@ -56,10 +64,22 @@ namespace EbiWS.WSDbfetchWs {
         public event getSupportedStylesCompletedEventHandler getSupportedStylesCompleted;
         
         /// <remarks/>
+        public event getDatabaseInfoListCompletedEventHandler getDatabaseInfoListCompleted;
+        
+        /// <remarks/>
+        public event getDatabaseInfoCompletedEventHandler getDatabaseInfoCompleted;
+        
+        /// <remarks/>
         public event getDbFormatsCompletedEventHandler getDbFormatsCompleted;
         
         /// <remarks/>
+        public event getFormatInfoCompletedEventHandler getFormatInfoCompleted;
+        
+        /// <remarks/>
         public event getFormatStylesCompletedEventHandler getFormatStylesCompleted;
+        
+        /// <remarks/>
+        public event getStyleInfoCompletedEventHandler getStyleInfoCompleted;
         
         /// <remarks/>
         public event fetchDataCompletedEventHandler fetchDataCompleted;
@@ -186,6 +206,87 @@ namespace EbiWS.WSDbfetchWs {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", ResponseNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute("getDatabaseInfoListReturn")]
+        public DatabaseInfo[] getDatabaseInfoList() {
+            object[] results = this.Invoke("getDatabaseInfoList", new object[0]);
+            return ((DatabaseInfo[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BegingetDatabaseInfoList(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getDatabaseInfoList", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public DatabaseInfo[] EndgetDatabaseInfoList(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((DatabaseInfo[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void getDatabaseInfoListAsync() {
+            this.getDatabaseInfoListAsync(null);
+        }
+        
+        /// <remarks/>
+        public void getDatabaseInfoListAsync(object userState) {
+            if ((this.getDatabaseInfoListOperationCompleted == null)) {
+                this.getDatabaseInfoListOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetDatabaseInfoListOperationCompleted);
+            }
+            this.InvokeAsync("getDatabaseInfoList", new object[0], this.getDatabaseInfoListOperationCompleted, userState);
+        }
+        
+        private void OngetDatabaseInfoListOperationCompleted(object arg) {
+            if ((this.getDatabaseInfoListCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.getDatabaseInfoListCompleted(this, new getDatabaseInfoListCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", ResponseNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute("getDatabaseInfoReturn")]
+        public DatabaseInfo getDatabaseInfo(string db) {
+            object[] results = this.Invoke("getDatabaseInfo", new object[] {
+                        db});
+            return ((DatabaseInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BegingetDatabaseInfo(string db, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getDatabaseInfo", new object[] {
+                        db}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public DatabaseInfo EndgetDatabaseInfo(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((DatabaseInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void getDatabaseInfoAsync(string db) {
+            this.getDatabaseInfoAsync(db, null);
+        }
+        
+        /// <remarks/>
+        public void getDatabaseInfoAsync(string db, object userState) {
+            if ((this.getDatabaseInfoOperationCompleted == null)) {
+                this.getDatabaseInfoOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetDatabaseInfoOperationCompleted);
+            }
+            this.InvokeAsync("getDatabaseInfo", new object[] {
+                        db}, this.getDatabaseInfoOperationCompleted, userState);
+        }
+        
+        private void OngetDatabaseInfoOperationCompleted(object arg) {
+            if ((this.getDatabaseInfoCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.getDatabaseInfoCompleted(this, new getDatabaseInfoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", ResponseNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute("getDbFormatsReturn")]
         public string[] getDbFormats(string db) {
             object[] results = this.Invoke("getDbFormats", new object[] {
@@ -223,6 +324,51 @@ namespace EbiWS.WSDbfetchWs {
             if ((this.getDbFormatsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.getDbFormatsCompleted(this, new getDbFormatsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", ResponseNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute("getFormatInfoReturn")]
+        public FormatInfo getFormatInfo(string db, string format) {
+            object[] results = this.Invoke("getFormatInfo", new object[] {
+                        db,
+                        format});
+            return ((FormatInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BegingetFormatInfo(string db, string format, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getFormatInfo", new object[] {
+                        db,
+                        format}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public FormatInfo EndgetFormatInfo(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((FormatInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void getFormatInfoAsync(string db, string format) {
+            this.getFormatInfoAsync(db, format, null);
+        }
+        
+        /// <remarks/>
+        public void getFormatInfoAsync(string db, string format, object userState) {
+            if ((this.getFormatInfoOperationCompleted == null)) {
+                this.getFormatInfoOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetFormatInfoOperationCompleted);
+            }
+            this.InvokeAsync("getFormatInfo", new object[] {
+                        db,
+                        format}, this.getFormatInfoOperationCompleted, userState);
+        }
+        
+        private void OngetFormatInfoOperationCompleted(object arg) {
+            if ((this.getFormatInfoCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.getFormatInfoCompleted(this, new getFormatInfoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -268,6 +414,54 @@ namespace EbiWS.WSDbfetchWs {
             if ((this.getFormatStylesCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.getFormatStylesCompleted(this, new getFormatStylesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", ResponseNamespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute("getStyleInfoReturn")]
+        public StyleInfo getStyleInfo(string db, string format, string style) {
+            object[] results = this.Invoke("getStyleInfo", new object[] {
+                        db,
+                        format,
+                        style});
+            return ((StyleInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BegingetStyleInfo(string db, string format, string style, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("getStyleInfo", new object[] {
+                        db,
+                        format,
+                        style}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public StyleInfo EndgetStyleInfo(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((StyleInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void getStyleInfoAsync(string db, string format, string style) {
+            this.getStyleInfoAsync(db, format, style, null);
+        }
+        
+        /// <remarks/>
+        public void getStyleInfoAsync(string db, string format, string style, object userState) {
+            if ((this.getStyleInfoOperationCompleted == null)) {
+                this.getStyleInfoOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetStyleInfoOperationCompleted);
+            }
+            this.InvokeAsync("getStyleInfo", new object[] {
+                        db,
+                        format,
+                        style}, this.getStyleInfoOperationCompleted, userState);
+        }
+        
+        private void OngetStyleInfoOperationCompleted(object arg) {
+            if ((this.getStyleInfoCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.getStyleInfoCompleted(this, new getStyleInfoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -378,6 +572,326 @@ namespace EbiWS.WSDbfetchWs {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit")]
+    public partial class DatabaseInfo {
+        
+        private string[] aliasListField;
+        
+        private string[] databaseTermsField;
+        
+        private string defaultFormatField;
+        
+        private string descriptionField;
+        
+        private string displayNameField;
+        
+        private ExampleIdentifiersInfo exampleIdentifiersField;
+        
+        private FormatInfo[] formatInfoListField;
+        
+        private string hrefField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("alias", IsNullable=false)]
+        public string[] aliasList {
+            get {
+                return this.aliasListField;
+            }
+            set {
+                this.aliasListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("databaseTerm", IsNullable=false)]
+        public string[] databaseTerms {
+            get {
+                return this.databaseTermsField;
+            }
+            set {
+                this.databaseTermsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string defaultFormat {
+            get {
+                return this.defaultFormatField;
+            }
+            set {
+                this.defaultFormatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string displayName {
+            get {
+                return this.displayNameField;
+            }
+            set {
+                this.displayNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public ExampleIdentifiersInfo exampleIdentifiers {
+            get {
+                return this.exampleIdentifiersField;
+            }
+            set {
+                this.exampleIdentifiersField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("formatInfo", IsNullable=false)]
+        public FormatInfo[] formatInfoList {
+            get {
+                return this.formatInfoListField;
+            }
+            set {
+                this.formatInfoListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string href {
+            get {
+                return this.hrefField;
+            }
+            set {
+                this.hrefField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit")]
+    public partial class ExampleIdentifiersInfo {
+        
+        private string[] accessionListField;
+        
+        private string[] entryVersionListField;
+        
+        private string[] idListField;
+        
+        private string[] nameListField;
+        
+        private string[] sequenceVersionListField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("accession", IsNullable=false)]
+        public string[] accessionList {
+            get {
+                return this.accessionListField;
+            }
+            set {
+                this.accessionListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("entryVersion", IsNullable=false)]
+        public string[] entryVersionList {
+            get {
+                return this.entryVersionListField;
+            }
+            set {
+                this.entryVersionListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("id", IsNullable=false)]
+        public string[] idList {
+            get {
+                return this.idListField;
+            }
+            set {
+                this.idListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("name", IsNullable=false)]
+        public string[] nameList {
+            get {
+                return this.nameListField;
+            }
+            set {
+                this.nameListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("sequenceVersion", IsNullable=false)]
+        public string[] sequenceVersionList {
+            get {
+                return this.sequenceVersionListField;
+            }
+            set {
+                this.sequenceVersionListField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit")]
+    public partial class StyleInfo {
+        
+        private string mimeTypeField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string mimeType {
+            get {
+                return this.mimeTypeField;
+            }
+            set {
+                this.mimeTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit")]
+    public partial class FormatInfo {
+        
+        private string[] aliasesField;
+        
+        private string[] dataTermsField;
+        
+        private string nameField;
+        
+        private StyleInfo[] styleInfoListField;
+        
+        private string[] syntaxTermsField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("alias", IsNullable=false)]
+        public string[] aliases {
+            get {
+                return this.aliasesField;
+            }
+            set {
+                this.aliasesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("dataTerm", IsNullable=false)]
+        public string[] dataTerms {
+            get {
+                return this.dataTermsField;
+            }
+            set {
+                this.dataTermsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("styleInfo", IsNullable=false)]
+        public StyleInfo[] styleInfoList {
+            get {
+                return this.styleInfoListField;
+            }
+            set {
+                this.styleInfoListField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("syntaxTerm", IsNullable=false)]
+        public string[] syntaxTerms {
+            get {
+                return this.syntaxTermsField;
+            }
+            set {
+                this.syntaxTermsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void getSupportedDBsCompletedEventHandler(object sender, getSupportedDBsCompletedEventArgs e);
     
     /// <remarks/>
@@ -456,6 +970,58 @@ namespace EbiWS.WSDbfetchWs {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void getDatabaseInfoListCompletedEventHandler(object sender, getDatabaseInfoListCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class getDatabaseInfoListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal getDatabaseInfoListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DatabaseInfo[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DatabaseInfo[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void getDatabaseInfoCompletedEventHandler(object sender, getDatabaseInfoCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class getDatabaseInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal getDatabaseInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public DatabaseInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((DatabaseInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void getDbFormatsCompletedEventHandler(object sender, getDbFormatsCompletedEventArgs e);
     
     /// <remarks/>
@@ -482,6 +1048,32 @@ namespace EbiWS.WSDbfetchWs {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void getFormatInfoCompletedEventHandler(object sender, getFormatInfoCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class getFormatInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal getFormatInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public FormatInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((FormatInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void getFormatStylesCompletedEventHandler(object sender, getFormatStylesCompletedEventArgs e);
     
     /// <remarks/>
@@ -502,6 +1094,32 @@ namespace EbiWS.WSDbfetchWs {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((string[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void getStyleInfoCompletedEventHandler(object sender, getStyleInfoCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class getStyleInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal getStyleInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public StyleInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((StyleInfo)(this.results[0]));
             }
         }
     }

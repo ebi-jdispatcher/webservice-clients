@@ -377,13 +377,13 @@ namespace EbiWS.FastmWs {
         
         private bool alignmentsFieldSpecified;
         
+        private string statsField;
+        
         private string seqrangeField;
         
         private string dbrangeField;
         
         private string filterField;
-        
-        private string statsField;
         
         private string sequenceField;
         
@@ -604,6 +604,17 @@ namespace EbiWS.FastmWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public string stats {
+            get {
+                return this.statsField;
+            }
+            set {
+                this.statsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
         public string seqrange {
             get {
                 return this.seqrangeField;
@@ -632,17 +643,6 @@ namespace EbiWS.FastmWs {
             }
             set {
                 this.filterField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string stats {
-            get {
-                return this.statsField;
-            }
-            set {
-                this.statsField = value;
             }
         }
         

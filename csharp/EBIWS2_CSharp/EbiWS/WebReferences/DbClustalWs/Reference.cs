@@ -339,34 +339,46 @@ namespace EbiWS.DbClustalWs {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
     public partial class InputParameters {
         
-        private string[] databaseField;
+        private string outformatField;
         
         private string sequenceField;
+        
+        private string blastreportField;
         
         private byte[] upblastfileField;
         
         private byte[] upidlistfileField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string[] database {
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public string outformat {
             get {
-                return this.databaseField;
+                return this.outformatField;
             }
             set {
-                this.databaseField = value;
+                this.outformatField = value;
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sequence {
             get {
                 return this.sequenceField;
             }
             set {
                 this.sequenceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public string blastreport {
+            get {
+                return this.blastreportField;
+            }
+            set {
+                this.blastreportField = value;
             }
         }
         

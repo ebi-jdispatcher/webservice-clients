@@ -355,6 +355,10 @@ namespace EbiWS.FastaWs {
         
         private bool gapextFieldSpecified;
         
+        private System.Nullable<bool> hspsField;
+        
+        private bool hspsFieldSpecified;
+        
         private System.Nullable<double> expupperlimField;
         
         private bool expupperlimFieldSpecified;
@@ -377,13 +381,15 @@ namespace EbiWS.FastaWs {
         
         private bool alignmentsFieldSpecified;
         
+        private string scoreformatField;
+        
+        private string statsField;
+        
         private string seqrangeField;
         
         private string dbrangeField;
         
         private string filterField;
-        
-        private string statsField;
         
         private string sequenceField;
         
@@ -478,6 +484,28 @@ namespace EbiWS.FastaWs {
             }
             set {
                 this.gapextFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public System.Nullable<bool> hsps {
+            get {
+                return this.hspsField;
+            }
+            set {
+                this.hspsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool hspsSpecified {
+            get {
+                return this.hspsFieldSpecified;
+            }
+            set {
+                this.hspsFieldSpecified = value;
             }
         }
         
@@ -604,6 +632,28 @@ namespace EbiWS.FastaWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public string scoreformat {
+            get {
+                return this.scoreformatField;
+            }
+            set {
+                this.scoreformatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public string stats {
+            get {
+                return this.statsField;
+            }
+            set {
+                this.statsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
         public string seqrange {
             get {
                 return this.seqrangeField;
@@ -632,17 +682,6 @@ namespace EbiWS.FastaWs {
             }
             set {
                 this.filterField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string stats {
-            get {
-                return this.statsField;
-            }
-            set {
-                this.statsField = value;
             }
         }
         

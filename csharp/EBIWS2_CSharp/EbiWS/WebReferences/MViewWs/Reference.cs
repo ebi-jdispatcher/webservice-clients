@@ -339,7 +339,7 @@ namespace EbiWS.MViewWs {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
     public partial class InputParameters {
         
-        private string typeField;
+        private string stypeField;
         
         private string informatField;
         
@@ -347,11 +347,19 @@ namespace EbiWS.MViewWs {
         
         private string htmlmarkupField;
         
+        private System.Nullable<bool> cssField;
+        
+        private bool cssFieldSpecified;
+        
         private string pcidField;
         
-        private string alignmentField;
+        private System.Nullable<bool> alignmentField;
         
-        private string rulerField;
+        private bool alignmentFieldSpecified;
+        
+        private System.Nullable<bool> rulerField;
+        
+        private bool rulerFieldSpecified;
         
         private System.Nullable<int> widthField;
         
@@ -363,7 +371,9 @@ namespace EbiWS.MViewWs {
         
         private string groupmapField;
         
-        private string consensusField;
+        private System.Nullable<bool> consensusField;
+        
+        private bool consensusFieldSpecified;
         
         private string concoloringField;
         
@@ -371,18 +381,20 @@ namespace EbiWS.MViewWs {
         
         private string congroupmapField;
         
-        private string congapsField;
+        private System.Nullable<bool> congapsField;
+        
+        private bool congapsFieldSpecified;
         
         private string sequenceField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string type {
+        public string stype {
             get {
-                return this.typeField;
+                return this.stypeField;
             }
             set {
-                this.typeField = value;
+                this.stypeField = value;
             }
         }
         
@@ -421,6 +433,28 @@ namespace EbiWS.MViewWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
+        public System.Nullable<bool> css {
+            get {
+                return this.cssField;
+            }
+            set {
+                this.cssField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool cssSpecified {
+            get {
+                return this.cssFieldSpecified;
+            }
+            set {
+                this.cssFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
         public string pcid {
             get {
                 return this.pcidField;
@@ -432,7 +466,7 @@ namespace EbiWS.MViewWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string alignment {
+        public System.Nullable<bool> alignment {
             get {
                 return this.alignmentField;
             }
@@ -442,13 +476,35 @@ namespace EbiWS.MViewWs {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool alignmentSpecified {
+            get {
+                return this.alignmentFieldSpecified;
+            }
+            set {
+                this.alignmentFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string ruler {
+        public System.Nullable<bool> ruler {
             get {
                 return this.rulerField;
             }
             set {
                 this.rulerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool rulerSpecified {
+            get {
+                return this.rulerFieldSpecified;
+            }
+            set {
+                this.rulerFieldSpecified = value;
             }
         }
         
@@ -509,12 +565,23 @@ namespace EbiWS.MViewWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string consensus {
+        public System.Nullable<bool> consensus {
             get {
                 return this.consensusField;
             }
             set {
                 this.consensusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool consensusSpecified {
+            get {
+                return this.consensusFieldSpecified;
+            }
+            set {
+                this.consensusFieldSpecified = value;
             }
         }
         
@@ -553,12 +620,23 @@ namespace EbiWS.MViewWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string congaps {
+        public System.Nullable<bool> congaps {
             get {
                 return this.congapsField;
             }
             set {
                 this.congapsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool congapsSpecified {
+            get {
+                return this.congapsFieldSpecified;
+            }
+            set {
+                this.congapsFieldSpecified = value;
             }
         }
         
