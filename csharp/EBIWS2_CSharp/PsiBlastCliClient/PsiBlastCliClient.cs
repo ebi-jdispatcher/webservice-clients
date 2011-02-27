@@ -376,6 +376,7 @@ http://www.ebi.ac.uk/support/
 					goto case "--seqrange";
 				case "--previousjobid":
 					InParams.previousjobid = args[++i];
+					Action = "submit";
 					break;
 				case "/previousjobid":
 					goto case "--previousjobid";
