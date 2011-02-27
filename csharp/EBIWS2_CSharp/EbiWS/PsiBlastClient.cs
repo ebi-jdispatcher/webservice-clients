@@ -97,6 +97,9 @@ namespace EbiWS
 		public wsParameterDetails GetParamDetail(string paramName)
 		{
 			PrintDebugMessage("GetParamDetail", "Begin", 1);
+			if(paramName == null || paramName.Length < 1) {
+				throw new ClientException("Parameter name is required to fetch parameter details.");
+			}
 			PrintDebugMessage("GetParamDetail", "paramName: " + paramName, 2);
 			ServiceProxyConnect();
 			wsParameterDetails paramDetail = SrvProxy.getParameterDetails(paramName);
@@ -108,6 +111,9 @@ namespace EbiWS
 		protected override void PrintParamDetail(string paramName)
 		{
 			PrintDebugMessage("PrintParamDetail", "Begin", 1);
+			if(paramName == null || paramName.Length < 1) {
+				throw new ClientException("Parameter name is required to print parameter details.");
+			}
 			wsParameterDetails paramDetail = GetParamDetail(paramName);
 			Console.WriteLine("{0}\t{1}", paramDetail.name, paramDetail.type);
 			if (paramDetail.description != null) Console.WriteLine(paramDetail.description);
@@ -136,6 +142,9 @@ namespace EbiWS
 		public override void SubmitJob()
 		{
 			PrintDebugMessage("SubmitJob", "Begin", 1);
+			if(this.Email == null || this.Email.Length < 1) {
+				throw new ClientException("E-mail address is required to submit a job.");
+			}
 			JobId = RunApp(Email, JobTitle, InParams);
 			if (OutputLevel > 0 || Async) Console.WriteLine(JobId);
 			// Simulate sync mode
@@ -150,6 +159,9 @@ namespace EbiWS
 		public string RunApp(string email, string title, InputParameters input)
 		{
 			PrintDebugMessage("RunApp", "Begin", 1);
+			if(email == null || email.Length < 1) {
+				throw new ClientException("E-mail address is required to submit a job.");
+			}
 			PrintDebugMessage("RunApp", "email: " + email, 2);
 			PrintDebugMessage("RunApp", "title: " + title, 2);
 			PrintDebugMessage("RunApp", "input: " + input, 2);
@@ -170,6 +182,9 @@ namespace EbiWS
 		public override string GetStatus(string jobId)
 		{
 			PrintDebugMessage("GetStatus", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("A job identifier is required to get job status.");
+			}
 			string status = "PENDING";
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
 			status = SrvProxy.getStatus(jobId);
@@ -190,6 +205,9 @@ namespace EbiWS
 		public wsResultType[] GetResultTypes(string jobId)
 		{
 			PrintDebugMessage("GetResultTypes", "Begin", 2);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("A job identifier is required to get result types for a job.");
+			}
 			wsResultType[] resultTypes = SrvProxy.getResultTypes(jobId);
 			PrintDebugMessage("GetResultTypes", "End", 2);
 			return resultTypes;
@@ -200,6 +218,9 @@ namespace EbiWS
 		public override void PrintResultTypes()
 		{
 			PrintDebugMessage("PrintResultTypes", "Begin", 1);
+			if(this.JobId == null || this.JobId.Length < 1) {
+				throw new ClientException("A job identifier is required to print result types for a job.");
+			}
 			PrintDebugMessage("PrintResultTypes", "JobId: " + JobId, 2);
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
 			wsResultType[] resultTypes = GetResultTypes(JobId);
@@ -220,6 +241,9 @@ namespace EbiWS
 		public override byte[] GetResult(string jobId, string format)
 		{
 			PrintDebugMessage("GetResult", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("A job identifier is required to get result.");
+			}
 			PrintDebugMessage("GetResult", "jobId: " + jobId, 1);
 			PrintDebugMessage("GetResult", "format: " + format, 1);
 			byte[] result = null;
@@ -236,6 +260,9 @@ namespace EbiWS
 		public override void GetResults(string jobId, string outformat, string outFileBase)
 		{
 			PrintDebugMessage("GetResults", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("A job identifier is required to get result.");
+			}
 			PrintDebugMessage("GetResults", "jobId: " + jobId, 2);
 			PrintDebugMessage("GetResults", "outformat: " + outformat, 2);
 			PrintDebugMessage("GetResults", "outFileBase: " + outFileBase, 2);
@@ -302,6 +329,9 @@ namespace EbiWS
 		public string[] GetIds(string jobId)
 		{
 			PrintDebugMessage("GetIds", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("A job identifier is required to get hit identifiers.");
+			}
 			PrintDebugMessage("GetIds", "jobId: " + jobId, 2);
 			string[] retVal = null;
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
@@ -323,6 +353,9 @@ namespace EbiWS
 		public void PrintGetIds()
 		{
 			PrintDebugMessage("PrintGetIds", "Begin", 1);
+			if(JobId == null || JobId.Length < 1) {
+				throw new ClientException("A job identifier is required to print hit identifiers.");
+			}
 			PrintDebugMessage("PrintGetIds", "JobId: " + JobId, 2);
 			string[] idList = GetIds(JobId);
 			foreach (string id in idList) Console.WriteLine(id);

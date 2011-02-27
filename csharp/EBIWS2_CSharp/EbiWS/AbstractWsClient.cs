@@ -15,6 +15,34 @@ using System.Text;
 namespace EbiWS
 {
 	/// <summary>
+	/// Generic exception for use in clients. 
+	/// </summary>
+	[Serializable]
+	public class ClientException : Exception
+	{
+		// Constructor
+		public ClientException()
+		{
+		}
+
+		// Constructor
+		public ClientException(string message) : base(message)
+		{
+		}
+
+		// Constructor
+		public ClientException(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+
+		// Constructor
+		protected ClientException(System.Runtime.Serialization.SerializationInfo info, 
+		                          System.Runtime.Serialization.StreamingContext context): base(info, context)
+		{
+		}
+	}
+
+	/// <summary>
 	/// Abstract definition of a client to the EMBL-EBI tool Web Services.
 	/// </summary>
 	public abstract class AbstractWsClient
@@ -336,6 +364,9 @@ Asynchronous job:
 		/// </returns>
 		protected string ReadTextFile(string fileName) {
 			PrintDebugMessage("ReadTextFile", "Begin", 1);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to read data from.");
+			}
 			PrintDebugMessage("ReadTextFile", "fileName: " + fileName, 2);
 			string retVal = "";
 			// Read from STDIN
@@ -354,6 +385,9 @@ Asynchronous job:
 		/// <returns>Data read from file as a byte array.</returns>
 		protected byte[] ReadFile(string fileName) {
 			PrintDebugMessage("ReadFile", "Begin", 1);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to read data from.");
+			}
 			PrintDebugMessage("ReadFile", "fileName: " + fileName, 1);
 			byte[] retVal = null;
 			if(fileName == "-") { // Read from STDIN
@@ -377,6 +411,9 @@ Asynchronous job:
 		/// <returns>Data as a string.</returns>
 		protected string LoadData(string fileOptionStr) {
 			PrintDebugMessage("LoadData", "Begin", 1);
+			if(fileOptionStr == null || fileOptionStr.Length < 1) {
+				throw new ClientException("A file name is required to read data from.");
+			}
 			PrintDebugMessage("LoadData", "fileOptionStr: " + fileOptionStr, 2);
 			string retVal = null;
 			if(fileOptionStr != null) {
@@ -401,6 +438,9 @@ Asynchronous job:
 		/// <returns>Data as a byte array.</returns>
 		protected byte[] LoadBinData(string fileOptionStr) {
 			PrintDebugMessage("LoadBinData", "Begin", 1);
+			if(fileOptionStr == null || fileOptionStr.Length < 1) {
+				throw new ClientException("A file name is required to read data from.");
+			}
 			PrintDebugMessage("LoadBinData", "fileOptionStr: " + fileOptionStr, 2);
 			byte[] retVal = null;
 			if(fileOptionStr != null) {
@@ -426,6 +466,9 @@ Asynchronous job:
 		/// <param name="content">Data to write to file.</param>
 		protected void WriteBinaryFile(string fileName, byte[] content) {
 			PrintDebugMessage("WriteBinaryFile", "Begin", 1);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to write data to.");
+			}
 			PrintDebugMessage("WriteBinaryFile", "fileName: " + fileName, 1);
 			PrintDebugMessage("WriteBinaryFile", "content: " + content.Length + " bytes", 1);
 			if(fileName == "-") { // STDOUT
@@ -449,6 +492,9 @@ Asynchronous job:
 		protected void WriteTextFile(string fileName, byte[] content)
 		{
 			PrintDebugMessage("WriteTextFile", "Begin", 1);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to write data to.");
+			}
 			PrintDebugMessage("WriteTextFile", "fileName: " + fileName, 1);
 			PrintDebugMessage("WriteTextFile", "content: " + content.Length + " bytes", 1);
 			System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
@@ -465,6 +511,9 @@ Asynchronous job:
 		protected void WriteTextFile(string fileName, string content)
 		{
 			PrintDebugMessage("WriteTextFile", "Begin", 1);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to write data to.");
+			}
 			PrintDebugMessage("WriteTextFile", "fileName: " + fileName, 1);
 			PrintDebugMessage("WriteTextFile", "content: " + content.Length + " characters", 1);
 			if (fileName == "-")
@@ -479,15 +528,36 @@ Asynchronous job:
 			PrintDebugMessage("WriteTextFile", "End", 1);
 		}
 		
+		/// <summary>
+		/// Set file to read sequence data from in multi-sequence mode. 
+		/// </summary>
+		/// <param name="fileName">
+		/// Name of the file to read from. A <see cref="System.String"/>.
+		/// </param>
 		protected void SetSequenceFile(string fileName) {
 			PrintDebugMessage("SetSequenceFile", "Begin", 11);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to read sequences from.");
+			}
 			PrintDebugMessage("SetSequenceFile", "fileName: " + fileName, 12);
 			this.sequenceFileReader = new StreamReader(fileName);
 			PrintDebugMessage("SetSequenceFile", "End", 11);
 		}
 		
+		/// <summary>
+		/// Read next sequence from sequence data file. Assumes fasta 
+		/// formatted sequence data. File to read from is set by 
+		/// SetSequenceFile(fileName).
+		/// </summary>
+		/// <returns>
+		/// Next sequence in the data stream as a fasta formatted string, or 
+		/// if the end of the stream is reached a null. A <see cref="System.String"/>.
+		/// </returns>
 		protected string NextSequence() {
 			PrintDebugMessage("NextSequence", "Begin", 11);
+			if(this.sequenceFileReader == null) {
+				throw new ClientException("Sequence data file to read from not set.");
+			}
 			string retVal = null;
 			string line = null;
 			// Skip to start of fasta sequence.
@@ -510,22 +580,48 @@ Asynchronous job:
 			return retVal;
 		}
 		
+		/// <summary>
+		/// Close the stream used to read from the sequence data file in 
+		/// multi-sequence mode.
+		/// </summary>
 		protected void CloseSequenceFile() {
 			PrintDebugMessage("CloseSequenceFile", "Begin", 11);
-			this.sequenceFileReader.Close();
+			if(this.sequenceFileReader != null) {
+				this.sequenceFileReader.Close();
+			}
 			this.sequenceFileReader = null;
 			PrintDebugMessage("CloseSequenceFile", "End", 11);
 		}
 		
+		/// <summary>
+		/// Set the input file to read a list of sequence entry identifiers 
+		/// from.
+		/// </summary>
+		/// <param name="fileName">
+		/// The name of the file to read the identifiers from. A <see cref="System.String"/>.
+		/// </param>
 		protected void SetIdentifierFile(string fileName) {
 			PrintDebugMessage("SetIdentifierFile", "Begin", 11);
+			if(fileName == null || fileName.Length < 1) {
+				throw new ClientException("A file name is required to read identifiers from.");
+			}
 			PrintDebugMessage("SetIdentifierFile", "fileName: " + fileName, 12);
 			this.identifierFileReader = new StreamReader(fileName);
-			PrintDebugMessage("SetIdentifierFile", "Begin", 11);
+			PrintDebugMessage("SetIdentifierFile", "End", 11);
 		}
 		
+		/// <summary>
+		/// Read the next identifier from the identifier list file. The 
+		/// identifier list file is set using SetIdentifierFile(fileName).
+		/// </summary>
+		/// <returns>
+		/// An entry identifier. A <see cref="System.String"/>.
+		/// </returns>
 		protected string NextIdentifier() {
 			PrintDebugMessage("NextIdentifier", "Begin", 11);
+			if(this.identifierFileReader == null) {
+				throw new ClientException("Identifier list file to read from not set.");
+			}
 			string retVal = null;
 			string line = null;
 			while((line = this.identifierFileReader.ReadLine()) != null) {
@@ -540,9 +636,14 @@ Asynchronous job:
 			return retVal;
 		}
 		
+		/// <summary>
+		/// Close the stream used to read from the identifier list file.
+		/// </summary>
 		protected void CloseIdentifierFile() {
 			PrintDebugMessage("CloseIdentifierFile", "Begin", 11);
-			this.identifierFileReader.Close();
+			if(this.identifierFileReader != null) {
+				this.identifierFileReader.Close();
+			}
 			this.identifierFileReader = null;
 			PrintDebugMessage("CloseIdentifierFile", "End", 11);
 		}
@@ -601,6 +702,9 @@ Asynchronous job:
 		/// </summary>
 		public void PrintStatus() {
 			PrintDebugMessage("PrintStatus", "Begin", 1);
+			if(this.JobId == null || this.JobId.Length < 1) {
+				throw new ClientException("Job identifier is required to get the job status.");
+			}
 			string status = GetStatus(JobId);
 			Console.WriteLine(status);
 			PrintDebugMessage("PrintStatus", "End", 1);
@@ -614,6 +718,9 @@ Asynchronous job:
 		/// </param>
 		public void ClientPoll(string jobId) {
 			PrintDebugMessage("ClientPoll", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("Job identifier is required to poll job status.");
+			}
 			PrintDebugMessage("ClientPoll", "jobId: " + jobId, 2);
 			int checkInterval = 1000;
 			string status = "PENDING";
@@ -670,18 +777,24 @@ Asynchronous job:
 		/// A <see cref="System.String"/>
 		/// </param>
 		public void GetResults(string jobId) {
-			PrintDebugMessage("PollJob", "Begin", 1);
+			PrintDebugMessage("GetResults", "Begin", 1);
+			if(jobId == null || jobId.Length < 1) {
+				throw new ClientException("Job identifier is required to get results.");
+			}
 			GetResults(jobId, OutFormat, OutFile);
-			PrintDebugMessage("PollJob", "End", 1);
+			PrintDebugMessage("GetResults", "End", 1);
 		}
 		
 		/// <summary>
 		/// Get results for the current job
 		/// </summary>
 		public void GetResults() {
-			PrintDebugMessage("PollJob", "Begin", 1);
+			PrintDebugMessage("GetResults", "Begin", 1);
+			if(this.JobId == null || this.JobId.Length < 1) {
+				throw new ClientException("Job identifier is required to get results.");
+			}
 			GetResults(JobId, OutFormat, OutFile);
-			PrintDebugMessage("PollJob", "End", 1);
+			PrintDebugMessage("GetResults", "End", 1);
 		}
 	}
 }
