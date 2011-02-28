@@ -22,7 +22,7 @@ L<SOAP::Lite> 0.69 and Perl 5.8.8
 L<SOAP::Lite> 0.71 and Perl 5.8.8
 
 =item *
-L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04)
 
 =back
 
@@ -593,7 +593,7 @@ sub submit_job {
 Load sequence data, from file or direct specification of input data with 
 command-line option.
 
-  my $data = load_data();
+  my (@data) = load_data();
 
 =cut
 
