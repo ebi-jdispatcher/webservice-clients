@@ -6,7 +6,7 @@ fasta_soaplite.pl
 
 =head1 DESCRIPTION
 
-FASTA SOAP web service Perl client using L<SOAP::Lite>.
+FASTA (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 
@@ -76,33 +76,40 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'program=s'  => \$tool_params{'program'},    # Program to use
-	'database|D=s' => \$params{'database'},        # Database to search
-	'stype|m=s' => \$tool_params{'stype'},   # Molecule/sequence type
-	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
-	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
-	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
-	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
-	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
-	'ktup|k=i'       => \$tool_params{'ktup'},       # Word size
-	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
-	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
-	'explowlim|F=f'  => \$tool_params{'explowlim'},    # Lower E-value
-	'filter=s'       => \$tool_params{'filter'},     # Low complexity filter
-	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
-	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
-	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
-	'sequence=s' => \$params{'sequence'},      # Query sequence
-	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
+	'program=s' => \$tool_params{'program'},    # Program to use
+	'stype|m=s' => \$tool_params{'stype'}, # Molecule type (DNA, RNA or Protein)
+	'matrix|s=s' => \$tool_params{'matrix'},    # Scoring matrix (protein).
+	'match_scores|r=s' =>
+	  \$tool_params{'match_scores'},    # Match/missmatch scores (nucleotide).
+	'gapopen|f=i'     => \$tool_params{'gapopen'},       # Gap creation penalty
+	'gapext|g=i'      => \$tool_params{'gapext'},        # Gap extension penalty
+	'hsps'            => \$params{'hsps'},               # Enable HSPs
+	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+	'expupperlim|E=f' => \$tool_params{'expupperlim'},   # Upper E-value
+	'explowlim|F=f'   => \$tool_params{'explowlim'},     # Lower E-value
+	'strand=s' =>
+	  \$tool_params{'strand'},    # Database strand to search (nucleotide).
+	'histogram|H'    => \$tool_params{'histogram'},    # Disable histogram
+	'scores|b=i'     => \$tool_params{'scores'},       # Number of scores
+	'alignments|d=i' => \$tool_params{'alignments'},   # Number of alignments
+	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
+	'stats|z=i'      => \$tool_params{'stats'},        # Statistical model
+	'seqrange|S=s'   => \$tool_params{'seqrange'},     # Query with sub-sequence
+	'dbrange|R=s'    => \$tool_params{'dbrange'},      # Restict database seqs.
+	'filter=s'       => \$tool_params{'filter'},       # Low complexity filter
+	'sequence=s'   => \$params{'sequence'},      # Query sequence file or DB:ID
+	'database|D=s' => \$params{'database'},      # Database to search
+	'ktup|k=i'     => \$tool_params{'ktup'},     # Word size
+	'multifasta'   => \$params{'multifasta'},    # Multiple fasta input
 
 	# Compatability options, old command-line
 	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
-	'rna|r'          => \$params{'rna'},             # Force query to be RNA
+	'rna|U'          => \$params{'rna'},             # Force query to be RNA
 	'protein|p'      => \$params{'protein'},         # Force query to be protein
 	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
 	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
-	'eupper=f'     => \$tool_params{'eupper'},  # Upper E-value
-	'elower=f'     => \$tool_params{'elower'},    # Lower E-value
+	'eupper=f'       => \$params{'eupper'},          # Upper E-value
+	'elower=f'       => \$params{'elower'},          # Lower E-value
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -746,6 +753,14 @@ sub load_params {
 		  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
 	}
 
+	# HSPs in output
+	if ( $params{'hsps'} ) {
+		$tool_params{'hsps'} = 1;
+	}
+	elsif ( $params{'nohsps'} ) {
+		$tool_params{'hsps'} = 0;
+	}
+
 	# Compatability options, old command-line
 	if(!$tool_params{'stype'}) {
 		$tool_params{'stype'} = 'dna' if($params{'nucleotide'});
@@ -978,23 +993,30 @@ Fast protein comparison or fast nucleotide comparison
 
 [Optional]
 
+  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -r, --match_scores : str  : match/missmatch scores, see --paramDetail 
+                              match_scores
   -f, --gapopen      : int  : penalty for gap opening
   -g, --gapext       : int  : penalty for additional residues in a gap
-  -b, --scores       : int  : maximum number of scores
-  -d, --alignments   : int  : maximum number of alignments
-  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)
-  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
+      --hsps         :      : enable multiple alignments per-hit, see 
+                              --paramDetail hsps
+      --nohsps       :      : disable multiple alignments per-hit, see 
+                              --paramDetail hsps
   -E, --expupperlim  : real : E-value upper limit for hit display
   -F, --explowlim    : real : E-value lower limit for hit display
-  -H, --histogram    :      : turn off histogram display
-  -n, --nucleotide   :      : force query to nucleotide sequence
+      --strand       : str  : query strand to use for search (DNA only)
   -3, --topstrand    :      : use only forward frame translations (DNA only)
   -i, --bottomstrand :      : reverse complement query sequence (DNA only)
+  -H, --histogram    :      : turn off histogram display
+  -b, --scores       : int  : maximum number of scores
+  -d, --alignments   : int  : maximum number of alignments
+      --scoreformat  : str  : score table format for FASTA output
+  -z, --stats        : int  : statistical model, see --getStats
+  -S, --seqrange     : str  : search with specified region of query sequence
+  -R, --dbrange      : str  : search database sequence within length range
       --filter       : str  : filter the query sequence for low complexity 
                               regions, see --paramDetail filter
-  -z, --stats        : int  : statistical model, see --getStats
-  -R, --dbrange      : str  : search database sequence within length range
-  -S, --seqrange     : str  : search with specified region of query sequence
+  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)
       --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
