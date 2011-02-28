@@ -6,7 +6,7 @@ fasta_lwp.pl
 
 =head1 DESCRIPTION
 
-FASTA REST web service Perl client using L<LWP>.
+FASTA (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
