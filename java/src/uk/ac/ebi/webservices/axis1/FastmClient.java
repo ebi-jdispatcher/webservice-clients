@@ -33,33 +33,38 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	private static final String usageMsg = "FASTM\n"
 		+ "=====\n"
 		+ "\n"
-		+ "Search a set of peptide fragments against a protein database.\n"
+		+ "Search a set of sequence fragments against a database.\n"
 		+ "\n"
 		+ "[Required]\n"
 		+ "\n"
-		+ "  -p, --program        : str  : FASTA program to use: see --paramDetail program\n"
-		+ "  -D, --database       : str  : database(s) to search, space seperated: see\n"
+		+ "      --program        : str  : FASTA program to use: see --paramDetail program\n"
+		+ "      --database       : str  : database(s) to search, space seperated: see\n"
 		+ "                                --paramDetail database\n"
 		+ "      --stype          : str  : query sequence type\n"
 		+ "  seqFile              : file : query sequence (\"-\" for STDIN)\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "  -f, --gapopen       : int  : penalty for gap opening\n"
-		+ "  -g, --gapext        : int  : penalty for additional residues in a gap\n"
-		+ "  -b, --scores        : int  : maximum number of scores\n"
-		+ "  -d, --alignments    : int  : maximum number of alignments\n"
-		+ "  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)\n"
-		+ "  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix\n"
-		+ "  -E, --eupper        : real : E-value upper limit for hit display\n"
-		+ "  -F, --elower        : real : E-value lower limit for hit display\n"
-		+ "  -H, --histogram     :      : turn off histogram display\n"
-		+ "      --filter        : str  : low complexity input sequence filter,\n"
-		+ "                               see --paramDetail filter\n"
-		+ "  -z, --stats         : int  : statistical model for search,\n"
-		+ "                               see --paramDetail stats\n"
-		+ "  -R, --dbrange       : str  : define a subset database by sequence length\n"
-		+ "  -S, --seqrange      : str  : search with a region of the query\n";
+		+ "  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix\n"
+		+ "  -r, --match_scores : str  : match/missmatch scores, see --paramDetail \n"
+		+ "                              match_scores\n"
+		+ "  -f, --gapopen      : int  : penalty for gap opening\n"
+		+ "  -g, --gapext       : int  : penalty for additional residues in a gap\n"
+		+ "  -E, --expupperlim  : real : E-value upper limit for hit display\n"
+		+ "  -F, --explowlim    : real : E-value lower limit for hit display\n"
+		+ "      --strand       : str  : query strand to use for search (DNA only)\n"
+		+ "  -3, --topstrand    :      : use only forward frame translations (DNA only)\n"
+		+ "  -i, --bottomstrand :      : reverse complement query sequence (DNA only)\n"
+		+ "  -H, --histogram    :      : turn off histogram display\n"
+		+ "  -b, --scores       : int  : maximum number of scores\n"
+		+ "  -d, --alignments   : int  : maximum number of alignments\n"
+		+ "  -z, --stats        : int  : statistical model for search,\n"
+		+ "                              see --paramDetail stats\n"
+		+ "  -S, --seqrange     : str  : search with specified region of query sequence\n"
+		+ "  -R, --dbrange      : str  : define a subset database by sequence length\n"
+		+ "      --filter       : str  : filter the query sequence for low complexity \n"
+		+ "                              regions, see --paramDetail filter\n"
+		+ "  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)\n";
 
 	/** Default constructor.
 	 */
@@ -337,27 +342,63 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
-		else params.setStype("protein");
-		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p"));
-		if (line.hasOption("D")) {
-			String[] dbList = line.getOptionValue("D").split(" +");
+		if (line.hasOption("program"))
+			params.setProgram(line.getOptionValue("program"));
+		if (line.hasOption("stype"))
+			params.setStype(line.getOptionValue("stype"));
+		else if (line.hasOption("dna"))
+			params.setStype("dna");
+		else if (line.hasOption("n"))
+			params.setStype("dna");
+		else if (line.hasOption("p"))
+			params.setStype("protein");
+		else if (line.hasOption("U"))
+			params.setStype("rna");
+		else
+			params.setStype("protein");
+		if (line.hasOption("s"))
+			params.setMatrix(line.getOptionValue("s"));
+		if(line.hasOption("r"))
+			params.setMatch_scores(line.getOptionValue("r"));
+		if (line.hasOption("f"))
+			params.setGapopen(new Integer(line.getOptionValue("f")));
+		if (line.hasOption("g"))
+			params.setGapext(new Integer(line.getOptionValue("g")));
+		if (line.hasOption("E"))
+			params.setExpupperlim(new Double(line.getOptionValue("E")));
+		if (line.hasOption("F"))
+			params.setExplowlim(new Double(line.getOptionValue("F")));
+		if(line.hasOption("strand"))
+			params.setStrand(line.getOptionValue("strand"));
+		else {
+			if (line.hasOption("3"))
+				params.setStrand("top");
+			if (line.hasOption("i"))
+				params.setStrand("bottom");
+		}
+		if (line.hasOption("H"))
+			params.setHist(new Boolean(false));
+		else
+			params.setHist(new Boolean(true));
+		if (line.hasOption("b"))
+			params.setScores(new Integer(line.getOptionValue("b")));
+		if (line.hasOption("d"))
+			params.setAlignments(new Integer(line.getOptionValue("d")));
+		if (line.hasOption("z"))
+			params.setStats(line.getOptionValue("z"));
+		if (line.hasOption("S"))
+			params.setSeqrange(line.getOptionValue("S"));
+		if (line.hasOption("R"))
+			params.setDbrange(line.getOptionValue("R"));
+		if (line.hasOption("filter"))
+			params.setFilter(line.getOptionValue("filter"));
+		if (line.hasOption("database")) {
+			String[] dbList = line.getOptionValue("database").split(" +");
 			params.setDatabase(dbList);
 		}
-		if (line.hasOption("s")) params.setMatrix(line.getOptionValue("s"));
-		if (line.hasOption("F")) params.setExplowlim(new Double(line.getOptionValue("F")));
-		if (line.hasOption("E")) params.setExpupperlim(new Double(line.getOptionValue("E")));
-		if (line.hasOption("b")) params.setScores(new Integer(line.getOptionValue("b"))); 
-		if (line.hasOption("k")) params.setKtup(new Integer(line.getOptionValue("k"))); 
-		if (line.hasOption("d")) params.setAlignments(new Integer(line.getOptionValue("d"))); 
-		if (line.hasOption("g")) params.setGapext(new Integer(line.getOptionValue("g"))); 
-		if (line.hasOption("f")) params.setGapopen(new Integer(line.getOptionValue("f"))); 
-		if (line.hasOption("R")) params.setDbrange(line.getOptionValue("R"));
-		if (line.hasOption("S")) params.setSeqrange(line.getOptionValue("S"));
-		if (line.hasOption("H")) params.setHist(new Boolean(false));
-		else params.setHist(new Boolean(true));
-		if (line.hasOption("filter")) params.setFilter(line.getOptionValue("filter"));
-		if (line.hasOption("z")) params.setStats(line.getOptionValue("z"));
+		if (line.hasOption("k"))
+			params.setKtup(new Integer(line.getOptionValue("k")));
+
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -375,23 +416,30 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("stype", "stype", true, "Sequence type");
-		options.addOption("p", "program", true, "Search program");
-		options.addOption("D", "database", true, "Database to search");
-		options.addOption("H", "histogram", false, "Output histogram");
+		options.addOption("program", true, "Search program");
+		options.addOption("stype", true, "Sequence type");
+		options.addOption("n", "nucleotide", false, "DNA query");
+		options.addOption("p", "protein", false, "Protein query");
+		options.addOption("U", "rna", false, "RNA query");
+		options.addOption("s", "matrix", true, "Scoring matrix");
+		options.addOption("r", "match_scores", true, "Match/missmatch score");
 		options.addOption("f", "gapopen", true, "Gap creation penalty");
 		options.addOption("g", "gapext", true, "Gap extension penalty");
+		options.addOption("E", "expupperlim", true, "Upper expectation value");
+		options.addOption("F", "explowlim", true, "Lower expectation value");
+		options.addOption("strand", true, "Query DNA strand");
+		options.addOption("3", "topstrand", false, "DNA top strand");
+		options.addOption("i", "bottomstrand", false, "DNA bottom strand");
+		options.addOption("H", "histogram", false, "Output histogram");
 		options.addOption("b", "scores", true, "Maximum number of reported scores");
 		options.addOption("d", "alignments", true, "Maximum number of reported alignments");
-		options.addOption("k", "ktup", true, "Word length");
-		options.addOption("s", "matrix", true, "Scoring matrix");
-		options.addOption("E", "eupper", true, "Upper expectation value");
-		options.addOption("F", "elower", true, "Lower expectation value");
-		options.addOption("filter", "filter", true, "Low complexity sequence filter");
 		options.addOption("z", "stats", true, "Statistical model for search");
-		options.addOption("R", "dbrange", true, "Range of sequence lengths in database to search");
 		options.addOption("S", "seqrange", true, "Region within the query sequence to search with");
+		options.addOption("R", "dbrange", true, "Range of sequence lengths in database to search");
+		options.addOption("filter", true, "Low complexity sequence filter");
 		options.addOption("sequence", true, "sequence file");
+		options.addOption("database", true, "Database to search");
+		options.addOption("k", "ktup", true, "Word length");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
 		// Create an instance of the client
