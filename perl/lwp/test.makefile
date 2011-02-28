@@ -61,6 +61,70 @@ dbfetch_fetchBatch:
 dbfetch_clean:
 	rm -f dbfetch-*
 
+# EMBOSS matcher
+emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid
+# TODO: emboss_matcher_file
+
+emboss_matcher_params:
+	${PERL} emboss_matcher_lwp.pl --params
+
+emboss_matcher_param_detail:
+	${PERL} emboss_matcher_lwp.pl --paramDetail matrix
+
+emboss_matcher_dbid:
+	${PERL} emboss_matcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_matcher_clean:
+	rm -f emboss_matcher-*
+
+# EMBOSS needle
+emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid
+# TODO: emboss_needle_file
+
+emboss_needle_params:
+	${PERL} emboss_needle_lwp.pl --params
+
+emboss_needle_param_detail:
+	${PERL} emboss_needle_lwp.pl --paramDetail matrix
+
+emboss_needle_dbid:
+	${PERL} emboss_needle_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_needle_clean:
+	rm -f emboss_needle-*
+
+# EMBOSS stretcher
+emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid
+# TODO: emboss_stretcher_file
+
+emboss_stretcher_params:
+	${PERL} emboss_stretcher_lwp.pl --params
+
+emboss_stretcher_param_detail:
+	${PERL} emboss_stretcher_lwp.pl --paramDetail matrix
+
+emboss_stretcher_dbid:
+	${PERL} emboss_stretcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_stretcher_clean:
+	rm -f emboss_stretcher-*
+
+# EMBOSS water
+emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid
+# TODO: emboss_water_file
+
+emboss_water_params:
+	${PERL} emboss_water_lwp.pl --params
+
+emboss_water_param_detail:
+	${PERL} emboss_water_lwp.pl --paramDetail matrix
+
+emboss_water_dbid:
+	${PERL} emboss_water_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_water_clean:
+	rm -f emboss_water-*
+
 # FASTA
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_multifasta_file
 
@@ -150,6 +214,22 @@ kalign_stdin_stdout:
 
 kalign_clean:
 	rm -f kalign-*
+
+# lalign
+lalign: lalign_params lalign_param_detail lalign_dbid
+# TODO: lalign_file
+
+lalign_params:
+	${PERL} lalign_lwp.pl --params
+
+lalign_param_detail:
+	${PERL} lalign_lwp.pl --paramDetail matrix
+
+lalign_dbid:
+	${PERL} lalign_lwp.pl --email ${EMAIL} --stype protein --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+lalign_clean:
+	rm -f lalign-*
 
 # MAFFT
 mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
