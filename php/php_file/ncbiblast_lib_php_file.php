@@ -16,6 +16,10 @@ class NcbiBlastClient {
   public $debugLevel = 0;
   // Base URL for service
   private $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
+  // HTTP proxy host.
+  private $proxy_host;
+  // HTTP proxy port.
+  private $proxy_port = '8080';
 
   // Debug message
   protected function printDebugMessage($method, $message, $level) {
@@ -48,16 +52,45 @@ class NcbiBlastClient {
     $this->printDebugMessage('setBaseUrl', 'End', 1);
   }
 
+  // Configure an HTTP proxy.
+  //   $client->setHttpProxy('proxy.example.org', '8080');
+  function setHttpProxy($proxy_host, $proxy_port) {
+    $this->printDebugMessage('setHttpProxy', 'Begin', 1);
+    $this->printDebugMessage('setHttpProxy', 'proxy_host: ' . $proxy_host, 2);
+    $this->printDebugMessage('setHttpProxy', 'proxy_port: ' . $proxy_port, 2);
+    $this->proxy_host = $proxy_host;
+    $this->proxy_port = $proxy_port;
+    $this->printDebugMessage('setHttpProxy', 'End', 1);    
+  }
+
+  // Get proxy string.
+  private function getHttpProxyStr() {
+    $this->printDebugMessage('getHttpProxyStr', 'Begin', 2);
+    $proxyStr = null;
+    if($this->proxy_host) {
+      $proxyStr = 'tcp://' . $this->proxy_host . ':' . $this->proxy_port;
+    }
+    $this->printDebugMessage('getHttpProxyStr', 'proxyStr: ' . $proxyStr, 12);
+    $this->printDebugMessage('getHttpProxyStr', 'End', 2);
+    return $proxyStr;
+  }
+
   // Perform an HTTP GET request.
   function httpGet($url) {
     $this->printDebugMessage('httpGet', 'Begin', 11);
     $contextOpts = array('http' => array(
 					 'method' => 'GET',
-					 'header' => 'User-agent: ' . $this->getUserAgent() . "\r\n"
+					 'request_fulluri' => true,
+					 'timeout'         => 300,
+					 'header' => 'User-agent: ' . $this->getUserAgent() . "\r\n",
 					 )
 			 );
+    if($this->proxy_host) { // Add HTTP proxy.
+      $contextOpts['http']['proxy'] = $this->getHttpProxyStr();
+    }
     $context = stream_context_create($contextOpts);
     $retVal = file_get_contents($url, false, $context);
+    $this->printDebugMessage('httpGet', 'Response: ' . $retVal, 21);
     $this->printDebugMessage('httpGet', 'End', 11);
     return $retVal;
   }
@@ -67,11 +100,16 @@ class NcbiBlastClient {
     $this->printDebugMessage('httpPost', 'Begin', 11);
     $opts = array('http' => array(
 				  'method'  => 'POST',
+				  'request_fulluri' => true,
+				  'timeout'         => 300,
 				  'header'  => 'Content-type: application/x-www-form-urlencoded' . "\r\n" .
 				  'User-agent: ' . $this->getUserAgent() . "\r\n",
 				  'content' => $postdata
 				  )
 		  );
+    if($this->proxy_host) { // Add HTTP proxy.
+      $contextOpts['http']['proxy'] = $this->getHttpProxyStr();
+    }
     $context  = stream_context_create($opts);
     $retVal = file_get_contents($url, false, $context);
     $this->printDebugMessage('httpPost', 'End', 11);

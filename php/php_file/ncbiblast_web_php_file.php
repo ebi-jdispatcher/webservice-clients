@@ -284,8 +284,8 @@ else {
 
     // Create an instance of the client.
     $client = new NcbiBlastWebClient();
-    // HTTP proxy config.
-    //$client->setHttpProxy($proxy_host, $proxy_port);
+    // HTTP proxy config (modify for your local configuration).
+    //$client->setHttpProxy('proxy.example.org', '8080');
 
     // Debug
     if(array_key_exists('debug', $inputParams)) $client->debugLevel = 2;

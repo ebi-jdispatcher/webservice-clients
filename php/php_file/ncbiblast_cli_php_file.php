@@ -144,7 +144,16 @@ try {
   // Get service proxy
   $client = new NcbiBlastCliClient();
   // HTTP proxy config.
-  //$client->setHttpProxy($proxy_host, $proxy_port);
+  // Try to get HTTP proxy setting from environment.
+  if(getenv('HTTP_PROXY') != '' || getenv('http_proxy') != '') {
+    if(getenv('HTTP_PROXY') != '') {
+      $tmpArray = parse_url(getenv('HTTP_PROXY'));
+    }
+    elseif(getenv('http_proxy') != '') {
+      $tmpArray = parse_url(getenv('http_proxy'));
+    }
+    $client->setHttpProxy($tmpArray['host'], $tmpArray['port']);
+  }
 
   // Debug options
   if(array_key_exists('trace', $options)) $client->trace = 1;
