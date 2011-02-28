@@ -31,24 +31,31 @@ For more information see:
 
 [Optional]
 
+  -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
+  -r, --match_scores  : str  : match/missmatch scores, see --paramDetail 
+                               match_scores
   -f, --gapopen       : int  : penalty for gap opening
   -g, --gapext        : int  : penalty for additional residues in a gap
-  -b, --scores        : int  : maximum number of scores
-  -d, --alignments    : int  : maximum number of alignments
-  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)
-  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix
-  -E, --eupper        : real : E-value upper limit for hit display
-  -F, --elower        : real : E-value lower limit for hit display
-  -H, --histogram     :      : turn off histogram display
-  -n, --nucleotide    :      : force query to nucleotide sequence
+      --hsps          :      : enable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --nohsps        :      : disable multiple alignments per-hit, see 
+                               --paramDetail hsps
+  -E, --expupperlim   : real : E-value upper limit for hit display
+  -F, --explowlim     : real : E-value lower limit for hit display
+      --strand        : str  : query strand to use for search (DNA only)
   -3, --topstrand     :      : use only forward frame translations (DNA only)
   -i, --bottomstrand  :      : reverse complement query sequence (DNA only)
-      --filter        : str  : low complexity input sequence filter,
-                               see --paramDetail filter
+  -H, --histogram     :      : turn off histogram display
+  -b, --scores        : int  : maximum number of scores
+  -d, --alignments    : int  : maximum number of alignments
+      --scoreformat   : str  : score table format for FASTA output
   -z, --stats         : int  : statistical model for search,
                                see --paramDetail stats
-  -M, --dbrange       : str  : define a subset database by sequence length
       --seqrange      : str  : search with a region of the query (START-END)
+  -M, --dbrange       : str  : define a subset database by sequence length
+      --filter        : str  : filter the query sequence for low complexity 
+                               regions, see --paramDetail filter
+  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)
       --multifasta    :      : treat input as a set of fasta formatted 
                                sequences.
 ";
@@ -244,19 +251,39 @@ For more information see:
 						break;
 					case "/program":
 						goto case "--program";
-					case "--database": // Database to search
-						char[] sepList = { ' ', ',' };
-						InParams.database = args[++i].Split(sepList);
-						Action = "submit";
-						break;
-					case "/database":
-						goto case "--database";
 					case "--stype": // Input sequence type
 						InParams.stype = args[++i];
 						Action = "submit";
 						break;
 					case "/stype":
 						goto case "--stype";
+					case "--nucleotide": // Nucleotide query sequence
+						InParams.stype = "dna";
+						break;
+					case "/nucleotide":
+						goto case "--nucleotide";
+					case "-n":
+						goto case "--nucleotide";
+					case "/n":
+						goto case "--nucleotide";
+					case "--protein": // Protein query sequence
+						InParams.stype = "protein";
+						break;
+					case "/protein":
+						goto case "--nucleotide";
+					case "-p":
+						goto case "--nucleotide";
+					case "/p":
+						goto case "--nucleotide";
+					case "--rna": // RNA query sequence
+						InParams.stype = "rna";
+						break;
+					case "/rna":
+						goto case "--rna";
+					case "-r":
+						goto case "--rna";
+					case "/r":
+						goto case "--rna";
 					case "--matrix": // Scoring matrix
 						InParams.matrix = args[++i];
 						break;
@@ -266,51 +293,11 @@ For more information see:
 						goto case "--matrix";
 					case "/s":
 						goto case "--matrix";
-					case "--eupper": // Upper E-value threshold
-						InParams.expupperlim = Convert.ToDouble(args[++i]);
-						InParams.expupperlimSpecified = true;
+					case "--match_scores": // Match/missmatch score.
+						InParams.match_scores = args[++i];
 						break;
-					case "/eupper":
-						goto case "--eupper";
-					case "-E":
-						goto case "--eupper";
-					case "/E":
-						goto case "--eupper";
-					case "--elower": // Lower E-value threshold
-						InParams.explowlim = Convert.ToDouble(args[++i]);
-						InParams.explowlimSpecified = true;
-						break;
-					case "/elower":
-						goto case "--elower";
-					case "-F":
-						goto case "--elower";
-					case "/F":
-						goto case "--elower";
-					case "--filter": // Low complexity filter
-						InParams.filter = args[++i];
-						break;
-					case "/filter":
-						goto case "--filter";
-					case "--scores": // Maximum number of scores to report
-						InParams.scores = Convert.ToInt32(args[++i]);
-						InParams.scoresSpecified = true;
-						break;
-					case "/scores":
-						goto case "--scores";
-					case "-b":
-						goto case "--scores";
-					case "/b":
-						goto case "--scores";
-					case "--alignments": // Maximum number of alignments to report
-						InParams.alignments = Convert.ToInt32(args[++i]);
-						InParams.alignmentsSpecified = true;
-						break;
-					case "/alignments":
-						goto case "--alignments";
-					case "-d":
-						goto case "--alignments";
-					case "/d":
-						goto case "--alignments";
+					case "/match_scores":
+						goto case "--match_scores";
 					case "--gapopen": // Gap open penalty
 						InParams.gapopen = Convert.ToInt32(args[++i]);
 						InParams.gapopenSpecified = true;
@@ -339,52 +326,43 @@ For more information see:
 						goto case "--gapext";
 					case "/g":
 						goto case "--gapext";
-					case "--ktup": // Word length (ktup)
-						InParams.ktup = Convert.ToInt32(args[++i]);
-						InParams.ktupSpecified = true;
+					case "--hsps": // Enable HSPs
+						InParams.hsps = true;
+						InParams.hspsSpecified = true;
 						break;
-					case "/ktup":
-						goto case "--ktup";
-					case "-k":
-						goto case "--ktup";
-					case "/k":
-						goto case "--ktup";
-					case "--histogram": // Suppress histogram
-						InParams.hist = false;
+					case "/hsps":
+						goto case "--hsps";
+					case "--nohsps": // Disable HSPs
+						InParams.hsps = false;
+						InParams.hspsSpecified = true;
 						break;
-					case "/histogram":
-						goto case "--histogram";
-					case "-H":
-						goto case "--histogram";
-					case "/H":
-						goto case "--histogram";
-					case "--nucleotide": // Nucleotide query sequence
-						InParams.stype = "dna";
+					case "/nohsps":
+						goto case "--nohsps";
+					case "--eupper": // Upper E-value threshold
+						InParams.expupperlim = Convert.ToDouble(args[++i]);
+						InParams.expupperlimSpecified = true;
 						break;
-					case "/nucleotide":
-						goto case "--nucleotide";
-					case "-n":
-						goto case "--nucleotide";
-					case "/n":
-						goto case "--nucleotide";
-					case "--protein": // Protein query sequence
-						InParams.stype = "protein";
+					case "/eupper":
+						goto case "--eupper";
+					case "-E":
+						goto case "--eupper";
+					case "/E":
+						goto case "--eupper";
+					case "--elower": // Lower E-value threshold
+						InParams.explowlim = Convert.ToDouble(args[++i]);
+						InParams.explowlimSpecified = true;
 						break;
-					case "/protein":
-						goto case "--nucleotide";
-					case "-p":
-						goto case "--nucleotide";
-					case "/p":
-						goto case "--nucleotide";
-					case "--rna": // RNA query sequence
-						InParams.stype = "rna";
+					case "/elower":
+						goto case "--elower";
+					case "-F":
+						goto case "--elower";
+					case "/F":
+						goto case "--elower";
+					case "--strand": // DNA query strand.
+						InParams.strand = args[++i];
 						break;
-					case "/rna":
-						goto case "--rna";
-					case "-r":
-						goto case "--rna";
-					case "/r":
-						goto case "--rna";
+					case "/strand":
+						goto case "--strand";
 					case "--topstrand": // TFAST[XY] use only forward frame translations
 						InParams.strand = "top";
 						break;
@@ -403,6 +381,40 @@ For more information see:
 						goto case "--bottomstrand";
 					case "/i":
 						goto case "--bottomstrand";
+					case "--histogram": // Suppress histogram
+						InParams.hist = false;
+						break;
+					case "/histogram":
+						goto case "--histogram";
+					case "-H":
+						goto case "--histogram";
+					case "/H":
+						goto case "--histogram";
+					case "--scores": // Maximum number of scores to report
+						InParams.scores = Convert.ToInt32(args[++i]);
+						InParams.scoresSpecified = true;
+						break;
+					case "/scores":
+						goto case "--scores";
+					case "-b":
+						goto case "--scores";
+					case "/b":
+						goto case "--scores";
+					case "--alignments": // Maximum number of alignments to report
+						InParams.alignments = Convert.ToInt32(args[++i]);
+						InParams.alignmentsSpecified = true;
+						break;
+					case "/alignments":
+						goto case "--alignments";
+					case "-d":
+						goto case "--alignments";
+					case "/d":
+						goto case "--alignments";
+					case "--scoreformat": // Score table format in FASTA output.
+						InParams.scoreformat = args[++i];
+						break;
+					case "/scoreformat":
+						goto case "--scoreformat";
 					case "--stats": // Statistical model
 						InParams.stats = args[++i];
 						break;
@@ -412,6 +424,11 @@ For more information see:
 						goto case "--stats";
 					case "/z":
 						goto case "--stats";
+					case "--seqrange": // Region in sequence to use for search.
+						InParams.seqrange = args[++i];
+						break;
+					case "/seqrange":
+						goto case "--seqrange";
 					case "--dbrange": // Range of lengths in database to search.
 						InParams.dbrange = args[++i];
 						break;
@@ -421,11 +438,28 @@ For more information see:
 						goto case "--dbrange";
 					case "/M":
 						goto case "--dbrange";
-					case "--seqrange": // Region in sequence to use for search.
-						InParams.seqrange = args[++i];
+					case "--filter": // Low complexity filter
+						InParams.filter = args[++i];
 						break;
-					case "/seqrange":
-						goto case "--seqrange";
+					case "/filter":
+						goto case "--filter";
+					case "--database": // Database to search
+						char[] sepList = { ' ', ',' };
+						InParams.database = args[++i].Split(sepList);
+						Action = "submit";
+						break;
+					case "/database":
+						goto case "--database";
+					case "--ktup": // Word length (ktup)
+						InParams.ktup = Convert.ToInt32(args[++i]);
+						InParams.ktupSpecified = true;
+						break;
+					case "/ktup":
+						goto case "--ktup";
+					case "-k":
+						goto case "--ktup";
+					case "/k":
+						goto case "--ktup";
 
 						// Input data/sequence option
 					case "--sequence": // Input sequence
