@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}</ProjectGuid>
+    <ProjectGuid>{7A918E15-0D61-419B-A02F-37E99B955E7F}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ClustalW2PhylogenyCliClient</RootNamespace>
-    <AssemblyName>ClustalW2PhylogenyCliClient</AssemblyName>
+    <RootNamespace>EmbossMatcherCliClient</RootNamespace>
+    <AssemblyName>EmbossMatcherCliClient</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,7 +30,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClustalW2PhylogenyCliClient.cs" />
+    <Compile Include="EmbossMatcherCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
