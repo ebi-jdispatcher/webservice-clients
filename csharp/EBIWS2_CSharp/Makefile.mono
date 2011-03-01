@@ -13,10 +13,15 @@ build-EbiWS \
 build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
 build-EBeyeCliClient \
+build-EmbossMatcherCliClient \
+build-EmbossNeedleCliClient \
+build-EmbossStretcherCliClient \
+build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
 build-IPRScanCliClient \
 build-KalignCliClient \
+build-LalignCliClient \
 build-MafftCliClient \
 build-MuscleCliClient \
 build-NcbiBlastCliClient \
@@ -38,6 +43,18 @@ build-ClustalW2PhylogenyCliClient: build-EbiWS
 build-EBeyeCliClient: build-EbiWS
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
 
+build-EmbossMatcherCliClient: build-EbiWS
+	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossNeedleCliClient: build-EbiWS
+	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossStretcherCliClient: build-EbiWS
+	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossWaterCliClient: build-EbiWS
+	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono
+
 build-FastaCliClient: build-EbiWS
 	cd FastaCliClient && $(MAKE) -f Makefile.mono
 
@@ -49,6 +66,9 @@ build-IPRScanCliClient: build-EbiWS
 
 build-KalignCliClient: build-EbiWS
 	cd KalignCliClient && $(MAKE) -f Makefile.mono
+
+build-LalignCliClient: build-EbiWS
+	cd LalignCliClient && $(MAKE) -f Makefile.mono
 
 build-MafftCliClient: build-EbiWS
 	cd MafftCliClient && $(MAKE) -f Makefile.mono
@@ -81,10 +101,15 @@ clean-EbiWS \
 clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
 clean-EBeyeCliClient \
+clean-EmbossMatcherCliClient \
+clean-EmbossNeedleCliClient \
+clean-EmbossStretcherCliClient \
+clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
 clean-IPRScanCliClient \
 clean-KalignCliClient \
+clean-LalignCliClient \
 clean-MafftCliClient \
 clean-MuscleCliClient \
 clean-NcbiBlastCliClient \
@@ -101,10 +126,22 @@ clean-ClustalW2CliClient:
 	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono clean
 
 clean-ClustalW2PhylogenyCliClient:
-	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono) clean
+	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossMatcherCliClient:
+	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossNeedleCliClient:
+	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossStretcherCliClient:
+	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossWaterCliClient:
+	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-FastaCliClient:
 	cd FastaCliClient && $(MAKE) -f Makefile.mono clean
@@ -117,6 +154,9 @@ clean-IPRScanCliClient:
 
 clean-KalignCliClient:
 	cd KalignCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-LalignCliClient:
+	cd LalignCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-MafftCliClient:
 	cd MafftCliClient && $(MAKE) -f Makefile.mono clean

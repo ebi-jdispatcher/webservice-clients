@@ -39,10 +39,15 @@ coreSrc = AbstractWsClient.cs \
 ClustalW2Client.cs \
 ClustalW2PhylogenyClient.cs \
 EBeyeClient.cs \
+EmbossMatcherClient.cs \
+EmbossNeedleClient.cs \
+EmbossStretcherClient.cs \
+EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
 IPRScanClient.cs \
 KalignClient.cs \
+LalignClient.cs \
 MafftClient.cs \
 MuscleClient.cs \
 NcbiBlastClient.cs \
@@ -76,6 +81,8 @@ $(STUBSRCDIR)/TcoffeeWs/Reference.cs \
 $(STUBSRCDIR)/WSDbfetchWs/Reference.cs \
 $(STUBSRCDIR)/WuBlastWs/Reference.cs
 
+### Build library ###
+
 $(DEBUGBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
 	mkdir -p $(DEBUGBINDIR)
 	$(CSC) $(CSFLAGS) -debug -target:library -out:$@ $(coreSrc) $(stubSrc)
@@ -91,6 +98,8 @@ $(DEBUGBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 $(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 	mkdir -p $(RELEASEBINDIR)
 	$(CSC) $(CSFLAGS) -target:module -out:$@ $(coreSrc) $(stubSrc)
+
+### Generate web service stubs ###
 
 $(STUBSRCDIR)/ClustalW2Ws/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2Ws -out:$@ "$(WSDLBASE)/clustalw2?wsdl"
@@ -157,6 +166,8 @@ $(STUBSRCDIR)/WSDbfetchWs/Reference.cs:
 
 $(STUBSRCDIR)/WuBlastWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs -out:$@ "$(WSDLBASE)/wublast?wsdl"
+
+### Clean-up ###
 
 clean:
 	find . -name '*~' -exec rm {} \;

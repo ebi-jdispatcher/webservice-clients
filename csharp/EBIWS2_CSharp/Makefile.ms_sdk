@@ -9,10 +9,15 @@ all: EbiWS \
 ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
+EmbossMatcherCliClient\bin\Relelase\EmbossMatcherCliClient.exe \
+EmbossNeedleCliClient\bin\Relelase\EmbossNeedleCliClient.exe \
+EmbossStretcherCliClient\bin\Relelase\EmbossStretcherCliClient.exe \
+EmbossWaterCliClient\bin\Relelase\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
+LalignCliClient\bin\Release\LalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
@@ -34,6 +39,18 @@ ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe: EbiWS\b
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
 
+EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk
+
 FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -45,6 +62,9 @@ IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 KalignCliClient\bin\Release\KalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk
+
+LalignCliClient\bin\Release\LalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk
 
 MafftCliClient\bin\Release\MafftCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -75,10 +95,15 @@ clean:
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -93,10 +118,15 @@ distclean:
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
