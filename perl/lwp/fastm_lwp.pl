@@ -6,7 +6,7 @@ fastm_lwp.pl
 
 =head1 DESCRIPTION
 
-FASTM REST web service Perl client using L<LWP>.
+FASTM (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
@@ -19,7 +19,7 @@ L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
 
 =item *
-L<LWP> 5.820, L<XML::Simple> 2.18 and Perl 5.10.0 (Ubuntu 9.04)
+L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =back
 
@@ -73,22 +73,29 @@ GetOptions(
 
 	# Tool specific options
 	'program=s'  => \$tool_params{'program'},    # Program to use
-	'database|D=s' => \$params{'database'},        # Database to search
-	'stype|m=s' => \$tool_params{'stype'},   # Molecule type (DNA, RNA or Protein)
-	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
+	'stype=s'    => \$params{'stype'},   # Molecule/sequence type
+	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
+	'rna|U'          => \$params{'rna'},             # Force query to be RNA
+	'protein|p'      => \$params{'protein'},         # Force query to be protein
+	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
+	'match_scores|r=s' => \$tool_params{'match_scores'}, # Match/missmatch.
 	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
 	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
+	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
+	'explowlim|F=f'  => \$tool_params{'explowlim'},    # Lower E-value
+	'strand=s'       => \$params{'strand'}, # Query strand.
+	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
+	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
+	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
 	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
 	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
-	'ktup|k=i'       => \$tool_params{'ktup'},       # Word size
-	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
-	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
-	'explowlim|F=f'   => \$tool_params{'explowlim'},    # Lower E-value
-	'filter=s'       => \$tool_params{'filter'},     # Low complexity filter
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
-	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
-	'sequence=s' => \$params{'sequence'},    # Query sequence file or DB:ID
+	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
+	'filter=s'       => \$tool_params{'filter'},     # Low complexity filter
+	'sequence=s' => \$params{'sequence'},      # Query sequence
+	'database=s' => \$params{'database'},        # Database to search
+	'ktup=i'       => \$tool_params{'ktup'},       # Word size
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -600,6 +607,29 @@ sub load_params {
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
 	$tool_params{'database'} = \@dbList;
+	# Query sequence type.
+	if($params{'stype'}) {
+		$tool_params{'stype'} = $params{'stype'};
+	}
+	elsif($params{'nucleotide'}) {
+		$tool_params{'stype'} = 'dna';
+	}
+	elsif($params{'protein'}) {
+		$tool_params{'stype'} = 'protein';
+	}
+	elsif($params{'rna'}) {
+		$tool_params{'stype'} = 'rna';
+	}
+	# Query strand.
+	if($params{'strand'}) {
+		$tool_params{'strand'} = $params{'strand'};
+	}
+	elsif($params{'bottomstrand'}) {
+		$tool_params{'strand'} = 'bottom';
+	}
+	elsif($params{'topstrand'}) {
+		$tool_params{'strand'} = 'top';
+	}
 
 	print_debug_message( 'load_params', 'End', 1 );
 }
@@ -807,20 +837,22 @@ Search a set of peptide fragments against a protein database.
 
 [Optional]
 
+  -s, --matrix       : str  : protein scoring matrix, see --paramDetail matrix
+  -r, --match_scores : str  : nucleotide match/miss-match scores
   -f, --gapopen      : int  : penalty for gap opening
   -g, --gapext       : int  : penalty for additional residues in a gap
-  -b, --scores       : int  : maximum number of scores
-  -d, --alignments   : int  : maximum number of alignments
-  -k, --ktup         : int  : word size (Protein 1-2)
-  -s, --matrix       : str  : scoring matrix, see --paramDetail matrix
   -E, --expupperlim  : real : E-value upper limit for hit display
   -F, --explowlim    : real : E-value lower limit for hit display
+      --strand       : str  : DNA query strand, see --paramDetail strand
   -H, --histogram    :      : turn off histogram display
+  -b, --scores       : int  : maximum number of scores
+  -d, --alignments   : int  : maximum number of alignments
+  -z, --stats        : int  : statistical model, see --getStats
+  -S, --seqrange     : str  : search with specified region of query sequence
+  -R, --dbrange      : str  : search database sequence within length range
       --filter       : str  : filter the query sequence for low complexity 
                               regions, see --paramDetail filter
-  -z, --stats        : int  : statistical model, see --getStats
-  -R, --dbrange      : str  : search database sequence within length range
-  -S, --seqrange     : str  : search with specified region of query sequence
+      --ktup         : int  : word size (DNA 1-6, Protein 1-2)
 
 [General]
 
