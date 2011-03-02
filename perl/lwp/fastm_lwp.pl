@@ -825,7 +825,7 @@ sub usage {
 FASTM
 =====
 
-Search a set of peptide fragments against a protein database.
+Search a set of sequence fragments against a sequence database.
 
 [Required]
 
