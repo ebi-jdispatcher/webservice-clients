@@ -44,7 +44,8 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "[Optional]\n"
 		+ "\n"
 		+ "      --upidlistfile   : file : list of BLAST hit identifiers\n"
-		+ "      --outformat      : str  : output alignment format, see --paramDetail outformat\n";
+		+ "      --output         : str  : output alignment format, see \n"
+		+ "                                --paramDetail outformat\n";
 
 	/** Default constructor.
 	 */
@@ -322,7 +323,7 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("outformat")) params.setOutformat(line.getOptionValue("outformat"));
+		if (line.hasOption("output")) params.setOutformat(line.getOptionValue("output"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -340,7 +341,7 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("outformat", true, "Output alignment format");
+		options.addOption("output", true, "Output alignment format");
 		options.addOption("blastreport", true, "BLAST report");
 		options.addOption("upidlistfile", true, "Identifier list");
 		options.addOption("sequence", true, "Query sequence");

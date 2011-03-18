@@ -46,7 +46,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --stype        : str  : sequence type, see --paramDetail stype\n"
 		+ "      --informat     : str  : input alignment format, see \n"
 		+ "                              --paramDetail informat\n"
-		+ "      --outformat    : str  : output alignment format, see \n"
+		+ "      --output       : str  : output alignment format, see \n"
 		+ "                              --paramDetail outformat\n"
 		+ "      --htmlmarkup   : str  : type of HTML markup to use in output,\n"
 		+ "                              see --paramDetail htmlmarkup\n"
@@ -346,7 +346,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Tool specific options
 		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("informat")) params.setInformat(line.getOptionValue("informat"));
-		if (line.hasOption("outformat")) params.setOutformat(line.getOptionValue("outformat"));
+		if (line.hasOption("output")) params.setOutformat(line.getOptionValue("output"));
 		if (line.hasOption("htmlmarkup")) params.setHtmlmarkup(line.getOptionValue("htmlmarkup"));
 		if (line.hasOption("pcid")) params.setPcid(line.getOptionValue("pcid"));
 		if (line.hasOption("alignment")) params.setAlignment(new Boolean(true));
@@ -383,7 +383,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Application specific options
 		options.addOption("stype", true, "Sequence type");
 		options.addOption("informat", true, "input alignment format");
-		options.addOption("outformat", true, "output alignment format");
+		options.addOption("output", true, "output alignment format");
 		options.addOption("htmlmarkup", true, "HTML markup type");
 		options.addOption("pcid", true, "percent identity method");
 		options.addOption("alignment", false, "show alignment");
