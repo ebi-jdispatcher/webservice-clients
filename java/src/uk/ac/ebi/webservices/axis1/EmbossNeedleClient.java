@@ -331,7 +331,7 @@ public class EmbossNeedleClient extends uk.ac.ebi.webservices.AbstractWsToolClie
 		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("m")) params.setMatrix(line.getOptionValue("m"));
 		if (line.hasOption("g")) params.setGapopen(new Float(line.getOptionValue("g")));
-		if (line.hasOption("x")) params.setGapextend(new Float(line.getOptionValue("x")));
+		if (line.hasOption("x")) params.setGapext(new Float(line.getOptionValue("x")));
 		if(line.hasOption("endweight")) params.setEndweight(new Boolean(true));
 		if(line.hasOption("endopen")) params.setEndopen(new Float(line.getOptionValue("endopen")));
 		if(line.hasOption("endextend")) params.setEndextend(new Float(line.getOptionValue("endextend")));
