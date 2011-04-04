@@ -12,10 +12,20 @@ PERL = /ebi/extserv/bin/perl/bin/perl
 EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 ebeye fasta fastm iprscan kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
-# TODO: dbfetch prank
+# TODO: clustalo dbfetch prank mview
+all: ebeye \
+clustalw2 dbclustal kalign mafft muscle tcoffee \
+emboss_matcher emboss_needle emboss_stretcher emboss_water lalign \
+iprscan \
+clustalw2_phylogeny \
+fasta fastm ncbiblast psiblast psisearch wublast
 
-clean: clustalw2_clean ebeye_clean fasta_clean iprscan_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psisearch_clean tcoffee_clean wublast_clean
+clean: ebeye_clean \
+clustalw2_clean dbclustal_clean kalign_clean mafft_clean muscle_clean tcoffee_clean \
+emboss_matcher_clean emboss_needle_clean emboss_stretcher_clean emboss_water_clean lalign_clean \
+iprscan_clean \
+clustalw2_phylogeny_clean \
+fasta_clean fastm_clean ncbiblast_clean psiblast_clean psisearch_clean wublast_clean
 
 # ClustalW 2.0.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
@@ -34,6 +44,40 @@ clustalw2_align_stdin_stdout:
 
 clustalw2_clean:
 	rm -f clustalw2-*
+
+# ClustalW 2.0.x Phylogeny
+clustalw2_phylogeny: clustalw2_phylogeny_params clustalw2_phylogeny_param_detail clustalw2_phylogeny_file clustalw2_phylogeny_stdin
+
+clustalw2_phylogeny_params:
+	${PERL} clustalw2_phylogeny_soaplite.pl --params
+
+clustalw2_phylogeny_param_detail:
+	${PERL} clustalw2_phylogeny_soaplite.pl --paramDetail tree
+
+clustalw2_phylogeny_file:
+	${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.aln
+
+clustalw2_phylogeny_stdin_stdout:
+	cat ../test_data/multi_prot.aln | ${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} --quiet --outfile - - > clustalw2_phylogeny-blah.ph
+
+clustalw2_phylogeny_clean:
+	rm -f clustalw2_phylogeny-*
+
+# DbClustal
+dbclustal: dbclustal_params dbclustal_param_detail
+# TODO: dbclustal_file
+
+dbclustal_params:
+	${PERL} dbclustal_soaplite.pl --params
+
+dbclustal_param_detail:
+	${PERL} dbclustal_soaplite.pl --paramDetail outformat
+
+dbclustal_file:
+	${PERL} dbclustal_soaplite.pl --email ${EMAIL} ???
+
+dbclustal_clean:
+	rm -f dbclustal-*
 
 # EB-eye
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
