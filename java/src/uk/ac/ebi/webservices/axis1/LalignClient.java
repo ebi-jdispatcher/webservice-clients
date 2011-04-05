@@ -59,22 +59,23 @@ public class LalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		this.setUserAgent();
 	}
 	
-	/** <p>Set the HTTP User-agent header string for the client.</p>
+	/** <p>Get a user-agent string for this client.</p>
 	 * 
 	 * <p><b>Note</b>: this affects all java.net based requests, but not the 
 	 * Axis requests. The user-agent used by Axis is set from the 
-	 * /org/apache/axis/i18n/resource.properties file included in the JAR.</p>
+	 * /org/apache/axis/i18n/resource.properties file included in the Axis 
+	 * JAR.</p>
+	 * 
+	 * @return Client user-agent string.
 	 */
-	private void setUserAgent() {
-		printDebugMessage("setUserAgent", "Begin", 1);
-		// Java web calls use the http.agent property as a prefix to the default user-agent.
+	protected String getClientUserAgentString() {
+		printDebugMessage("getClientUserAgent", "Begin", 11);
 		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
-		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
-		if(System.getProperty("http.agent") != null) {
-			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
-		}
-		else System.setProperty("http.agent", clientUserAgent);
-		printDebugMessage("setUserAgent", "End", 1);
+		String clientUserAgent = "EBI-Sample-Client/" + clientVersion 
+			+ " (" + this.getClass().getName() + "; " 
+			+ System.getProperty("os.name") + ")";
+		printDebugMessage("getClientUserAgent", "End", 11);
+		return clientUserAgent;
 	}
 
 	/** Print usage message. */

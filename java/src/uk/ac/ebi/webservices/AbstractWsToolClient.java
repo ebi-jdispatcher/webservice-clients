@@ -153,6 +153,58 @@ public abstract class AbstractWsToolClient {
 		}
 	}
 	
+	/** <p>Get the HTTP user-agent string used for java.net calls by the 
+	 * client (see RFC2616).</p>
+	 * 
+	 * @return User-agent string.
+	 */
+	public String getUserAgent() {
+		printDebugMessage("getUserAgent", "Begin/End", 1);
+		return System.getProperty("http.agent");
+	}
+	
+	/** <p>Set the HTTP user-agent string used for java.net calls by the 
+	 * client (see RFC2616).</p>
+	 * 
+	 * @param userAgent User-agent string to prepend to default client 
+	 * user-agent.
+	 */
+	public void setUserAgent(String userAgent) {
+		printDebugMessage("setUserAgent", "Begin", 1);
+		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		StringBuffer clientUserAgent = new StringBuffer();
+		if(userAgent != null && userAgent.length() > 0) {
+			clientUserAgent.append(userAgent);
+		}
+		clientUserAgent.append(getClientUserAgentString());
+		if(System.getProperty("http.agent") != null) {
+			clientUserAgent.append(" ").append(System.getProperty("http.agent"));
+		}
+		System.setProperty("http.agent", clientUserAgent.toString());
+		printDebugMessage("setUserAgent", "End", 1);
+	}
+
+	/** <p>Set the HTTP User-agent header string (see RFC2616) used by the 
+	 * client for java.net requests.</p>
+	 */
+	protected void setUserAgent() {
+		printDebugMessage("setUserAgent", "Begin", 1);
+		// Java web calls use the http.agent property as a prefix to the default user-agent.
+		String clientUserAgent = getClientUserAgentString();
+		if(System.getProperty("http.agent") != null) {
+			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
+		}
+		else System.setProperty("http.agent", clientUserAgent);
+		printDebugMessage("setUserAgent", "End", 1);
+	}
+	
+	/** Get client specific user-agent string for addition to client 
+	 * user-agent string.
+	 * 
+	 * @return Client specific user-agent string.
+	 */
+	protected abstract String getClientUserAgentString();
+
 	/** Generate a string containing the values of the fields with "get" methods. 
 	 * 
 	 * @param obj Object the get values from
