@@ -46,8 +46,8 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --stype        : str  : sequence type, see --paramDetail stype\n"
 		+ "      --informat     : str  : input alignment format, see \n"
 		+ "                              --paramDetail informat\n"
-		+ "      --output       : str  : output alignment format, see \n"
-		+ "                              --paramDetail outformat\n"
+		+ "      --outputformat : str  : output alignment format, see \n"
+		+ "                              --paramDetail outputformat\n"
 		+ "      --htmlmarkup   : str  : type of HTML markup to use in output,\n"
 		+ "                              see --paramDetail htmlmarkup\n"
 		+ "      --pcid         : str  : method for percent identity\n"
@@ -60,7 +60,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --coloring     : str  : style of coloring\n"
 		+ "      --colormap     : str  : colour map\n"
 		+ "      --groupmap     : str  : group colour map\n"
-		+ "      --consensus    : str  : show/hide consensus\n"
+		+ "      --consensus    :      : show/hide consensus\n"
 		+ "      --concoloring  : str  : style of colouring for consensus\n"
 		+ "      --concolormap  : str  : colour map for consensus\n"
 		+ "      --congroupmap  : str  : group map for consensus\n"
@@ -75,22 +75,23 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		this.setUserAgent();
 	}
 	
-	/** <p>Set the HTTP User-agent header string for the client.</p>
+	/** <p>Get a user-agent string for this client.</p>
 	 * 
 	 * <p><b>Note</b>: this affects all java.net based requests, but not the 
 	 * Axis requests. The user-agent used by Axis is set from the 
-	 * /org/apache/axis/i18n/resource.properties file included in the JAR.</p>
+	 * /org/apache/axis/i18n/resource.properties file included in the Axis 
+	 * JAR.</p>
+	 * 
+	 * @return Client user-agent string.
 	 */
-	private void setUserAgent() {
-		printDebugMessage("setUserAgent", "Begin", 1);
-		// Java web calls use the http.agent property as a prefix to the default user-agent.
+	protected String getClientUserAgentString() {
+		printDebugMessage("getClientUserAgent", "Begin", 11);
 		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
-		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
-		if(System.getProperty("http.agent") != null) {
-			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
-		}
-		else System.setProperty("http.agent", clientUserAgent);
-		printDebugMessage("setUserAgent", "End", 1);
+		String clientUserAgent = "EBI-Sample-Client/" + clientVersion 
+			+ " (" + this.getClass().getName() + "; " 
+			+ System.getProperty("os.name") + ")";
+		printDebugMessage("getClientUserAgent", "End", 11);
+		return clientUserAgent;
 	}
 
 	/** Print usage message. */
@@ -346,7 +347,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Tool specific options
 		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("informat")) params.setInformat(line.getOptionValue("informat"));
-		if (line.hasOption("output")) params.setOutformat(line.getOptionValue("output"));
+		if (line.hasOption("outputformat")) params.setOutputformat(line.getOptionValue("outputformat"));
 		if (line.hasOption("htmlmarkup")) params.setHtmlmarkup(line.getOptionValue("htmlmarkup"));
 		if (line.hasOption("pcid")) params.setPcid(line.getOptionValue("pcid"));
 		if (line.hasOption("alignment")) params.setAlignment(new Boolean(true));
@@ -358,7 +359,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if(line.hasOption("colormap")) params.setColormap(line.getOptionValue("colormap"));
 		if(line.hasOption("groupmap")) params.setGroupmap(line.getOptionValue("groupmap"));
 		if (line.hasOption("consensus")) params.setConsensus(new Boolean(true));
-		else if (line.hasOption("consensus")) params.setConsensus(new Boolean(false));
+		else if (line.hasOption("noconsensus")) params.setConsensus(new Boolean(false));
 		if(line.hasOption("concoloring")) params.setConcoloring(line.getOptionValue("concoloring"));
 		if(line.hasOption("concolormap")) params.setConcolormap(line.getOptionValue("concolormap"));
 		if(line.hasOption("congroupmap")) params.setCongroupmap(line.getOptionValue("congroupmap"));
@@ -383,7 +384,7 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Application specific options
 		options.addOption("stype", true, "Sequence type");
 		options.addOption("informat", true, "input alignment format");
-		options.addOption("output", true, "output alignment format");
+		options.addOption("outputformat", true, "output alignment format");
 		options.addOption("htmlmarkup", true, "HTML markup type");
 		options.addOption("pcid", true, "percent identity method");
 		options.addOption("alignment", false, "show alignment");
