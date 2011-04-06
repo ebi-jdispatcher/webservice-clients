@@ -12,9 +12,9 @@ PERL = /ebi/extserv/bin/perl/bin/perl
 EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-# TODO: clustalo dbfetch prank mview
+# TODO: clustalo dbfetch prank
 all: ebeye \
-clustalw2 dbclustal kalign mafft muscle tcoffee \
+clustalw2 dbclustal kalign mafft muscle mview tcoffee \
 emboss_matcher emboss_needle emboss_stretcher emboss_water lalign \
 iprscan \
 clustalw2_phylogeny \
@@ -64,17 +64,17 @@ clustalw2_phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
 
 # DbClustal
-dbclustal: dbclustal_params dbclustal_param_detail
-# TODO: dbclustal_file
+dbclustal: dbclustal_param_detail dbclustal_file
+# TODO: dbclustal_params
 
 dbclustal_params:
 	${PERL} dbclustal_soaplite.pl --params
 
 dbclustal_param_detail:
-	${PERL} dbclustal_soaplite.pl --paramDetail outformat
+	${PERL} dbclustal_soaplite.pl --paramDetail output
 
 dbclustal_file:
-	${PERL} dbclustal_soaplite.pl --email ${EMAIL} ???
+	${PERL} dbclustal_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --blastreport ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt
 
 dbclustal_clean:
 	rm -f dbclustal-*
@@ -349,6 +349,22 @@ muscle_stdin_stdout:
 
 muscle_clean:
 	rm -f muscle-*
+
+# MView
+mview: mview_param_detail mview_file
+# TODO: mview_params
+
+mview_params:
+	${PERL} mview_soaplite.pl --params
+
+mview_param_detail:
+	${PERL} mview_soaplite.pl --paramDetail outputformat
+
+mview_file:
+	${PERL} mview_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt --alignment --ruler --consensus --htmlmarkup off
+
+mview_clean:
+	rm -f mview-*
 
 # NCBI BLAST
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout
