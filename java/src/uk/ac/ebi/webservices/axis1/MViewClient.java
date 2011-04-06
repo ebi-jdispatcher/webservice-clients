@@ -50,6 +50,10 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "                              --paramDetail outputformat\n"
 		+ "      --htmlmarkup   : str  : type of HTML markup to use in output,\n"
 		+ "                              see --paramDetail htmlmarkup\n"
+		+ "      --css          :      : enable Cascading Style Sheets (CSS) "
+		+ "                              for HTML styles\n"
+		+ "      --nocss        :      : disable Cascading Style Sheets (CSS) "
+		+ "                              for HTML styles\n"
 		+ "      --pcid         : str  : method for percent identity\n"
 		+ "                              see --paramDetail pcid\n"
 		+ "      --alignment    :      : show alignment\n"
@@ -60,7 +64,8 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --coloring     : str  : style of coloring\n"
 		+ "      --colormap     : str  : colour map\n"
 		+ "      --groupmap     : str  : group colour map\n"
-		+ "      --consensus    :      : show/hide consensus\n"
+		+ "      --consensus    :      : show consensus\n"
+		+ "      --noconsensus  :      : hide consensus\n"
 		+ "      --concoloring  : str  : style of colouring for consensus\n"
 		+ "      --concolormap  : str  : colour map for consensus\n"
 		+ "      --congroupmap  : str  : group map for consensus\n"
@@ -349,6 +354,8 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("informat")) params.setInformat(line.getOptionValue("informat"));
 		if (line.hasOption("outputformat")) params.setOutputformat(line.getOptionValue("outputformat"));
 		if (line.hasOption("htmlmarkup")) params.setHtmlmarkup(line.getOptionValue("htmlmarkup"));
+		if (line.hasOption("css")) params.setCss(new Boolean(true));
+		else if (line.hasOption("nocss")) params.setCss(new Boolean(false));
 		if (line.hasOption("pcid")) params.setPcid(line.getOptionValue("pcid"));
 		if (line.hasOption("alignment")) params.setAlignment(new Boolean(true));
 		else if (line.hasOption("noalignment")) params.setAlignment(new Boolean(false));
@@ -386,6 +393,8 @@ public class MViewClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("informat", true, "input alignment format");
 		options.addOption("outputformat", true, "output alignment format");
 		options.addOption("htmlmarkup", true, "HTML markup type");
+		options.addOption("css", false, "Enable CSS markup for HTML output");
+		options.addOption("nocss", false, "Disable CSS markup for HTML output");
 		options.addOption("pcid", true, "percent identity method");
 		options.addOption("alignment", false, "show alignment");
 		options.addOption("noalignment", false, "hide alignment");
