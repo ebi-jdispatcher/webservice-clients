@@ -968,7 +968,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalw2_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/msa/mview_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
