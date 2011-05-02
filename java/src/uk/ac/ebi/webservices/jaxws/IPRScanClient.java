@@ -246,8 +246,8 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		for(int i = 0; i < typeList.length; i++) {
 			System.out.print(
 					typeList[i].getIdentifier() + "\n\t"
-					+ typeList[i].getLabel() + "\n\t"
-					+ typeList[i].getDescription() + "\n\t"
+					+ typeList[i].getLabel().getValue() + "\n\t"
+					+ typeList[i].getDescription().getValue() + "\n\t"
 					+ typeList[i].getMediaType() + "\n\t"
 					+ typeList[i].getFileSuffix() + "\n"
 					);
