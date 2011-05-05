@@ -74,9 +74,6 @@ GetOptions(
 	# Tool specific options
 	'program=s'  => \$tool_params{'program'},    # Program to use
 	'stype=s'    => \$params{'stype'},   # Molecule/sequence type
-	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
-	'rna|U'          => \$params{'rna'},             # Force query to be RNA
-	'protein|p'      => \$params{'protein'},         # Force query to be protein
 	'matrix|s=s'     => \$tool_params{'matrix'},     # Scoring matrix
 	'match_scores|r=s' => \$tool_params{'match_scores'}, # Match/missmatch.
 	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
@@ -84,8 +81,6 @@ GetOptions(
 	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
 	'explowlim|F=f'  => \$tool_params{'explowlim'},    # Lower E-value
 	'strand=s'       => \$params{'strand'}, # Query strand.
-	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
-	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
 	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
 	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
@@ -97,6 +92,15 @@ GetOptions(
 	'database=s' => \$params{'database'},        # Database to search
 	'ktup=i'       => \$tool_params{'ktup'},       # Word size
 	
+	# Compatability options, old command-line
+	'nucleotide|n'   => \$params{'nucleotide'},      # Force query to be DNA/RNA
+	'rna|U'          => \$params{'rna'},             # Force query to be RNA
+	'protein|p'      => \$params{'protein'},         # Force query to be protein
+	'topstrand|3'    => \$params{'topstrand'},       # Search with top stand
+	'bottomstrand|i' => \$params{'bottomstrand'},    # Search with bottom strand
+	'eupper=f'       => \$params{'eupper'},          # Upper E-value
+	'elower=f'       => \$params{'elower'},          # Lower E-value
+
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
