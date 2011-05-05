@@ -29,24 +29,24 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 
 [Optional]
 
+  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix
+  -r, --match_scores  : str  : match/missmatch scores, see --paramDetail 
+                               match_scores
   -f, --gapopen       : int  : penalty for gap opening
   -g, --gapext        : int  : penalty for additional residues in a gap
-  -b, --scores        : int  : maximum number of scores
-  -d, --alignments    : int  : maximum number of alignments
-  -k, --ktup          : int  : word size (DNA 1-6, Protein 1-2)
-  -s, --matrix        : str  : scoring matrix name, see --paramDetail matrix
   -E, --eupper        : real : E-value upper limit for hit display
   -F, --elower        : real : E-value lower limit for hit display
+      --strand        : str  : query sequence strand to use for search (DNA only)
   -H, --histogram     :      : turn off histogram display
-  -n, --nucleotide    :      : force query to nucleotide sequence
-  -3, --topstrand     :      : use only forward frame translations (DNA only)
-  -i, --bottomstrand  :      : reverse complement query sequence (DNA only)
-      --filter        : str  : low complexity input sequence filter,
-                               see --paramDetail filter
+  -b, --scores        : int  : maximum number of scores
+  -d, --alignments    : int  : maximum number of alignments
   -z, --stats         : int  : statistical model for search,
                                see --paramDetail stats
-  -M, --dbrange       : str  : define a subset database by sequence length
-      --seqrange      : str  : search with a region of the query (START-END)
+  -S, --seqrange      : str  : search with a region of the query (START-END)
+  -R, --dbrange       : str  : define a subset database by sequence length
+      --filter        : str  : low complexity input sequence filter,
+                               see --paramDetail filter
+      --ktup          : int  : word size (DNA 1-6, Protein 1-2)
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -257,6 +257,15 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 						goto case "--matrix";
 					case "/s":
 						goto case "--matrix";
+					case "--match_scores": // Match/missmatch scores
+						InParams.match_scores = args[++i];
+						break;
+					case "/match_scores":
+						goto case "--match_scores";
+					case "-r":
+						goto case "--match_scores";
+					case "/r":
+						goto case "--match_scores";
 					case "--eupper": // Upper E-value threshold
 						InParams.expupperlim = Convert.ToDouble(args[++i]);
 						InParams.expupperlimSpecified = true;
@@ -336,10 +345,6 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 						break;
 					case "/ktup":
 						goto case "--ktup";
-					case "-k":
-						goto case "--ktup";
-					case "/k":
-						goto case "--ktup";
 					case "--histogram": // Suppress histogram
 						InParams.hist = false;
 						break;
@@ -372,9 +377,9 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 						break;
 					case "/rna":
 						goto case "--rna";
-					case "-r":
+					case "-U":
 						goto case "--rna";
-					case "/r":
+					case "/U":
 						goto case "--rna";
 					case "--topstrand": // TFAST[XY] use only forward frame translations
 						InParams.strand = "top";
