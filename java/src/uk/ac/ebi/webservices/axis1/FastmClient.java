@@ -53,8 +53,6 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "  -E, --expupperlim  : real : E-value upper limit for hit display\n"
 		+ "  -F, --explowlim    : real : E-value lower limit for hit display\n"
 		+ "      --strand       : str  : query strand to use for search (DNA only)\n"
-		+ "  -3, --topstrand    :      : use only forward frame translations (DNA only)\n"
-		+ "  -i, --bottomstrand :      : reverse complement query sequence (DNA only)\n"
 		+ "  -H, --histogram    :      : turn off histogram display\n"
 		+ "  -b, --scores       : int  : maximum number of scores\n"
 		+ "  -d, --alignments   : int  : maximum number of alignments\n"
@@ -64,7 +62,7 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "  -R, --dbrange      : str  : define a subset database by sequence length\n"
 		+ "      --filter       : str  : filter the query sequence for low complexity \n"
 		+ "                              regions, see --paramDetail filter\n"
-		+ "  -k, --ktup         : int  : word size (DNA 1-6, Protein 1-2)\n";
+		+ "      --ktup         : int  : word size (DNA 1-6, Protein 1-2)\n";
 
 	/** Default constructor.
 	 */
