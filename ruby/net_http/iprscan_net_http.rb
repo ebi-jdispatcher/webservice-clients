@@ -143,6 +143,13 @@ class EbiWsIPRScan
       path = uri.path
     end
     resp, data = httpConn.get(path, {'User-agent' => getUserAgent()})
+    case resp
+    when Net::HTTPSuccess, Net::HTTPRedirection
+      # OK
+    else
+      $stderr.puts data
+      resp.error!
+    end
     printDebugMessage('restRequest', 'data: ' + data, 21)
     printDebugMessage('restRequest', 'End', 11)
     return data
@@ -192,6 +199,9 @@ class EbiWsIPRScan
       if(value.elements['label'].has_text?)
         puts "\t" + value.elements['label'].text
       end    
+      value.each_element('properties/property') { |wsProperty|
+        puts "\t" + wsProperty.elements['key'].text + "\t" + wsProperty.elements['value'].text
+      }
     }
     printDebugMessage('printParamDetail', 'End', 1)
   end
