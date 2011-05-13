@@ -102,6 +102,7 @@ def getUserAgent():
 def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
+    # Errors are indicated by HTTP status codes.
     try:
         user_agent = getUserAgent()
         http_headers = { 'User-Agent' : user_agent }
@@ -110,7 +111,8 @@ def restRequest(url):
         result = reqH.read()
         reqH.close()
     except urllib2.HTTPError, ex:
-        print ex.read()
+        # Trap exception and output the document to get error message.
+        print >>sys.stderr, ex.read()
         raise
     printDebugMessage('restRequest', 'End', 11)
     return result
@@ -156,6 +158,9 @@ def printGetParameterDetails(paramName):
             print 'default',
         print
         print "\t" + str(value.label)
+        if(hasattr(value, 'properties')):
+            for wsProperty in value.properties:
+                print  "\t" + str(wsProperty.key) + "\t" + str(wsProperty.value)
     #print doc
     printDebugMessage('printGetParameterDetails', 'End', 1)
 
@@ -182,12 +187,14 @@ def serviceRun(email, title, params):
     # Concatenate the two parts.
     requestData += applData
     printDebugMessage('serviceRun', 'requestData: ' + requestData, 2)
+    # Errors are indicated by HTTP status codes.
     try:
         reqH = urllib2.urlopen(requestUrl, requestData)
         jobId = reqH.read()
         reqH.close()    
     except urllib2.HTTPError, ex:
-        print ex.read()
+        # Trap exception and output the document to get error message.
+        print >>sys.stderr, ex.read()
         raise
     printDebugMessage('serviceRun', 'jobId: ' + jobId, 2)
     printDebugMessage('serviceRun', 'End', 1)
@@ -346,5 +353,5 @@ elif options.resultTypes and options.jobid:
 elif options.polljob and options.jobid:
     getResult(options.jobid)
 else:
-    print 'Error: unrecognised argument combination'
+    print >>sys.stderr, 'Error: unrecognised argument combination'
     parser.print_help()
