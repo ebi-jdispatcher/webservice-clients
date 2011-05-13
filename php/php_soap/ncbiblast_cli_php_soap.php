@@ -41,6 +41,16 @@ class NcbiBlastCliClient extends NcbiBlastClient {
 	if($val->defaultValue) print 'default';
 	print "\n";
 	if($val->label) print "\t" . $val->label . "\n";
+	if(array_key_exists('properties', $val)) {
+	  if(is_array($val->properties->property)) {
+	    foreach($val->properties->property as $wsProperty) {
+	      print "\t" .  $wsProperty->key . "\t" . $wsProperty->value . "\n";
+	    }
+	  }
+	  else {
+	    print "\t" .  $val->properties->property->key . "\t" . $val->properties->property->value . "\n";
+	  }
+	}
       }
     }
     $this->printDebugMessage('printGetParameterDetails', 'Begin', 1);
