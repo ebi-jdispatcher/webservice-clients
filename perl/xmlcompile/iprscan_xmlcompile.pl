@@ -495,6 +495,11 @@ sub print_param_details {
 		}
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
+		if(defined($value->{'properties'})) {
+			foreach my $wsProperty (@{$value->{'properties'}{'property'}}) {
+				print "\t", $wsProperty->{'key'}, "\t", $wsProperty->{'value'}, "\n";
+			}
+		}
 	}
 	&print_debug_message( 'print_param_details', 'End', 1 );
 }
