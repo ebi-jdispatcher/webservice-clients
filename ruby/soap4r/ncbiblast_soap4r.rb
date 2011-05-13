@@ -243,6 +243,11 @@ class EbiWsNcbiBlast
       if(value.label)
         puts "\t" + value.label
       end
+      if(value.properties)
+        value.properties.property.each { |wsProperty|
+          puts "\t" + wsProperty.key + "\t" + wsProperty.value
+        }
+      end
     }
     printDebugMessage('printParamDetail', 'End', 1)
   end
