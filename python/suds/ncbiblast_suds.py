@@ -181,6 +181,38 @@ def readFile(filename):
     printDebugMessage('readFile', 'End', 1)
     return data
 
+# Output parameter details.
+def printGetParameterDetails(paramName):
+    printDebugMessage('printGetParameterDetails', 'Begin', 1)
+    paramDetail = serviceGetParameterDetails(paramName)
+    print paramDetail['name'], "\t", paramDetail['type']
+    print paramDetail['description']
+    for value in paramDetail['values']['value']:
+        print value['value'],
+        if(value['defaultValue']):
+            print '(default)',
+        print
+        print "\t", value['label']
+        if(hasattr(value, 'properties')):
+            for wsProperty in value['properties']['property']:
+                print "\t", wsProperty['key'], "\t", wsProperty['value']
+    printDebugMessage('printGetParameterDetails', 'End', 1)
+
+# Output available result types for job.
+def printGetResultTypes(jobId):
+    printDebugMessage('printGetResultTypes', 'Begin', 1)
+    for resultType in serviceGetResultTypes(jobId):
+        print resultType['identifier']
+        if(hasattr(resultType, 'label')):
+            print "\t", resultType['label']
+        if(hasattr(resultType, 'description')):
+            print "\t", resultType['description']
+        if(hasattr(resultType, 'mediaType')):
+            print "\t", resultType['mediaType']
+        if(hasattr(resultType, 'fileSuffix')):
+            print "\t", resultType['fileSuffix']
+    printDebugMessage('printGetResultTypes', 'End', 1)
+
 # Create the client
 printDebugMessage('main', 'WSDL: ' + options.WSDL, 1)
 client = Client(options.WSDL)
@@ -223,15 +255,7 @@ elif options.params:
         print paramName
 # Get parameter details
 elif options.paramDetail:
-    paramDetail = serviceGetParameterDetails(options.paramDetail)
-    print paramDetail['name'], "\t", paramDetail['type']
-    print paramDetail['description']
-    for value in paramDetail['values']['value']:
-        print value['value'],
-        if(value['defaultValue'] == 'true'):
-            print '(default)',
-        print
-        print "\t", value['label']
+    printGetParameterDetails(options.paramDetail)
 # Submit job
 elif options.email and not options.jobid:
     params = {}
@@ -289,16 +313,7 @@ elif options.status and options.jobid:
     print status
 # List result types for job
 elif options.resultTypes and options.jobid:
-    for resultType in serviceGetResultTypes(options.jobid):
-        print resultType['identifier']
-        if(hasattr(resultType, 'label')):
-            print "\t", resultType['label']
-        if(hasattr(resultType, 'description')):
-            print "\t", resultType['description']
-        if(hasattr(resultType, 'mediaType')):
-            print "\t", resultType['mediaType']
-        if(hasattr(resultType, 'fileSuffix')):
-            print "\t", resultType['fileSuffix']
+    printGetResultTypes(options.jobid)
 # Get results for job
 elif options.polljob and options.jobid:
     getResult(options.jobid)
