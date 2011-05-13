@@ -285,7 +285,13 @@ sub soap_get_parameter_details {
 		SOAP::Data->name( 'parameterId' => $parameterId )
 		  ->attr( { 'xmlns' => '' } ) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
+	# Convert parameter values into a list.
 	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
+	# Convert WsProperties for each value into a list.
+	for(my $i = 0; $i < scalar(@paramValueList); $i++) {
+		my (@propertyList) = $ret->valueof('//parameterDetails/values/[' . ($i + 1) . ']/properties/property');
+		$paramValueList[$i]->{'properties'} = \@propertyList;
+	}
 	$paramDetail->{'values'} = \@paramValueList;
 	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
 	return $paramDetail;
@@ -493,6 +499,12 @@ sub print_param_details {
 		}
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
+		if(defined($value->{'properties'})) {
+			foreach my $wsProperty (@{$value->{'properties'}}) {
+				print "\t", $wsProperty->{'key'},
+					"\t", $wsProperty->{'value'}, "\n";
+			}
+		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
