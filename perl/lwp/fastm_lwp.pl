@@ -448,6 +448,20 @@ sub print_param_details {
 		}
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
+		if(defined($value->{'properties'})) {
+			foreach my $key (sort(keys(%{$value->{'properties'}{'property'}}))) {
+				if(ref($value->{'properties'}{'property'}{$key}) eq 'HASH' && 
+					defined($value->{'properties'}{'property'}{$key}{'value'})) {
+					print "\t", $key, "\t", 
+						$value->{'properties'}{'property'}{$key}{'value'}, "\n";
+				}
+				else {
+					print "\t", $value->{'properties'}{'property'}{'key'}, 
+						"\t", $value->{'properties'}{'property'}{'value'}, "\n";
+					last;					
+				}
+			}
+		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
