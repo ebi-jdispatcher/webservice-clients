@@ -69,33 +69,37 @@ else:
 
 # Get list of parameters
 def getParameters():
-    req = getParametersRequest()
-    msg = srvProxy.getParameters(req)
-    return msg._parameters._id
+  req = getParametersRequest()
+  msg = srvProxy.getParameters(req)
+  return msg._parameters._id
 
 def printParameters():
-    params = getParameters()
-    for param in params:
-        print param
+  params = getParameters()
+  for param in params:
+    print param
 
 # Get information about a parameter
 def getParameterDetails(paramName):
-    req = getParameterDetailsRequest()
-    req._parameterId = paramName
-    msg = srvProxy.getParameterDetails(req)
-    return msg._parameterDetails
+  req = getParameterDetailsRequest()
+  req._parameterId = paramName
+  msg = srvProxy.getParameterDetails(req)
+  return msg._parameterDetails
 
 # Print parameter information
 def printParameterDetails(paramName):
-    paramDetails = getParameterDetails(paramName)
-    print paramDetails._name + "\t" + paramDetails._type
-    print paramDetails._description
+  paramDetails = getParameterDetails(paramName)
+  print paramDetails._name + "\t" + paramDetails._type
+  print paramDetails._description
+  if paramDetails._values:
     for value in paramDetails._values._value:
-        if value._defaultValue:
-            print value._value + "\tdefault"
-        else:
-            print value._value
-        print "\t" + value._label
+      if value._defaultValue:
+        print value._value + "\tdefault"
+      else:
+        print value._value
+      print "\t" + value._label
+      if value._properties:
+        for wsProperty in value._properties._property:
+          print "\t" + wsProperty._key + "\t" + wsProperty._value
 
 # Client-side job poll
 def clientPoll(jobId):
@@ -108,173 +112,172 @@ def clientPoll(jobId):
 
 # Submit a job
 def run(email, title, params):
-    req = runRequest()
-    req._email = email
-    req._title = title
-    InputParameters = ns0.InputParameters_Def(None).pyclass
-    req._parameters = InputParameters()
-    if params.has_key('program'):
-        req._parameters._program = params['program']
-    if params.has_key('database'):
-        ArrayOfString = ns0.ArrayOfString_Def(None).pyclass
-        req._parameters._database = ArrayOfString()
-        req._parameters._database._string = [params['database']]
-    if params.has_key('stype'):
-        req._parameters._stype = params['stype']
-    if params.has_key('matrix'):
-        req._parameters._matrix = params['matrix']
-    if params.has_key('exp'):
-        req._parameters._exp = params['exp']
-    else:
-        req._parameters._exp = "10"
-    if params.has_key('filter'):
-        req._parameters._filter = params['filter']
-    if params.has_key('alignments'):
-        req._parameters._alignments = params['alignments']
-    else:
-        req._parameters._alignments = 50
-    if params.has_key('scores'):
-        req._parameters._scores = params['scores']
-    else:
-        req._parameters._scores = 50
-    if params.has_key('dropoff'):
-        req._parameters._dropoff = params['dropoff']
-    if params.has_key('match_score'):
-        req._parameters._match_score = params['match_score']
-    if params.has_key('gapopen'):
-        req._parameters._gapopen = params['gapopen']
-    if params.has_key('gapext'):
-        req._parameters._gapext = params['gapext']
-    if params.has_key('gapalign'):
-        req._parameters._gapalign = params['gapalign']
-    if params.has_key('sequence'):
-        req._parameters._sequence = params['sequence']
-    msg = srvProxy.run(req)
-    return msg._jobId
+  req = runRequest()
+  req._email = email
+  req._title = title
+  InputParameters = ns0.InputParameters_Def(None).pyclass
+  req._parameters = InputParameters()
+  if params.has_key('program'):
+    req._parameters._program = params['program']
+  if params.has_key('database'):
+    ArrayOfString = ns0.ArrayOfString_Def(None).pyclass
+    req._parameters._database = ArrayOfString()
+    req._parameters._database._string = [params['database']]
+  if params.has_key('stype'):
+    req._parameters._stype = params['stype']
+  if params.has_key('matrix'):
+    req._parameters._matrix = params['matrix']
+  if params.has_key('exp'):
+    req._parameters._exp = params['exp']
+  else:
+    req._parameters._exp = "10"
+  if params.has_key('filter'):
+    req._parameters._filter = params['filter']
+  if params.has_key('alignments'):
+    req._parameters._alignments = params['alignments']
+  else:
+    req._parameters._alignments = 50
+  if params.has_key('scores'):
+    req._parameters._scores = params['scores']
+  else:
+    req._parameters._scores = 50
+  if params.has_key('dropoff'):
+    req._parameters._dropoff = params['dropoff']
+  if params.has_key('match_score'):
+    req._parameters._match_score = params['match_score']
+  if params.has_key('gapopen'):
+    req._parameters._gapopen = params['gapopen']
+  if params.has_key('gapext'):
+    req._parameters._gapext = params['gapext']
+  if params.has_key('gapalign'):
+    req._parameters._gapalign = params['gapalign']
+  if params.has_key('sequence'):
+    req._parameters._sequence = params['sequence']
+  msg = srvProxy.run(req)
+  return msg._jobId
 
 # Get status for a jobid
 def getStatus(jobid):
-    req = getStatusRequest()
-    req._jobId = jobid
-    msg = srvProxy.getStatus(req)
-    return msg._status
+  req = getStatusRequest()
+  req._jobId = jobid
+  msg = srvProxy.getStatus(req)
+  return msg._status
 
 # Get list of available result types
 def getResultTypes(jobId):
-    # Get available result types
-    req = getResultTypesRequest()
-    req._jobId = jobId
-    msg = srvProxy.getResultTypes(req)
-    return msg._resultTypes._type
+  req = getResultTypesRequest()
+  req._jobId = jobId
+  msg = srvProxy.getResultTypes(req)
+  return msg._resultTypes._type
 
 # Print result type for a job
 def printResultTypes(jobId):
-    resultTypes = getResultTypes(jobId)
-    for resultType in resultTypes:
-        print resultType._identifier
+  resultTypes = getResultTypes(jobId)
+  for resultType in resultTypes:
+    print resultType._identifier
 
 # Get result of a specified type
 def getResult(jobId, typeName):
-    req = getResultRequest()
-    req._jobId = jobId
-    req._type = typeName
-    msg = srvProxy.getResult(req)
-    return msg._output
+  req = getResultRequest()
+  req._jobId = jobId
+  req._type = typeName
+  msg = srvProxy.getResult(req)
+  return msg._output
 
 # Get results for a jobid
 def getResults(jobId):
-    clientPoll(jobId)
-    resultTypes = getResultTypes(jobId)
-    for resultType in resultTypes:
-        # Get the result
-        result = getResult(jobId, resultType._identifier)
-        # Derive the filename for the result
-        if options.outfile:
-            filename = options.outfile + '.' + resultType._identifier + '.' + resultType._fileSuffix
-        else:
-            filename = jobId + '.' + resultType._identifier + '.' + resultType._fileSuffix
-        # Write a result file
-        if not options.outformat or options.outformat == resultType:
-            fh = open(filename, 'w');
-            fh.write(result)
-            fh.close()
-            print filename
+  clientPoll(jobId)
+  resultTypes = getResultTypes(jobId)
+  for resultType in resultTypes:
+    # Get the result
+    result = getResult(jobId, resultType._identifier)
+    # Derive the filename for the result
+    if options.outfile:
+      filename = options.outfile + '.' + resultType._identifier + '.' + resultType._fileSuffix
+    else:
+      filename = jobId + '.' + resultType._identifier + '.' + resultType._fileSuffix
+    # Write a result file
+    if not options.outformat or options.outformat == resultType:
+      fh = open(filename, 'w');
+      fh.write(result)
+      fh.close()
+      print filename
 
 # Read a file
 def readFile(filename):
-    fh = open(filename, 'r')
-    data = fh.read()
-    fh.close()
-    return data
+  fh = open(filename, 'r')
+  data = fh.read()
+  fh.close()
+  return data
 
 # No options... print help.
 if numOpts < 2:
-    parser.print_help()
+  parser.print_help()
 # List parameters
 elif options.params:
-    printParameters()
+  printParameters()
 # Get parameter details
 elif options.paramDetail:
-    printParameterDetails(options.paramDetail)
+  printParameterDetails(options.paramDetail)
 # Get status
 elif options.status and options.jobid:
-    print getStatus(options.jobid)
+  print getStatus(options.jobid)
 # Get result types
 elif options.resultTypes and options.jobid:
-    printResultTypes(options.jobid)
+  printResultTypes(options.jobid)
 # Get results
 elif options.polljob and options.jobid:
-    getResults(options.jobid)
+  getResults(options.jobid)
 # Submit job
 elif options.email and not options.jobid:
-    params = {}
-    if len(args) > 0:
-        if os.access(args[0], os.R_OK): # Read file into content
-            params['sequence'] = readFile(args[0])
-        else: # Argument is a sequence id
-            params['sequence'] = args[0]
-    elif options.sequence: # Specified via option
-        if os.access(options.sequence, os.R_OK): # Read file into content
-            params['sequence'] = readFile(options.sequence)
-        else: # Argument is a sequence id
-            params['sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
-    if options.gapalign:
-        params['gapalign'] = 1
-    else:
-        params['gapalign'] = 0
-    # Add the other options (if defined)
-    if options.program:
-        params['program'] = options.program
-    if options.database:
-        params['database'] = options.database
-    if options.stype:
-        params['stype'] = options.stype
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.exp:
-        params['exp'] = options.exp
-    if options.filter:
-        params['filter'] = options.filter
-    if options.numal:
-        params['alignments'] = options.numal
-    if options.scores:
-        params['scores'] = options.scores
-    if options.dropoff:
-        params['dropoff'] = options.dropoff
-    if options.match_score:
-        params['match_score'] = options.match_score
-    if options.opengap:
-        params['gapopen'] = options.opengap
-    if options.extendgap:
-        params['gapext'] = options.extendgap
-    # Submit the job
-    jobid = run(options.email, options.title, params)
-    if options.async: # Async mode
-        print jobid
-    else: # Sync mode
-        time.sleep(1)
-        getResults(jobid)
+  params = {}
+  if len(args) > 0:
+    if os.access(args[0], os.R_OK): # Read file into content
+      params['sequence'] = readFile(args[0])
+    else: # Argument is a sequence id
+      params['sequence'] = args[0]
+  elif options.sequence: # Specified via option
+    if os.access(options.sequence, os.R_OK): # Read file into content
+      params['sequence'] = readFile(options.sequence)
+    else: # Argument is a sequence id
+      params['sequence'] = options.sequence
+  # Booleans need to be represented as 1/0 rather than True/False
+  if options.gapalign:
+    params['gapalign'] = 1
+  else:
+    params['gapalign'] = 0
+  # Add the other options (if defined)
+  if options.program:
+    params['program'] = options.program
+  if options.database:
+    params['database'] = options.database
+  if options.stype:
+    params['stype'] = options.stype
+  if options.matrix:
+    params['matrix'] = options.matrix
+  if options.exp:
+    params['exp'] = options.exp
+  if options.filter:
+    params['filter'] = options.filter
+  if options.numal:
+    params['alignments'] = options.numal
+  if options.scores:
+    params['scores'] = options.scores
+  if options.dropoff:
+    params['dropoff'] = options.dropoff
+  if options.match_score:
+    params['match_score'] = options.match_score
+  if options.opengap:
+    params['gapopen'] = options.opengap
+  if options.extendgap:
+    params['gapext'] = options.extendgap
+  # Submit the job
+  jobid = run(options.email, options.title, params)
+  if options.async: # Async mode
+    print jobid
+  else: # Sync mode
+    time.sleep(1)
+    getResults(jobid)
 else:
-    print 'Error: unrecognised argument combination'
-    parser.print_help()
+  print 'Error: unrecognised argument combination'
+  parser.print_help()
