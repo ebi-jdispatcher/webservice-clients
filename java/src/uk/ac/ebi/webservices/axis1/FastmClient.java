@@ -50,12 +50,17 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "                              match_scores\n"
 		+ "  -f, --gapopen      : int  : penalty for gap opening\n"
 		+ "  -g, --gapext       : int  : penalty for additional residues in a gap\n"
+		+ "      --hsps         :      : enable multiple alignments per-hit, see \n"
+		+ "                              --paramDetail hsps\n"
+		+ "      --nohsps       :      : disable multiple alignments per-hit, see \n"
+		+ "                              --paramDetail hsps\n"
 		+ "  -E, --expupperlim  : real : E-value upper limit for hit display\n"
 		+ "  -F, --explowlim    : real : E-value lower limit for hit display\n"
 		+ "      --strand       : str  : query strand to use for search (DNA only)\n"
 		+ "  -H, --histogram    :      : turn off histogram display\n"
 		+ "  -b, --scores       : int  : maximum number of scores\n"
 		+ "  -d, --alignments   : int  : maximum number of alignments\n"
+		+ "      --scoreformat  : str  : score table format for FASTA output\n"
 		+ "  -z, --stats        : int  : statistical model for search,\n"
 		+ "                              see --paramDetail stats\n"
 		+ "  -S, --seqrange     : str  : search with specified region of query sequence\n"
@@ -363,6 +368,10 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			params.setGapopen(new Integer(line.getOptionValue("f")));
 		if (line.hasOption("g"))
 			params.setGapext(new Integer(line.getOptionValue("g")));
+		if(line.hasOption("hsps"))
+			params.setHsps(new Boolean(true));
+		else if(line.hasOption("nohsps"))
+			params.setHsps(new Boolean(false));
 		if (line.hasOption("E"))
 			params.setExpupperlim(new Double(line.getOptionValue("E")));
 		if (line.hasOption("F"))
@@ -383,6 +392,8 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			params.setScores(new Integer(line.getOptionValue("b")));
 		if (line.hasOption("d"))
 			params.setAlignments(new Integer(line.getOptionValue("d")));
+		if (line.hasOption("scoreformat"))
+			params.setScoreformat(line.getOptionValue("scoreformat"));
 		if (line.hasOption("z"))
 			params.setStats(line.getOptionValue("z"));
 		if (line.hasOption("S"))
@@ -424,6 +435,8 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("r", "match_scores", true, "Match/missmatch score");
 		options.addOption("f", "gapopen", true, "Gap creation penalty");
 		options.addOption("g", "gapext", true, "Gap extension penalty");
+		options.addOption("hsps", false, "Enable HSPs");
+		options.addOption("nohsps", false, "Disable HSPs");
 		options.addOption("E", "expupperlim", true, "Upper expectation value");
 		options.addOption("F", "explowlim", true, "Lower expectation value");
 		options.addOption("strand", true, "Query DNA strand");
@@ -432,6 +445,7 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("H", "histogram", false, "Output histogram");
 		options.addOption("b", "scores", true, "Maximum number of reported scores");
 		options.addOption("d", "alignments", true, "Maximum number of reported alignments");
+		options.addOption("scoreformat", true, "Score table format");
 		options.addOption("z", "stats", true, "Statistical model for search");
 		options.addOption("S", "seqrange", true, "Region within the query sequence to search with");
 		options.addOption("R", "dbrange", true, "Range of sequence lengths in database to search");

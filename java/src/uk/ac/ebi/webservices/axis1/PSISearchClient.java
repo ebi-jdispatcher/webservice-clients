@@ -34,28 +34,33 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "==========\n"
 		+ "\n"
 		+ "Rapid sequence database search programs utilizing the PSI-Search algorithm.\n"
-		+"\n"
-		+"[Required]\n"
 		+ "\n"
-		+"  -D, --database      : str  : database(s) to search, space separated. See\n"
-		+"                               --paramDetail database\n"
-		+"  seqFile             : file : query sequence (\"-\" for STDIN, @filename for\n"
-		+"                               identifier list file)\n"
+		+ "[Required]\n"
 		+ "\n"
-		+"[Optional]\n"
+		+ "  -D, --database      : str  : database(s) to search, space separated. See\n"
+		+ "                               --paramDetail database\n"
+		+ "  seqFile             : file : query sequence (\"-\" for STDIN, @filename for\n"
+		+ "                               identifier list file)\n"
 		+ "\n"
-		+"  -M, --matrix        : str  : scoring matrix, see --paramDetail matrix\n"
-		+"  -e, --expthr        : real : 0<E<= 1000. Statistical significance threshold \n"
-		+"                               for reporting database sequence matches.\n"
-		+"  -h, --psithr        : real : E-value limit for inclusion in PSSM\n"
-		+"  -v, --scores        : int  : number of scores to be reported\n"
-		+"  -b, --alignments    : int  : number of alignments to report\n"
-		+"  -G, --gapopen       : int  : Gap open penalty\n"
-		+"  -E, --gapext        : int  : Gap extension penalty\n"
-		+"      --previousjobid : str  : Job Id for last iteration\n"
-		+"      --selectedHits  : file : Selected hits from last iteration for building\n" 
-		+"                               search profile (PSSM)\n"
-		+"  -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration\n";
+		+ "[Optional]\n"
+		+ "\n"
+		+ "  -M, --matrix        : str  : scoring matrix, see --paramDetail matrix\n"
+		+ "  -e, --expthr        : real : 0<E<= 1000. Statistical significance threshold \n"
+		+ "                               for reporting database sequence matches.\n"
+		+ "  -h, --psithr        : real : E-value limit for inclusion in PSSM\n"
+		+ "  -v, --scores        : int  : number of scores to be reported\n"
+		+ "  -b, --alignments    : int  : number of alignments to report\n"
+		+ "  -G, --gapopen       : int  : Gap open penalty\n"
+		+ "  -E, --gapext        : int  : Gap extension penalty\n"
+		+ "      --scoreformat   : str  : score table format for FASTA output\n"
+		+ "      --hsps          :      : enable multiple alignments per-hit, see \n"
+		+ "                               --paramDetail hsps\n"
+		+ "      --nohsps        :      : disable multiple alignments per-hit, see \n"
+		+ "                               --paramDetail hsps\n"
+		+ "      --previousjobid : str  : Job Id for last iteration\n"
+		+ "      --selectedHits  : file : Selected hits from last iteration for building\n" 
+		+ "                               search profile (PSSM)\n"
+		+ "  -R, --cpfile        : file : PSI-BLAST checkpoint from last iteration\n";
 	/** Additional usage information for iterations */
 	private static final String iterationMsg = "Iterations:\n"
 		+ "\n"
@@ -376,6 +381,12 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		else params.setAlignments(new Integer(500));
 		if (line.hasOption("G")) params.setGapopen(new Integer(line.getOptionValue("G"))); 
 		if (line.hasOption("E")) params.setGapext(new Integer(line.getOptionValue("E")));
+		if(line.hasOption("hsps"))
+			params.setHsps(new Boolean(true));
+		else if(line.hasOption("nohsps"))
+			params.setHsps(new Boolean(false));
+		if (line.hasOption("scoreformat"))
+			params.setScoreformat(line.getOptionValue("scoreformat"));
 		if(line.hasOption("previousjobid")) params.setPreviousjobid(line.getOptionValue("previousjobid"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
@@ -403,6 +414,9 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("G", "gapopen", true, "Gap creation penalty");
 		options.addOption("E", "gapext", true, "Gap extension penalty");
 		options.addOption("i", "sequence", true, "Query sequence");
+		options.addOption("hsps", false, "Enable HSPs");
+		options.addOption("nohsps", false, "Disable HSPs");
+		options.addOption("scoreformat", true, "Score table format");
 		options.addOption("previousjobid", true, "Job identifier for previous iteration");
 		options.addOption("selectedHits", true, "Selected hits for building PSSM");
 		options.addOption("R", "cpfile", true, "PSI-BLAST checkpoint");
