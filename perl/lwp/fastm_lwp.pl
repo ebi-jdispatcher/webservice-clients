@@ -78,12 +78,15 @@ GetOptions(
 	'match_scores|r=s' => \$tool_params{'match_scores'}, # Match/missmatch.
 	'gapopen|f=i'    => \$tool_params{'gapopen'},    # Gap creation penalty
 	'gapext|g=i'     => \$tool_params{'gapext'},     # Gap extension penalty
+	'hsps'            => \$params{'hsps'},               # Enable HSPs
+	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
 	'expupperlim|E=f' => \$tool_params{'expupperlim'},  # Upper E-value
 	'explowlim|F=f'  => \$tool_params{'explowlim'},    # Lower E-value
 	'strand=s'       => \$params{'strand'}, # Query strand.
 	'histogram|H'    => \$tool_params{'histogram'},  # Disable histogram
 	'scores|b=i'     => \$tool_params{'scores'},     # Number of scores
 	'alignments|d=i' => \$tool_params{'alignments'}, # Number of alignments
+	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
 	'stats|z=i'      => \$tool_params{'stats'},      # Statistical model
 	'seqrange|S=s'   => \$tool_params{'seqrange'},   # Query with sub-sequence
 	'dbrange|R=s'    => \$tool_params{'dbrange'},    # Restict database seqs.
@@ -625,6 +628,16 @@ sub load_params {
 	# Database(s) to search
 	my (@dbList) = split /[ ,]/, $params{'database'};
 	$tool_params{'database'} = \@dbList;
+
+	# HSPs in output
+	if ( $params{'hsps'} ) {
+		$tool_params{'hsps'} = 1;
+	}
+	elsif ( $params{'nohsps'} ) {
+		$tool_params{'hsps'} = 0;
+	}
+
+	# Compatability options, old command-line
 	# Query sequence type.
 	if($params{'stype'}) {
 		$tool_params{'stype'} = $params{'stype'};
@@ -859,12 +872,17 @@ Search a set of sequence fragments against a sequence database.
   -r, --match_scores : str  : nucleotide match/miss-match scores
   -f, --gapopen      : int  : penalty for gap opening
   -g, --gapext       : int  : penalty for additional residues in a gap
+      --hsps         :      : enable multiple alignments per-hit, see 
+                              --paramDetail hsps
+      --nohsps       :      : disable multiple alignments per-hit, see 
+                              --paramDetail hsps
   -E, --expupperlim  : real : E-value upper limit for hit display
   -F, --explowlim    : real : E-value lower limit for hit display
       --strand       : str  : DNA query strand, see --paramDetail strand
   -H, --histogram    :      : turn off histogram display
   -b, --scores       : int  : maximum number of scores
   -d, --alignments   : int  : maximum number of alignments
+      --scoreformat  : str  : score table format for FASTA output
   -z, --stats        : int  : statistical model, see --getStats
   -S, --seqrange     : str  : search with specified region of query sequence
   -R, --dbrange      : str  : search database sequence within length range

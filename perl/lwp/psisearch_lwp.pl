@@ -81,6 +81,9 @@ GetOptions(
 	'gapopen|G=i'      => \$tool_params{'gapopen'},       # Open gap penalty
 	'gapext|E=i'       => \$tool_params{'gapext'},        # Gap extension penality
 	'mask'             => \$tool_params{'mask'},          # PSSM region masking
+	'hsps'            => \$params{'hsps'},               # Enable HSPs
+	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
 	'sequence|i=s'     => \$params{'sequence'},           # Query sequence
 	'previousjobid=s'  => \$tool_params{'previousjobid'}, # Job Id for last iteration
 	'selectedHits=s'   => \$params{'selectedHits'},       # Selected hits for building PSSM
@@ -716,6 +719,14 @@ Load job parameters from command-line options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
+	# HSPs in output
+	if ( $params{'hsps'} ) {
+		$tool_params{'hsps'} = 1;
+	}
+	elsif ( $params{'nohsps'} ) {
+		$tool_params{'hsps'} = 0;
+	}
+
 	# Compatability options, old command-line
 	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
 		$tool_params{'gapopen'} = $params{'opengap'};
@@ -977,6 +988,11 @@ Rapid sequence database search programs utilizing the PSI-Search algorithm.
   -b, --alignments    : int  : number of alignments to report
   -G, --gapopen       : int  : Gap open penalty
   -E, --gapext        : int  : Gap extension penalty
+      --hsps          :      : enable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --nohsps        :      : disable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --scoreformat   : str  : score table format for FASTA output
       --previousjobid : str  : Job Id for last iteration
       --selectedHits  : file : Selected hits from last iteration for building 
                                search profile (PSSM)

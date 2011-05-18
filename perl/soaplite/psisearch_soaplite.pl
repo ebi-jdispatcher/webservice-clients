@@ -83,6 +83,9 @@ GetOptions(
 	'psithr=f'        => \$tool_params{'psithr'},     # E-value threshold for PSSM
 	'scores|b=i'      => \$tool_params{'scores'},     # Number of scores
 	'alignments|d=i'  => \$tool_params{'alignments'}, # Number of alignments
+	'hsps'            => \$params{'hsps'},               # Enable HSPs
+	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
 	'sequence=s'      => \$params{'sequence'},        # Query sequence file or DB:ID
 	'database=s'      => \$params{'database'},        # Database to search
 	'previousjobid=s' => \$tool_params{'previousjobid'}, # Job Id for last iteration
@@ -748,6 +751,14 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
+	# HSPs in output
+	if ( $params{'hsps'} ) {
+		$tool_params{'hsps'} = 1;
+	}
+	elsif ( $params{'nohsps'} ) {
+		$tool_params{'hsps'} = 0;
+	}
+
 	# Compatability options, old command-line
 	if(!$tool_params{'matrix'} && $params{'matrix'}) {
 		$tool_params{'matrix'} = $params{'matrix'};
@@ -1017,6 +1028,11 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
   -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
   -E, --expthr        : real : E-value limit for hit display
       --psithr        : real : E-value limit for inclusion in PSSM
+      --hsps          :      : enable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --nohsps        :      : disable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --scoreformat   : str  : score table format for FASTA output
       --previousjobid : str  : job identifier from previous iteration
       --selectedHits  : str  : file containing list of hits selected to 
                                create PSSM.
