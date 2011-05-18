@@ -89,7 +89,8 @@ GetOptions(
 	'scores|b=i'     => \$tool_params{'scores'},       # Number of scores
 	'alignments|d=i' => \$tool_params{'alignments'},   # Number of alignments
 	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
-	'stats|z=i'      => \$tool_params{'stats'},        # Statistical model
+	'stats|z=i'      => \$tool_params{'stats'},        # Statistical model.
+	'annotsym|V=s'   => \$tool_params{'annotsym'},     # Annotation symbols.
 	'seqrange|S=s'   => \$tool_params{'seqrange'},     # Query with sub-sequence
 	'dbrange|R=s'    => \$tool_params{'dbrange'},      # Restict database seqs.
 	'filter=s'       => \$tool_params{'filter'},       # Low complexity filter
@@ -989,6 +990,7 @@ Fast protein comparison or fast nucleotide comparison
   -d, --alignments   : int  : maximum number of alignments
       --scoreformat  : str  : score table format for FASTA output
   -z, --stats        : int  : statistical model, see --getStats
+  -V, --annotsym     : str  : annotation symbols in query or database sequence
   -S, --seqrange     : str  : search with specified region of query sequence
   -R, --dbrange      : str  : search database sequence within length range
       --filter       : str  : filter the query sequence for low complexity 
