@@ -78,6 +78,7 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "      --scoreformat  : str  : score table format for FASTA output\n"
 			+ "  -z, --stats        : int  : statistical model for search,\n"
 			+ "                              see --paramDetail stats\n"
+			+ "  -V, --annotsym     : str  : annotation symbols in query or database sequence\n"
 			+ "  -S, --seqrange     : str  : search with specified region of query sequence\n"
 			+ "  -R, --dbrange      : str  : define a subset database by sequence length\n"
 			+ "      --filter       : str  : filter the query sequence for low complexity \n"
@@ -448,6 +449,8 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			params.setScoreformat(line.getOptionValue("scoreformat"));
 		if (line.hasOption("z"))
 			params.setStats(line.getOptionValue("z"));
+		if(line.hasOption("V"))
+			params.setAnnotsym(line.getOptionValue("V"));
 		if (line.hasOption("S"))
 			params.setSeqrange(line.getOptionValue("S"));
 		if (line.hasOption("R"))
@@ -548,6 +551,7 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("d", "alignments", true, "Maximum reported alignments");
 		options.addOption("scoreformat", true, "Score table format");
 		options.addOption("z", "stats", true, "Statistical model for search");
+		options.addOption("V", "annotsym", true, "Annotation symbols");
 		options.addOption("S", "seqrange", true,
 			"Region within the query sequence to search with");
 		options.addOption("R", "dbrange", true,
