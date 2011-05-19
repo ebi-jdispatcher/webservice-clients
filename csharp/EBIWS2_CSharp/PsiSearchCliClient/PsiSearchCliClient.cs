@@ -30,6 +30,11 @@ Iterative profile search using Smith-Waterman (SSEARCH) and PSI-BLAST.
   -s, --matrix        : str  : scoring matrix, see --paramDetail matrix
   -E, --expthr        : real : E-value limit for hit display
       --psithr        : real : E-value limit for inclusion in PSSM
+      --hsps          :      : enable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --nohsps        :      : disable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --scoreformat   : str  : score table format for FASTA output
       --previousjobid : str  : job identifier from previous iteration
       --selectedHits  : str  : file containing list of hits selected to 
                                create PSSM.
@@ -316,6 +321,23 @@ http://www.ebi.ac.uk/support/
 						goto case "--gapext";
 					case "/g":
 						goto case "--gapext";
+					case "--hsps": // Enable HSPs
+						InParams.hsps = true;
+						InParams.hspsSpecified = true;
+						break;
+					case "/hsps":
+						goto case "--hsps";
+					case "--nohsps": // Disable HSPs
+						InParams.hsps = false;
+						InParams.hspsSpecified = true;
+						break;
+					case "/nohsps":
+						goto case "--nohsps";
+					case "--scoreformat": // Score table format in FASTA output.
+						InParams.scoreformat = args[++i];
+						break;
+					case "/scoreformat":
+						goto case "--scoreformat";
 				case "--previousjobid": // Job identifier for prev. iteration
 					InParams.previousjobid = args[++i];
 					break;
