@@ -51,6 +51,7 @@ For more information see:
       --scoreformat   : str  : score table format for FASTA output
   -z, --stats         : int  : statistical model for search,
                                see --paramDetail stats
+  -V, --annotsym      : str  : annotation symbols in query or database sequence
       --seqrange      : str  : search with a region of the query (START-END)
   -M, --dbrange       : str  : define a subset database by sequence length
       --filter        : str  : filter the query sequence for low complexity 
@@ -424,6 +425,15 @@ For more information see:
 						goto case "--stats";
 					case "/z":
 						goto case "--stats";
+					case "--annotsym": // Annotation symbols.
+						InParams.annotsym = args[++i];
+						break;
+					case "/annotsym":
+						goto case "--annotsym";
+					case "-V":
+						goto case "--annotsym";
+					case "/V":
+						goto case "--annotsym";
 					case "--seqrange": // Region in sequence to use for search.
 						InParams.seqrange = args[++i];
 						break;
