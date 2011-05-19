@@ -34,12 +34,17 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
                                match_scores
   -f, --gapopen       : int  : penalty for gap opening
   -g, --gapext        : int  : penalty for additional residues in a gap
+      --hsps          :      : enable multiple alignments per-hit, see 
+                               --paramDetail hsps
+      --nohsps        :      : disable multiple alignments per-hit, see 
+                               --paramDetail hsps
   -E, --eupper        : real : E-value upper limit for hit display
   -F, --elower        : real : E-value lower limit for hit display
       --strand        : str  : query sequence strand to use for search (DNA only)
   -H, --histogram     :      : turn off histogram display
   -b, --scores        : int  : maximum number of scores
   -d, --alignments    : int  : maximum number of alignments
+      --scoreformat   : str  : score table format for FASTA output
   -z, --stats         : int  : statistical model for search,
                                see --paramDetail stats
   -S, --seqrange      : str  : search with a region of the query (START-END)
@@ -266,6 +271,18 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 						goto case "--match_scores";
 					case "/r":
 						goto case "--match_scores";
+					case "--hsps": // Enable HSPs
+						InParams.hsps = true;
+						InParams.hspsSpecified = true;
+						break;
+					case "/hsps":
+						goto case "--hsps";
+					case "--nohsps": // Disable HSPs
+						InParams.hsps = false;
+						InParams.hspsSpecified = true;
+						break;
+					case "/nohsps":
+						goto case "--nohsps";
 					case "--eupper": // Upper E-value threshold
 						InParams.expupperlim = Convert.ToDouble(args[++i]);
 						InParams.expupperlimSpecified = true;
@@ -399,6 +416,11 @@ http://www.ebi.ac.uk/Tools/fastm/help.html
 						goto case "--bottomstrand";
 					case "/i":
 						goto case "--bottomstrand";
+					case "--scoreformat": // Score table format in FASTA output.
+						InParams.scoreformat = args[++i];
+						break;
+					case "/scoreformat":
+						goto case "--scoreformat";
 					case "--stats": // Statistical model
 						InParams.stats = args[++i];
 						break;
