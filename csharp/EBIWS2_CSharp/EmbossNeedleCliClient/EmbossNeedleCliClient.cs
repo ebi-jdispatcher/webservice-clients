@@ -225,16 +225,16 @@ Global pairwise sequence alignment using EMBOSS needle.
 					goto case "--gapopen";
 				case "/g":
 					goto case "--gapopen";
-				case "--gapextend": // Gap extension penalty.
-					InParams.gapextend = Convert.ToSingle(args[++i]);
-					InParams.gapextendSpecified = true;
+				case "--gapext": // Gap extension penalty.
+					InParams.gapext = Convert.ToSingle(args[++i]);
+					InParams.gapextSpecified = true;
 					break;
-				case "/gapextend":
-					goto case "--gapextend";
+				case "/gapext":
+					goto case "--gapext";
 				case "-x":
-					goto case "--gapextend";
+					goto case "--gapext";
 				case "/x":
-					goto case "--gapextend";
+					goto case "--gapext";
 				case "--endweight": // Enable end gap scores.
 					InParams.endweight = true;
 					InParams.endweightSpecified = true;
