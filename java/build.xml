@@ -89,6 +89,7 @@
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-mview" />
 		<antcall target="axis1-stubs-ncbiblast" />
+		<antcall target="axis1-stubs-phobius" />
 		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
@@ -206,6 +207,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-phobius" description="Axis 1.x: generate stubs for Phobius (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.phobius" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/phobius?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-prank" description="Axis 1.x: generate stubs for PRANK (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.prank" />
@@ -245,7 +252,7 @@
 
 	<!-- Compile Axis 1.x code into classes -->
 	<target name="axis1-compile" description="Axis 1.x: compile SOAP clients">
-		<javac target="1.4" source="1.4" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/" />
+		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/" />
 	</target>
 
 	<!-- Package Axis 1.x jars -->
@@ -253,7 +260,7 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- ClustalO -->
+		<!-- TODO ClustalO -->
 		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
@@ -416,7 +423,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- PRANK -->
+		<!-- TODO Phobius -->
+		<!-- TODO PRANK -->
 		<jar destfile="${jar.dir}/PSIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/**">
@@ -489,6 +497,7 @@
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
+		<antcall target="axis1-distclean-stubs-phobius" />
 		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
@@ -605,6 +614,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ncbiblast" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-phobius" description="Axis 1.x: remove Phobius (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/phobius" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="phobius" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-prank" description="Axis 1.x: remove PRANK (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/prank" includes="*/**" />
@@ -665,6 +680,7 @@
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-mview" />
 		<antcall target="jaxws-stubs-ncbiblast" />
+		<antcall target="jaxws-stubs-phobius" />
 		<antcall target="jaxws-stubs-prank" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
@@ -782,6 +798,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-phobius" description="JAX-WS RI: generate stubs for Phobius (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.phobius" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/phobius?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-prank" description="JAX-WS RI: generate stubs for PRANK (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.prank" />
@@ -829,10 +851,10 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- ClustalO -->
-		<!-- ClustalW2 -->
-		<!-- ClustalW2 Phylogeny -->
-		<!-- DbClustal -->
+		<!-- TODO ClustalO -->
+		<!-- TODO ClustalW2 -->
+		<!-- TODO ClustalW2 Phylogeny -->
+		<!-- TODO DbClustal -->
 		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
@@ -841,12 +863,12 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- EMBOSS matcher -->
-		<!-- EMBOSS needle -->
-		<!-- EMBOSS stretcher -->
-		<!-- EMBOSS water -->
-		<!-- FASTA -->
-		<!-- FASTM -->
+		<!-- TODO EMBOSS matcher -->
+		<!-- TODO EMBOSS needle -->
+		<!-- TODO EMBOSS stretcher -->
+		<!-- TODO EMBOSS water -->
+		<!-- TODO FASTA -->
+		<!-- TODO FASTM -->
 		<jar destfile="${jar.dir}/IPRScan_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/iprscan/**">
@@ -857,11 +879,11 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- Kalign -->
-		<!-- lalign -->
-		<!-- MAFFT -->
-		<!-- MUSCLE -->
-		<!-- MView -->
+		<!-- TODO Kalign -->
+		<!-- TODO lalign -->
+		<!-- TODO MAFFT -->
+		<!-- TODO MUSCLE -->
+		<!-- TODO MView -->
 		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
@@ -872,10 +894,11 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- PRANK -->
-		<!-- PSI-BLAST -->
-		<!-- PSI-Search -->
-		<!-- T-COFFEE -->
+		<!-- TODO Phobius -->
+		<!-- TODO PRANK -->
+		<!-- TODO PSI-BLAST -->
+		<!-- TODO PSI-Search -->
+		<!-- TODO T-COFFEE -->
 		<jar destfile="${jar.dir}/WSDbfetch_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/WSDbfetchClient.** uk/ac/ebi/webservices/jaxws/stubs/wsdbfetch/**">
@@ -886,7 +909,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- WU-BLAST -->
+		<!-- TODO WU-BLAST -->
 	</target>
 
 	<!-- Clean-up JAX-WS generated files -->
@@ -909,6 +932,7 @@
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-mview" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
+		<antcall target="jaxws-distclean-stubs-phobius" />
 		<antcall target="jaxws-distclean-stubs-prank" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
 		<antcall target="jaxws-distclean-stubs-psisearch" />
@@ -1022,6 +1046,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-phobius" description="JAX-WS RI: remove Phobius (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/phobius" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="phobius" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-prank" description="JAX-WS RI: remove PRANK (SOAP) stubs">
