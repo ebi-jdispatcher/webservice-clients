@@ -8,8 +8,8 @@
 package uk.ac.ebi.webservices.axis1;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -256,20 +256,6 @@ public class EBeyeClient {
 			System.err.println(msg);
 		}
 	}
-
-//	/**
-//	 * Get an instance of the service proxy to use with other methods.
-//	 * 
-//	 * @throws javax.xml.rpc.ServiceException
-//	 */
-//	private void srvProxyConnect() throws javax.xml.rpc.ServiceException {
-//		printDebugMessage("srvProxyConnect", "Begin", 2);
-//		if (this.srvProxy == null) {
-//			EBISearchService_Service service = new EBISearchService_ServiceLocator();
-//			this.srvProxy = service.getEBISearchServiceHttpPort();
-//		}
-//		printDebugMessage("srvProxyConnect", "End", 2);
-//	}
 	
 	/** Ensure that a service proxy is available to call the web service.
 	 * 
@@ -316,19 +302,15 @@ public class EBeyeClient {
 	 * @param sepListStr Set of characters to use as separators.
 	 * @return Array of strings.
 	 */
-	// @SuppressWarnings("unchecked")
 	private String[] splitString(String inStr, String sepListStr) {
 		printDebugMessage("splitString", "Begin", 11);
 		String[] retVal = null;
-		Vector vec = new Vector();
+		ArrayList<String> list = new ArrayList<String>();
 		StringTokenizer tok = new StringTokenizer(inStr, sepListStr);
 		while (tok.hasMoreTokens()) {
-			vec.add(tok.nextToken());
+			list.add(tok.nextToken());
 		}
-		retVal = new String[vec.size()];
-		for (int i = 0; i < vec.size(); i++) {
-			retVal[i] = (String) vec.elementAt(i);
-		}
+		retVal = list.toArray(new String[list.size()]);
 		printDebugMessage("splitString", "End", 11);
 		return retVal;
 	}
