@@ -70,6 +70,9 @@
     <Compile Include="EmbossStretcherClient.cs" />
     <Compile Include="EmbossWaterClient.cs" />
     <Compile Include="LalignClient.cs" />
+    <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
+    <Compile Include="WebReferences\Phobius\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -95,6 +98,9 @@
     <None Include="WebReferences\EmbossStretcherWs\Reference.map" />
     <None Include="WebReferences\EmbossWaterWs\Reference.map" />
     <None Include="WebReferences\LalignWs\Reference.map" />
+    <None Include="WebReferences\PrankWs\Reference.map" />
+    <None Include="WebReferences\ClustalOWs\Reference.map" />
+    <None Include="WebReferences\Phobius\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

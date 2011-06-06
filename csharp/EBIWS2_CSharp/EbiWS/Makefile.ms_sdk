@@ -63,6 +63,7 @@ WSDbfetchClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
+$(STUBSRCDIR)\ClustalOWs\Reference.cs \
 $(STUBSRCDIR)\ClustalW2PhylogenyWs\Reference.cs \
 $(STUBSRCDIR)\ClustalW2Ws\Reference.cs \
 $(STUBSRCDIR)\DbClustalWs\Reference.cs \
@@ -80,6 +81,8 @@ $(STUBSRCDIR)\MafftWs\Reference.cs \
 $(STUBSRCDIR)\MuscleWs\Reference.cs \
 $(STUBSRCDIR)\MViewWs\Reference.cs \
 $(STUBSRCDIR)\NcbiBlastWs\Reference.cs \
+$(STUBSRCDIR)\PhobiusWs\Reference.cs \
+$(STUBSRCDIR)\PrankWs\Reference.cs \
 $(STUBSRCDIR)\PsiBlastWs\Reference.cs \
 $(STUBSRCDIR)\PsiSearchWs\Reference.cs \
 $(STUBSRCDIR)\TcoffeeWs\Reference.cs \
@@ -95,6 +98,9 @@ $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
 	$(CSC) $(CSFLAGS) /target:library /out:$@ $(coreSrc) $(stubSrc)
 
 ### Generate web service stubs ###
+
+$(STUBSRCDIR)\ClustalOWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalOWs /out:$@ "$(WSDLBASE)/clustalo?wsdl"
 
 $(STUBSRCDIR)\ClustalW2PhylogenyWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2PhylogenyWs /out:$@ "$(WSDLBASE)/clustalw2_phylogeny?wsdl"
@@ -146,6 +152,12 @@ $(STUBSRCDIR)\MViewWs\Reference.cs:
 
 $(STUBSRCDIR)\NcbiBlastWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+
+$(STUBSRCDIR)\PhobiusWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PhobiusWs /out:$@ "$(WSDLBASE)/phobius?wsdl"
+
+$(STUBSRCDIR)\PrankWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PrankWs /out:$@ "$(WSDLBASE)/prank?wsdl"
 
 $(STUBSRCDIR)\PsiBlastWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).PsiBlastWs /out:$@ "$(WSDLBASE)/psiblast?wsdl"
