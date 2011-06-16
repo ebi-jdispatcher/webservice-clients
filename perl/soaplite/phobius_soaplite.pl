@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/pfa/phobius_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -78,6 +78,7 @@ GetOptions(
 	# Tool specific options
 	'stype|m=s'     => \$tool_params{'stype'},     # Molecule type (protein)
 	'format|f=s'    => \$tool_params{'format'},    # output format (short|long|grp|raw)
+	'sequence=s'    => \$params{'sequence'},       # Query sequence file or DB:ID
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
