@@ -59,7 +59,7 @@ use MIME::Base64;
 use Data::Dumper;
 
 # WSDL URL for service
-my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/phobius?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/phobius?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
