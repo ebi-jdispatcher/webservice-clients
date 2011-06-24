@@ -9,10 +9,10 @@ all: EbiWS \
 ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
-EmbossMatcherCliClient\bin\Relelase\EmbossMatcherCliClient.exe \
-EmbossNeedleCliClient\bin\Relelase\EmbossNeedleCliClient.exe \
-EmbossStretcherCliClient\bin\Relelase\EmbossStretcherCliClient.exe \
-EmbossWaterCliClient\bin\Relelase\EmbossWaterCliClient.exe \
+EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
+EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
+EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
+EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
@@ -21,6 +21,7 @@ LalignCliClient\bin\Release\LalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
+PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
@@ -75,6 +76,9 @@ MuscleCliClient\bin\Release\MuscleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
+PhobiusCliClient\bin\Release\PhobiusCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk
+
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -107,6 +111,7 @@ clean:
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd TcoffeeBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -130,6 +135,7 @@ distclean:
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean

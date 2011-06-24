@@ -25,6 +25,7 @@ build-LalignCliClient \
 build-MafftCliClient \
 build-MuscleCliClient \
 build-NcbiBlastCliClient \
+build-PhobiusCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
 build-TcoffeeCliClient \
@@ -79,6 +80,9 @@ build-MuscleCliClient: build-EbiWS
 build-NcbiBlastCliClient: build-EbiWS
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono
 
+build-PhobiusCliClient: build-EbiWS
+	cd PhobiusCliClient && $(MAKE) -f Makefile.mono
+
 build-PsiBlastCliClient: build-EbiWS
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono
 
@@ -113,6 +117,7 @@ clean-LalignCliClient \
 clean-MafftCliClient \
 clean-MuscleCliClient \
 clean-NcbiBlastCliClient \
+clean-PhobiusCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
 clean-TcoffeeCliClient \
@@ -167,6 +172,9 @@ clean-MuscleCliClient:
 clean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-PhobiusCliClient:
+	cd PhobiusCliClient && $(MAKE) -f Makefile.mono clean
+	
 clean-PsiBlastCliClient:
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -196,6 +204,7 @@ distclean-KalignCliClient \
 distclean-MafftCliClient \
 distclean-MuscleCliClient \
 distclean-NcbiBlastCliClient \
+distclean-PhobiusCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
 distclean-TcoffeeCliClient \
@@ -234,6 +243,9 @@ distclean-MuscleCliClient:
 
 distclean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PhobiusCliClient:
+	cd PhobiusCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-PsiBlastCliClient:
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono distclean
