@@ -27,6 +27,7 @@ LalignCliClient.exe \
 MafftCliClient.exe \
 MuscleCliClient.exe \
 NcbiBlastCliClient.exe \
+PhobiusCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
 TcoffeeCliClient.exe \
@@ -95,6 +96,10 @@ MuscleCliClient.exe: EbiWS.dll
 
 NcbiBlastCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/NcbiBlastCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+PhobiusCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PhobiusCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 PsiBlastCliClient.exe: EbiWS.dll
