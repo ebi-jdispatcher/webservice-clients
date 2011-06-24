@@ -36,6 +36,7 @@
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\EBeyeWs\Reference.cs" />
     <Compile Include="EBeyeClient.cs" />
+    <Compile Include="WebReferences\PhobiusWs\Reference.cs" />
     <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />
     <Compile Include="WebReferences\PsiSearchWs\Reference.cs" />
     <Compile Include="WebReferences\ClustalW2Ws\Reference.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="KalignClient.cs" />
     <Compile Include="MafftClient.cs" />
     <Compile Include="MuscleClient.cs" />
+    <Compile Include="PhobiusClient.cs" />
     <Compile Include="PsiBlastClient.cs" />
     <Compile Include="PsiSearchClient.cs" />
     <Compile Include="TcoffeeClient.cs" />
@@ -72,7 +74,6 @@
     <Compile Include="LalignClient.cs" />
     <Compile Include="WebReferences\PrankWs\Reference.cs" />
     <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
-    <Compile Include="WebReferences\Phobius\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -80,6 +81,7 @@
     <None Include="WebReferences\FastaWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
     <None Include="WebReferences\EBeyeWs\Reference.map" />
+    <None Include="WebReferences\PhobiusWs\Reference.map" />
     <None Include="WebReferences\PsiBlastWs\Reference.map" />
     <None Include="WebReferences\PsiSearchWs\Reference.map" />
     <None Include="WebReferences\ClustalW2Ws\Reference.map" />
@@ -100,7 +102,6 @@
     <None Include="WebReferences\LalignWs\Reference.map" />
     <None Include="WebReferences\PrankWs\Reference.map" />
     <None Include="WebReferences\ClustalOWs\Reference.map" />
-    <None Include="WebReferences\Phobius\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

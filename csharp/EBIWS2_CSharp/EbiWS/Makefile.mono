@@ -51,6 +51,7 @@ LalignClient.cs \
 MafftClient.cs \
 MuscleClient.cs \
 NcbiBlastClient.cs \
+PhobiusClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
 TcoffeeClient.cs \
