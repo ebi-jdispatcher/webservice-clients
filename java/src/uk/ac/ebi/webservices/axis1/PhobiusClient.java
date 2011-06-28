@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * JDispatcher FASTA (SOAP) web service Java client using Axis 1.x.
+ * JDispatcher Phobius (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -14,21 +14,12 @@ import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.phobius.*;
 
-/**
- * <p>
- * JDispatcher Phobius (SOAP) web service Java client using Apache Axis 1.x.
- * </p>
+/** <p>JDispatcher Phobius (SOAP) web service Java client using Apache Axis 1.x.</p>
  * 
- * <p>
- * See:
- * </p>
+ * <p>See:</p>
  * <ul>
- * <li><a
- * href="http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap">http
- * ://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap</a></li>
- * <li><a
- * href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java"
- * >http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
  */
@@ -36,7 +27,7 @@ public class PhobiusClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Client version/revision */
-	private String revision = "$Revision: 1868 $";
+	private String revision = "$Revision$";
 	/** Tool specific usage message */
 	private static final String usageMsg = "Phobius\n"
 			+ "=====\n"
