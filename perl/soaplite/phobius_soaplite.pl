@@ -76,7 +76,6 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'stype|m=s'     => \$tool_params{'stype'},     # Molecule type (protein)
 	'format|f=s'    => \$tool_params{'format'},    # output format (short|long|grp|raw)
 	'sequence=s'    => \$params{'sequence'},       # Query sequence file or DB:ID
 	
@@ -164,7 +163,7 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-'$Revision: 1883 $' =~ m/(\d+)/;
+'$Revision$' =~ m/(\d+)/;
 $soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
@@ -937,7 +936,6 @@ Prediction of transmembrane topology and signal peptides from the amino acid seq
                                identifier list file)
 
 [Optional]
-  -m, --stype         : str  : query sequence type (protein)
   -f, --format        : str  : output format (short|long|grp|raw)
 
 [General]
