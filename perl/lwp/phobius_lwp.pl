@@ -72,7 +72,6 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'stype|m=s'     => \$tool_params{'stype'},       # Molecule type (protein)
 	'format|f=s'    => \$tool_params{'format'},      # output format (short|long|grp|raw)
 	'sequence=s'    => \$params{'sequence'},         # Query sequence
 
@@ -205,7 +204,7 @@ sub rest_request {
 
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	'$Revision: 1885 $' =~ m/(\d+)/;
+	'$Revision$' =~ m/(\d+)/;
 	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
 
@@ -912,7 +911,6 @@ Prediction of transmembrane topology and signal peptides from the amino acid seq
                               identifier list file)
 
 [Optional]
-  -m, --stype         : str  : query sequence type (protein)
   -f, --format        : str  : output format (short|long|grp|raw)
 
 [General]
