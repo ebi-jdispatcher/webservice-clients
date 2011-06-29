@@ -6,7 +6,7 @@ ncbiblast_soaplite.pl
 
 =head1 DESCRIPTION
 
-NCBI BLAST SOAP web service Perl client using L<SOAP::Lite>.
+NCBI BLAST (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

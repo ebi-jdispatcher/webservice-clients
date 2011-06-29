@@ -6,7 +6,7 @@ ebeye_soaplite.pl
 
 =head1 DESCRIPTION
 
-EB-eye SOAP client using L<SOAP::Lite>
+EB-eye (SOAP) client using L<SOAP::Lite>
 
 Tested with:
 

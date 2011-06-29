@@ -6,7 +6,7 @@ psiblast_soaplite.pl
 
 =head1 DESCRIPTION
 
-NCBI PSI-BLAST SOAP web service Perl client using L<SOAP::Lite>.
+NCBI PSI-BLAST (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

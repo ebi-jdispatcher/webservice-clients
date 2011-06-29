@@ -6,7 +6,7 @@ mafft_soaplite.pl
 
 =head1 DESCRIPTION
 
-MAFFT SOAP web service Perl client using L<SOAP::Lite>.
+MAFFT (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

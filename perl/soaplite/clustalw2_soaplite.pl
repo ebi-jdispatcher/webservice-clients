@@ -6,7 +6,7 @@ clustalw2_soaplite.pl
 
 =head1 DESCRIPTION
 
-ClustalW 2 SOAP web service Perl client using L<SOAP::Lite>.
+ClustalW 2 (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

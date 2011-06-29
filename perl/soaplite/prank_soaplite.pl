@@ -6,7 +6,7 @@ prank_soaplite.pl
 
 =head1 DESCRIPTION
 
-PRANK SOAP web service Perl client using L<SOAP::Lite>.
+PRANK (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

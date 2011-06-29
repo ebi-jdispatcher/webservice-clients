@@ -6,7 +6,7 @@ tcoffee_soaplite.pl
 
 =head1 DESCRIPTION
 
-T-COFFEE SOAP web service Perl client using L<SOAP::Lite>.
+T-COFFEE (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

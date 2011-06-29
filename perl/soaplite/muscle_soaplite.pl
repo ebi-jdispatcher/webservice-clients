@@ -6,7 +6,7 @@ muscle_soaplite.pl
 
 =head1 DESCRIPTION
 
-MUSCLE SOAP web service Perl client using L<SOAP::Lite>.
+MUSCLE (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

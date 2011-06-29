@@ -6,7 +6,7 @@ kalign_soaplite.pl
 
 =head1 DESCRIPTION
 
-Kalign SOAP web service Perl client using L<SOAP::Lite>.
+Kalign (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

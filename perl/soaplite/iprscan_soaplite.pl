@@ -6,7 +6,7 @@ iprscan_soaplite.pl
 
 =head1 DESCRIPTION
 
-InterProScan SOAP web service Perl client using L<SOAP::Lite>.
+InterProScan (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

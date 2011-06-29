@@ -6,7 +6,7 @@ psisearch_soaplite.pl
 
 =head1 DESCRIPTION
 
-PSI-Search SOAP web service Perl client using L<SOAP::Lite>.
+PSI-Search (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

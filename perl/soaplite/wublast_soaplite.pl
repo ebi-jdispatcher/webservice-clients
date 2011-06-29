@@ -6,7 +6,7 @@ wublast_soaplite.pl
 
 =head1 DESCRIPTION
 
-WU-BLAST SOAP web service Perl client using L<SOAP::Lite>.
+WU-BLAST (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 

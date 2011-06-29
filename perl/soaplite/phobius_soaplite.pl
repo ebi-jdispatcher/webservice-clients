@@ -6,7 +6,7 @@ phobius_soaplite.pl
 
 =head1 DESCRIPTION
 
-PhobiusSOAP web service Perl client using L<SOAP::Lite>.
+Phobius (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 
