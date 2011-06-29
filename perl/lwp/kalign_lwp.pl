@@ -6,7 +6,7 @@ kalign_lwp.pl
 
 =head1 DESCRIPTION
 
-Kalign REST web service Perl client using L<LWP>.
+Kalign (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

@@ -6,7 +6,7 @@ iprscan_lwp.pl
 
 =head1 DESCRIPTION
 
-InterProScan REST web service Perl client using L<LWP>.
+InterProScan (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

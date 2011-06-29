@@ -6,7 +6,7 @@ muscle_lwp.pl
 
 =head1 DESCRIPTION
 
-MUSCLE REST web service Perl client using L<LWP>.
+MUSCLE (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

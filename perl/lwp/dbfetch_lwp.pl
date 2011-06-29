@@ -6,7 +6,7 @@ dbfetch_lwp.pl
 
 =head1 DESCRIPTION
 
-dbfetch REST web service Perl client using L<LWP>.
+dbfetch (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

@@ -6,7 +6,7 @@ tcoffee_lwp.pl
 
 =head1 DESCRIPTION
 
-T-Coffee REST web service Perl client using L<LWP>.
+T-Coffee (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

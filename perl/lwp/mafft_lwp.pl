@@ -6,7 +6,7 @@ mafft_lwp.pl
 
 =head1 DESCRIPTION
 
-MAFFT REST web service Perl client using L<LWP>.
+MAFFT (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

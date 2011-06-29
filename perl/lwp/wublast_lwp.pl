@@ -6,7 +6,7 @@ wublast_lwp.pl
 
 =head1 DESCRIPTION
 
-WU-BLAST REST web service Perl client using L<LWP>.
+WU-BLAST (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

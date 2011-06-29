@@ -6,7 +6,7 @@ clustalw2_lwp.pl
 
 =head1 DESCRIPTION
 
-ClustalW 2 REST web service Perl client using L<LWP>.
+ClustalW 2 (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

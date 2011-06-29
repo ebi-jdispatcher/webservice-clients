@@ -6,7 +6,7 @@ ncbiblast_lwp.pl
 
 =head1 DESCRIPTION
 
-NCBI BLAST REST web service Perl client using L<LWP>.
+NCBI BLAST (REST) web service Perl client using L<LWP>.
 
 Tested with:
 

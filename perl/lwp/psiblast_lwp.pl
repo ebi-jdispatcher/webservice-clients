@@ -6,7 +6,7 @@ psiblast_lwp.pl
 
 =head1 DESCRIPTION
 
-NCBI PSI-BLAST REST web service Perl client using L<LWP>.
+NCBI PSI-BLAST (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
