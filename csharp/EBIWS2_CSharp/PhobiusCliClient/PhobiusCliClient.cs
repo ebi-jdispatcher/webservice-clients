@@ -29,8 +29,6 @@ For more information see:
 
 [Optional]
 
-  -m, --stype       : str  : query sequence type (protein), see --paramDetail
-                             stype
   -f, --format      : str  : output format (short|long|grp|raw) see 
                              --paramDetail format
       --multifasta  :      : treat input as a set of fasta formatted sequences
@@ -219,16 +217,6 @@ For more information see:
 					goto case "--multifasta";
 
 						// Tool specific options
-					case "--stype": // Input sequence type
-						InParams.stype = args[++i];
-						Action = "submit";
-						break;
-					case "/stype":
-						goto case "--stype";
-					case "-m":
-						goto case "--stype";
-					case "/m":
-						goto case "--stype";
 					case "--format": // Format
 						InParams.format = args[++i];
 						break;
