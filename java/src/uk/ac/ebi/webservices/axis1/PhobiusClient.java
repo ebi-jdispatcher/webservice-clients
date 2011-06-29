@@ -45,7 +45,6 @@ public class PhobiusClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "\n"
 			+ "[Optional]\n"
 			+ "\n"
-			+ "  -m, --stype          : str  : query sequence type (protein), see --paramDetail stype\n"
 			+ "  -f, --format         : str  : output format (short|long|grp|raw) see --paramDetail format\n"
 			+ "      --multifasta   :      : treat input as a set of fasta formatted sequences\n";
 
@@ -361,13 +360,8 @@ public class PhobiusClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	public InputParameters loadParams(CommandLine line) throws IOException {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
-		// Tool specific options
-		if (line.hasOption("stype"))
-			params.setStype(line.getOptionValue("stype"));
-		else if (line.hasOption("m"))
-			params.setStype(line.getOptionValue("m"));
-		
-		if (line.hasOption("f"))
+		// Tool specific options		
+		if (line.hasOption("format"))
 			params.setFormat(line.getOptionValue("f"));
 		else if (line.hasOption("f"))
 			params.setFormat(line.getOptionValue("format"));
@@ -438,7 +432,6 @@ public class PhobiusClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			"Get list of identifiers from result");
 		// Application specific options
 		options.addOption("program", true, "Search program");
-		options.addOption("m", "stype", true, "Sequence type");
 		options.addOption("f", "format", true, "Output format");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command
