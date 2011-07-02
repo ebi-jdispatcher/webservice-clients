@@ -635,7 +635,7 @@ sub load_data {
 			$retSeq = $ARGV[0];
 		}
 	}
-	if ( $params{'sequence'} ) {                   # Via --sequence
+	elsif ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			$retSeq = &read_file( $params{'sequence'} );
 		}
@@ -837,8 +837,9 @@ standard input.
 =cut
 
 sub read_file {
-	print_debug_message( 'read_file', 'Begin', 1 );
+	print_debug_message( 'read_file', 'Begin', 11 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 12 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -853,7 +854,8 @@ sub read_file {
 		}
 		close($FILE);
 	}
-	print_debug_message( 'read_file', 'End', 1 );
+	print_debug_message( 'read_file', 'length(content): ' . length($content), 12 );
+	print_debug_message( 'read_file', 'End', 11 );
 	return $content;
 }
 
@@ -867,7 +869,7 @@ standard output.
 =cut
 
 sub write_file {
-	print_debug_message( 'write_file', 'Begin', 1 );
+	print_debug_message( 'write_file', 'Begin', 11 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
@@ -881,7 +883,7 @@ sub write_file {
 		syswrite( $FILE, $data );
 		close($FILE);
 	}
-	print_debug_message( 'write_file', 'End', 1 );
+	print_debug_message( 'write_file', 'End', 11 );
 }
 
 =head2 usage()
