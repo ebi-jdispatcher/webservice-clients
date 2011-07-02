@@ -4,17 +4,98 @@
 #
 # ======================================================================
 
-#PERL = perl
-PERL = /ebi/extserv/bin/perl/bin/perl
+PERL = perl
+#PERL = /ebi/extserv/bin/perl/bin/perl
+#PERL = /ebi/extserv/bin/perl-5.10.1/bin/perl
 #PERL = /sw/arch/bin/perl
 #EMAIL = email@example.org
 EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: clustalw2 fasta fastm iprscan kalign mafft muscle ncbiblast psiblast psisearch tcoffee wublast
-# TODO: dbfetch prank
+all: \
+dbfetch \
+msa \
+pfa \
+phylogeny \
+psa \
+sss
 
-clean: clustalw2_clean fasta_clean fastm_clean iprscan_clean kalign_clean mafft_clean muscle_clean ncbiblast_clean psiblast_clean psisearch_clean tcoffee_clean wublast_clean
+clean: \
+dbfetch_clean \
+msa_clean \
+pfa_clean \
+phylogeny_clean \
+psa_clean \
+sss_clean
+
+# Multiple Sequence Alignment (MSA)
+msa: \
+clustalw2 \
+dbclustal \
+kalign \
+mafft \
+muscle \
+mview \
+prank \
+tcoffee \
+
+msa_clean: \
+clustalw2_clean \
+dbclustal_clean \
+kalign_clean \
+mafft_clean \
+muscle_clean \
+mview_clean \
+prank_clean \
+tcoffee_clean
+
+# Protein Function Analysis (PFA)
+pfa: \
+iprscan \
+phobius
+
+pfa_clean: \
+iprscan_clean \
+phobius_clean
+
+# Phylogeny
+phylogeny: \
+clustalw2phylogeny
+
+phylogeny_clean: \
+clustalw2phylogeny_clean
+
+# Pairwise Sequence Alignment (PSA)
+psa: \
+emboss_matcher \
+emboss_needle \
+emboss_stretcher \
+emboss_water \
+lalign
+
+psa_clean: \
+emboss_matcher_clean \
+emboss_needle_clean \
+emboss_stretcher_clean \
+emboss_water_clean \
+lalign_clean
+
+# Sequence Similarity Search (SSS)
+sss: \
+fasta \
+fastm \
+ncbiblast \
+psiblast \
+psisearch \
+wublast
+
+sss_clean: \
+fasta_clean \
+fastm_clean \
+ncbiblast_clean \
+psiblast_clean \
+psisearch_clean \
+wublast_clean
 
 # ClustalW 2.0.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
@@ -33,6 +114,20 @@ clustalw2_align_stdin_stdout:
 
 clustalw2_clean:
 	rm -f clustalw2-*
+
+# TODO: ClustalW 2.x Phylogeny
+clustalw2phylogeny:
+	echo 'TODO:' $@
+
+clustalw2phylogeny_clean:
+	rm -f clustalw2phylogeny-*
+
+# TODO: DbClustal
+dbclustal:
+	echo 'TODO:' $@
+
+dbclustal_clean:
+	rm -f dbclustal-*
 
 # dbfetch
 dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
@@ -62,8 +157,7 @@ dbfetch_clean:
 	rm -f dbfetch-*
 
 # EMBOSS matcher
-emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid
-# TODO: emboss_matcher_file
+emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
 
 emboss_matcher_params:
 	${PERL} emboss_matcher_lwp.pl --params
@@ -74,12 +168,14 @@ emboss_matcher_param_detail:
 emboss_matcher_dbid:
 	${PERL} emboss_matcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_matcher_file:
+	echo 'TODO:' $@
+
 emboss_matcher_clean:
 	rm -f emboss_matcher-*
 
 # EMBOSS needle
-emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid
-# TODO: emboss_needle_file
+emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid emboss_needle_file
 
 emboss_needle_params:
 	${PERL} emboss_needle_lwp.pl --params
@@ -90,12 +186,14 @@ emboss_needle_param_detail:
 emboss_needle_dbid:
 	${PERL} emboss_needle_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_needle_file:
+	echo 'TODO:' $@
+
 emboss_needle_clean:
 	rm -f emboss_needle-*
 
 # EMBOSS stretcher
-emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid
-# TODO: emboss_stretcher_file
+emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
 
 emboss_stretcher_params:
 	${PERL} emboss_stretcher_lwp.pl --params
@@ -106,12 +204,14 @@ emboss_stretcher_param_detail:
 emboss_stretcher_dbid:
 	${PERL} emboss_stretcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_stretcher_file:
+	echo 'TODO:' $@
+
 emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
 
 # EMBOSS water
-emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid
-# TODO: emboss_water_file
+emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
 
 emboss_water_params:
 	${PERL} emboss_water_lwp.pl --params
@@ -121,6 +221,9 @@ emboss_water_param_detail:
 
 emboss_water_dbid:
 	${PERL} emboss_water_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_water_file:
+	echo 'TODO:' $@
 
 emboss_water_clean:
 	rm -f emboss_water-*
@@ -216,8 +319,7 @@ kalign_clean:
 	rm -f kalign-*
 
 # lalign
-lalign: lalign_params lalign_param_detail lalign_dbid
-# TODO: lalign_file
+lalign: lalign_params lalign_param_detail lalign_dbid lalign_file
 
 lalign_params:
 	${PERL} lalign_lwp.pl --params
@@ -227,6 +329,9 @@ lalign_param_detail:
 
 lalign_dbid:
 	${PERL} lalign_lwp.pl --email ${EMAIL} --stype protein --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+lalign_file:
+	echo 'TODO:' $@
 
 lalign_clean:
 	rm -f lalign-*
@@ -267,6 +372,13 @@ muscle_stdin_stdout:
 muscle_clean:
 	rm -f muscle-*
 
+# TODO: MView
+mview:
+	echo 'TODO:' $@
+
+mview_clean:
+	rm -f mview-*
+
 # NCBI BLAST
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_multifasta_file
 
@@ -293,6 +405,13 @@ ncbiblast_multifasta_file:
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
+
+# TODO: Phobius
+phobius:
+	echo 'TODO:' $@
+
+phobius_clean:
+	rm -f phobius-*
 
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout
@@ -338,6 +457,10 @@ psisearch_clean:
 
 # TODO PRANK
 prank:
+	echo 'TODO:' $@
+
+prank_clean:
+	rm -f prank-*
 
 # T-Coffee
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
