@@ -71,42 +71,44 @@ my %params = ( 'debugLevel' => 0 );
 # Default parameter values (should get these from the service)
 my %tool_params = ();
 GetOptions(
-
-	# Tool specific options
-	'stype=s'       => \$tool_params{'stype'},      # Sequence type
-	'format=s'      => \$tool_params{'format'},     # Output format
+    # Tool specific options
     'sequence=s'    => \$params{'sequence'},        # Input sequences/alignment
-    'treeFile=s'    => \$params{'treeFile'},        # Input tree
-    'skipInsertions' => \$tool_params{'skipInsertions'}, # Skip insertions
-    'dots'          => \$tool_params{'dots'},       # Use '.' for gaps
-    'gaprate=f'     => \$tool_params{'gaprate'},    # Gap opening rate
-    'gapext=f'      => \$tool_params{'gapext'},     # Gap extension probability
-    'kappa=i'       => \$tool_params{'kappa'},      # TS/TV Rate Ratio
-    'rho=i'         => \$tool_params{'rho'},        # PUR/PYR Rate Ratio
-    'codon'         => \$tool_params{'codon'},      # Codon
-    'termgap'       => \$tool_params{'termgap'},    # Penalise terminal gaps
-    'nopost'        => \$tool_params{'nopost'},     # Do not compute posterior support
-    'pwdist=f'      => \$tool_params{'pwdist'},     # Expected pairwise distance for guidetree
-    'iterations=s'  => \$tool_params{'iterations'}, # Number of iterations
-    'skipInsertionsPost' => \$tool_params{'skipInsertionsPost'}, # Skip insertions Post
-    'uselogs'       => \$tool_params{'uselogs'},    # Use Logs
-    'writeanc'      => \$tool_params{'writeanc'},   # Output ancestral sequences
-    'printnodes'    => \$tool_params{'printnodes'}, # Output each node
-    'matresize=i'   => \$tool_params{'matresize'},  # Matrix Resizing Multiplier
-    'maxinitsize=i' => \$tool_params{'maxinitsize'}, # Matrix Initial Size Multiplier
-    'longseq'       => \$tool_params{'longseq'},    # Save space in pairwise alignments
-    'pwgenomic'     => \$tool_params{'pwgenomic'},  # Do pairwise alignment, no guidetree
-    'pwgenomicdist=f' => \$tool_params{'pwgenomicdist'}, # Distance for pairwise alignment
-    'scalebranches=i' => \$tool_params{'scalebranches'}, # Scale branch lengths
-    'fixedbranches=i' => \$tool_params{'fixedbranches'}, # Fixed branch length
-    'maxbranches=i'   => \$tool_params{'maxbranches'}, # Maximum branch length
-    'realbranches'  => \$tool_params{'realbranches'}, # Disable branch length truncation
-    'seed=i'        => \$tool_params{'seed'},       # Random number seed
-    'translate'     => \$tool_params{'translate'},  # Translate to protein
-    'mttranslate'   => \$tool_params{'mttranslate'}, # Translate to protein using MT table
-
-	# Compatability options (old command-line)
-    'outorder=s'    => \$params{'outorder'},     # Order of sequences in alignment
+    'data_file=s'   => \$params{'data_file'},
+    'tree_file=s'   => \$params{'tree_file'},
+    'do_njtree'     => \$tool_params{'do_njtree'},
+    'do_clustalw_tree' => \$tool_params{'do_clustalw_tree'},
+    'model_file=s'    => \$params{'model_file'},
+    'output_format=s' => \$tool_params{'output_format'}, # Output format.
+    'trust_insertions' => \$tool_params{'trust_insertions'},
+    'show_insertions_with_dots' => \$tool_params{'show_insertions_with_dots'},
+    'use_log_space' => \$tool_params{'use_log_space'},
+    'use_codon_model' => \$tool_params{'use_codon_model'},
+    'translate_DNA' => \$tool_params{'translate_DNA'},
+    'mt_translate_DNA' => \$tool_params{'mt_translate_DNA'},
+    'gap_rate=f' => \$tool_params{'gap_rate'},
+    'gap_extension=f' => \$tool_params{'gap_extension'},
+    'tn93_kappa=f' => \$tool_params{'tn93_kappa'},
+    'tn93_rho=f' => \$tool_params{'tn93_rho'},
+    'guide_pairwise_distance=f' => \$tool_params{'guide_pairwise_distance'},
+    'max_pairwise_distance=f' => \$tool_params{'max_pairwise_distance'},
+    'branch_length_scaling=f' => \$tool_params{'branch_length_scaling'},
+    'branch_length_fixed=f' => \$tool_params{'branch_length_fixed'},
+    'branch_length_maximum=f' => \$tool_params{'branch_length_maximum'},
+    'use_real_branch_lengths' => \$tool_params{'use_real_branch_lengths'},
+    'do_no_posterior' => \$tool_params{'do_no_posterior'},
+    'run_once' => \$tool_params{'run_once'},
+    'run_twice' => \$tool_params{'run_twice'},
+    'penalise_terminal_gaps' => \$tool_params{'penalise_terminal_gaps'},
+    'do_posterior_only' => \$tool_params{'do_posterior_only'},
+    'use_chaos_anchors' => \$tool_params{'use_chaos_anchors'},
+    'minimum_anchor_distance=i' => \$tool_params{'minimum_anchor_distance'},
+    'maximum_anchor_distance=i' => \$tool_params{'maximum_anchor_distance'},
+    'skip_anchor_distance=i' => \$tool_params{'skip_anchor_distance'},
+    'drop_anchor_distance=i' => \$tool_params{'drop_anchor_distance'},
+    'output_ancestors' => \$tool_params{'output_ancestors'},
+    'noise_level=i' => \$tool_params{'noise_level'},
+    'stay_quiet' => \$tool_params{'stay_quiet'},
+    'random_seed=i' => \$tool_params{'random_seed'},
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -646,7 +648,12 @@ sub load_data {
 		}
 	}
 	# Named argument
-	$retSeq = &load_param_file($params{'sequence'});
+	if($params{'sequence'}) {
+	    $retSeq = &load_param_file($params{'sequence'});
+	}
+	elsif($params{'data_file'}) {
+	    $retSeq = &load_param_file($params{'data_file'});
+	}
 	
 	print_debug_message( 'load_seq_data', 'End', 1 );
 	return $retSeq;
@@ -665,6 +672,7 @@ sub load_param_file {
 	my $retData = undef;
 	my $paramData = shift;
 	if($paramData) {
+	    print_debug_message( 'load_param_file', 'paramData: ' . $paramData, 2 );
 		# Load data from a file, or STDIN
 		if ( -f $paramData || $paramData eq '-' ) {
 			$retData = &read_file( $paramData );
@@ -693,7 +701,9 @@ sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
 	# Load guide tree from file.
-	$tool_params{'treeFile'} = load_param_file($params{'treeFile'});
+	$tool_params{'tree_file'} = load_param_file($params{'tree_file'});
+	# Structure model from file.
+	$tool_params{'model_file'} = load_param_file($params{'model_file'});
 	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
@@ -835,8 +845,9 @@ standard input.
 =cut
 
 sub read_file {
-	print_debug_message( 'read_file', 'Begin', 1 );
+	print_debug_message( 'read_file', 'Begin', 11 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 12 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -851,7 +862,8 @@ sub read_file {
 		}
 		close($FILE);
 	}
-	print_debug_message( 'read_file', 'End', 1 );
+	print_debug_message( 'read_file', 'length(content): ' . length($content), 12 );
+	print_debug_message( 'read_file', 'End', 11 );
 	return $content;
 }
 
@@ -865,7 +877,7 @@ standard output.
 =cut
 
 sub write_file {
-	print_debug_message( 'write_file', 'Begin', 1 );
+	print_debug_message( 'write_file', 'Begin', 11 );
 	my ( $filename, $data ) = @_;
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
@@ -879,7 +891,7 @@ sub write_file {
 		syswrite( $FILE, $data );
 		close($FILE);
 	}
-	print_debug_message( 'write_file', 'End', 1 );
+	print_debug_message( 'write_file', 'End', 11 );
 }
 
 =head2 usage()
