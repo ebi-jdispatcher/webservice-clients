@@ -5,33 +5,109 @@
 #
 # ======================================================================
 
-#PERL = perl
-PERL = /ebi/extserv/bin/perl/bin/perl
+PERL = perl
+#PERL = /ebi/extserv/bin/perl/bin/perl
+#PERL = /ebi/extserv/bin/perl-5.10.1/bin/perl
 #PERL = /sw/arch/bin/perl
 #EMAIL = email@example.org
 EMAIL = support@ebi.ac.uk
 
-# Run all test sets
-# TODO: clustalo dbfetch prank
-all: ebeye \
-clustalw2 dbclustal kalign mafft muscle mview tcoffee \
-emboss_matcher emboss_needle emboss_stretcher emboss_water lalign \
-iprscan \
-clustalw2_phylogeny \
-fasta fastm ncbiblast psiblast psisearch wublast
+# Prevent termination on error calling --params with SOAP::Lite > 0.60a
+JDispatcher_params_suffix=|| true
 
-clean: ebeye_clean \
-clustalw2_clean dbclustal_clean kalign_clean mafft_clean muscle_clean tcoffee_clean \
-emboss_matcher_clean emboss_needle_clean emboss_stretcher_clean emboss_water_clean lalign_clean \
+# Run all test sets
+all: \
+dbfetch \
+ebeye \
+msa \
+pfa \
+phylogeny \
+psa \
+sss
+
+clean: \
+dbfetch_clean \
+ebeye_clean \
+msa_clean \
+pfa_clean \
+phylogeny_clean \
+psa_clean \
+sss_clean
+
+# Multiple Sequence Alignment (MSA)
+msa: \
+clustalw2 \
+dbclustal \
+kalign \
+mafft \
+muscle \
+mview \
+prank \
+tcoffee \
+
+msa_clean: \
+clustalw2_clean \
+dbclustal_clean \
+kalign_clean \
+mafft_clean \
+muscle_clean \
+mview_clean \
+prank_clean \
+tcoffee_clean
+
+# Protein Function Analysis (PFA)
+pfa: \
+iprscan \
+phobius
+
+pfa_clean: \
 iprscan_clean \
-clustalw2_phylogeny_clean \
-fasta_clean fastm_clean ncbiblast_clean psiblast_clean psisearch_clean wublast_clean
+phobius_clean
+
+# Phylogeny
+phylogeny: \
+clustalw2phylogeny
+
+phylogeny_clean: \
+clustalw2phylogeny_clean
+
+# Pairwise Sequence Alignment (PSA)
+psa: \
+emboss_matcher \
+emboss_needle \
+emboss_stretcher \
+emboss_water \
+lalign
+
+psa_clean: \
+emboss_matcher_clean \
+emboss_needle_clean \
+emboss_stretcher_clean \
+emboss_water_clean \
+lalign_clean
+
+# Sequence Similarity Search (SSS)
+sss: \
+fasta \
+fastm \
+ncbiblast \
+psiblast \
+psisearch \
+wublast
+
+sss_clean: \
+fasta_clean \
+fastm_clean \
+ncbiblast_clean \
+psiblast_clean \
+psisearch_clean \
+wublast_clean
 
 # ClustalW 2.0.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
 
 clustalw2_params:
-	${PERL} clustalw2_soaplite.pl --params
+	${PERL} clustalw2_soaplite.pl --params ${JDispatcher_params_suffix}
 
 clustalw2_param_detail:
 	${PERL} clustalw2_soaplite.pl --paramDetail alignment
@@ -46,29 +122,28 @@ clustalw2_clean:
 	rm -f clustalw2-*
 
 # ClustalW 2.0.x Phylogeny
-clustalw2_phylogeny: clustalw2_phylogeny_params clustalw2_phylogeny_param_detail clustalw2_phylogeny_file clustalw2_phylogeny_stdin
+clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin
 
-clustalw2_phylogeny_params:
-	${PERL} clustalw2_phylogeny_soaplite.pl --params
+clustalw2phylogeny_params:
+	${PERL} clustalw2_phylogeny_soaplite.pl --params ${JDispatcher_params_suffix}
 
-clustalw2_phylogeny_param_detail:
+clustalw2phylogeny_param_detail:
 	${PERL} clustalw2_phylogeny_soaplite.pl --paramDetail tree
 
-clustalw2_phylogeny_file:
+clustalw2phylogeny_file:
 	${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.aln
 
-clustalw2_phylogeny_stdin_stdout:
+clustalw2phylogeny_stdin_stdout:
 	cat ../test_data/multi_prot.aln | ${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} --quiet --outfile - - > clustalw2_phylogeny-blah.ph
 
-clustalw2_phylogeny_clean:
+clustalw2phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
 
 # DbClustal
-dbclustal: dbclustal_param_detail dbclustal_file
-# TODO: dbclustal_params
+dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
 
 dbclustal_params:
-	${PERL} dbclustal_soaplite.pl --params
+	${PERL} dbclustal_soaplite.pl --params ${JDispatcher_params_suffix}
 
 dbclustal_param_detail:
 	${PERL} dbclustal_soaplite.pl --paramDetail output
@@ -78,6 +153,33 @@ dbclustal_file:
 
 dbclustal_clean:
 	rm -f dbclustal-*
+
+# WSDbfetch Document/literal SOAP
+dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
+
+dbfetch_getSupportedDBs:
+	${PERL} wsdbfetch_soaplite.pl getSupportedDBs > dbfetch-getSupportedDBs.txt
+
+dbfetch_getSupportedFormats:
+	${PERL} wsdbfetch_soaplite.pl getSupportedFormats > dbfetch-getSupportedFormats.txt
+
+dbfetch_getSupportedStyles:
+	${PERL} wsdbfetch_soaplite.pl getSupportedStyles > dbfetch-getSupportedStyles.txt
+
+dbfetch_getDbFormats:
+	${PERL} wsdbfetch_soaplite.pl getDbFormats uniprotkb > dbfetch-getDbFormats.txt
+
+dbfetch_getFormatStyles:
+	${PERL} wsdbfetch_soaplite.pl getFormatStyles uniprotkb default > dbfetch-getFormatStyles.txt
+
+dbfetch_fetchData:
+	${PERL} wsdbfetch_soaplite.pl fetchData 'uniprotkb:wap_rat' > dbfetch-fetchData.txt
+
+dbfetch_fetchBatch:
+	${PERL} wsdbfetch_soaplite.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' > dbfetch-fetchBatch.txt
+
+dbfetch_clean:
+	rm -f dbfetch-*
 
 # EB-eye
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
@@ -150,11 +252,10 @@ ebeye_listFieldsInformation:
 ebeye_clean:
 
 # EMBOSS matcher
-emboss_matcher: emboss_matcher_param_detail emboss_matcher_dbid
-# TODO: emboss_matcher_params emboss_matcher_file
+emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
 
 emboss_matcher_params:
-	${PERL} emboss_matcher_soaplite.pl --params
+	${PERL} emboss_matcher_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_matcher_param_detail:
 	${PERL} emboss_matcher_soaplite.pl --paramDetail matrix
@@ -162,15 +263,17 @@ emboss_matcher_param_detail:
 emboss_matcher_dbid:
 	${PERL} emboss_matcher_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_matcher_file:
+	${PERL} emboss_matcher_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
 emboss_matcher_clean:
 	rm -f emboss_matcher-*
 
 # EMBOSS needle
-emboss_needle: emboss_needle_param_detail emboss_needle_dbid
-# TODO: emboss_needle_params emboss_needle_file
+emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid emboss_needle_file
 
 emboss_needle_params:
-	${PERL} emboss_needle_soaplite.pl --params
+	${PERL} emboss_needle_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_needle_param_detail:
 	${PERL} emboss_needle_soaplite.pl --paramDetail matrix
@@ -178,15 +281,17 @@ emboss_needle_param_detail:
 emboss_needle_dbid:
 	${PERL} emboss_needle_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_needle_file:
+	${PERL} emboss_needle_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
 emboss_needle_clean:
 	rm -f emboss_needle-*
 
 # EMBOSS stretcher
-emboss_stretcher: emboss_stretcher_param_detail emboss_stretcher_dbid
-# TODO: emboss_stretcher_params emboss_stretcher_file
+emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
 
 emboss_stretcher_params:
-	${PERL} emboss_stretcher_soaplite.pl --params
+	${PERL} emboss_stretcher_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_stretcher_param_detail:
 	${PERL} emboss_stretcher_soaplite.pl --paramDetail matrix
@@ -194,21 +299,26 @@ emboss_stretcher_param_detail:
 emboss_stretcher_dbid:
 	${PERL} emboss_stretcher_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
+emboss_stretcher_file:
+	${PERL} emboss_stretcher_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
 emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
 
 # EMBOSS water
-emboss_water: emboss_water_param_detail emboss_water_dbid
-# TODO: emboss_water_params emboss_water_file
+emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
 
 emboss_water_params:
-	${PERL} emboss_water_soaplite.pl --params
+	${PERL} emboss_water_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_water_param_detail:
 	${PERL} emboss_water_soaplite.pl --paramDetail matrix
 
 emboss_water_dbid:
 	${PERL} emboss_water_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+emboss_water_file:
+	${PERL} emboss_water_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 emboss_water_clean:
 	rm -f emboss_water-*
@@ -217,7 +327,7 @@ emboss_water_clean:
 fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout
 
 fasta_params:
-	${PERL} fasta_soaplite.pl --params
+	${PERL} fasta_soaplite.pl --params ${JDispatcher_params_suffix}
 
 fasta_param_detail:
 	${PERL} fasta_soaplite.pl --paramDetail program
@@ -238,7 +348,7 @@ fasta_clean:
 fastm: fastm_params fastm_param_detail fastm_file fastm_stdin_stdout
 
 fastm_params:
-	${PERL} fastm_soaplite.pl --params
+	${PERL} fastm_soaplite.pl --params ${JDispatcher_params_suffix}
 
 fastm_param_detail:
 	${PERL} fastm_soaplite.pl --paramDetail program
@@ -253,11 +363,10 @@ fastm_clean:
 	rm -f fastm-*
 
 # InterProScan
-iprscan: iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_multifasta_file
-# TODO: iprscan_params 
+iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_multifasta_file
 
 iprscan_params:
-	${PERL} iprscan_soaplite.pl --params
+	${PERL} iprscan_soaplite.pl --params ${JDispatcher_params_suffix}
 
 iprscan_param_detail:
 	${PERL} iprscan_soaplite.pl --paramDetail appl
@@ -284,7 +393,7 @@ iprscan_clean:
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
 
 kalign_params:
-	${PERL} kalign_soaplite.pl --params
+	${PERL} kalign_soaplite.pl --params ${JDispatcher_params_suffix}
 
 kalign_param_detail:
 	${PERL} kalign_soaplite.pl --paramDetail format
@@ -299,17 +408,19 @@ kalign_clean:
 	rm -f kalign-*
 
 # lalign
-lalign: lalign_param_detail lalign_dbid
-# TODO: lalign_params lalign_file
+lalign: lalign_params lalign_param_detail lalign_dbid lalign_file
 
 lalign_params:
-	${PERL} lalign_soaplite.pl --params
+	${PERL} lalign_soaplite.pl --params ${JDispatcher_params_suffix}
 
 lalign_param_detail:
 	${PERL} lalign_soaplite.pl --paramDetail matrix
 
 lalign_dbid:
 	${PERL} lalign_soaplite.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
+
+lalign_file:
+	${PERL} lalign_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 lalign_clean:
 	rm -f lalign-*
@@ -318,7 +429,7 @@ lalign_clean:
 mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
 
 mafft_params:
-	${PERL} mafft_soaplite.pl --params
+	${PERL} mafft_soaplite.pl --params ${JDispatcher_params_suffix}
 
 mafft_param_detail:
 	${PERL} mafft_soaplite.pl --paramDetail matrix
@@ -336,7 +447,7 @@ mafft_clean:
 muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
 
 muscle_params:
-	${PERL} muscle_soaplite.pl --params
+	${PERL} muscle_soaplite.pl --params ${JDispatcher_params_suffix}
 
 muscle_param_detail:
 	${PERL} muscle_soaplite.pl --paramDetail format
@@ -351,17 +462,19 @@ muscle_clean:
 	rm -f muscle-*
 
 # MView
-mview: mview_param_detail mview_file
-# TODO: mview_params
+mview: mview_params mview_param_detail mview_file mview_stdin_stdout
 
 mview_params:
-	${PERL} mview_soaplite.pl --params
+	${PERL} mview_soaplite.pl --params ${JDispatcher_params_suffix}
 
 mview_param_detail:
 	${PERL} mview_soaplite.pl --paramDetail outputformat
 
 mview_file:
 	${PERL} mview_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt --alignment --ruler --consensus --htmlmarkup off
+
+mview_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt | ${PERL} mview_soaplite.pl --email ${EMAIL} --alignment --ruler --consensus --htmlmarkup off --quiet --outformat out --outfile - - > mview-blah.aln
 
 mview_clean:
 	rm -f mview-*
@@ -370,7 +483,7 @@ mview_clean:
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout
 
 ncbiblast_params:
-	${PERL} ncbiblast_soaplite.pl --params
+	${PERL} ncbiblast_soaplite.pl --params ${JDispatcher_params_suffix}
 
 ncbiblast_param_detail:
 	${PERL} ncbiblast_soaplite.pl --paramDetail program
@@ -387,8 +500,53 @@ ncbiblast_stdin_stdout:
 ncbiblast_clean:
 	rm -f ncbiblast-*
 
+# Phobius
+phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout
+
+phobius_params:
+	${PERL} phobius_soaplite.pl --params ${JDispatcher_params_suffix}
+
+phobius_param_detail:
+	${PERL} phobius_soaplite.pl --paramDetail format
+
+phobius_file:
+	${PERL} phobius_soaplite.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+phobius_dbid:
+	${PERL} phobius_soaplite.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+
+phobius_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} phobius_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > phobius-blah.txt
+
+phobius_clean:
+	rm -f phobius-*
+
+# PRANK
+prank: prank_params prank_param_detail prank_file prank_stdin_stdout
+
+prank_params:
+	${PERL} prank_soaplite.pl --params ${JDispatcher_params_suffix}
+
+prank_param_detail:
+	${PERL} prank_soaplite.pl --paramDetail output_format
+
+prank_file:
+	${PERL} prank_soaplite.pl --email ${EMAIL} --output_format 15 ../test_data/multi_prot.tfa
+
+prank_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} prank_soaplite.pl --email ${EMAIL} --output_format 15 --quiet --outformat aln-msf --outfile - - > prank-blah.aln
+
+prank_clean:
+	rm -f prank-*
+
 # PSI-BLAST
 psiblast: psiblast_file psiblast_dbid psiblast_stdin_stdout
+
+psiblast_params:
+	${PERL} psiblast_soaplite.pl --params ${JDispatcher_params_suffix}
+
+psiblast_param_detail:
+	${PERL} psiblast_soaplite.pl --paramDetail matrix
 
 psiblast_file:
 	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
@@ -406,7 +564,7 @@ psiblast_clean:
 psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
 
 psisearch_params:
-	${PERL} psisearch_soaplite.pl --params
+	${PERL} psisearch_soaplite.pl --params ${JDispatcher_params_suffix}
 
 psisearch_param_detail:
 	${PERL} psisearch_soaplite.pl --paramDetail matrix
@@ -427,7 +585,7 @@ psisearch_clean:
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
 
 tcoffee_params:
-	${PERL} tcoffee_soaplite.pl --params
+	${PERL} tcoffee_soaplite.pl --params ${JDispatcher_params_suffix}
 
 tcoffee_param_detail:
 	${PERL} tcoffee_soaplite.pl --paramDetail matrix
@@ -445,7 +603,7 @@ tcoffee_clean:
 wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout
 
 wublast_params:
-	${PERL} wublast_soaplite.pl --params
+	${PERL} wublast_soaplite.pl --params ${JDispatcher_params_suffix}
 
 wublast_param_detail:
 	${PERL} wublast_soaplite.pl --paramDetail program
