@@ -1,3 +1,4 @@
+# $Id$
 # ======================================================================
 #
 # Test sample SOAP::Lite clients run.
@@ -11,9 +12,36 @@ PERL = perl
 EMAIL = support@ebi.ac.uk
 
 # Run all test sets
-all: ebeye iprscan ncbiblast
+all: dbfetch ebeye iprscan ncbiblast
 
-clean: ebeye_clean iprscan_clean ncbiblast_clean
+clean: dbfetch_clean ebeye_clean iprscan_clean ncbiblast_clean
+
+# WSDbfetch Document/literal SOAP
+dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
+
+dbfetch_getSupportedDBs:
+	${PERL} wsdbfetch_xmlcompile.pl getSupportedDBs > dbfetch-getSupportedDBs.txt
+
+dbfetch_getSupportedFormats:
+	${PERL} wsdbfetch_xmlcompile.pl getSupportedFormats > dbfetch-getSupportedFormats.txt
+
+dbfetch_getSupportedStyles:
+	${PERL} wsdbfetch_xmlcompile.pl getSupportedStyles > dbfetch-getSupportedStyles.txt
+
+dbfetch_getDbFormats:
+	${PERL} wsdbfetch_xmlcompile.pl getDbFormats uniprotkb > dbfetch-getDbFormats.txt
+
+dbfetch_getFormatStyles:
+	${PERL} wsdbfetch_xmlcompile.pl getFormatStyles uniprotkb default > dbfetch-getFormatStyles.txt
+
+dbfetch_fetchData:
+	${PERL} wsdbfetch_xmlcompile.pl fetchData 'uniprotkb:wap_rat' > dbfetch-fetchData.txt
+
+dbfetch_fetchBatch:
+	${PERL} wsdbfetch_xmlcompile.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' > dbfetch-fetchBatch.txt
+
+dbfetch_clean:
+	rm -f dbfetch-*
 
 # EB-eye
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
