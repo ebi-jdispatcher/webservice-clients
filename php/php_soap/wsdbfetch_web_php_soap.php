@@ -4,8 +4,8 @@
 #
 # Uses PHP SOAP.
 #
-# Note: this is a command-line program, call using:
-#  php wsdbfetch_cli_php_soap.php [options...]
+# Note: install, along with wsdbfetch_lib_php_soap.php, in a directory 
+# which is served by a web server with PHP enabled.
 #
 # Tested with:
 #   PHP 5.1.6 (CentOS 5)
