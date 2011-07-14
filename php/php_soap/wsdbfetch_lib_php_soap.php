@@ -97,6 +97,16 @@ class WSDbfetchClient {
     }
     $this->printDebugMessage('soapTrace', 'End', 12);
   }
+
+  // Get database meta-information.
+  function soapGetDatabaseInfoList() {
+    $this->printDebugMessage('soapGetDatabaseInfoList', 'Begin', 2);
+    $this->serviceProxyConnect();
+    $result = $this->srvProxy->getDatabaseInfoList();
+    if($this->trace) $this->soapTrace();
+    $this->printDebugMessage('soapGetDatabaseInfoList', 'End', 2);
+    return $result->getDatabaseInfoListReturn;
+  }
   
   // Get list of available databases.
   function soapGetSupportedDBs() {
