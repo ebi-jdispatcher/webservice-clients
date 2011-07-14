@@ -101,7 +101,7 @@ class WSDbfetchWebClient extends WSDbfetchClient {
 <form method="GET">
 <p>
 <a href="?info=database">Database</a>: <input name="database"></input>
-Ids: <input name="id"</input>
+Ids: <input name="id"></input>
 Format: <input name="format"></input>
 Style: <input name="style"></input>
 </p>
