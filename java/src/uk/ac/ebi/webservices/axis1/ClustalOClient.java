@@ -41,6 +41,7 @@ public class ClustalOClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
+		+ "  --stype            : str  : input sequence type, see --paramDetail stype\n"
 		+ "  --guidetreeout     :      : enable output of guide tree.\n"
 		+ "  --noguidetreeout   :      : disable output of guide tree.\n"
 		+ "  --dismatout        :      : enable output of distance matrix.\n"
@@ -338,7 +339,7 @@ public class ClustalOClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		//if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype));
+		if (line.hasOption("stype")) params.setStype(line.getOptionValue("stype"));
 		if (line.hasOption("guidetreeout")) {
 			params.setGuidetreeout(new Boolean(true));
 		}
