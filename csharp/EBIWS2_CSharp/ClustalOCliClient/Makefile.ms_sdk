@@ -1,0 +1,54 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# ClustalW 2 client using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: ClustalOCliClient
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### ClustalW 2 command-line client ###
+
+ClustalOCliClient: $(DEBUGBINDIR)\ClustalOCliClient.exe $(RELEASEBINDIR)\ClustalOCliClient.exe
+
+$(DEBUGBINDIR)\ClustalOCliClient.exe: $(DEBUGBINDIR) ClustalOCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalOCliClient.cs
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\ClustalOCliClient.exe: $(RELEASEBINDIR) ClustalOCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalOCliClient.cs
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)
