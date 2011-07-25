@@ -89,10 +89,6 @@ GetOptions(
 	#'stype=s' => \$tool_params{'stype'}, # Input sequence type
     'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
 	
-	# Compatability options, old command-line
-	'align|A'      => \$params{'align'},       # Do full multiple alignment
-	'quicktree|Q'  => \$params{'quicktree'},   # Fast guide tree
-
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
