@@ -74,6 +74,7 @@
     <Compile Include="LalignClient.cs" />
     <Compile Include="WebReferences\PrankWs\Reference.cs" />
     <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
+    <Compile Include="ClustalOClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

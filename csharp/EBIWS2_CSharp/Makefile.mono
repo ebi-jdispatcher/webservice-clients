@@ -10,6 +10,7 @@ all: build
 ### Build ###
 build: \
 build-EbiWS \
+build-ClustalOCliClient \
 build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
 build-EBeyeCliClient \
@@ -34,6 +35,9 @@ build-WuBlastCliClient
 
 build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
+
+build-ClustalOCliClient: build-EbiWS
+	cd ClustalOCliClient && $(MAKE) -f Makefile.mono
 
 build-ClustalW2CliClient: build-EbiWS
 	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono
@@ -102,6 +106,7 @@ build-WuBlastCliClient: build-EbiWS
 
 clean: \
 clean-EbiWS \
+clean-ClustalOCliClient \
 clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
 clean-EBeyeCliClient \
@@ -126,6 +131,9 @@ clean-WuBlastCliClient
 
 clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
+
+clean-ClustalOCliClient:
+	cd ClustalOCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-ClustalW2CliClient:
 	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono clean
@@ -194,6 +202,7 @@ clean-WuBlastCliClient:
 
 distclean: \
 distclean-EbiWS \
+distclean-ClustalOCliClient \
 distclean-ClustalW2CliClient \
 distclean-ClustalW2PhylogenyCliClient \
 distclean-EBeyeCliClient \
@@ -213,6 +222,9 @@ distclean-WuBlastCliClient
 
 distclean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono distclean
+
+distclean-ClustalOCliClient:
+	cd ClustalOCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-ClustalW2CliClient:
 	cd ClustalW2CliClient && $(MAKE) -f Makefile.mono distclean

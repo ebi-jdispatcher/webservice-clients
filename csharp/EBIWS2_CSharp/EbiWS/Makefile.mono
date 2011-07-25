@@ -36,6 +36,7 @@ EbiWS.dll: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
 EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
 
 coreSrc = AbstractWsClient.cs \
+ClustalOClient.cs \
 ClustalW2Client.cs \
 ClustalW2PhylogenyClient.cs \
 EBeyeClient.cs \
