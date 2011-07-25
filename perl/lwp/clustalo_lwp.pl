@@ -86,7 +86,7 @@ GetOptions(
 	'gtiterations=i' => \$tool_params{'gtiterations'}, # Maximum guild tree iterations
 	'hmmiterations=i' => \$tool_params{'hmmiterations'}, # Maximum HMM iterations
 	'outfmt=s' => \$tool_params{'outfmt'}, # Output alignment format
-	#'stype=s' => \$tool_params{'stype'}, # Input sequence type
+	'stype=s' => \$tool_params{'stype'}, # Input sequence type
     'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
 	
 	# Generic options
@@ -864,6 +864,7 @@ Multiple sequence alignment using Clustal Omega.
 
 [Optional]
 
+  --stype            : str  : input sequence type, see --paramDetail stype.
   --guidetreeout     :      : enable output of guide tree.
   --noguidetreeout   :      : disable output of guide tree.
   --dismatout        :      : enable output of distance matrix.
