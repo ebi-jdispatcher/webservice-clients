@@ -260,7 +260,14 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- TODO ClustalO -->
+		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalOClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalOClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
