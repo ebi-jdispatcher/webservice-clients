@@ -12,8 +12,9 @@ projectDir =  ../EBIWS2_CSharp
 
 all: \
 EbiWS.dll \
-ClustalW2PhylogenyCliClient.exe \
+ClustalOCliClient.exe \
 ClustalW2CliClient.exe \
+ClustalW2PhylogenyCliClient.exe \
 EBeyeCliClient.exe \
 EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient.exe \
@@ -37,6 +38,10 @@ WuBlastCliClient.exe
 EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
 	cp ${projectDir}/EbiWS/bin/Release/$@ $@
 	chmod -x $@
+
+ClustalOCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/ClustalOCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
 
 ClustalW2CliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/ClustalW2CliClient/bin/Release/$@ EbiWS.dll
@@ -121,3 +126,6 @@ WSDbfetchCliClient.exe: EbiWS.dll
 WuBlastCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/WuBlastCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
+
+clean:
+	rm -f EbiWS.dll *.exe
