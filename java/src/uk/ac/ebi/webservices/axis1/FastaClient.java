@@ -14,21 +14,12 @@ import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.fasta.*;
 
-/**
- * <p>
- * JDispatcher FASTA (SOAP) web service Java client using Apache Axis 1.x.
- * </p>
+/** <p>JDispatcher FASTA (SOAP) web service Java client using Apache Axis 1.x.</p>
  * 
- * <p>
- * See:
- * </p>
+ * <p>See:</p>
  * <ul>
- * <li><a
- * href="http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap">http
- * ://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap</a></li>
- * <li><a
- * href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java"
- * >http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap">http://www.ebi.ac.uk/Tools/webservices/services/sss/fasta_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
  */
