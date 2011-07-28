@@ -22,6 +22,7 @@ Multiple sequence alignment using Clustal Omega.
 
 [Optional]
 
+  --stype            : str  : input sequence type, see --paramDetail stype.
   --guidetreeout     :      : enable output of guide tree.
   --noguidetreeout   :      : disable output of guide tree.
   --dismatout        :      : enable output of distance matrix.
@@ -210,6 +211,11 @@ Multiple sequence alignment using Clustal Omega.
 						goto case "--endpoint";
 
 						// Tool specific options
+				case "--stype": // Input sequence type.
+					InParams.stype = args[++i];
+					break;
+				case "/stype":
+					goto case "--stype";
 				case "--guidetreeout": // Enable output of guide tree.
 					InParams.guidetreeout = true;
 					InParams.guidetreeoutSpecified = true;
