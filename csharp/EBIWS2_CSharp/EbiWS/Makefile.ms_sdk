@@ -171,7 +171,7 @@ $(STUBSRCDIR)\TcoffeeWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs /out:$@ "$(WSDLBASE)/tcoffee?wsdl"
 
 $(STUBSRCDIR)\WSDbfetchWs\Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl"
 
 $(STUBSRCDIR)\WuBlastWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs /out:$@ "$(WSDLBASE)/wublast?wsdl"
