@@ -240,7 +240,7 @@
 	<target name="axis1-stubs-wsdbfetch" description="Axis 1.x: generate stubs for WSDbfetch (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.wsdbfetch" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-wublast" description="Axis 1.x: generate stubs for WU-BLAST (SOAP)">
@@ -847,7 +847,7 @@
 	<target name="jaxws-stubs-wsdbfetch" description="JAX-WS RI: generate stubs for WSDbfetch (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.wsdbfetch" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-wublast" description="JAX-WS RI: generate stubs for WU-BLAST (SOAP)">
