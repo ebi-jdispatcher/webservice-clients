@@ -3,12 +3,18 @@
 #
 # Makefile to build C# EBI Web Services clients using MS .NET SDK.
 #
+# ----------------------------------------------------------------------
+# Run as:
+#   nmake -f Makefile.ms_sdk
+#
+# Main targets are: all, clean and distclean
 # ======================================================================
 
 all: EbiWS \
 ClustalOCliClient\bin\Release\ClustalOCliClient.exe \
 ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
+DbClustalCliClient\bin\Release\DbClustalCliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
@@ -21,6 +27,7 @@ KalignCliClient\bin\Release\KalignCliClient.exe \
 LalignCliClient\bin\Release\LalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
+MViewCliClient\bin\Release\MViewCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
@@ -40,6 +47,9 @@ ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe: EbiWS\bin\Release\EbiWS.d
 
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk
+
+DbClustalCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk
 
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -77,6 +87,9 @@ MafftCliClient\bin\Release\MafftCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 MuscleCliClient\bin\Release\MuscleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk
 
+MViewCliClient\bin\Release\MViewCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk
+
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -103,6 +116,7 @@ clean:
 	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -115,6 +129,7 @@ clean:
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -128,6 +143,7 @@ distclean:
 	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
@@ -140,6 +156,7 @@ distclean:
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean

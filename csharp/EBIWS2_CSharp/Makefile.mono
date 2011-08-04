@@ -13,6 +13,7 @@ build-EbiWS \
 build-ClustalOCliClient \
 build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
+build-DbClustalCliClient \
 build-EBeyeCliClient \
 build-EmbossMatcherCliClient \
 build-EmbossNeedleCliClient \
@@ -25,6 +26,7 @@ build-KalignCliClient \
 build-LalignCliClient \
 build-MafftCliClient \
 build-MuscleCliClient \
+build-MViewCliClient \
 build-NcbiBlastCliClient \
 build-PhobiusCliClient \
 build-PsiBlastCliClient \
@@ -44,6 +46,9 @@ build-ClustalW2CliClient: build-EbiWS
 
 build-ClustalW2PhylogenyCliClient: build-EbiWS
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono
+
+build-DbClustalCliClient: build-EbiWS
+	cd DbClustalCliClient && $(MAKE) -f Makefile.mono
 
 build-EBeyeCliClient: build-EbiWS
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
@@ -81,6 +86,9 @@ build-MafftCliClient: build-EbiWS
 build-MuscleCliClient: build-EbiWS
 	cd MuscleCliClient && $(MAKE) -f Makefile.mono
 
+build-MViewCliClient: build-EbiWS
+	cd MViewCliClient && $(MAKE) -f Makefile.mono
+
 build-NcbiBlastCliClient: build-EbiWS
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono
 
@@ -109,6 +117,7 @@ clean-EbiWS \
 clean-ClustalOCliClient \
 clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
+clean-DbClustalCliClient \
 clean-EBeyeCliClient \
 clean-EmbossMatcherCliClient \
 clean-EmbossNeedleCliClient \
@@ -121,6 +130,7 @@ clean-KalignCliClient \
 clean-LalignCliClient \
 clean-MafftCliClient \
 clean-MuscleCliClient \
+clean-MViewCliClient \
 clean-NcbiBlastCliClient \
 clean-PhobiusCliClient \
 clean-PsiBlastCliClient \
@@ -140,6 +150,9 @@ clean-ClustalW2CliClient:
 
 clean-ClustalW2PhylogenyCliClient:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-DbClustalCliClient:
+	cd DbClustalCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
@@ -177,6 +190,9 @@ clean-MafftCliClient:
 clean-MuscleCliClient:
 	cd MuscleCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-MViewCliClient:
+	cd MViewCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -205,6 +221,7 @@ distclean-EbiWS \
 distclean-ClustalOCliClient \
 distclean-ClustalW2CliClient \
 distclean-ClustalW2PhylogenyCliClient \
+distclean-DbClustalCliClient \
 distclean-EBeyeCliClient \
 distclean-FastaCliClient \
 distclean-FastmCliClient \
@@ -212,6 +229,7 @@ distclean-IPRScanCliClient \
 distclean-KalignCliClient \
 distclean-MafftCliClient \
 distclean-MuscleCliClient \
+distclean-MViewCliClient \
 distclean-NcbiBlastCliClient \
 distclean-PhobiusCliClient \
 distclean-PsiBlastCliClient \
@@ -231,6 +249,9 @@ distclean-ClustalW2CliClient:
 
 distclean-ClustalW2PhylogenyCliClient:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-DbClustalCliClient:
+	cd DbClustalCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
@@ -252,6 +273,9 @@ distclean-MafftCliClient:
 
 distclean-MuscleCliClient:
 	cd MuscleCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-MViewCliClient:
+	cd MViewCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-NcbiBlastCliClient:
 	cd NcbiBlastCliClient && $(MAKE) -f Makefile.mono distclean
