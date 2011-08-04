@@ -15,6 +15,7 @@ EbiWS.dll \
 ClustalOCliClient.exe \
 ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient.exe \
+DbClustalCliClient.exe \
 EBeyeCliClient.exe \
 EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient.exe \
@@ -27,6 +28,7 @@ KalignCliClient.exe \
 LalignCliClient.exe \
 MafftCliClient.exe \
 MuscleCliClient.exe \
+MViewCliClient.exe \
 NcbiBlastCliClient.exe \
 PhobiusCliClient.exe \
 PsiBlastCliClient.exe \
@@ -49,6 +51,10 @@ ClustalW2CliClient.exe: EbiWS.dll
 
 ClustalW2PhylogenyCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/ClustalW2PhylogenyCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+DbClustalCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/DbClustalCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EBeyeCliClient.exe: EbiWS.dll
@@ -97,6 +103,10 @@ MafftCliClient.exe: EbiWS.dll
 
 MuscleCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/MuscleCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+MViewCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/MViewCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 NcbiBlastCliClient.exe: EbiWS.dll
