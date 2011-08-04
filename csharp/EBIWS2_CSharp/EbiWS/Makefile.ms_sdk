@@ -44,6 +44,7 @@ coreSrc = AbstractWsClient.cs \
 ClustalOClient.cs \
 ClustalW2Client.cs \
 ClustalW2PhylogenyClient.cs \
+DbClustalClient.cs \
 EBeyeClient.cs \
 EmbossMatcherClient.cs \
 EmbossNeedleClient.cs \
@@ -56,6 +57,7 @@ KalignClient.cs \
 LalignClient.cs \
 MafftClient.cs \
 MuscleClient.cs \
+MViewClient.cs \
 NcbiBlastClient.cs \
 PhobiusClient.cs \
 PsiBlastClient.cs \
