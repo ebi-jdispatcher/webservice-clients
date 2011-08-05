@@ -642,9 +642,12 @@ sub multi_submit_job {
 			push( @filename_list, $params{'sequence'} );
 		}
 	}
-
+	if(scalar(@filename_list) < 1) {
+		die 'Error: no files found to process.';
+	}
 	$/ = '>';
 	foreach my $filename (@filename_list) {
+		print_debug_message( 'multi_submit_job', 'filename: ' . $filename, 2 );
 		open( my $INFILE, '<', $filename )
 		  or die "Error: unable to open file $filename ($!)";
 		while (<$INFILE>) {
