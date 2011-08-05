@@ -461,7 +461,7 @@ sub from_wsdl {
 		}
 	}
 	if(scalar(@retVal) != 2) {
-		die "Error: Empty WSDL document for service, unable to determine endpoint or namespace.";
+		die "Error: Unable to determine service endpoint or namespace.";
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );
 	return @retVal;
