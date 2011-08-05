@@ -633,8 +633,13 @@ sub multi_submit_job {
 
 	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
-		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			push( @filename_list, $ARGV[0] );
+		foreach my $fileOpt (@ARGV) {
+			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File
+				push( @filename_list, $fileOpt );
+			}
+			else {
+				warn "Warning: input file \"$fileOpt\" not found"; 
+			}
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
