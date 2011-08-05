@@ -421,10 +421,21 @@ sub print_debug_message {
 
 =head2 from_wsdl()
 
-Extract the service namespace and endpoint from the service WSDL document.
+Extract the service namespace and endpoint from the service WSDL document 
+for use when creating the service interface.
 
-The namespace and endpoint are required to create a service interface that 
-supports repeating elements as used in document/literal services.
+This function assumes that the WSDL contains a single service using a single
+namespace and endpoint.
+
+The namespace and endpoint are required to create a service interface, using 
+SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used 
+in many document/literal services. Using SOAP::Lite->service() with the WSDL
+gives an interface where the data structures returned by the service are 
+mapped into hash structures and repeated elements are collapsed to a single
+instance.
+
+Note: rpc/encoded services are handled  as expected by SOAP::Lite->service() 
+since repeating data structures are encoded using arrays by the service.  
 
   my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
 
@@ -435,21 +446,21 @@ sub from_wsdl {
 	my (@retVal) = ();
 	my $wsdlStr;
 	my $fetchAttemptCount = 0;
-	while((!defined($wsdlStr) || $wsdlStr eq '') && $fetchAttemptCount < MAX_RETRIES) {
+	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		$wsdlStr = get($WSDL);
 		$fetchAttemptCount++;
-	}
-	if(defined($wsdlStr) && $wsdlStr ne '') {
-		if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
-			push( @retVal, $2 );
+		if(defined($wsdlStr) && $wsdlStr ne '') {
+			if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
+				push( @retVal, $2 );
+			}
+			if ( $wsdlStr =~
+				m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+			{
+				push( @retVal, $2 );
+			}
 		}
-		if ( $wsdlStr =~
-			m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
-		{
-			push( @retVal, $2 );
-		}
 	}
-	else {
+	if(scalar(@retVal) != 2) {
 		die "Error: Empty WSDL document for service, unable to determine endpoint or namespace.";
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );
