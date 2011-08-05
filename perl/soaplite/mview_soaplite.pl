@@ -440,22 +440,26 @@ sub from_wsdl {
 	my (@retVal) = ();
 	my $wsdlStr;
 	my $fetchAttemptCount = 0;
-	while((!defined($wsdlStr) || $wsdlStr eq '') && $fetchAttemptCount < MAX_RETRIES) {
+	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
+		# Fetch WSDL document.
 		$wsdlStr = get($WSDL);
 		$fetchAttemptCount++;
-	}
-	if(defined($wsdlStr) && $wsdlStr ne '') {
-		if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
-			push( @retVal, $2 );
+		if(defined($wsdlStr) && $wsdlStr ne '') {
+			# Extract service endpoint.
+			if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
+				$retVal[0] = $2;
+			}
+			# Extract service namespace.
+			if ( $wsdlStr =~
+				m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+			{
+				$retVal[1] = $2;
+			}
 		}
-		if ( $wsdlStr =~
-			m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
-		{
-			push( @retVal, $2 );
-		}
 	}
-	else {
-		die "Error: Empty WSDL document for service, unable to determine endpoint or namespace.";
+	# Check endpoint and namespace have been obtained.
+	if(scalar(@retVal) != 2 || $retVal[0] eq '' || $retVal[1] eq '') {
+		die "Error: Unable to determine service endpoint and namespace for requests.";
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );
 	return @retVal;

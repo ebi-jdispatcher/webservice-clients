@@ -647,9 +647,9 @@ sub multi_submit_job {
 	my (@filename_list) = ();
 
 	# Query sequence
-	if ( defined( $ARGV[0] ) ) {    # Bare option
+	if ( defined( $ARGV[0] ) ) {    # Bare option(s).
 		foreach my $fileOpt (@ARGV) {
-			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File
+			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File or STDIN.
 				push( @filename_list, $fileOpt );
 			}
 			else {
