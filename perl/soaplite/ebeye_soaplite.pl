@@ -58,6 +58,9 @@ use File::Basename;
 use MIME::Base64;
 use Data::Dumper;
 
+# Maximum connection retries.
+use constant MAX_RETRIES => 3;
+
 # WSDL URL for service
 my $WSDL = 'http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl';
 
@@ -869,19 +872,24 @@ since repeating data structures are encoded using arrays by the service.
 sub from_wsdl {
 	&print_debug_message( 'from_wsdl', 'Begin', 1 );
 	my (@retVal) = ();
-	my $wsdlStr  = get($WSDL);    # Get WSDL using LWP.
-	                              # Extract service endpoint.
-	if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
-		&print_debug_message( 'from_wsdl', 'endpoint: ' . $2, 2 );
-		push( @retVal, $2 );
+	my $wsdlStr;
+	my $fetchAttemptCount = 0;
+	while((!defined($wsdlStr) || $wsdlStr eq '') && $fetchAttemptCount < MAX_RETRIES) {
+		$wsdlStr = get($WSDL);
+		$fetchAttemptCount++;
 	}
-
-	# Extract namespace.
-	if ( $wsdlStr =~
-		m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
-	{
-		&print_debug_message( 'from_wsdl', 'namespace: ' . $2, 2 );
-		push( @retVal, $2 );
+	if(defined($wsdlStr) && $wsdlStr ne '') {
+		if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
+			push( @retVal, $2 );
+		}
+		if ( $wsdlStr =~
+			m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+		{
+			push( @retVal, $2 );
+		}
+	}
+	else {
+		die "Error: Empty WSDL document for service, unable to determine endpoint or namespace.";
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );
 	return @retVal;
