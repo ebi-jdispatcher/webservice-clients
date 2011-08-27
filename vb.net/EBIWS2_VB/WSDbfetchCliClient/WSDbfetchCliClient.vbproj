@@ -35,9 +35,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\EbiWs\EbiWs.vbproj">
+    <ProjectReference Include="..\EbiWS\EbiWS.vbproj">
       <Project>{B1ED0927-F372-4752-B6C8-69D1FC08582B}</Project>
-      <Name>EbiWs</Name>
+      <Name>EbiWS</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

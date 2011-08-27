@@ -5,7 +5,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WSDbfetchCliClient", "WSDbf
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.vbproj", "{7D448175-E968-4AD7-BF15-37EFC4C59A0A}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EbiWs", "EbiWs\EbiWs.vbproj", "{B1ED0927-F372-4752-B6C8-69D1FC08582B}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EbiWS", "EbiWS\EbiWS.vbproj", "{B1ED0927-F372-4752-B6C8-69D1FC08582B}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EBeyeCliClient", "EBeyeCliClient\EBeyeCliClient.vbproj", "{1BD60446-8EE0-4522-90AF-45D35085E2AD}"
 EndProject
