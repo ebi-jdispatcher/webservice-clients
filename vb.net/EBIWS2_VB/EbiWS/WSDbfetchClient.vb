@@ -11,7 +11,7 @@ Option Explicit On
 Option Strict On
 
 Imports System
-Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
+' Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
 
 Namespace EbiWS
 	Public Class WSDbfetchClient
@@ -50,15 +50,15 @@ Namespace EbiWS
 		End Property
 		Private _serviceEndPoint As String = Nothing
 		' Web service proxy
-		Public Property SrvProxy() As EbiWs.WSDbfetchWs.WSDBFetchDoclitServerService
+		Public Property SrvProxy() As EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService
 			Get
 				Return _srvProxy
 			End Get
-			Set (ByVal value As EbiWs.WSDbfetchWs.WSDBFetchDoclitServerService)
+			Set (ByVal value As EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService)
 				_srvProxy = value
 			End Set
 		End Property
-		Private _srvProxy As EbiWs.WSDbfetchWs.WSDBFetchDoclitServerService = Nothing
+		Private _srvProxy As EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService = Nothing
 		' Client object revision/version.
 		Private revision As String = "$Revision$"
 		
@@ -88,9 +88,9 @@ Namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If Me.SrvProxy Is Nothing Then
 				If Me.ServiceEndPoint Is Nothing Then
-					Me.SrvProxy = New EbiWs.WSDbfetchWs.WSDBFetchDoclitServerService()
+					Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
 				Else
-					Me.SrvProxy = New EbiWs.WSDbfetchWs.WSDBFetchDoclitServerService()
+					Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
 					Me.SrvProxy.Url = Me.ServiceEndPoint
 				End If
 				Me.ServiceEndPoint = Me.SrvProxy.Url
