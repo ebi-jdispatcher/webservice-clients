@@ -20,7 +20,7 @@ BINDIR = bin
 DEBUGBINDIR = $(BINDIR)/Debug
 RELEASEBINDIR = $(BINDIR)/Release
 # Directory for generated stubs code
-STUBSRCDIR = Web\ References
+STUBSRCDIR = WebReferences
 
 # Base URL of Tool WSDLs
 WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
