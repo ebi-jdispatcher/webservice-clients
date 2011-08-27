@@ -29,6 +29,8 @@
   <ItemGroup>
     <None Include="Web References\NcbiBlastWs\Reference.map" />
     <None Include="Web References\WSDbfetchWs\Reference.map" />
+    <None Include="Web References\EBeyeWs\Reference.map" />
+    <None Include="Web References\IPRScanWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Web References\NcbiBlastWs\Reference.vb" />
@@ -36,6 +38,10 @@
     <Compile Include="AbstractWsClient.vb" />
     <Compile Include="WSDbfetchClient.vb" />
     <Compile Include="NcbiBlastClient.vb" />
+    <Compile Include="EBeyeClient.vb" />
+    <Compile Include="IPRScanClient.vb" />
+    <Compile Include="Web References\EBeyeWs\Reference.vb" />
+    <Compile Include="Web References\IPRScanWs\Reference.vb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
