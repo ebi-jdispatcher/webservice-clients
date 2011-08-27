@@ -1,0 +1,95 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build VB.NET EBI Web Services clients using Mono.
+#
+# ======================================================================
+
+# VB.NET compiler
+VBC = vbnc
+# VB.NET compiler flags
+VBFLAGS = -r:System.Web.Services
+
+# WSDL to VB.NET tool
+WSDL2CS = wsdl2
+# WSDL to VB.NET flags
+WSDL2CSFLAGS = -language:VB -namespace:EbiWS
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)/Debug
+RELEASEBINDIR = $(BINDIR)/Release
+# Directory for generated stubs code
+STUBSRCDIR = WebReferences
+
+# Base URL of Tool WSDLs
+WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
+
+all: EbiWS
+
+### EbiWS ###
+
+EbiWS: EbiWS.dll
+
+EbiWS.dll: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
+
+EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
+
+coreSrc = AbstractWsClient.vb \
+EBeyeClient.vb \
+IPRScanClient.vb \
+NcbiBlastClient.vb \
+WSDbfetchClient.vb
+
+stubSrc = \
+$(STUBSRCDIR)/EBeyeWs/Reference.vb \
+$(STUBSRCDIR)/IPRScanWs/Reference.vb \
+$(STUBSRCDIR)/NcbiBlastWs/Reference.vb \
+$(STUBSRCDIR)/WSDbfetchWs/Reference.vb
+
+### Build library ###
+
+$(DEBUGBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
+	mkdir -p $(DEBUGBINDIR)
+	$(VBC) $(VBFLAGS) -debug -target:library -out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)/EbiWS.dll: $(coreSrc) $(stubSrc)
+	mkdir -p $(RELEASEBINDIR)
+	$(VBC) $(VBFLAGS) -target:library -out:$@ $(coreSrc) $(stubSrc)
+
+$(DEBUGBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
+	mkdir -p $(DEBUGBINDIR)
+	$(VBC) $(VBFLAGS) -debug -target:module -out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
+	mkdir -p $(RELEASEBINDIR)
+	$(VBC) $(VBFLAGS) -target:module -out:$@ $(coreSrc) $(stubSrc)
+
+### Generate web service stubs ###
+
+$(STUBSRCDIR)/EBeyeWs/Reference.vb:
+	mkdir -p $(STUBSRCDIR)/EBeyeWs/
+	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
+
+$(STUBSRCDIR)/IPRScanWs/Reference.vb:
+	mkdir -p $(STUBSRCDIR)/IPRScanWs/
+	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScanWs -out:$@ "$(WSDLBASE)/iprscan?wsdl"
+
+$(STUBSRCDIR)/NcbiBlastWs/Reference.vb:
+	mkdir -p $(STUBSRCDIR)/NcbiBlastWs/
+	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs -out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+
+$(STUBSRCDIR)/WSDbfetchWs/Reference.vb:
+	mkdir -p $(STUBSRCDIR)/WSDbfetchWs/
+	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs -out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl"
+
+### Clean-up ###
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/
+
+clean-stubs:
+	rm -rf $(STUBSRCDIR)/*/*.vb
