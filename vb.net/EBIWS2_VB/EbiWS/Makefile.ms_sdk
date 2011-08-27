@@ -13,7 +13,7 @@ VBFLAGS =
 # WSDL to VB.NET tool
 WSDL2CS = wsdl
 # WSDL to VB.NET flags
-WSDL2CSFLAGS = /langauge:VB /namespace:EbiWS
+WSDL2CSFLAGS = /language:VB /namespace:EbiWS
 
 # Directory for compiled binaries
 BINDIR = bin
