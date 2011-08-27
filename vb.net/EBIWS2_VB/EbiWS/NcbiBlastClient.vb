@@ -12,7 +12,7 @@ Option Strict On
 
 Imports System
 
-Namespace EbiWs
+Namespace EbiWS
 	Public Class NcbiBlastClient
 		Inherits AbstractWsClient
 	

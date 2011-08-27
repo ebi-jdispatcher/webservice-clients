@@ -11,9 +11,9 @@ Option Explicit On
 Option Strict On
 
 Imports System
-' Imports EbiWs.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
+Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
 
-Namespace EbiWs
+Namespace EbiWS
 	Public Class WSDbfetchClient
 		' Output level
 		Public Property OutputLevel() As Integer

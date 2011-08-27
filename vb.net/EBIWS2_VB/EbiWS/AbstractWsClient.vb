@@ -13,7 +13,7 @@ Option Strict On
 Imports System
 
 
-Namespace EbiWs
+Namespace EbiWS
 	Public MustInherit Class AbstractWsClient
 	
 		Public Sub New()

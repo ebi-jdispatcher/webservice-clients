@@ -5,10 +5,11 @@ Option Strict On
 Imports System
 
 
-
-Public Class IPRScanClient
+Namespace EbiWS
+	Public Class IPRScanClient
 	
-	Public Sub New()
-		MyBase.New
-	End Sub
-End Class
+		Public Sub New()
+			MyBase.New
+		End Sub
+	End Class
+End Namespace
