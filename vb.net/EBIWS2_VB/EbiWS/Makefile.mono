@@ -8,7 +8,7 @@
 # VB.NET compiler
 VBC = vbnc
 # VB.NET compiler flags
-VBFLAGS = -r:System.Web.Services
+VBFLAGS = 
 
 # WSDL to VB.NET tool
 WSDL2CS = wsdl2
@@ -20,7 +20,7 @@ BINDIR = bin
 DEBUGBINDIR = $(BINDIR)/Debug
 RELEASEBINDIR = $(BINDIR)/Release
 # Directory for generated stubs code
-STUBSRCDIR = WebReferences
+STUBSRCDIR = Web\ References
 
 # Base URL of Tool WSDLs
 WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
