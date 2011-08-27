@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WSDbfetchCliClient", "WSDbfetchCliClient\WSDbfetchCliClient.vbproj", "{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.vbproj", "{7D448175-E968-4AD7-BF15-37EFC4C59A0A}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EbiWs", "EbiWs\EbiWs.vbproj", "{B1ED0927-F372-4752-B6C8-69D1FC08582B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}.Debug|x86.ActiveCfg = Debug|x86
+		{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}.Debug|x86.Build.0 = Debug|x86
+		{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}.Release|x86.ActiveCfg = Release|x86
+		{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}.Release|x86.Build.0 = Release|x86
+		{7D448175-E968-4AD7-BF15-37EFC4C59A0A}.Debug|x86.ActiveCfg = Debug|x86
+		{7D448175-E968-4AD7-BF15-37EFC4C59A0A}.Debug|x86.Build.0 = Debug|x86
+		{7D448175-E968-4AD7-BF15-37EFC4C59A0A}.Release|x86.ActiveCfg = Release|x86
+		{7D448175-E968-4AD7-BF15-37EFC4C59A0A}.Release|x86.Build.0 = Release|x86
+		{B1ED0927-F372-4752-B6C8-69D1FC08582B}.Debug|x86.ActiveCfg = Debug|x86
+		{B1ED0927-F372-4752-B6C8-69D1FC08582B}.Debug|x86.Build.0 = Debug|x86
+		{B1ED0927-F372-4752-B6C8-69D1FC08582B}.Release|x86.ActiveCfg = Release|x86
+		{B1ED0927-F372-4752-B6C8-69D1FC08582B}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.vbproj
+	EndGlobalSection
+EndGlobal

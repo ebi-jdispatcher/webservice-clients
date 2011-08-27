@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B1ED0927-F372-4752-B6C8-69D1FC08582B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>EbiWs</RootNamespace>
+    <AssemblyName>EbiWs</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <DefineTrace>false</DefineTrace>
+    <AdditionalParameters />
+    <DefineDebug>false</DefineDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <DefineTrace>false</DefineTrace>
+    <AdditionalParameters />
+    <DefineDebug>false</DefineDebug>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Web References\NcbiBlastWs\Reference.map" />
+    <None Include="Web References\WSDbfetchWs\Reference.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Web References\NcbiBlastWs\Reference.vb" />
+    <Compile Include="Web References\WSDbfetchWs\Reference.vb" />
+    <Compile Include="AbstractWsClient.vb" />
+    <Compile Include="WSDbfetchClient.vb" />
+    <Compile Include="NcbiBlastClient.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+</Project>
