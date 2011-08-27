@@ -27,15 +27,21 @@
     <DefineDebug>false</DefineDebug>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Web References\NcbiBlastWs\Reference.map" />
-    <None Include="Web References\WSDbfetchWs\Reference.map" />
+    <None Include="WebReferences\NcbiBlastWs\Reference.map" />
+    <None Include="WebReferences\WSDbfetchWs\Reference.map" />
+    <None Include="WebReferences\EBeyeWs\Reference.map" />
+    <None Include="WebReferences\IPRScanWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Web References\NcbiBlastWs\Reference.vb" />
-    <Compile Include="Web References\WSDbfetchWs\Reference.vb" />
+    <Compile Include="WebReferences\NcbiBlastWs\Reference.vb" />
+    <Compile Include="WebReferences\WSDbfetchWs\Reference.vb" />
     <Compile Include="AbstractWsClient.vb" />
     <Compile Include="WSDbfetchClient.vb" />
     <Compile Include="NcbiBlastClient.vb" />
+    <Compile Include="EBeyeClient.vb" />
+    <Compile Include="IPRScanClient.vb" />
+    <Compile Include="WebReferences\EBeyeWs\Reference.vb" />
+    <Compile Include="WebReferences\IPRScanWs\Reference.vb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
