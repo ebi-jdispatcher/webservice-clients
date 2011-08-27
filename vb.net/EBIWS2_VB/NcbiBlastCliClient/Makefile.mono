@@ -8,7 +8,7 @@
 # VB.NET compiler
 VBC = vbnc
 # VB.NET compiler flags
-VBFLAGS = -r:System.Web.Services
+VBFLAGS = 
 
 # Directory for compiled binaries
 BINDIR = bin
