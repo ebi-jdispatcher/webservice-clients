@@ -7,7 +7,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4F5202EA-98F8-4582-8BF8-BF57D981F7AE}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>WSDbfetchCliClient</RootNamespace>
     <AssemblyName>WSDbfetchCliClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
