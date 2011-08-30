@@ -11,7 +11,7 @@ Option Explicit On
 Option Strict On
 
 Imports System
-' Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
+Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
 
 Namespace EbiWS
 	Public Class WSDbfetchClient
@@ -30,8 +30,8 @@ Namespace EbiWS
 		' Debug output level.
 		Public Property DebugLevel() As Integer
 			Get
-				Return _debugLevel
-			End Get
+			Return _debugLevel
+		End Get
 			Set (ByVal value As Integer)
 				If value > -1 Then
 					_debugLevel = value
@@ -126,8 +126,12 @@ Namespace EbiWS
 		Public Function GetSupportedDBs() As String()
 			PrintDebugMessage("GetSupportedDBs", "Begin", 1)
 			ServiceProxyConnect()
-			Dim dbNameList As String()
+			Dim dbNameList() As String
 			dbNameList = Me.SrvProxy.getSupportedDBs()
+			If dbNameList Is Nothing Then
+				PrintDebugMessage("GetSupportedDBs", "Null dbNameList returned by getSupportedDBs()" , 2)
+				dbNameList = New String() {} ' Replace with an empty array.
+			End If
 			PrintDebugMessage("GetSupportedDBs", "got " & dbNameList.Length & " db names", 2)
 			PrintDebugMessage("GetSupportedDBs", "End", 1)
 			Return dbNameList
@@ -148,6 +152,10 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getSupportedFormats()
+			If nameList Is Nothing Then
+				PrintDebugMessage("GetSupportedFormats", "Null nameList returned by getSupportedFormats()" , 2)
+				nameList = New String() {} ' Replace with an empty array.
+			End If
 			PrintDebugMessage("GetSupportedFormats", "got " & nameList.Length & " names", 2)
 			PrintDebugMessage("GetSupportedFormats", "End", 1)
 			Return nameList
@@ -168,6 +176,10 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getSupportedStyles()
+			If nameList Is Nothing Then
+				PrintDebugMessage("GetSupportedStyles", "Null nameList returned by getSupportedStyles()" , 2)
+				nameList = New String() {} ' Replace with an empty array.
+			End If
 			PrintDebugMessage("GetSupportedStyles", "got " & nameList.Length & " names", 2)
 			Return nameList
 		End Function
@@ -187,6 +199,10 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getDbFormats(dbName)
+			If nameList Is Nothing Then
+				PrintDebugMessage("GetDbFormats", "Null nameList returned by getDbFormats()" , 2)
+				nameList = New String() {} ' Replace with an empty array.
+			End If
 			PrintDebugMessage("GetDbFormats", "got " & nameList.Length & " names", 2)
 			PrintDebugMessage("GetDbFormats", "End", 1)
 			Return nameList
@@ -207,6 +223,10 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getFormatStyles(dbName, formatName)
+			If nameList Is Nothing Then
+				PrintDebugMessage("GetFormatStyles", "Null nameList returned by getFormatStyles()" , 2)
+				nameList = New String() {} ' Replace with an empty array.
+			End If
 			PrintDebugMessage("GetFormatStyles", "got " & nameList.Length & " names", 2)
 			PrintDebugMessage("GetFormatStyles", "End", 1)
 			Return nameList
@@ -261,11 +281,15 @@ Namespace EbiWS
 
 		' Print a list of strings
 		Private Sub PrintStrList(ByVal strList As String())
-			For Each item As String In strList
-				If item IsNot Nothing AndAlso item <> "" Then
-					Console.WriteLine(item)
-				End If
-			Next
+			PrintDebugMessage("PrintStrList", "Begin", 21)
+			If strList IsNot Nothing AndAlso strList.Length > 0 Then
+				For Each item As String In strList
+					If item IsNot Nothing AndAlso item <> "" Then
+						Console.WriteLine(item)
+					End If
+				Next
+			End If
+			PrintDebugMessage("PrintStrList", "End", 21)
 		End Sub
 	End Class
 End Namespace
