@@ -7,7 +7,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B1ED0927-F372-4752-B6C8-69D1FC08582B}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>EbiWs</RootNamespace>
     <AssemblyName>EbiWs</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
