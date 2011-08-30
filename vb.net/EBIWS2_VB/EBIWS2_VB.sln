@@ -39,6 +39,6 @@ Global
 		{B360F189-1096-43AB-816D-73AD4945118E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.vbproj
+		StartupItem = WSDbfetchCliClient\WSDbfetchCliClient.vbproj
 	EndGlobalSection
 EndGlobal
