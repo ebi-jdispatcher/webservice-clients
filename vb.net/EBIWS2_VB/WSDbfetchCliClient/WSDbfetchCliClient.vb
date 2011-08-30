@@ -10,6 +10,7 @@
 Option Explicit On
 Option Strict On
 
+Imports System
 Imports EbiWS ' Service wrapper classes.
 
 Namespace EbiWS
