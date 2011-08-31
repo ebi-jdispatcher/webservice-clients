@@ -7,7 +7,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7D448175-E968-4AD7-BF15-37EFC4C59A0A}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>NcbiBlastCliClient</RootNamespace>
     <AssemblyName>NcbiBlastCliClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
