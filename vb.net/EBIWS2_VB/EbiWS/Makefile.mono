@@ -8,7 +8,7 @@
 # VB.NET compiler
 VBC = vbnc
 # VB.NET compiler flags
-VBFLAGS = 
+VBFLAGS = -reference:System.Web.Services.dll,System.Xml.dll
 
 # WSDL to VB.NET tool
 WSDL2CS = wsdl2
