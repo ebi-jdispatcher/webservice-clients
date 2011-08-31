@@ -7,7 +7,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1BD60446-8EE0-4522-90AF-45D35085E2AD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>EBeyeCliClient</RootNamespace>
     <AssemblyName>EBeyeCliClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
