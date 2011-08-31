@@ -10,6 +10,7 @@
 Option Explicit On
 Option Strict On
 
+Imports Microsoft.VisualBasic.ControlChars ' Character constants (e.g. Tab).
 Imports System
 Imports System.Collections
 Imports System.IO
@@ -265,12 +266,13 @@ Environment.NewLine & _
 			For Each info As FieldInfo In objType.GetFields()
 				PrintDebugMessage("ObjectFieldsToString", "info: " & info.Name & " (" & info.FieldType.FullName & ")", 33)
 				If info.FieldType.IsArray Then
-					strBuilder.Append(info.Name & ":\n")
-					For Each subObj As Object In info.GetValue(obj)
-						strBuilder.Append("\t" & subObj)
+					strBuilder.Append(info.Name & ":" & Environment.NewLine)
+					Dim subObjList As Object() = TryCast(info.GetValue(obj), Object())
+					For Each subObj As Object In subObjList
+						strBuilder.Append(Tab & subObj.ToString)
 					Next subObj
 				Else
-					strBuilder.Append(info.Name & ": " & info.GetValue(obj) & "\n")
+					strBuilder.Append(info.Name & ": " & info.GetValue(obj).ToString & Environment.NewLine)
 				End If
 			Next info
 			PrintDebugMessage("ObjectFieldsToString", "End", 32)
@@ -282,7 +284,7 @@ Environment.NewLine & _
 			PrintDebugMessage("ObjectPropertiesToString", "Begin", 31)
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			If obj Is Nothing Then
-				Return "null"
+				Return "<null>"
 			End If
 			Dim objType As Type = obj.GetType()
 			If objType Is Nothing Then
@@ -292,23 +294,27 @@ Environment.NewLine & _
 			For Each info As PropertyInfo In objType.GetProperties()
 				PrintDebugMessage("ObjectPropertiesToString", "info: " & info.Name & " (" & info.PropertyType.FullName & ")", 32)
 				If info.PropertyType.IsArray Then
-					' PrintDebugMessage("ObjectPropertiesToString", "info: obj" & info.GetValue(obj, null), 33)
-					Dim objArray As IList = info.GetValue(obj, Nothing)
-					' objArray As Object() = info.GetValue(obj, null)
+					Dim objArray As IList = TryCast(info.GetValue(obj, Nothing), IList)
 					If objArray IsNot Nothing And objArray.Count > 0 Then
 						PrintDebugMessage("ObjectPropertiesToString", "Array: " & objArray.Count, 33)
-						strBuilder.Append(info.Name & ":\n")
+						strBuilder.Append(info.Name & ":" & Environment.NewLine)
 						For Each subObj As Object In objArray
 							If subObj IsNot Nothing Then
-								strBuilder.Append("\t" & subObj)
+								strBuilder.Append(Tab & subObj.ToString)
 							End If
 						Next subObj
 					Else
-						strBuilder.Append(info.Name & ": <null>\n")
+						strBuilder.Append(info.Name & ": <null>" & Environment.NewLine)
 					End If
 				Else
-					PrintDebugMessage("ObjectPropertiesToString", "Object: " & obj, 33)
-					strBuilder.Append(info.Name & ": " & info.GetValue(obj, Nothing) & "\n")
+					PrintDebugMessage("ObjectPropertiesToString", "Object: " & obj.ToString, 33)
+					strBuilder.Append(info.Name & ": ")
+					If info.GetValue(obj, Nothing) IsNot Nothing Then
+						strBuilder.Append(info.GetValue(obj, Nothing).ToString)
+					Else
+						strBuilder.Append("<null>")
+					End If
+					strBuilder.Append(Environment.NewLine)
 				End If
 				PrintDebugMessage("ObjectPropertiesToString", strBuilder.ToString(), 33)
 			Next info
@@ -322,6 +328,40 @@ Environment.NewLine & _
 				Console.Error.WriteLine(msg)
 			End If
 		End Sub
+		
+		' Construct a User-agent string.
+		Protected Function constuctUserAgentStr(ByVal revision As String, ByVal clientClassName As String, ByVal userAgent As String) As String
+			PrintDebugMessage("constuctUserAgentStr", "Begin", 31)
+			Dim retUserAgent As String = "EBI-Sample-Client"
+			Dim clientVersion As String = "0"
+			' Client version.
+			If revision IsNot Nothing And revision.Length > 0 Then
+				' CVS/Subversion revision tag.
+				If revision.StartsWith("$") Then
+					' Populated tag, extract revision number.
+					If revision.Length > 13 Then
+						clientVersion = revision.Substring(11, (revision.Length - 13))
+					End If
+				' Alternative revision/version string.
+				Else
+					clientVersion = revision
+				End If
+			End If
+			Dim strBuilder As StringBuilder = New StringBuilder()
+			strBuilder.Append(retUserAgent & "/" & clientVersion)
+			strBuilder.Append(" (" & clientClassName & "; VB.NET; " & Environment.OSVersion.ToString)
+			If userAgent Is Nothing Or userAgent.Length < 1 Then ' No agent
+				strBuilder.Append(")")
+			ElseIf userAgent.Contains("(") Then ' MS .NET
+				strBuilder.Append(") " & userAgent)
+			Else ' Mono
+				strBuilder.Append("; " & userAgent & ")")
+			End If
+			retUserAgent = strBuilder.ToString
+			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " & retUserAgent, 32)
+			PrintDebugMessage("constuctUserAgentStr", "End", 31)
+			Return retUserAgent
+		End Function
 		
 		' Read data from a text file into a string.
 		Protected Function ReadTextFile(ByVal fileName As String) As String
@@ -354,7 +394,7 @@ Environment.NewLine & _
 			If fileName Is "-" Then ' Read from STDIN
 				Dim s As Stream = Console.OpenStandardInput()
 				Dim sr As BinaryReader = New BinaryReader(s)
-				retVal = sr.ReadBytes(s.Length)
+				retVal = sr.ReadBytes(CInt(s.Length))
 				' Note: do not close since this is STDIN.
 			Else ' Read from file
 				retVal = File.ReadAllBytes(fileName)
@@ -448,7 +488,7 @@ Environment.NewLine & _
 				Throw New ClientException("A file name is required to write data to.")
 			End If
 			PrintDebugMessage("WriteTextFile", "fileName: " & fileName, 1)
-			PrintDebugMessage("WriteTextFile", "content: " & content.Length + " characters", 1)
+			PrintDebugMessage("WriteTextFile", "content: " & content.Length & " characters", 1)
 			If fileName Is "-" Then ' STDOUT
 				Console.Write(content)
 			Else ' Data file
@@ -491,7 +531,7 @@ Environment.NewLine & _
 				line = Me.sequenceFileReader.ReadLine()
 				PrintProgressMessage(line, 1)
 				retVal = line & Environment.NewLine
-				While (Not Me.sequenceFileReader.Peek().Equals(">")) And ((line = Me.sequenceFileReader.ReadLine()) IsNot Nothing)
+				While (Not Me.sequenceFileReader.Peek().Equals(">")) And (line = Me.sequenceFileReader.ReadLine())
 					PrintDebugMessage("NextSequence", "line: " & line, 12)
 					retVal &= line & Environment.NewLine
 				End While
@@ -533,7 +573,7 @@ Environment.NewLine & _
 			End If
 			Dim retVal As String = Nothing
 			Dim line As String = Nothing
-			While ((line = Me.identifierFileReader.ReadLine()) IsNot Nothing)
+			While (line = Me.identifierFileReader.ReadLine())
 				PrintProgressMessage(line, 1)
 				If line.Contains(":") Then
 					retVal = line.Trim()

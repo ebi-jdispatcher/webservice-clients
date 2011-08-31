@@ -195,7 +195,7 @@ Environment.NewLine & _
 						Me.PrintFetchBatch(dbName, idListStr, formatName, styleName)
 						Exit Select
 					Case Else ' Don't know what to do, so print error message
-						Console.Error.WriteLine("Error: unknown option: " & args(i) & "\n")
+						Console.Error.WriteLine("Error: unknown option: " & args(i) & Environment.Newline)
 						retVal = 1
 						Exit Select
 				End Select

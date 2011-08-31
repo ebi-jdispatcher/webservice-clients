@@ -286,25 +286,25 @@ Environment.NewLine & _
 						Exit Select
 					Case "--database" ' Database to search
 						i += 1 ' Shift to parameter value.
-						Dim sepList As Char() = {" ", ","}
+						Dim sepList As Char() = {" "C, ","C}
 						InParams.database = args(i).Split(sepList)
 						Action = "submit"
 						Exit Select
 					Case "-D"
 						i += 1 ' Shift to parameter value.
-						Dim sepList As Char() = {" ", ","}
+						Dim sepList As Char() = {" "C, ","C}
 						InParams.database = args(i).Split(sepList)
 						Action = "submit"
 						Exit Select
 					Case "/database"
 						i += 1 ' Shift to parameter value.
-						Dim sepList As Char() = {" ", ","}
+						Dim sepList As Char() = {" "C, ","C}
 						InParams.database = args(i).Split(sepList)
 						Action = "submit"
 						Exit Select
 					Case "/D"
 						i += 1 ' Shift to parameter value.
-						Dim sepList As Char() = {" ", ","}
+						Dim sepList As Char() = {" "C, ","C}
 						InParams.database = args(i).Split(sepList)
 						Action = "submit"
 						Exit Select
@@ -529,8 +529,8 @@ Environment.NewLine & _
 						Exit Select
 					Case Else
 						' Check for unknown option.
-						If args(i).StartsWith("--") Or args(i).LastIndexOf("/") Is 0 Then
-							Console.Error.WriteLine("Error: unknown option: " & args(i) & "\n")
+						If args(i).StartsWith("--") Or (args(i).LastIndexOf("/") = 0) Then
+							Console.Error.WriteLine("Error: unknown option: " & args(i) & Environment.NewLine)
 							Action = "exit"
 							Exit For
 						End If

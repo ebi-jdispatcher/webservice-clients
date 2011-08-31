@@ -10,8 +10,10 @@
 Option Explicit On
 Option Strict On
 
+Imports Microsoft.VisualBasic.ControlChars ' Character constants (e.g. Tab).
 Imports System
 Imports System.IO
+Imports System.Text.RegularExpressions
 Imports EbiWS.NcbiBlastWs ' "Web Reference" or wsdl.exe generated stubs.
 
 Namespace EbiWS
@@ -35,7 +37,7 @@ Namespace EbiWS
 				Return _inParams
 			End Get
 			Set (value As EbiWS.NcbiBlastWs.InputParameters)
-				inParams = value
+				_inParams = value
 			End Set
 		End Property
 		Private _inParams As EbiWS.NcbiBlastWs.InputParameters = Nothing
@@ -69,13 +71,7 @@ Namespace EbiWS
 		' Set User-agent for web service proxy.
 		Private Sub SetProxyUserAgent()
 			PrintDebugMessage("SetProxyUserAgent", "Begin", 11)
-			Dim clientVersion As String = revision.Substring(11, (revision.Length - 13))
-			Dim userAgent As String = "EBI-Sample-Client/" & clientVersion & " (" & Me.GetType().Name & "; " & System.Environment.OSVersion.ToString()
-			If SrvProxy.UserAgent.Contains("(") ' MS .NET
-				userAgent &= ") " & SrvProxy.UserAgent
-			Else ' Mono
-				userAgent &= "; " & SrvProxy.UserAgent & ")"
-			End If
+			Dim userAgent As String = constuctUserAgentStr(revision, Me.GetType().Name, SrvProxy.UserAgent)
 			PrintDebugMessage("SetProxyUserAgent", "userAgent: " & userAgent, 12)
 			SrvProxy.UserAgent = userAgent
 			PrintDebugMessage("SetProxyUserAgent", "End", 11)
@@ -105,7 +101,7 @@ Namespace EbiWS
 		Protected Overrides Sub PrintParamDetail(ByVal paramName As String)
 			PrintDebugMessage("PrintParamDetail", "Begin", 1)
 			Dim paramDetail As EbiWS.NcbiBlastWs.wsParameterDetails = GetParamDetail(paramName)
-			Console.WriteLine("{0}\t{1}", paramDetail.name, paramDetail.type)
+			Console.WriteLine("{0}{1}{2}", paramDetail.name, Tab, paramDetail.type)
 			If paramDetail.description IsNot Nothing Then
 				Console.WriteLine(paramDetail.description)
 			End If
@@ -113,15 +109,15 @@ Namespace EbiWS
 				For Each paramValue As EbiWS.NcbiBlastWs.wsParameterValue In paramDetail.values
 					Console.Write(paramValue.value)
 					If paramValue.defaultValue Then
-						Console.Write("\tdefault")
+						Console.Write("{0}default", Tab)
 					End If
 					Console.WriteLine()
 					If paramValue.label IsNot Nothing Then
-						Console.WriteLine("\t{0}", paramValue.label)
+						Console.WriteLine("{0}{1}", Tab, paramValue.label)
 					End If
 					If paramValue.properties IsNot Nothing Then
 						For Each valueProperty As EbiWS.NcbiBlastWs.wsProperty In paramValue.properties
-							Console.WriteLine("\t{0}\t{1}", valueProperty.key, valueProperty.value)
+							Console.WriteLine("{0}{1}{2}{3}", Tab, valueProperty.key, Tab, valueProperty.value)
 						Next valueProperty
 					End If
 				Next paramValue
@@ -137,7 +133,7 @@ Namespace EbiWS
 			If Me.multifasta Then
 				SetSequenceFile(InParams.sequence)
 				Dim inSeq As String = Nothing
-				While (inSeq = NextSequence()) IsNot Nothing
+				While (inSeq = NextSequence())
 					InParams.sequence = inSeq
 					SubmitJob()
 				End While
@@ -146,7 +142,7 @@ Namespace EbiWS
 			ElseIf InParams.sequence.StartsWith("@") Then
 				SetIdentifierFile(InParams.sequence.Substring(1))
 				Dim inId As String = Nothing
-				While (inId = NextIdentifier()) IsNot Nothing
+				While (inId = NextIdentifier())
 					InParams.sequence = inId
 					SubmitJob()
 				End While
@@ -222,16 +218,16 @@ Namespace EbiWS
 			For Each resultType As EbiWS.NcbiBlastWs.wsResultType In resultTypes
 				Console.WriteLine(resultType.identifier)
 				If resultType.label IsNot Nothing Then
-					Console.WriteLine("\t{0}", resultType.label)
+					Console.WriteLine("{0}{1}", Tab, resultType.label)
 				End If
 				If resultType.description IsNot Nothing Then
-					Console.WriteLine("\t{0}", resultType.description)
+					Console.WriteLine("{0}{1}", Tab, resultType.description)
 				End If
 				If resultType.mediaType IsNot Nothing Then
-					Console.WriteLine("\t{0}", resultType.mediaType)
+					Console.WriteLine("{0}{1}", Tab, resultType.mediaType)
 				End If
 				If resultType.fileSuffix IsNot Nothing Then
-					Console.WriteLine("\t{0}", resultType.fileSuffix)
+					Console.WriteLine("{0}{1}", Tab, resultType.fileSuffix)
 				End If
 			Next resultType
 			PrintDebugMessage("PrintResultTypes", "End", 1)
@@ -329,8 +325,8 @@ Namespace EbiWS
 			Dim content As Byte() = GetResult(jobId, "ids")
 			Dim enc As System.Text.ASCIIEncoding = New System.Text.ASCIIEncoding()
 			Dim tempStr As String = enc.GetString(content)
-			Dim sepList As Char() = { "\n" }
-			retVal = tempStr.Split(sepList)
+			Dim wsre As RegEx = New RegEx("[\r\n]+")
+			retVal = wsre.Split(tempStr)
 			PrintDebugMessage("GetIds", "got " & retVal.Length & " Ids", 2)
 			PrintDebugMessage("GetIds", "End", 1)
 			Return retVal
