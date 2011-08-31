@@ -7,7 +7,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B360F189-1096-43AB-816D-73AD4945118E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>IPRScanCliClient</RootNamespace>
     <AssemblyName>IPRScanCliClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
