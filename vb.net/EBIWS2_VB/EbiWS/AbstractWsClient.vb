@@ -246,7 +246,7 @@ Environment.NewLine & _
 		End Sub
 		
 		' Construct a string of the values of an object, both fields and properties.
-		Protected Function ObjectValueToString(obj As Object) As String
+		Protected Function ObjectValueToString(ByVal obj As Object) As String
 			PrintDebugMessage("ObjectValueToString", "Begin", 31)
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			If obj IsNot Nothing Then
@@ -258,7 +258,7 @@ Environment.NewLine & _
 		End Function
 		
 		' Construct a string of the fields of an object.
-		Protected Function ObjectFieldsToString(obj As Object) As String
+		Protected Function ObjectFieldsToString(ByVal obj As Object) As String
 			PrintDebugMessage("ObjectFieldsToString", "Begin", 32)
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			Dim objType As Type = obj.GetType()
@@ -280,7 +280,7 @@ Environment.NewLine & _
 		End Function
 		
 		' Construct a string of the properties of an object.
-		Protected Function ObjectPropertiesToString(obj As Object) As String
+		Protected Function ObjectPropertiesToString(ByVal obj As Object) As String
 			PrintDebugMessage("ObjectPropertiesToString", "Begin", 31)
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			If obj Is Nothing Then
@@ -323,7 +323,7 @@ Environment.NewLine & _
 		End Function
 
 		' Print a progress message, at the specified output level.
-		Protected Sub PrintProgressMessage(msg As String, level As Integer)
+		Protected Sub PrintProgressMessage(ByVal msg As String, ByVal level As Integer)
 			If OutputLevel >= level Then
 				Console.Error.WriteLine(msg)
 			End If
@@ -482,7 +482,7 @@ Environment.NewLine & _
 		End Sub
 
 		' Write a string to a file.
-		Protected Sub WriteTextFile(fileName As String, content As String)
+		Protected Sub WriteTextFile(ByVal fileName As String, ByVal content As String)
 			PrintDebugMessage("WriteTextFile", "Begin", 1)
 			If fileName Is Nothing Or fileName.Length < 1 Then
 				Throw New ClientException("A file name is required to write data to.")
