@@ -89,15 +89,22 @@ Namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If Me.SrvProxy Is Nothing Then
 				Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
-				If Me.ServiceEndPoint IsNot Nothing And Me.ServiceEndPoint.Length > 0 Then
-					Me.SrvProxy.Url = Me.ServiceEndPoint
-				End If
-				Me.ServiceEndPoint = Me.SrvProxy.Url
-				PrintDebugMessage("ServiceProxyConnect", "ServiceEndPoint: " & Me.ServiceEndPoint, 12)
 				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & Me.SrvProxy.ToString(), 12)
+				SetProxyEndPoint() ' Set explicit service endpoint, if defined.
 				SetProxyUserAgent() ' Set user-agent for client.
 			End If
 			PrintDebugMessage("ServiceProxyConnect", "End", 11)
+		End Sub
+		
+		' Set specific web service endpoint for web service proxy.
+		Private Sub SetProxyEndPoint()
+			PrintDebugMessage("SetProxyEndPoint", "Begin", 11)
+			If Me.ServiceEndPoint IsNot Nothing Then
+				Me.SrvProxy.Url = Me.ServiceEndPoint
+			End If
+			Me.ServiceEndPoint = Me.SrvProxy.Url
+			PrintDebugMessage("SetProxyEndPoint", "ServiceEndPoint: " & Me.ServiceEndPoint, 12)
+			PrintDebugMessage("SetProxyEndPoint", "End", 11)
 		End Sub
 		
 		' Set User-agent for web service proxy.
