@@ -11,6 +11,7 @@ Option Explicit On
 Option Strict On
 
 Imports System
+Imports System.Text
 Imports EbiWS.WSDbfetchWs ' "Web Reference" or wsdl.exe generated stubs.
 
 Namespace EbiWS
