@@ -26,7 +26,7 @@ Namespace EbiWS
 			Get
 				Return _srvProxy
 			End Get
-			Set (value As EbiWS.NcbiBlastWs.JDispatcherService)
+			Set (ByVal value As EbiWS.NcbiBlastWs.JDispatcherService)
 				_srvProxy = value
 			End Set
 		End Property
@@ -36,7 +36,7 @@ Namespace EbiWS
 			Get
 				Return _inParams
 			End Get
-			Set (value As EbiWS.NcbiBlastWs.InputParameters)
+			Set (ByVal value As EbiWS.NcbiBlastWs.InputParameters)
 				_inParams = value
 			End Set
 		End Property
@@ -55,10 +55,8 @@ Namespace EbiWS
 		Protected Overrides Sub ServiceProxyConnect()
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If SrvProxy Is Nothing Then
-				If ServiceEndPoint Is Nothing Then
-					SrvProxy = New EbiWS.NcbiBlastWs.JDispatcherService()
-				Else
-					SrvProxy = New EbiWS.NcbiBlastWs.JDispatcherService()
+				SrvProxy = New EbiWS.NcbiBlastWs.JDispatcherService()
+				If ServiceEndPoint IsNot Nothing And ServiceEndPoint.Length > 0 Then
 					SrvProxy.Url = ServiceEndPoint
 				End If
 				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " & SrvProxy.Url, 12)
@@ -80,7 +78,7 @@ Namespace EbiWS
 		' Implementation of abstract method (AbsractWsClient.GetParams()).
 		Public Overrides Function GetParams() As String()
 			PrintDebugMessage("GetParams", "Begin", 1)
-			ServiceProxyConnect()
+			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			Dim paramNameList As String() = SrvProxy.getParameters()
 			PrintDebugMessage("GetParams", "got " & paramNameList.Length & " parameter names", 2)
 			PrintDebugMessage("GetParams", "End", 1)
@@ -88,10 +86,10 @@ Namespace EbiWS
 		End Function
 
 		' Get detailed information about a named parameter. 
-		Public Function GetParamDetail(paramName As String) As EbiWS.NcbiBlastWs.wsParameterDetails 
+		Public Function GetParamDetail(ByVal paramName As String) As EbiWS.NcbiBlastWs.wsParameterDetails 
 			PrintDebugMessage("GetParamDetail", "Begin", 1)
 			PrintDebugMessage("GetParamDetail", "paramName: " & paramName, 2)
-			ServiceProxyConnect()
+			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			Dim paramDetail As EbiWS.NcbiBlastWs.wsParameterDetails = SrvProxy.getParameterDetails(paramName)
 			PrintDebugMessage("GetParamDetail", "End", 1)
 			Return paramDetail
@@ -101,6 +99,9 @@ Namespace EbiWS
 		Protected Overrides Sub PrintParamDetail(ByVal paramName As String)
 			PrintDebugMessage("PrintParamDetail", "Begin", 1)
 			Dim paramDetail As EbiWS.NcbiBlastWs.wsParameterDetails = GetParamDetail(paramName)
+			If paramDetail Is Nothing Then
+				Throw New ClientException("Null returned by web service.")
+			End If
 			Console.WriteLine("{0}{1}{2}", paramDetail.name, Tab, paramDetail.type)
 			If paramDetail.description IsNot Nothing Then
 				Console.WriteLine(paramDetail.description)
@@ -211,8 +212,10 @@ Namespace EbiWS
 		Public Overrides Sub PrintResultTypes()
 			PrintDebugMessage("PrintResultTypes", "Begin", 1)
 			PrintDebugMessage("PrintResultTypes", "JobId: " & JobId, 2)
-			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			Dim resultTypes As EbiWS.NcbiBlastWs.wsResultType() = GetResultTypes(JobId)
+			If resultTypes Is Nothing Then
+				Throw New ClientException("Null returned by web service.")
+			End If
 			PrintDebugMessage("PrintResultTypes", "resultTypes: " & resultTypes.Length, 2)
 			PrintProgressMessage("Getting output formats for job " & JobId, 1)
 			For Each resultType As EbiWS.NcbiBlastWs.wsResultType In resultTypes
@@ -239,6 +242,7 @@ Namespace EbiWS
 			PrintDebugMessage("GetResult", "jobId: " & jobId, 1)
 			PrintDebugMessage("GetResult", "format: " & format, 1)
 			Dim result As Byte() = Nothing
+			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			result = SrvProxy.getResult(jobId, format, Nothing)
 			PrintDebugMessage("GetResult", "End", 1)
 			Return result
@@ -251,7 +255,6 @@ Namespace EbiWS
 			PrintDebugMessage("GetResults", "jobId: " & jobId, 2)
 			PrintDebugMessage("GetResults", "outformat: " & outformat, 2)
 			PrintDebugMessage("GetResults", "outFileBase: " & outFileBase, 2)
-			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			' Check status, and wait if not finished
 			ClientPoll(jobId)
 			' Use JobId if output file name is not defined
@@ -318,7 +321,6 @@ Namespace EbiWS
 			PrintDebugMessage("GetIds", "Begin", 1)
 			PrintDebugMessage("GetIds", "jobId: " & jobId, 2)
 			Dim retVal As String() = Nothing
-			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			' Check status, and wait if not finished
 			ClientPoll(jobId)
 			' Get the Ids
@@ -337,9 +339,13 @@ Namespace EbiWS
 			PrintDebugMessage("PrintGetIds", "Begin", 1)
 			PrintDebugMessage("PrintGetIds", "JobId: " & JobId, 2)
 			Dim idList As String() = GetIds(JobId)
-			For Each id As String In idList
-				Console.WriteLine(id)
-			Next id
+			If idList Is Nothing Then
+				Throw New ClientException("Null identifier list obtained from service.")
+			Else
+				For Each id As String In idList
+					Console.WriteLine(id)
+				Next id
+			End If
 			PrintDebugMessage("PrintGetIds", "End", 1)
 		End Sub
 
