@@ -108,6 +108,9 @@ $(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 
 ### Generate web service stubs ###
 
+# Collation target to generate stubs, but not compile.
+stubs: $(stubSrc)
+
 $(STUBSRCDIR)/ClustalOWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalOWs -out:$@ "$(WSDLBASE)/clustalo?wsdl"
 
