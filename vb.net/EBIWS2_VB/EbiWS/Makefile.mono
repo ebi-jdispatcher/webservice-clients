@@ -67,6 +67,9 @@ $(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 
 ### Generate web service stubs ###
 
+# Collation target to generate stubs, but not compile.
+stubs: $(stubSrc)
+
 $(STUBSRCDIR)/EBeyeWs/Reference.vb:
 	mkdir -p $(STUBSRCDIR)/EBeyeWs/
 	$(WSDL2VB) $(WSDL2VBFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"

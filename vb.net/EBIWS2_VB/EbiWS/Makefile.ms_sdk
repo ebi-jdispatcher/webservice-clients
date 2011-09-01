@@ -11,9 +11,9 @@ VBC = vbc
 VBFLAGS = 
 
 # WSDL to VB.NET tool
-WSDL2CS = wsdl
+WSDL2VB = wsdl
 # WSDL to VB.NET flags
-WSDL2CSFLAGS = /language:VB /namespace:EbiWS
+WSDL2VBFLAGS = /language:VB /namespace:EbiWS
 
 # Directory for compiled binaries
 BINDIR = bin
@@ -62,17 +62,20 @@ $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
 
 ### Generate web service stubs ###
 
+# Collation target to generate stubs, but not compile.
+stubs: $(stubSrc)
+
 $(STUBSRCDIR)\EBeyeWs\Reference.vb:
-	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs /out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).EBeyeWs /out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
 
 $(STUBSRCDIR)\IPRScanWs\Reference.vb:
-	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScanWs /out:$@ "$(WSDLBASE)/iprscan?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).IPRScanWs /out:$@ "$(WSDLBASE)/iprscan?wsdl"
 
 $(STUBSRCDIR)\NcbiBlastWs\Reference.vb:
-	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
 
 $(STUBSRCDIR)\WSDbfetchWs\Reference.vb:
-	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl"
 
 ### Clean-up ###
 
