@@ -605,6 +605,9 @@ Environment.NewLine & _
 		Protected Sub PrintParams()
 			PrintDebugMessage("PrintParams", "Begin", 1)
 			Dim paramNameList As String() = GetParams()
+			If paramNameList Is Nothing Then
+				Throw New ClientException("Null returned by web service.")
+			End If
 			For Each paramName As String In paramNameList
 				Console.WriteLine(paramName)
 			Next paramName
