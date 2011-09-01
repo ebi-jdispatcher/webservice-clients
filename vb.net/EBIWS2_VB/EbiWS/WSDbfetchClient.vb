@@ -84,13 +84,11 @@ Namespace EbiWS
 		End Sub
 
 		' Get the service connection. Has to be called before attempting to use any of the service operations.
-		Sub ServiceProxyConnect()
+		Protected Sub ServiceProxyConnect()
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If Me.SrvProxy Is Nothing Then
-				If Me.ServiceEndPoint Is Nothing Then
-					Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
-				Else
-					Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
+				Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
+				If Me.ServiceEndPoint IsNot Nothing And Me.ServiceEndPoint.Length > 0 Then
 					Me.SrvProxy.Url = Me.ServiceEndPoint
 				End If
 				Me.ServiceEndPoint = Me.SrvProxy.Url
@@ -104,24 +102,46 @@ Namespace EbiWS
 		' Set User-agent for web service proxy.
 		Private Sub SetProxyUserAgent()
 			PrintDebugMessage("SetProxyUserAgent", "Begin", 11)
-			Dim clientVersion As String
-			If Me.revision.Length > 13 Then
-				clientVersion = Me.revision.Substring(11, (Me.revision.Length - 13))
-			Else
-				clientVersion = "0"
-			End If
-			Dim userAgent As String
-			userAgent = "EBI-Sample-Client/" & clientVersion & " (" & Me.GetType().Name & "; " & System.Environment.OSVersion.ToString()
-			If Me.SrvProxy.UserAgent.Contains("(") Then ' MS .NET
-				userAgent &= ") " & Me.SrvProxy.UserAgent
-			Else ' Mono
-				userAgent &= "; " & Me.SrvProxy.UserAgent & ")"
-			End If
+			Dim userAgent As String = constuctUserAgentStr(revision, Me.GetType().Name, Me.SrvProxy.UserAgent)
 			PrintDebugMessage("SetProxyUserAgent", "userAgent: " & userAgent, 12)
 			Me.SrvProxy.UserAgent = userAgent
 			PrintDebugMessage("SetProxyUserAgent", "End", 11)
 		End Sub
 
+		' Construct a User-agent string for the client.
+		Protected Function constuctUserAgentStr(ByVal revision As String, ByVal clientClassName As String, ByVal userAgent As String) As String
+			PrintDebugMessage("constuctUserAgentStr", "Begin", 31)
+			Dim retUserAgent As String = "EBI-Sample-Client"
+			Dim clientVersion As String = "0"
+			' Client version.
+			If revision IsNot Nothing And revision.Length > 0 Then
+				' CVS/Subversion revision tag.
+				If revision.StartsWith("$") Then
+					' Populated tag, extract revision number.
+					If revision.Length > 13 Then
+						clientVersion = revision.Substring(11, (revision.Length - 13))
+					End If
+				' Alternative revision/version string.
+				Else
+					clientVersion = revision
+				End If
+			End If
+			Dim strBuilder As StringBuilder = New StringBuilder()
+			strBuilder.Append(retUserAgent & "/" & clientVersion)
+			strBuilder.Append(" (" & clientClassName & "; VB.NET; " & Environment.OSVersion.ToString)
+			If userAgent Is Nothing Or userAgent.Length < 1 Then ' No agent
+				strBuilder.Append(")")
+			ElseIf userAgent.Contains("(") Then ' MS .NET
+				strBuilder.Append(") " & userAgent)
+			Else ' Mono
+				strBuilder.Append("; " & userAgent & ")")
+			End If
+			retUserAgent = strBuilder.ToString
+			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " & retUserAgent, 32)
+			PrintDebugMessage("constuctUserAgentStr", "End", 31)
+			Return retUserAgent
+		End Function
+	
 		' Get list of database names from sevice.
 		Public Function GetSupportedDBs() As String()
 			PrintDebugMessage("GetSupportedDBs", "Begin", 1)
@@ -129,7 +149,7 @@ Namespace EbiWS
 			Dim dbNameList() As String
 			dbNameList = Me.SrvProxy.getSupportedDBs()
 			If dbNameList Is Nothing Then
-				PrintDebugMessage("GetSupportedDBs", "Null dbNameList returned by getSupportedDBs()" , 2)
+				Console.Error.WriteLine("Error: Null returned by web service")
 				dbNameList = New String() {} ' Replace with an empty array.
 			End If
 			PrintDebugMessage("GetSupportedDBs", "got " & dbNameList.Length & " db names", 2)
@@ -153,7 +173,7 @@ Namespace EbiWS
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getSupportedFormats()
 			If nameList Is Nothing Then
-				PrintDebugMessage("GetSupportedFormats", "Null nameList returned by getSupportedFormats()" , 2)
+				Console.Error.WriteLine("Error: Null returned by web service.")
 				nameList = New String() {} ' Replace with an empty array.
 			End If
 			PrintDebugMessage("GetSupportedFormats", "got " & nameList.Length & " names", 2)
@@ -177,7 +197,7 @@ Namespace EbiWS
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getSupportedStyles()
 			If nameList Is Nothing Then
-				PrintDebugMessage("GetSupportedStyles", "Null nameList returned by getSupportedStyles()" , 2)
+				Console.Error.WriteLine("Error: Null returned by web service.")
 				nameList = New String() {} ' Replace with an empty array.
 			End If
 			PrintDebugMessage("GetSupportedStyles", "got " & nameList.Length & " names", 2)
@@ -200,7 +220,7 @@ Namespace EbiWS
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getDbFormats(dbName)
 			If nameList Is Nothing Then
-				PrintDebugMessage("GetDbFormats", "Null nameList returned by getDbFormats()" , 2)
+				Console.Error.WriteLine("Error: Null returned by web service.")
 				nameList = New String() {} ' Replace with an empty array.
 			End If
 			PrintDebugMessage("GetDbFormats", "got " & nameList.Length & " names", 2)
@@ -224,7 +244,7 @@ Namespace EbiWS
 			Dim nameList As String()
 			nameList = Me.SrvProxy.getFormatStyles(dbName, formatName)
 			If nameList Is Nothing Then
-				PrintDebugMessage("GetFormatStyles", "Null nameList returned by getFormatStyles()" , 2)
+				Console.Error.WriteLine("Error: Null returned by web service.")
 				nameList = New String() {} ' Replace with an empty array.
 			End If
 			PrintDebugMessage("GetFormatStyles", "got " & nameList.Length & " names", 2)
@@ -247,6 +267,9 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim entryStr As String
 			entryStr = Me.SrvProxy.fetchData(query, formatName, styleName)
+			If entryStr Is Nothing Then
+				Console.Error.WriteLine("Error: Null returned by web service.")
+			End If
 			PrintDebugMessage("FetchData", "End", 1)
 			Return entryStr
 		End Function
@@ -266,6 +289,9 @@ Namespace EbiWS
 			ServiceProxyConnect()
 			Dim entriesStr As String
 			entriesStr = Me.SrvProxy.fetchBatch(dbName, idListStr, formatName, styleName)
+			If entriesStr Is Nothing Then
+				Console.Error.WriteLine("Error: Null returned by web service.")
+			End If
 			PrintDebugMessage("FetchBatch", "End", 1)
 			Return entriesStr
 		End Function
