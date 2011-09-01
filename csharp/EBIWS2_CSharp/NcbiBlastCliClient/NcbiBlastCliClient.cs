@@ -33,7 +33,7 @@ For more information see:
   -m, --matrix         : str  : scoring matrix, see --paramDetail matrix
   -e, --exp            : real : 0<E<= 1000. Statistical significance threshold
                                 for reporting database sequence matches.
-  -f, --filter         :      : low complexity sequence filter, see
+  -f, --filter         : str  : low complexity sequence filter, see
                                 --paramDetail filter
   -A, --align          : int  : alignment format, see --paramDetail align
   -s, --scores         : int  : maximum number of scores to report
@@ -225,11 +225,11 @@ For more information see:
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
-				case "--multifasta":
-					this.multifasta = true;
-					break;
-				case "/multifasta":
-					goto case "--multifasta";
+					case "--multifasta":
+						this.multifasta = true;
+						break;
+					case "/multifasta":
+						goto case "--multifasta";
 
 						// Tool specific options
 					case "--program": // BLAST program
@@ -279,7 +279,7 @@ For more information see:
 					case "/E":
 						goto case "--exp";
 					case "--filter": // Low complexity filter
-						InParams.filter = "1"; // Set true
+						InParams.filter = args[++i];
 						Action = "submit";
 						break;
 					case "-f":
@@ -348,7 +348,7 @@ For more information see:
 						goto case "--extendgap";
 					case "/e":
 						goto case "--extendgap";
-					case "--gapalign": // Use gapped alignments
+					case "--gapalign": // Enable gapped alignments.
 						InParams.gapalign = true;
 						Action = "submit";
 						break;
@@ -357,6 +357,12 @@ For more information see:
 					case "/gapalign":
 						goto case "--gapalign";
 					case "/g":
+						goto case "--gapalign";
+					case "--nogapalign": // Disable gapped alignments.
+						InParams.gapalign = false;
+						Action = "submit";
+						break;
+					case "/nogapalign":
 						goto case "--gapalign";
 
 						// Input data/sequence option
