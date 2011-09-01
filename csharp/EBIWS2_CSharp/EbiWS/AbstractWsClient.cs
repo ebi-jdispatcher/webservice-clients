@@ -354,6 +354,67 @@ Asynchronous job:
 		}
 		
 		/// <summary>
+		/// Construct a User-agent string for the client. See RFC2616 for details of HTTP user-agent strings.
+		/// </summary>
+		/// <param name="revision">Revision/version to use for the client.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="clientClassName">Specific name for the client, used as part of the comment. Commonly derived from the name of the class.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="userAgent">Less specific user-agent string to be appended to the user-agent string or incorporated into the comment.
+		/// A <see cref="System.String"/>
+		/// </param>
+		protected string ConstuctUserAgentStr(string revision, string clientClassName, string userAgent) {
+			PrintDebugMessage("constuctUserAgentStr", "Begin", 31);
+			string retUserAgent = "EBI-Sample-Client";
+			string clientVersion = "0";
+			// Client version.
+			if(revision != null && revision.Length > 0) {
+				// CVS/Subversion revision tag.
+				if(revision.StartsWith("$") && revision.EndsWith("$")) {
+					// Populated tag, extract revision number.
+					if(revision.Length > 13) {
+						clientVersion = revision.Substring(11, (revision.Length - 13));
+					}
+				}
+				// Alternative revision/version string.
+				else {
+					clientVersion = revision;
+				}
+			}
+			// Agent name and version.
+			StringBuilder strBuilder = new StringBuilder();
+			strBuilder.Append(retUserAgent + "/" + clientVersion);
+			// Agent comment (additional information).
+			strBuilder.Append(" (");
+			if(clientClassName != null && clientClassName.Length > 0) {
+				// Provided class/client name.
+				strBuilder.Append(clientClassName + "; ");
+			}
+			else {
+				// Use current class name.
+				strBuilder.Append(this.GetType().Name + "; ");
+			}
+			strBuilder.Append("C#; " + Environment.OSVersion.ToString());
+			if(userAgent == null || userAgent.Length < 1) { // No previous agent.
+				strBuilder.Append(")");
+			}
+			else if(userAgent.StartsWith("Mono ")) { // Mono agent.
+				// Malformed so add to comments.
+				strBuilder.Append("; " + userAgent + ")");
+			}
+			else { // MS .NET or other user-agent.
+				// Append after comments.
+				strBuilder.Append(") " + userAgent);
+			}
+			retUserAgent = strBuilder.ToString();
+			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " + retUserAgent, 32);
+			PrintDebugMessage("constuctUserAgentStr", "End", 31);
+			return retUserAgent;
+		}
+
+		/// <summary>
 		/// Read data from a text file into a string.
 		/// </summary>
 		/// <param name="fileName">Name of the file to read data from.

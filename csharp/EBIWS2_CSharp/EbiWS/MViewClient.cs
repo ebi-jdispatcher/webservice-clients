@@ -44,34 +44,29 @@ namespace EbiWS
 		{
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11);
 			if (SrvProxy == null) {
-				if(ServiceEndPoint == null) {
-					SrvProxy = new JDispatcherService();
-				}
-				else {
-					SrvProxy = new JDispatcherService();
-					SrvProxy.Url = ServiceEndPoint;
-				}
-				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " + SrvProxy.Url, 12);
+				SrvProxy = new JDispatcherService();
+				SetProxyEndPoint(); // Set explicit service endpoint, if defined.
 				SetProxyUserAgent(); // Set user-agent for client.
 			}
-			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
+			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy.ToString(), 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 		
+		// Set service proxy endpoint.
+		private void SetProxyEndPoint() {
+			PrintDebugMessage("SetProxyEndPoint", "Begin", 11);
+			if(ServiceEndPoint != null && ServiceEndPoint.Length > 0) {
+				SrvProxy.Url = ServiceEndPoint;
+			}
+			ServiceEndPoint = SrvProxy.Url;
+			PrintDebugMessage("SetProxyEndPoint", "Service endpoint: " + SrvProxy.Url, 12);
+			PrintDebugMessage("SetProxyEndPoint", "End", 11);
+		}
+
 		// Set User-agent for web service proxy.
 		private void SetProxyUserAgent() {
 			PrintDebugMessage("SetProxyUserAgent", "Begin", 11);
-			String clientVersion = "0";
-			if(revision.Length > 13) {
-				revision.Substring(11, (revision.Length - 13));
-			}
-			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.ToString();
-			if(SrvProxy.UserAgent.Contains("(")) { // MS .NET
-				userAgent += ") " + SrvProxy.UserAgent;
-			}
-			else { // Mono
-				userAgent += "; " + SrvProxy.UserAgent + ")";
-			}
+			String userAgent = ConstuctUserAgentStr(revision, this.GetType().Name, SrvProxy.UserAgent);
 			PrintDebugMessage("SetProxyUserAgent", "userAgent: " + userAgent, 12);
 			SrvProxy.UserAgent = userAgent;
 			PrintDebugMessage("SetProxyUserAgent", "End", 11);

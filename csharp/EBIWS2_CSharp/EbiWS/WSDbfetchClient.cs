@@ -185,37 +185,83 @@ namespace EbiWS {
 		{
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11);
 			if (SrvProxy == null) {
-				if(ServiceEndPoint == null) {
-					SrvProxy = new WSDBFetchDoclitServerService();
-				}
-				else {
-					SrvProxy = new WSDBFetchDoclitServerService();
-					SrvProxy.Url = ServiceEndPoint;
-				}
-				ServiceEndPoint = SrvProxy.Url;
-				PrintDebugMessage("ServiceProxyConnect", "ServiceEndPoint: " + ServiceEndPoint, 12);
-				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
+				SrvProxy = new WSDBFetchDoclitServerService();
+				SetProxyEndPoint(); // Set explicit service endpoint, if defined.
 				SetProxyUserAgent(); // Set user-agent for client.
+				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			}
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
+		}
+
+		// Set service proxy endpoint.
+		private void SetProxyEndPoint() {
+			PrintDebugMessage("SetProxyEndPoint", "Begin", 11);
+			if(ServiceEndPoint != null && ServiceEndPoint.Length > 0) {
+				SrvProxy.Url = ServiceEndPoint;
+			}
+			ServiceEndPoint = SrvProxy.Url;
+			PrintDebugMessage("SetProxyEndPoint", "Service endpoint: " + SrvProxy.Url, 12);
+			PrintDebugMessage("SetProxyEndPoint", "End", 11);
 		}
 
 		// Set User-agent for web service proxy.
 		private void SetProxyUserAgent() {
 			PrintDebugMessage("SetProxyUserAgent", "Begin", 11);
-			String clientVersion = revision.Substring(11, (revision.Length - 13));
-			String userAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.GetType().Name + "; " + System.Environment.OSVersion.ToString();
-			if(SrvProxy.UserAgent.Contains("(")) { // MS .NET
-				userAgent += ") " + SrvProxy.UserAgent;
-			}
-			else { // Mono
-				userAgent += "; " + SrvProxy.UserAgent + ")";
-			}
+			String userAgent = ConstuctUserAgentStr(revision, this.GetType().Name, SrvProxy.UserAgent);
 			PrintDebugMessage("SetProxyUserAgent", "userAgent: " + userAgent, 12);
 			SrvProxy.UserAgent = userAgent;
 			PrintDebugMessage("SetProxyUserAgent", "End", 11);
 		}
 		
+		// Construct a User-agent string for the client. See RFC2616 for details of HTTP user-agent strings.
+		private string ConstuctUserAgentStr(string revision, string clientClassName, string userAgent) {
+			PrintDebugMessage("constuctUserAgentStr", "Begin", 31);
+			string retUserAgent = "EBI-Sample-Client";
+			string clientVersion = "0";
+			// Client version.
+			if(revision != null && revision.Length > 0) {
+				// CVS/Subversion revision tag.
+				if(revision.StartsWith("$") && revision.EndsWith("$")) {
+					// Populated tag, extract revision number.
+					if(revision.Length > 13) {
+						clientVersion = revision.Substring(11, (revision.Length - 13));
+					}
+				}
+				// Alternative revision/version string.
+				else {
+					clientVersion = revision;
+				}
+			}
+			// Agent name and version.
+			StringBuilder strBuilder = new StringBuilder();
+			strBuilder.Append(retUserAgent + "/" + clientVersion);
+			// Agent comment (additional information).
+			strBuilder.Append(" (");
+			if(clientClassName != null && clientClassName.Length > 0) {
+				// Provided class/client name.
+				strBuilder.Append(clientClassName + "; ");
+			}
+			else {
+				// Use current class name.
+				strBuilder.Append(this.GetType().Name + "; ");
+			}
+			strBuilder.Append("C#; " + Environment.OSVersion.ToString());
+			if(userAgent == null || userAgent.Length < 1) { // No previous agent.
+				strBuilder.Append(")");
+			}
+			else if(userAgent.StartsWith("Mono ")) { // Mono agent.
+				// Malformed so add to comments.
+				strBuilder.Append("; " + userAgent + ")");
+			}
+			else { // MS .NET or other user-agent.
+				// Append after comments.
+				strBuilder.Append(") " + userAgent);
+			}
+			retUserAgent = strBuilder.ToString();
+			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " + retUserAgent, 32);
+			PrintDebugMessage("constuctUserAgentStr", "End", 31);
+			return retUserAgent;
+		}
 		
 		/// <summary>
 		/// Get list of database names from sevice.
