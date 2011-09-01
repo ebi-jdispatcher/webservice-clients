@@ -32,13 +32,11 @@ solution and its projects.
 For plain .NET SDK and Mono environments a set of make files are
 provided for MS Windows and Linux which can be invoked as follows:
 
-MS .NET SDK
-
+- MS .NET SDK
 From the SDK "CMD Shell"
   nmake -f Makefile.ms_sdk
 
-Mono
-
+- Mono
 From a terminal
   make -f Makefile.mono
 
@@ -70,3 +68,6 @@ Support
 
 If you have problems with the clients or any suggestions for our web services
 then please contact us via the Support form http://www.ebi.ac.uk/support/
+
+---
+$Id$
