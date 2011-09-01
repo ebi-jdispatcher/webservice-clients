@@ -7,17 +7,17 @@ Visual Basic .NET.
 Service Stubs
 -------------
 
-Due to issues with the Mono versions of wsdl.exe the required service stubs 
-are generated using the Microsoft SDK and checked-in to the repository. To 
-regenerate, open an Microsoft SDK environment CMD window, change to the root
-directory of the solution and enter:
+Due to issues with the Mono versions of wsdl.exe (see Notes) the required 
+service stubs have been generated using the Microsoft SDK and checked-in to 
+the repository. To regenerate, open an Microsoft SDK environment CMD window, 
+change to the root directory of the solution and enter:
 
   cd EbiWS
   nmake -f Makefile.ms_sdk clean-stubs
   nmake -f Makefile.ms_sdk stubs
 
-The resulting WebReference\*\Reference.vb files can then be checked-in using 
-a Subversion client (e.g. TortoiseSVN).
+The resulting WebReference\*\Reference.vb files will be used in subsequent 
+compiles.
 
 Building
 --------
@@ -42,19 +42,21 @@ or with msbuild using the MonoDevelop/Visual Studio solution:
 Notes
 -----
 
-Mono:
+A. Issues observed in Mono environments.
 
 1. Mono 2.4 (Ubuntu 10.04 LTS) fails to generate stubs ("Web References") 
 using wsdl.exe or wsdl2.exe with a error relating to WS-I Basic Profile 
 check R2305. This issue has been reported as a Mono bug, see: 
 https://bugzilla.novell.com/show_bug.cgi?id=569533, and appears to be fixed 
-in more recent versions (e.g. 2.6) although they now incorrectly report that 
-the services fail the R2305 compliance check.
+in more recent versions (e.g. 2.6.7) although they now incorrectly report that 
+the services fail the R2305 compliance check (confirmed with the WS-I tools).
 
 2. While the project builds with Mono 2.x, when using MS SDK generated stubs, 
 the clients do not work due to the web service calls all returning null. 
 Strangely the equivalent sample clients C# work as expected in these versions, 
-suggesting that this is caused by a problem in the Mono VB.NET implementation.
+suggesting that this is caused by a problem in the Mono VB.NET implementation. 
+It has not been checked if the compiled clients work correctly in MS .NET 
+environments.
 
 3. Generation of client stubs ("Web References") for the document/literal 
 wrapper SOAP services using Mono 2.6 wsdl.exe/wsdl2.exe generates VB code 
@@ -63,6 +65,12 @@ which fails to compile.
 4. Generation of client stubs ("Service References") for the document/literal 
 wrapper SOAP services using Mono 2.6 svcutil.exe also generates VB code which 
 fails to compile.
+
+Support
+-------
+
+If you have problems with the clients or any suggestions for our web services
+then please contact us via the Support form http://www.ebi.ac.uk/support/
 
 ---
 $Id$
