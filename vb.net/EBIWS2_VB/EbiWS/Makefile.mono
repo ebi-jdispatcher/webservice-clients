@@ -11,9 +11,9 @@ VBC = vbnc
 VBFLAGS = -reference:System.Web.Services.dll,System.Xml.dll
 
 # WSDL to VB.NET tool
-WSDL2CS = wsdl2
+WSDL2VB = wsdl2
 # WSDL to VB.NET flags
-WSDL2CSFLAGS = -language:VB -namespace:EbiWS
+WSDL2VBFLAGS = -language:vb -namespace:EbiWS
 
 # Directory for compiled binaries
 BINDIR = bin
@@ -69,19 +69,19 @@ $(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 
 $(STUBSRCDIR)/EBeyeWs/Reference.vb:
 	mkdir -p $(STUBSRCDIR)/EBeyeWs/
-	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).EBeyeWs -out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
 
 $(STUBSRCDIR)/IPRScanWs/Reference.vb:
 	mkdir -p $(STUBSRCDIR)/IPRScanWs/
-	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScanWs -out:$@ "$(WSDLBASE)/iprscan?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).IPRScanWs -out:$@ "$(WSDLBASE)/iprscan?wsdl"
 
 $(STUBSRCDIR)/NcbiBlastWs/Reference.vb:
 	mkdir -p $(STUBSRCDIR)/NcbiBlastWs/
-	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs -out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).NcbiBlastWs -out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
 
 $(STUBSRCDIR)/WSDbfetchWs/Reference.vb:
 	mkdir -p $(STUBSRCDIR)/WSDbfetchWs/
-	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs -out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl"
+	$(WSDL2VB) $(WSDL2VBFLAGS).WSDbfetchWs -out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl"
 
 ### Clean-up ###
 
