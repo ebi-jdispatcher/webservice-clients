@@ -99,9 +99,9 @@ Namespace EbiWS
 		' Set specific web service endpoint for web service proxy.
 		Private Sub SetProxyEndPoint()
 			PrintDebugMessage("SetProxyEndPoint", "Begin", 11)
-			If Me.ServiceEndPoint IsNot Nothing Then
-				Me.SrvProxy.Url = Me.ServiceEndPoint
-			End If
+            If Me.ServiceEndPoint IsNot Nothing AndAlso ServiceEndPoint.Length > 0 Then
+                Me.SrvProxy.Url = Me.ServiceEndPoint
+            End If
 			Me.ServiceEndPoint = Me.SrvProxy.Url
 			PrintDebugMessage("SetProxyEndPoint", "ServiceEndPoint: " & Me.ServiceEndPoint, 12)
 			PrintDebugMessage("SetProxyEndPoint", "End", 11)
@@ -122,28 +122,28 @@ Namespace EbiWS
 			Dim retUserAgent As String = "EBI-Sample-Client"
 			Dim clientVersion As String = "0"
 			' Client version.
-			If revision IsNot Nothing And revision.Length > 0 Then
-				' CVS/Subversion revision tag.
-				If revision.StartsWith("$") Then
-					' Populated tag, extract revision number.
-					If revision.Length > 13 Then
-						clientVersion = revision.Substring(11, (revision.Length - 13))
-					End If
-				' Alternative revision/version string.
-				Else
-					clientVersion = revision
-				End If
-			End If
+            If revision IsNot Nothing AndAlso revision.Length > 0 Then
+                ' CVS/Subversion revision tag.
+                If revision.StartsWith("$") Then
+                    ' Populated tag, extract revision number.
+                    If revision.Length > 13 Then
+                        clientVersion = revision.Substring(11, (revision.Length - 13))
+                    End If
+                    ' Alternative revision/version string.
+                Else
+                    clientVersion = revision
+                End If
+            End If
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			strBuilder.Append(retUserAgent & "/" & clientVersion)
 			strBuilder.Append(" (" & clientClassName & "; VB.NET; " & Environment.OSVersion.ToString)
-			If userAgent Is Nothing Or userAgent.Length < 1 Then ' No agent
-				strBuilder.Append(")")
-			ElseIf userAgent.Contains("(") Then ' MS .NET
-				strBuilder.Append(") " & userAgent)
-			Else ' Mono
-				strBuilder.Append("; " & userAgent & ")")
-			End If
+            If userAgent Is Nothing OrElse userAgent.Length < 1 Then ' No agent
+                strBuilder.Append(")")
+            ElseIf userAgent.Contains("(") Then ' MS .NET
+                strBuilder.Append(") " & userAgent)
+            Else ' Mono
+                strBuilder.Append("; " & userAgent & ")")
+            End If
 			retUserAgent = strBuilder.ToString
 			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " & retUserAgent, 32)
 			PrintDebugMessage("constuctUserAgentStr", "End", 31)
