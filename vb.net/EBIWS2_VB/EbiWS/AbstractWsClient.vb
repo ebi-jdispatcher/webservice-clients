@@ -295,17 +295,17 @@ Environment.NewLine & _
 				PrintDebugMessage("ObjectPropertiesToString", "info: " & info.Name & " (" & info.PropertyType.FullName & ")", 32)
 				If info.PropertyType.IsArray Then
 					Dim objArray As IList = TryCast(info.GetValue(obj, Nothing), IList)
-					If objArray IsNot Nothing And objArray.Count > 0 Then
-						PrintDebugMessage("ObjectPropertiesToString", "Array: " & objArray.Count, 33)
-						strBuilder.Append(info.Name & ":" & Environment.NewLine)
-						For Each subObj As Object In objArray
-							If subObj IsNot Nothing Then
-								strBuilder.Append(Tab & subObj.ToString)
-							End If
-						Next subObj
-					Else
-						strBuilder.Append(info.Name & ": <null>" & Environment.NewLine)
-					End If
+                    If objArray IsNot Nothing AndAlso objArray.Count > 0 Then
+                        PrintDebugMessage("ObjectPropertiesToString", "Array: " & objArray.Count, 33)
+                        strBuilder.Append(info.Name & ":" & Environment.NewLine)
+                        For Each subObj As Object In objArray
+                            If subObj IsNot Nothing Then
+                                strBuilder.Append(Tab & subObj.ToString)
+                            End If
+                        Next subObj
+                    Else
+                        strBuilder.Append(info.Name & ": <null>" & Environment.NewLine)
+                    End If
 				Else
 					PrintDebugMessage("ObjectPropertiesToString", "Object: " & obj.ToString, 33)
 					strBuilder.Append(info.Name & ": ")
@@ -335,28 +335,28 @@ Environment.NewLine & _
 			Dim retUserAgent As String = "EBI-Sample-Client"
 			Dim clientVersion As String = "0"
 			' Client version.
-			If revision IsNot Nothing And revision.Length > 0 Then
-				' CVS/Subversion revision tag.
-				If revision.StartsWith("$") Then
-					' Populated tag, extract revision number.
-					If revision.Length > 13 Then
-						clientVersion = revision.Substring(11, (revision.Length - 13))
-					End If
-				' Alternative revision/version string.
-				Else
-					clientVersion = revision
-				End If
-			End If
+            If revision IsNot Nothing AndAlso revision.Length > 0 Then
+                ' CVS/Subversion revision tag.
+                If revision.StartsWith("$") Then
+                    ' Populated tag, extract revision number.
+                    If revision.Length > 13 Then
+                        clientVersion = revision.Substring(11, (revision.Length - 13))
+                    End If
+                    ' Alternative revision/version string.
+                Else
+                    clientVersion = revision
+                End If
+            End If
 			Dim strBuilder As StringBuilder = New StringBuilder()
 			strBuilder.Append(retUserAgent & "/" & clientVersion)
 			strBuilder.Append(" (" & clientClassName & "; VB.NET; " & Environment.OSVersion.ToString)
-			If userAgent Is Nothing Or userAgent.Length < 1 Then ' No agent
-				strBuilder.Append(")")
-			ElseIf userAgent.Contains("(") Then ' MS .NET
-				strBuilder.Append(") " & userAgent)
-			Else ' Mono
-				strBuilder.Append("; " & userAgent & ")")
-			End If
+            If userAgent Is Nothing OrElse userAgent.Length < 1 Then ' No agent
+                strBuilder.Append(")")
+            ElseIf userAgent.Contains("(") Then ' MS .NET
+                strBuilder.Append(") " & userAgent)
+            Else ' Mono
+                strBuilder.Append("; " & userAgent & ")")
+            End If
 			retUserAgent = strBuilder.ToString
 			PrintDebugMessage("constuctUserAgentStr", "retUserAgent: " & retUserAgent, 32)
 			PrintDebugMessage("constuctUserAgentStr", "End", 31)
@@ -366,18 +366,18 @@ Environment.NewLine & _
 		' Read data from a text file into a string.
 		Protected Function ReadTextFile(ByVal fileName As String) As String
 			PrintDebugMessage("ReadTextFile", "Begin", 1)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to read data from.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to read data from.")
+            End If
 			PrintDebugMessage("ReadTextFile", "fileName: " & fileName, 2)
 			Dim retVal As String = ""
 			' Read from STDIN
-			If fileName Is "-" Then
-				retVal = Console.In.ReadToEnd()
-			' Read from file
-			Else 
-				retVal = File.ReadAllText(fileName)
-			End If
+            If fileName = "-" Then
+                retVal = Console.In.ReadToEnd()
+                ' Read from file
+            Else
+                retVal = File.ReadAllText(fileName)
+            End If
 			PrintDebugMessage("ReadTextFile", "read " & retVal.Length & " characters", 1)
 			PrintDebugMessage("ReadTextFile", "End", 1)
 			Return retVal
@@ -386,19 +386,19 @@ Environment.NewLine & _
 		' Read a file into a byte array.
 		Protected Function ReadFile(ByVal fileName As String) As Byte()
 			PrintDebugMessage("ReadFile", "Begin", 1)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to read data from.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to read data from.")
+            End If
 			PrintDebugMessage("ReadFile", "fileName: " & fileName, 1)
 			Dim retVal As Byte() = Nothing
-			If fileName Is "-" Then ' Read from STDIN
-				Dim s As Stream = Console.OpenStandardInput()
-				Dim sr As BinaryReader = New BinaryReader(s)
-				retVal = sr.ReadBytes(CInt(s.Length))
-				' Note: do not close since this is STDIN.
-			Else ' Read from file
-				retVal = File.ReadAllBytes(fileName)
-			End If
+            If fileName = "-" Then ' Read from STDIN
+                Dim s As Stream = Console.OpenStandardInput()
+                Dim sr As BinaryReader = New BinaryReader(s)
+                retVal = sr.ReadBytes(CInt(s.Length))
+                ' Note: do not close since this is STDIN.
+            Else ' Read from file
+                retVal = File.ReadAllBytes(fileName)
+            End If
 			PrintDebugMessage("ReadFile", "read " & retVal.Length & " bytes", 1)
 			PrintDebugMessage("ReadFile", "End", 1)
 			Return retVal
@@ -407,19 +407,19 @@ Environment.NewLine & _
 		' Load text data to be submitted to the tool.
 		Protected Function LoadData(ByVal fileOptionStr As String) As String
 			PrintDebugMessage("LoadData", "Begin", 1)
-			If fileOptionStr Is Nothing Or fileOptionStr.Length < 1 Then
-				Throw New ClientException("A file name is required to read data from.")
-			End If
+            If fileOptionStr Is Nothing OrElse fileOptionStr.Length < 1 Then
+                Throw New ClientException("A file name is required to read data from.")
+            End If
 			PrintDebugMessage("LoadData", "fileOptionStr: " & fileOptionStr, 2)
 			Dim retVal As String = Nothing
 			If fileOptionStr IsNot Nothing Then
-				If fileOptionStr Is "-" Then ' STDIN
-					retVal = ReadTextFile(fileOptionStr)
-				ElseIf File.Exists(fileOptionStr) Then ' File
-					retVal = ReadTextFile(fileOptionStr)
-				Else ' Entry Id or raw sequence
-					retVal = fileOptionStr
-				End If
+                If fileOptionStr = "-" Then ' STDIN
+                    retVal = ReadTextFile(fileOptionStr)
+                ElseIf File.Exists(fileOptionStr) Then ' File
+                    retVal = ReadTextFile(fileOptionStr)
+                Else ' Entry Id or raw sequence
+                    retVal = fileOptionStr
+                End If
 			End If
 			PrintDebugMessage("LoadData", "End", 1)
 			Return retVal
@@ -428,20 +428,20 @@ Environment.NewLine & _
 		' Load binary data for submission to the tool service.
 		Protected Function LoadBinData(ByVal fileOptionStr As String) As Byte()
 			PrintDebugMessage("LoadBinData", "Begin", 1)
-			If fileOptionStr Is Nothing Or fileOptionStr.Length < 1 Then
-				Throw New ClientException("A file name is required to read data from.")
-			End If
+            If fileOptionStr Is Nothing OrElse fileOptionStr.Length < 1 Then
+                Throw New ClientException("A file name is required to read data from.")
+            End If
 			PrintDebugMessage("LoadBinData", "fileOptionStr: " & fileOptionStr, 2)
 			Dim retVal As Byte() = Nothing
 			If fileOptionStr IsNot Nothing Then
-				If fileOptionStr Is "-" Then ' STDIN
-					retVal = ReadFile(fileOptionStr)
-				ElseIf File.Exists(fileOptionStr) Then ' File
-					retVal = ReadFile(fileOptionStr)
-				Else ' Entry Id or raw sequence
-					Dim enc As System.Text.ASCIIEncoding = New System.Text.ASCIIEncoding()
-					retVal = enc.GetBytes(fileOptionStr)
-				End If
+                If fileOptionStr = "-" Then ' STDIN
+                    retVal = ReadFile(fileOptionStr)
+                ElseIf File.Exists(fileOptionStr) Then ' File
+                    retVal = ReadFile(fileOptionStr)
+                Else ' Entry Id or raw sequence
+                    Dim enc As System.Text.ASCIIEncoding = New System.Text.ASCIIEncoding()
+                    retVal = enc.GetBytes(fileOptionStr)
+                End If
 			End If
 			PrintDebugMessage("LoadBinData", "End", 1)
 			Return retVal
@@ -450,29 +450,29 @@ Environment.NewLine & _
 		' Write a byte array to a file.
 		Protected Sub WriteBinaryFile(ByVal fileName As String, ByVal content As Byte())
 			PrintDebugMessage("WriteBinaryFile", "Begin", 1)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to write data to.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to write data to.")
+            End If
 			PrintDebugMessage("WriteBinaryFile", "fileName: " & fileName, 1)
 			PrintDebugMessage("WriteBinaryFile", "content: " & content.Length & " bytes", 1)
-			If fileName Is "-" Then ' STDOUT
-				Dim s As Stream = Console.OpenStandardOutput()
-				Dim sw As BinaryWriter = New BinaryWriter(s)
-				sw.Write(content)
-				' Note: do not close, since this is STDOUT.
-			Else ' Data file
-				File.WriteAllBytes(fileName, content)
-				Console.WriteLine("Wrote: {0}", fileName)
-			End If
+            If fileName = "-" Then ' STDOUT
+                Dim s As Stream = Console.OpenStandardOutput()
+                Dim sw As BinaryWriter = New BinaryWriter(s)
+                sw.Write(content)
+                ' Note: do not close, since this is STDOUT.
+            Else ' Data file
+                File.WriteAllBytes(fileName, content)
+                Console.WriteLine("Wrote: {0}", fileName)
+            End If
 			PrintDebugMessage("WriteBinaryFile", "End", 1)
 		End Sub
 
 		' Write text data encoded as a byte array to a file.
 		Protected Sub WriteTextFile(ByVal fileName As String, ByVal content As Byte())
 			PrintDebugMessage("WriteTextFile", "Begin", 1)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to write data to.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to write data to.")
+            End If
 			PrintDebugMessage("WriteTextFile", "fileName: " & fileName, 1)
 			PrintDebugMessage("WriteTextFile", "content: " & content.Length & " bytes", 1)
 			Dim enc As System.Text.ASCIIEncoding = New System.Text.ASCIIEncoding()
@@ -484,26 +484,26 @@ Environment.NewLine & _
 		' Write a string to a file.
 		Protected Sub WriteTextFile(ByVal fileName As String, ByVal content As String)
 			PrintDebugMessage("WriteTextFile", "Begin", 1)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to write data to.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to write data to.")
+            End If
 			PrintDebugMessage("WriteTextFile", "fileName: " & fileName, 1)
 			PrintDebugMessage("WriteTextFile", "content: " & content.Length & " characters", 1)
-			If fileName Is "-" Then ' STDOUT
-				Console.Write(content)
-			Else ' Data file
-				File.WriteAllText(fileName, content)
-				Console.WriteLine("Wrote: {0}", fileName)
-			End If
+            If fileName = "-" Then ' STDOUT
+                Console.Write(content)
+            Else ' Data file
+                File.WriteAllText(fileName, content)
+                Console.WriteLine("Wrote: {0}", fileName)
+            End If
 			PrintDebugMessage("WriteTextFile", "End", 1)
 		End Sub
 
 		' Set file to read sequence data from in multi-sequence mode. 
 		Protected Sub SetSequenceFile(ByVal fileName As String)
 			PrintDebugMessage("SetSequenceFile", "Begin", 11)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to read sequences from.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to read sequences from.")
+            End If
 			PrintDebugMessage("SetSequenceFile", "fileName: " & fileName, 12)
 			Me.sequenceFileReader = New StreamReader(fileName)
 			PrintDebugMessage("SetSequenceFile", "End", 11)
@@ -519,23 +519,27 @@ Environment.NewLine & _
 			End If
 			Dim retVal As String = Nothing
 			Dim line As String = Nothing
-			' Skip to start of fasta sequence.
-			While Not Me.sequenceFileReader.Peek().Equals(">")
-				line = Me.sequenceFileReader.ReadLine()
-				PrintDebugMessage("NextSequence", "line: " & line, 12)
-				If line Is Nothing Then
-					Exit While
-				End If
-			End While
-			If Me.sequenceFileReader.Peek().Equals(">") Then
-				line = Me.sequenceFileReader.ReadLine()
-				PrintProgressMessage(line, 1)
-				retVal = line & Environment.NewLine
-				While (Not Me.sequenceFileReader.Peek().Equals(">")) And (line = Me.sequenceFileReader.ReadLine())
-					PrintDebugMessage("NextSequence", "line: " & line, 12)
-					retVal &= line & Environment.NewLine
-				End While
-			End If
+            ' Skip to start of fasta sequence.
+            While Microsoft.VisualBasic.ChrW(sequenceFileReader.Peek()) <> ">"c
+                line = Me.sequenceFileReader.ReadLine()
+                PrintDebugMessage("NextSequence", "skip line: " & line, 12)
+                If line Is Nothing Then
+                    Exit While
+                End If
+            End While
+            If Microsoft.VisualBasic.ChrW(sequenceFileReader.Peek()) = ">"c Then
+                line = Me.sequenceFileReader.ReadLine()
+                PrintProgressMessage(line, 1)
+                retVal = line & Environment.NewLine
+                While Microsoft.VisualBasic.ChrW(sequenceFileReader.Peek()) <> ">"c
+                    line = Me.sequenceFileReader.ReadLine()
+                    If line Is Nothing Then
+                        Exit While
+                    End If
+                    PrintDebugMessage("NextSequence", "line: " & line, 12)
+                    retVal &= line & Environment.NewLine
+                End While
+            End If
 			PrintDebugMessage("NextSequence", "retVal:" & Environment.NewLine & retVal, 12)
 			PrintDebugMessage("NextSequence", "End", 11)
 			Return retVal
@@ -556,9 +560,9 @@ Environment.NewLine & _
 		' from.
 		Protected Sub SetIdentifierFile(ByVal fileName As String)
 			PrintDebugMessage("SetIdentifierFile", "Begin", 11)
-			If fileName Is Nothing Or fileName.Length < 1 Then
-				Throw New ClientException("A file name is required to read identifiers from.")
-			End If
+            If fileName Is Nothing OrElse fileName.Length < 1 Then
+                Throw New ClientException("A file name is required to read identifiers from.")
+            End If
 			PrintDebugMessage("SetIdentifierFile", "fileName: " & fileName, 12)
 			Me.identifierFileReader = New StreamReader(fileName)
 			PrintDebugMessage("SetIdentifierFile", "End", 11)
@@ -572,14 +576,16 @@ Environment.NewLine & _
 				Throw New ClientException("Identifier list file to read from not set.")
 			End If
 			Dim retVal As String = Nothing
-			Dim line As String = Nothing
-			While (line = Me.identifierFileReader.ReadLine())
-				PrintProgressMessage(line, 1)
-				If line.Contains(":") Then
-					retVal = line.Trim()
-					Exit While
-				End If
-			End While
+            Dim line As String = Nothing
+            line = Me.identifierFileReader.ReadLine()
+            While line IsNot Nothing
+                PrintProgressMessage(line, 1)
+                If line.Contains(":") Then
+                    retVal = line.Trim()
+                    Exit While
+                End If
+                line = Me.identifierFileReader.ReadLine()
+            End While
 			PrintDebugMessage("NextIdentifier", "retVal: " & retVal, 12)
 			PrintDebugMessage("NextIdentifier", "End", 11)
 			Return retVal
@@ -626,9 +632,9 @@ Environment.NewLine & _
 		' Print the status of the current job.
 		Public Sub PrintStatus()
 			PrintDebugMessage("PrintStatus", "Begin", 1)
-			If Me.JobId Is Nothing Or Me.JobId.Length < 1 Then
-				Throw New ClientException("Job identifier is required to get the job status.")
-			End If
+            If Me.JobId Is Nothing OrElse Me.JobId.Length < 1 Then
+                Throw New ClientException("Job identifier is required to get the job status.")
+            End If
 			Dim status As String = GetStatus(JobId)
 			Console.WriteLine(status)
 			PrintDebugMessage("PrintStatus", "End", 1)
@@ -637,26 +643,26 @@ Environment.NewLine & _
 		' Wait for a job to finish.
 		Public Sub ClientPoll(ByVal jobId As String)
 			PrintDebugMessage("ClientPoll", "Begin", 1)
-			If jobId Is Nothing Or jobId.Length < 1 Then
-				Throw New ClientException("Job identifier is required to poll job status.")
-			End If
+            If jobId Is Nothing OrElse jobId.Length < 1 Then
+                Throw New ClientException("Job identifier is required to poll job status.")
+            End If
 			PrintDebugMessage("ClientPoll", "jobId: " & jobId, 2)
 			Dim checkInterval As Integer = 1000
 			Dim status As String = "PENDING"
 			' Check status and wait if not finished
-			While status Is "RUNNING" Or status Is "PENDING"
-				status = GetStatus(JobId)
-				PrintProgressMessage(status, 1)
-				If status Is "RUNNING" Or status Is "PENDING" Then
-					' Wait before polling again.
-					PrintDebugMessage("clientPoll", "checkInterval: " & checkInterval, 2)
-					System.Threading.Thread.Sleep(checkInterval)
-					checkInterval *= 2
-					If checkInterval > MaxCheckInterval Then
-						checkInterval = MaxCheckInterval
-					End If
-				End If
-			End While
+            While status = "RUNNING" OrElse status = "PENDING"
+                status = GetStatus(jobId)
+                PrintProgressMessage(status, 1)
+                If status = "RUNNING" OrElse status = "PENDING" Then
+                    ' Wait before polling again.
+                    PrintDebugMessage("clientPoll", "checkInterval: " & checkInterval, 2)
+                    System.Threading.Thread.Sleep(checkInterval)
+                    checkInterval *= 2
+                    If checkInterval > MaxCheckInterval Then
+                        checkInterval = MaxCheckInterval
+                    End If
+                End If
+            End While
 			PrintDebugMessage("ClientPoll", "End", 1)
 		End Sub
 
@@ -672,9 +678,9 @@ Environment.NewLine & _
 		' Get results for a job using the current format and output file.
 		Public Sub GetResults(ByVal jobId As String)
 			PrintDebugMessage("GetResults", "Begin", 1)
-			If jobId Is Nothing Or jobId.Length < 1 Then
-				Throw New ClientException("Job identifier is required to get results.")
-			End If
+            If jobId Is Nothing OrElse jobId.Length < 1 Then
+                Throw New ClientException("Job identifier is required to get results.")
+            End If
 			GetResults(jobId, OutFormat, OutFile)
 			PrintDebugMessage("GetResults", "End", 1)
 		End Sub
@@ -682,9 +688,9 @@ Environment.NewLine & _
 		' Get results for the current job.
 		Public Sub GetResults()
 			PrintDebugMessage("GetResults", "Begin", 1)
-			If Me.JobId Is Nothing Or Me.JobId.Length < 1 Then
-				Throw New ClientException("Job identifier is required to get results.")
-			End If
+            If Me.JobId Is Nothing OrElse Me.JobId.Length < 1 Then
+                Throw New ClientException("Job identifier is required to get results.")
+            End If
 			GetResults(JobId, OutFormat, OutFile)
 			PrintDebugMessage("GetResults", "End", 1)
 		End Sub
