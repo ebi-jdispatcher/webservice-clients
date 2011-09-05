@@ -56,14 +56,14 @@ Namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If SrvProxy Is Nothing Then
 				SrvProxy = New EbiWS.NcbiBlastWs.JDispatcherService()
-				If ServiceEndPoint IsNot Nothing And ServiceEndPoint.Length > 0 Then
-					SrvProxy.Url = ServiceEndPoint
-				End If
-				PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " & SrvProxy.Url, 12)
-				SetProxyUserAgent() ' Set user-agent for client.
-			End If
-			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & SrvProxy.ToString(), 12)
-			PrintDebugMessage("ServiceProxyConnect", "End", 11)
+                If ServiceEndPoint IsNot Nothing AndAlso ServiceEndPoint.Length > 0 Then
+                    SrvProxy.Url = ServiceEndPoint
+                End If
+                PrintDebugMessage("ServiceProxyConnect", "Service endpoint: " & SrvProxy.Url, 12)
+                SetProxyUserAgent() ' Set user-agent for client.
+                PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & SrvProxy.ToString(), 12)
+            End If
+            PrintDebugMessage("ServiceProxyConnect", "End", 11)
 		End Sub
 
 		' Set User-agent for web service proxy.
@@ -133,20 +133,24 @@ Namespace EbiWS
 			' 1. Multiple fasta sequence input.
 			If Me.multifasta Then
 				SetSequenceFile(InParams.sequence)
-				Dim inSeq As String = Nothing
-				While (inSeq = NextSequence())
-					InParams.sequence = inSeq
-					SubmitJob()
-				End While
+                Dim inSeq As String = Nothing
+                inSeq = NextSequence()
+                While inSeq IsNot Nothing
+                    InParams.sequence = inSeq
+                    SubmitJob()
+                    inSeq = NextSequence()
+                End While
 				CloseSequenceFile()
 			' 2. Entry identifier list input.
 			ElseIf InParams.sequence.StartsWith("@") Then
 				SetIdentifierFile(InParams.sequence.Substring(1))
-				Dim inId As String = Nothing
-				While (inId = NextIdentifier())
-					InParams.sequence = inId
-					SubmitJob()
-				End While
+                Dim inId As String = Nothing
+                inId = NextIdentifier()
+                While inId IsNot Nothing
+                    InParams.sequence = inId
+                    SubmitJob()
+                    inId = NextIdentifier()
+                End While
 				CloseIdentifierFile()
 			' 3. Simple sequence input.
 			Else
@@ -270,26 +274,27 @@ Namespace EbiWS
 			If outformat IsNot Nothing Then ' Specified data type.
 				Dim selResultType As EbiWS.NcbiBlastWs.wsResultType = Nothing
 				For Each resultType As EbiWS.NcbiBlastWs.wsResultType In resultTypes
-					If resultType.identifier Is outformat Then
-						selResultType = resultType
-					End If
+                    PrintDebugMessage("GetResults", "resultType: " & resultType.identifier, 3)
+                    If resultType.identifier = outformat Then
+                        selResultType = resultType
+                    End If
 				Next resultType
 				PrintDebugMessage("GetResults", "resultType:\n" & ObjectValueToString(selResultType), 2)
 				res = GetResult(jobId, selResultType.identifier)
 				' Text data
 				If selResultType.mediaType.StartsWith("text") Then
-					If tmpOutFile Is "-" Then
-						WriteTextFile(tmpOutFile, res)
-					Else
-						WriteTextFile(tmpOutFile & "." & selResultType.identifier & "." & selResultType.fileSuffix, res)
-					End If
+                    If tmpOutFile = "-" Then
+                        WriteTextFile(tmpOutFile, res)
+                    Else
+                        WriteTextFile(tmpOutFile & "." & selResultType.identifier & "." & selResultType.fileSuffix, res)
+                    End If
 				' Binary data
 				Else
-					If tmpOutFile Is "-" Then
-						WriteBinaryFile(tmpOutFile, res)
-					Else 
-						WriteBinaryFile(tmpOutFile & "." & selResultType.identifier & "." & selResultType.fileSuffix, res)
-					End If
+                    If tmpOutFile = "-" Then
+                        WriteBinaryFile(tmpOutFile, res)
+                    Else
+                        WriteBinaryFile(tmpOutFile & "." & selResultType.identifier & "." & selResultType.fileSuffix, res)
+                    End If
 				End If
 			Else ' Data types available
 				' Write a file for each output type.
