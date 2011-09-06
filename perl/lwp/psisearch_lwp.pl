@@ -53,6 +53,7 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
+use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psisearch';
@@ -756,20 +757,20 @@ sub load_params {
 	# Selected hit identifier list for building PSSM.
 	if(defined($params{'selectedHits'})) {
 		if(-f $params{'selectedHits'}) {
-			$tool_params{'selectedHits'} = encode_base64(&read_file( $params{'selectedHits'}), '');
+			$tool_params{'selectedHits'} = &read_file( $params{'selectedHits'});
 		}
 		else {
-			$tool_params{'selectedHits'} = encode_base64($params{'selectedHits'}, '');
+			$tool_params{'selectedHits'} = $params{'selectedHits'};
 		}
 	}
 	
 	# PSI-BLAST checkpoint from previous iteration.
 	if(defined($params{'cpfile'})) {
 		if(-f $params{'cpfile'}) {
-			$tool_params{'cpfile'} = encode_base64(&read_file( $params{'cpfile'} ), '');
+			$tool_params{'cpfile'} = uri_escape(&read_file( $params{'cpfile'} ));
 		}
 		else {
-			$tool_params{'cpfile'} = encode_base64($params{'cpfile'}, '');
+			$tool_params{'cpfile'} = uri_escape($params{'cpfile'});
 		}
 	}
 
