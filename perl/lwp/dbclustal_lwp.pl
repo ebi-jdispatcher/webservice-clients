@@ -75,8 +75,8 @@ GetOptions(
 	# Tool specific options
 	'output=s' => \$tool_params{'output'}, # output multiple sequence alignment format
 	'sequence=s' => \$params{'sequence'}, # input query sequence used in BLAST
-    'blastreport=s' => \$params{'blastreport'}, # input BLAST report
-    'idlist=s' => \$params{'idlist'}, # list of identifiers for selecting BLAST hits for alignment 
+	'blastreport=s' => \$params{'blastreport'}, # input BLAST report
+	'idlist=s' => \$params{'idlist'}, # list of identifiers for selecting BLAST hits for alignment 
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
