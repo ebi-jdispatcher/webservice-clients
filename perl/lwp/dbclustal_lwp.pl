@@ -37,7 +37,7 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 VERSION
 
-$Id: clustalw2_lwp.pl 1732 2011-01-25 11:47:02Z hpm $
+$Id$
 
 =cut
 
@@ -190,7 +190,7 @@ sub rest_request {
 
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	'$Revision: 1732 $' =~ m/(\d+)/;
+	'$Revision$' =~ m/(\d+)/;
 	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
 	$ua->env_proxy;
 
