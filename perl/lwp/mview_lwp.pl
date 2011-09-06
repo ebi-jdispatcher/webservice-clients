@@ -616,6 +616,45 @@ Load job parameters from command-line options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
+
+	# Enable/disable CSS
+	if($params{'css'}) {
+		$tool_params{'css'} = 'true';
+	}
+	elsif($params{'nocss'}) {
+		$tool_params{'css'} = 'false';
+	}
+	# Show/hide alignment
+	if($params{'alignment'}) {
+		$tool_params{'alignment'} = 'true';
+	}
+	elsif($params{'noalignment'}) {
+		$tool_params{'alignment'} = 'false';
+	}
+	# Show/hide ruler
+	if($params{'ruler'}) {
+		$tool_params{'ruler'} = 'true';
+	}
+	elsif($params{'noruler'}) {
+		$tool_params{'ruler'} = 'false';
+	}
+	# Show/hide consensus
+	if($params{'consensus'}) {
+		$tool_params{'consensus'} = 'true';
+	}
+	elsif($params{'noconsensus'}) {
+		$tool_params{'consensus'} = 'false';
+	}
+	# Include/exclude gaps from consensus
+	if($params{'congaps'}) {
+		$tool_params{'congaps'} = 'true';
+	}
+	elsif($params{'nocongaps'}) {
+		$tool_params{'congaps'} = 'false';
+	}
+	
+	print_debug_message( 'load_params',
+		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
