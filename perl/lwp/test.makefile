@@ -115,16 +115,35 @@ clustalw2_align_stdin_stdout:
 clustalw2_clean:
 	rm -f clustalw2-*
 
-# TODO: ClustalW 2.x Phylogeny
-clustalw2phylogeny:
-	echo 'TODO:' $@
+# ClustalW 2.x Phylogeny
+clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
+
+clustalw2phylogeny_params:
+	${PERL} clustalw2phylogeny_lwp.pl --params ${JDispatcher_params_suffix}
+
+clustalw2phylogeny_param_detail:
+	${PERL} clustalw2phylogeny_lwp.pl --paramDetail tree
+
+clustalw2phylogeny_file:
+	${PERL} clustalw2phylogeny_lwp.pl --email ${EMAIL} ../test_data/multi_prot.aln
+
+clustalw2phylogeny_stdin_stdout:
+	cat ../test_data/multi_prot.aln | ${PERL} clustalw2phylogeny_lwp.pl --email ${EMAIL} --quiet --outformat tree --outfile - - > clustalw2_phylogeny-blah.ph
 
 clustalw2phylogeny_clean:
-	rm -f clustalw2phylogeny-*
+	rm -f clustalw2_phylogeny-*
 
-# TODO: DbClustal
-dbclustal:
-	echo 'TODO:' $@
+# DbClustal
+dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
+
+dbclustal_params:
+	${PERL} dbclustal_lwp.pl --params
+
+dbclustal_param_detail:
+	${PERL} dbclustal_lwp.pl --paramDetail output
+
+dbclustal_file:
+	${PERL} dbclustal_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --blastreport ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt
 
 dbclustal_clean:
 	rm -f dbclustal-*
@@ -372,9 +391,20 @@ muscle_stdin_stdout:
 muscle_clean:
 	rm -f muscle-*
 
-# TODO: MView
-mview:
-	echo 'TODO:' $@
+# MView
+mview: mview_params mview_param_detail mview_file mview_stdin_stdout
+
+mview_params:
+	${PERL} mview_lwp.pl --params
+
+mview_param_detail:
+	${PERL} mview_lwp.pl --paramDetail outputformat
+
+mview_file:
+	${PERL} mview_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt --alignment --ruler --consensus --htmlmarkup off
+
+mview_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt | ${PERL} mview_lwp.pl --email ${EMAIL} --alignment --ruler --consensus --htmlmarkup off --quiet --outformat out --outfile - - > mview-blah.aln
 
 mview_clean:
 	rm -f mview-*
@@ -406,9 +436,23 @@ ncbiblast_multifasta_file:
 ncbiblast_clean:
 	rm -f ncbiblast-*
 
-# TODO: Phobius
-phobius:
-	echo 'TODO:' $@
+# Phobius
+phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout
+
+phobius_params:
+	${PERL} phobius_lwp.pl --params
+
+phobius_param_detail:
+	${PERL} phobius_lwp.pl --paramDetail format
+
+phobius_file:
+	${PERL} phobius_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+phobius_dbid:
+	${PERL} phobius_lwp.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+
+phobius_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} phobius_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > phobius-blah.txt
 
 phobius_clean:
 	rm -f phobius-*
