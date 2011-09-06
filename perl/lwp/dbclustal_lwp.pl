@@ -72,10 +72,10 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'output=s' => \$tool_params{'outformat'}, # output multiple sequence alignment format
+	'output=s' => \$tool_params{'output'}, # output multiple sequence alignment format
 	'sequence=s' => \$params{'sequence'}, # input query sequence used in BLAST
     'blastreport=s' => \$params{'blastreport'}, # input BLAST report
-    'upidlistfile=s' => \$params{'upidlistfile'}, # list of identifiers for selecting BLAST hits for alignment 
+    'idlist=s' => \$params{'idlist'}, # list of identifiers for selecting BLAST hits for alignment 
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -595,6 +595,27 @@ Load job parameters from command-line options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
+	
+	# BLAST report
+	if ( $params{'blastreport'} ) {                   # Via --sequence
+		if ( -f $params{'blastreport'} ) {    # File
+			$tool_params{'blastreport'} = &read_file( $params{'blastreport'} );
+		}
+		else {
+			die 'Error: no BLAST report specified'
+		}
+	}
+	
+	# Hit identifier list
+	if ( $params{'idlist'} ) {
+		if ( -f $params{'idlist'} ) {    # File
+			$tool_params{'idlist'} = &read_file( $params{'idlist'} );
+		}
+		else { # Direct specification
+			$tool_params{'idlist'} = $params{'idlist'};
+		}
+	}
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -801,7 +822,7 @@ hit sequences with the local alignments found by BLAST preserved.
 
       --upidlistfile   : file : list of BLAST hit identifiers
       --output         : str  : output alignment format, see 
-                                --paramDetail outformat
+                                --paramDetail output
 
 [General]
 
