@@ -1,4 +1,4 @@
-' $Id: IPRScanClient.cs 2006 2011-09-01 13:51:24Z hpm $
+' $Id$
 ' ======================================================================
 ' JDispatcher SOAP client for InterProScan
 '
@@ -9,6 +9,7 @@
 Option Explicit On
 Option Strict On
 
+Imports Microsoft.VisualBasic.ControlChars ' Character constants (e.g. Tab).
 Imports System
 Imports System.IO
 Imports EbiWS.IPRScanWs ' "Web Reference" or wsdl.exe generated stubs.
@@ -18,27 +19,27 @@ Namespace EbiWS
 	Public Class IPRScanClient
 		Inherits EbiWS.AbstractWsClient
 		' Webservice proxy object.
-		Public Property SrvProxy As JDispatcherService
-			Get
-				Return _srvProxy
-			End Get
-			Set (ByVal value As JDispatcherService)
-				_srvProxy = value
-			End Set
-		End Property
-		Private JDispatcherService _srvProxy = Nothing
-		' Parameters used for launching jobs.
-		Public Property InParams As InputParameters
-			Get
-				Return _inParams
-			End Get
-			Set (ByVal value As InParams)
-				_inParams = value
-			End Set
-		End Property
-		Private _inParams As InputParameters = Nothing
-		' Multiple fasta formatted sequences as input.
-		Protected multifasta As Boolean = False;
+        Private _srvProxy As JDispatcherService = Nothing
+        Public Property SrvProxy() As JDispatcherService
+            Get
+                Return _srvProxy
+            End Get
+            Set(ByVal value As JDispatcherService)
+                _srvProxy = value
+            End Set
+        End Property
+        ' Parameters used for launching jobs.
+        Private _inParams As InputParameters = Nothing
+        Public Property InParams() As InputParameters
+            Get
+                Return _inParams
+            End Get
+            Set(ByVal value As InputParameters)
+                _inParams = value
+            End Set
+        End Property
+        ' Multiple fasta formatted sequences as input.
+        Protected multifasta As Boolean = False
 		' Client object revision.
 		Private revision As String = "$Revision$"
 
@@ -137,20 +138,20 @@ Namespace EbiWS
 				Dim inSeq As String = Nothing
 				inSeq = NextSequence()
 				While inSeq IsNot Nothing
-					InParams.sequence = inSeq;
-					SubmitJob();
+                    InParams.sequence = inSeq
+                    SubmitJob()
 					inSeq = NextSequence()
 				End While
 				CloseSequenceFile()
 			' 2. Entry identifier list input.
 			ElseIf InParams.sequence.StartsWith("@") Then
 				SetIdentifierFile(InParams.sequence.Substring(1))
-				Dim inId As String = Nothing;
-				inId = NextIdentifer()
+                Dim inId As String = Nothing
+                inId = NextIdentifier()
 				While inId IsNot Nothing
 					InParams.sequence = inId
 					SubmitJob()
-					inId = NextIdentifer()
+                    inId = NextIdentifier()
 				End While
 				CloseIdentifierFile()
 			' 3. Simple sequence input.
@@ -290,30 +291,31 @@ Namespace EbiWS
 					If tmpOutFile = "-" Then
 						WriteBinaryFile(tmpOutFile, res)
 					Else
-						WriteBinaryFile(tmpOutFile & "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
-				End If
-			Else ' Data types available
-				' Write a file for each output type
-				For Each resultType As wsResultType In resultTypes
-					PrintDebugMessage("GetResults", "resultType:" & Environment.Newline & ObjectValueToString(resultType), 2)
-					res = GetResult(jobId, resultType.identifier)
-					' Text data
-					If resultType.mediaType.StartsWith("text") Then
-						If tmpOutFile = "-" Then
-							WriteTextFile(tmpOutFile, res)
-						Else
-							WriteTextFile(tmpOutFile & "." & resultType.identifier & "." & resultType.fileSuffix, res)
-						End If
-					' Binary data
-					Else
-						If tmpOutFile = "-" Then
-							WriteBinaryFile(tmpOutFile, res)
-						Else
-							WriteBinaryFile(tmpOutFile & "." & resultType.identifier & "." & resultType.fileSuffix, res)
-						End If
-					End If
-				Next resultType
-			End If
+                        WriteBinaryFile(tmpOutFile & "." + selResultType.identifier + "." + selResultType.fileSuffix, res)
+                    End If
+                End If
+            Else ' Data types available
+                ' Write a file for each output type
+                For Each resultType As wsResultType In resultTypes
+                    PrintDebugMessage("GetResults", "resultType:" & Environment.NewLine & ObjectValueToString(resultType), 2)
+                    res = GetResult(jobId, resultType.identifier)
+                    ' Text data
+                    If resultType.mediaType.StartsWith("text") Then
+                        If tmpOutFile = "-" Then
+                            WriteTextFile(tmpOutFile, res)
+                        Else
+                            WriteTextFile(tmpOutFile & "." & resultType.identifier & "." & resultType.fileSuffix, res)
+                        End If
+                        ' Binary data
+                    Else
+                        If tmpOutFile = "-" Then
+                            WriteBinaryFile(tmpOutFile, res)
+                        Else
+                            WriteBinaryFile(tmpOutFile & "." & resultType.identifier & "." & resultType.fileSuffix, res)
+                        End If
+                    End If
+                Next resultType
+            End If
 			PrintDebugMessage("GetResults", "End", 1)
 		End Sub
 	End Class
