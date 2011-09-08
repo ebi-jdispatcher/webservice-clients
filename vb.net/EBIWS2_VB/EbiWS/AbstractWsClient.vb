@@ -174,10 +174,10 @@ Namespace EbiWS
 			End Set
 		End Property
 		Private _action As String = "unknown"
-		' Reader for sequence input data.
-		Private sequenceFileReader As StreamReader = Nothing
+        ' Reader for fasta format sequence input data.
+        Private sequenceFileReader As TextReader = Nothing
 		' Reader for entry identifier input data.
-		Private identifierFileReader As StreamReader = Nothing
+        Private identifierFileReader As TextReader = Nothing
 		' Usage message for generic options.
 		Private genericOptsStr As String = _
 "[General]" & Environment.NewLine & _
@@ -504,10 +504,14 @@ Environment.NewLine & _
             If fileName Is Nothing OrElse fileName.Length < 1 Then
                 Throw New ClientException("A file name is required to read sequences from.")
             End If
-			PrintDebugMessage("SetSequenceFile", "fileName: " & fileName, 12)
-			Me.sequenceFileReader = New StreamReader(fileName)
-			PrintDebugMessage("SetSequenceFile", "End", 11)
-		End Sub
+            PrintDebugMessage("SetSequenceFile", "fileName: " & fileName, 12)
+            If fileName = "-" Then ' STDIN.
+                Me.sequenceFileReader = Console.In
+            Else ' Data file.
+                Me.sequenceFileReader = New StreamReader(fileName)
+            End If
+            PrintDebugMessage("SetSequenceFile", "End", 11)
+        End Sub
 
 		' Read next sequence from sequence data file. Assumes fasta 
 		' formatted sequence data. File to read from is set by 
@@ -549,9 +553,9 @@ Environment.NewLine & _
 		' multi-sequence mode.
 		Protected Sub CloseSequenceFile()
 			PrintDebugMessage("CloseSequenceFile", "Begin", 11)
-			If Me.sequenceFileReader IsNot Nothing Then
-				Me.sequenceFileReader.Close()
-			End If
+            If Me.sequenceFileReader IsNot Nothing AndAlso Me.sequenceFileReader IsNot Console.In Then
+                Me.sequenceFileReader.Close()
+            End If
 			Me.sequenceFileReader = Nothing
 			PrintDebugMessage("CloseSequenceFile", "End", 11)
 		End Sub
@@ -563,10 +567,14 @@ Environment.NewLine & _
             If fileName Is Nothing OrElse fileName.Length < 1 Then
                 Throw New ClientException("A file name is required to read identifiers from.")
             End If
-			PrintDebugMessage("SetIdentifierFile", "fileName: " & fileName, 12)
-			Me.identifierFileReader = New StreamReader(fileName)
-			PrintDebugMessage("SetIdentifierFile", "End", 11)
-		End Sub
+            PrintDebugMessage("SetIdentifierFile", "fileName: " & fileName, 12)
+            If fileName = "-" Then ' STDIN.
+                Me.identifierFileReader = Console.In
+            Else ' Data file.
+                Me.identifierFileReader = New StreamReader(fileName)
+            End If
+            PrintDebugMessage("SetIdentifierFile", "End", 11)
+        End Sub
 
 		' Read the next identifier from the identifier list file. The 
 		' identifier list file is set using SetIdentifierFile(fileName).
@@ -594,9 +602,9 @@ Environment.NewLine & _
 		' Close the stream used to read from the identifier list file.
 		Protected Sub CloseIdentifierFile()
 			PrintDebugMessage("CloseIdentifierFile", "Begin", 11)
-			If Me.identifierFileReader IsNot Nothing Then
-				Me.identifierFileReader.Close()
-			End If
+            If Me.identifierFileReader IsNot Nothing AndAlso Me.identifierFileReader IsNot Console.In Then
+                Me.identifierFileReader.Close()
+            End If
 			Me.identifierFileReader = Nothing
 			PrintDebugMessage("CloseIdentifierFile", "End", 11)
 		End Sub
