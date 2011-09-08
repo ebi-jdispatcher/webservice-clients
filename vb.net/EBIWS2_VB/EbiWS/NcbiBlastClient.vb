@@ -180,7 +180,7 @@ Namespace EbiWS
 			PrintDebugMessage("RunApp", "Begin", 1)
 			PrintDebugMessage("RunApp", "email: " & email, 2)
 			PrintDebugMessage("RunApp", "title: " & title, 2)
-			PrintDebugMessage("RunApp", "input:\n" & ObjectValueToString(input), 2)
+			PrintDebugMessage("RunApp", "input:" & Environment.Newline & ObjectValueToString(input), 2)
 			Dim jobId As String = Nothing
 			Me.ServiceProxyConnect() ' Ensure we have a service proxy
 			' Submit the job
@@ -279,7 +279,7 @@ Namespace EbiWS
                         selResultType = resultType
                     End If
 				Next resultType
-				PrintDebugMessage("GetResults", "resultType:\n" & ObjectValueToString(selResultType), 2)
+				PrintDebugMessage("GetResults", "resultType:" & Environment.Newline & ObjectValueToString(selResultType), 2)
 				res = GetResult(jobId, selResultType.identifier)
 				' Text data
 				If selResultType.mediaType.StartsWith("text") Then
@@ -299,7 +299,7 @@ Namespace EbiWS
 			Else ' Data types available
 				' Write a file for each output type.
 				For Each resultType As EbiWS.NcbiBlastWs.wsResultType In resultTypes
-					PrintDebugMessage("GetResults", "resultType:\n" & ObjectValueToString(resultType), 2)
+					PrintDebugMessage("GetResults", "resultType:" & Environment.Newline & ObjectValueToString(resultType), 2)
 					res = GetResult(jobId, resultType.identifier)
 					' Text data
 					If resultType.mediaType.StartsWith("text") Then
