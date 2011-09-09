@@ -151,8 +151,8 @@ namespace EbiWS
 			set{action = value;}
 		}
 		private string action = "unknown";
-		private StreamReader sequenceFileReader = null;
-		private StreamReader identifierFileReader = null;
+		private TextReader sequenceFileReader = null;
+		private TextReader identifierFileReader = null;
 		/// <summary>
 		/// Usage message for generic options.
 		/// </summary>
@@ -593,7 +593,8 @@ Asynchronous job:
 		/// Set file to read sequence data from in multi-sequence mode. 
 		/// </summary>
 		/// <param name="fileName">
-		/// Name of the file to read from. A <see cref="System.String"/>.
+		/// Name of the file to read from. If the file name is "-" data is 
+		/// read from STDIN. A <see cref="System.String"/>.
 		/// </param>
 		protected void SetSequenceFile(string fileName) {
 			PrintDebugMessage("SetSequenceFile", "Begin", 11);
@@ -601,7 +602,12 @@ Asynchronous job:
 				throw new ClientException("A file name is required to read sequences from.");
 			}
 			PrintDebugMessage("SetSequenceFile", "fileName: " + fileName, 12);
-			this.sequenceFileReader = new StreamReader(fileName);
+			if(fileName.Equals("-")) { // STDIN.
+				this.sequenceFileReader = Console.In;
+			}
+			else { // Data file.
+				this.sequenceFileReader = new StreamReader(fileName);
+			}
 			PrintDebugMessage("SetSequenceFile", "End", 11);
 		}
 		
@@ -647,7 +653,7 @@ Asynchronous job:
 		/// </summary>
 		protected void CloseSequenceFile() {
 			PrintDebugMessage("CloseSequenceFile", "Begin", 11);
-			if(this.sequenceFileReader != null) {
+			if(this.sequenceFileReader != null && this.sequenceFileReader != Console.In) {
 				this.sequenceFileReader.Close();
 			}
 			this.sequenceFileReader = null;
@@ -659,7 +665,8 @@ Asynchronous job:
 		/// from.
 		/// </summary>
 		/// <param name="fileName">
-		/// The name of the file to read the identifiers from. A <see cref="System.String"/>.
+		/// The name of the file to read the identifiers from. If the file 
+		/// name is "-" then data is read from STDIN. A <see cref="System.String"/>.
 		/// </param>
 		protected void SetIdentifierFile(string fileName) {
 			PrintDebugMessage("SetIdentifierFile", "Begin", 11);
@@ -667,7 +674,12 @@ Asynchronous job:
 				throw new ClientException("A file name is required to read identifiers from.");
 			}
 			PrintDebugMessage("SetIdentifierFile", "fileName: " + fileName, 12);
-			this.identifierFileReader = new StreamReader(fileName);
+			if(fileName.Equals("-")) { // STDIN.
+				this.identifierFileReader = Console.In;
+			}
+			else { // Data file.
+				this.identifierFileReader = new StreamReader(fileName);
+			}
 			PrintDebugMessage("SetIdentifierFile", "End", 11);
 		}
 		
@@ -702,7 +714,7 @@ Asynchronous job:
 		/// </summary>
 		protected void CloseIdentifierFile() {
 			PrintDebugMessage("CloseIdentifierFile", "Begin", 11);
-			if(this.identifierFileReader != null) {
+			if(this.identifierFileReader != null && this.identifierFileReader != Console.In) {
 				this.identifierFileReader.Close();
 			}
 			this.identifierFileReader = null;
