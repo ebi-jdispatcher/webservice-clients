@@ -455,16 +455,18 @@ Environment.NewLine & _
         Private Function GetOptionParameters(ByVal args As String(), ByRef position As Integer, ByRef retVal As Integer, ByVal numParam As Integer) As String()
             PrintDebugMessage("GetOptionParameters", "Begin", 11)
             Dim lastParamPosition As Integer = position + numParam
-            Dim retList As String() = Nothing
+            Dim retList As String()
             If args.Length > lastParamPosition Then
-                ReDim retList(0 To numParam)
+                Dim tmpList(0 To numParam) As String
                 Dim i As Integer = 0
                 While position < lastParamPosition
                     position += 1
-                    retList(i) = args(position)
+                    tmpList(i) = args(position)
                     i += 1
                 End While
+                retList = tmpList
             Else
+            	retList = Nothing
                 Console.Error.WriteLine("Error: insufficent arguments for " & args(position))
                 retVal = 1
             End If
