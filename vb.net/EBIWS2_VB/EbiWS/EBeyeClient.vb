@@ -77,11 +77,11 @@ Namespace EbiWS
 		End Sub
 		
 		' Print a debug message at the specified level.
-		Protected Sub PrintDebugMessage(ByVal methodName As String, ByVal message As String, ByVal level As String)
-			If level <= DebugLevel Then
-				Console.Error.WriteLine("[{0}()] {1}", methodName, message)
-			End If
-		End Sub
+        Protected Sub PrintDebugMessage(ByVal methodName As String, ByVal message As String, ByVal level As Integer)
+            If level <= DebugLevel Then
+                Console.Error.WriteLine("[{0}()] {1}", methodName, message)
+            End If
+        End Sub
 
 		' Construct a string of the values of an object, both fields and properties.
 		Protected Function ObjectValueToString(ByVal obj As Object) As String
@@ -102,12 +102,13 @@ Namespace EbiWS
 			For Each info As System.Reflection.FieldInfo In objType.GetFields()
 				PrintDebugMessage("ObjectFieldsToString", "info: " & info.Name, 33)
 				If info.FieldType.IsArray Then
-					strBuilder.Append(info.Name & ":" & Environment.Newline)
-					For Each subObj As Object In info.GetValue(obj)
-						strBuilder.Append(Tab & subObj)
-					Next subObj
+                    strBuilder.Append(info.Name & ":" & Environment.NewLine)
+                    Dim subObjList As Object() = TryCast(info.GetValue(obj), Object())
+                    For Each subObj As Object In subObjList
+                        strBuilder.Append(Tab & subObj.ToString)
+                    Next subObj
 				Else
-					strBuilder.Append(info.Name & ": " & info.GetValue(obj) & Environment.Newline)
+					strBuilder.Append(info.Name & ": " & info.GetValue(obj).ToString & Environment.Newline)
 				End If
 			Next info
 			PrintDebugMessage("ObjectFieldsToString", "End", 32)
@@ -123,12 +124,13 @@ Namespace EbiWS
 			For Each info As PropertyInfo In objType.GetProperties()
 				PrintDebugMessage("ObjectPropertiesToString", "info: " & info.Name, 32)
 				If info.PropertyType.IsArray Then
-					strBuilder.Append(info.Name & ":" & Environment.Newline)
-					For Each subObj As Object In info.GetValue(obj, Nothing)
-						strBuilder.Append(Tab & subObj)
-					Next subObj
+                    strBuilder.Append(info.Name & ":" & Environment.NewLine)
+                    Dim subObjList As Object() = TryCast(info.GetValue(obj, Nothing), Object())
+                    For Each subObj As Object In subObjList
+                        strBuilder.Append(Tab & subObj.ToString)
+                    Next subObj
 				Else
-					strBuilder.Append(info.Name & ": " & info.GetValue(obj, Nothing) & Environment.Newline)
+                    strBuilder.Append(info.Name & ": " & info.GetValue(obj, Nothing).ToString & Environment.NewLine)
 				End If
 			Next info
 			PrintDebugMessage("ObjectPropertiesToString", "End", 31)
@@ -225,7 +227,7 @@ Namespace EbiWS
 			PrintDebugMessage("ListDomains", "Begin", 1)
 			ServiceProxyConnect()
 			Dim domainNameList As String() = SrvProxy.listDomains()
-			PrintDebugMessage("ListDomains", "got " + domainNameList.Length + " domain names", 2)
+            PrintDebugMessage("ListDomains", "got " & domainNameList.Length & " domain names", 2)
 			PrintDebugMessage("ListDomains", "End", 1)
 			Return domainNameList
 		End Function
@@ -658,9 +660,10 @@ Namespace EbiWS
 		' Print details about hte search and retrivable fields available for a domain.
 		Public Sub PrintListFieldsInformation(ByVal domain As String)
 			PrintDebugMessage("PrintListFieldsInformation", "Begin", 1)
-			Dim result As EbiWS.EBeyeWs.FieldInfo() = ListFieldsInformation(domain)
+            Dim result As EbiWS.EBeyeWs.FieldInfo() = ListFieldsInformation(domain)
+            Console.WriteLine("#Id" & Tab & "Name" & Tab & "Description" & Tab & "Searchable" & Tab & "Retrievable")
 			For Each field As EbiWS.EBeyeWs.FieldInfo In result
-				Console.WriteLine(field.id & Tab & field.name & Tab & field.description & Tab & field.searchable & Tab & field.retrievable)
+                Console.WriteLine(field.id & Tab & field.name & Tab & field.description & Tab & field.searchable & Tab & field.retrievable)
 			Next field
 			PrintDebugMessage("PrintListFieldsInformation", "End", 1)
 		End Sub
