@@ -55,8 +55,8 @@ the services fail the R2305 compliance check (confirmed with the WS-I tools).
 the clients do not work due to the web service calls all returning null. 
 Strangely the equivalent sample clients C# work as expected in these versions, 
 suggesting that this is caused by a problem in the Mono VB.NET implementation. 
-It has not been checked if the compiled clients work correctly in MS .NET 
-environments.
+MS VB.NET compiled clients work as expected, confiriming that this is a 
+compiler issue.
 
 3. Generation of client stubs ("Web References") for the document/literal 
 wrapper SOAP services using Mono 2.6 wsdl.exe/wsdl2.exe generates VB code 
@@ -65,6 +65,19 @@ which fails to compile.
 4. Generation of client stubs ("Service References") for the document/literal 
 wrapper SOAP services using Mono 2.6 svcutil.exe also generates VB code which 
 fails to compile.
+
+5. Provided code will not compile with the Mono 1.2 VB.NET implementation. 
+The code uses "Next varName" to close "For" loops and this is not supported 
+by the VB compiler used in Mono 1.2. Commenting out the 'varName' will allow 
+to compile to complete, However the produced clients so not function 
+correctly.
+
+Workaround:
+To creste clients that work on both MS .NET and Mono environments, compile 
+the project on MS Windows using the MS SDK or Visual Studio. The generated 
+.dll and .exe files can then be used on both platforms. Alternativly, since 
+the same API is used, the EbiWS.dll from the C# project can be used with the 
+VB.NET .exe files to produce working clients.
 
 Support
 -------
