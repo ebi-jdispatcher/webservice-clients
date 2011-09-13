@@ -172,11 +172,27 @@ dbfetch_getDbFormats:
 dbfetch_getFormatStyles:
 	${PERL} wsdbfetch_soaplite.pl getFormatStyles uniprotkb default > dbfetch-getFormatStyles.txt
 
-dbfetch_fetchData:
+dbfetch_fetchData: dbfetch_fetchData_string dbfetch_fetchData_file dbfetch_fetchData_stdin
+
+dbfetch_fetchData_string:
 	${PERL} wsdbfetch_soaplite.pl fetchData 'uniprotkb:wap_rat' > dbfetch-fetchData.txt
 
-dbfetch_fetchBatch:
+dbfetch_fetchData_file:
+	${PERL} wsdbfetch_soaplite.pl fetchData @../test_data/uniprot_id_list.txt > dbfetch-fetchDataFile.txt
+
+dbfetch_fetchData_stdin:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} wsdbfetch_soaplite.pl fetchData @- > dbfetch-fetchDataStdin.txt
+
+dbfetch_fetchBatch: dbfetch_fetchBatch_string dbfetch_fetchBatch_file dbfetch_fetchBatch_stdin
+
+dbfetch_fetchBatch_string:
 	${PERL} wsdbfetch_soaplite.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' > dbfetch-fetchBatch.txt
+
+dbfetch_fetchBatch_file:
+	${PERL} wsdbfetch_soaplite.pl fetchBatch uniprotkb @../test_data/uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
+
+dbfetch_fetchBatch_stdin:
+	cat ../test_data/uniprot_id_list_b.txt | ${PERL} wsdbfetch_soaplite.pl fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
 
 dbfetch_clean:
 	rm -f dbfetch-*

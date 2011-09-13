@@ -422,8 +422,31 @@ sub print_fetch_data {
 	my $query = shift;
 	my $formatName = shift;
 	my $styleName = shift;
-	my $entryStr = &soap_fetch_data($query, $formatName, $styleName);
-	print $entryStr, "\n" if($entryStr);
+	# Read identifiers from file?
+	if($query eq '-' || $query =~ m/^@/) {
+		my $FH;
+		my $filename = $query;
+		$filename =~ s/^@//;
+		if($filename eq '-') {
+			$FH = *STDIN;
+		}
+		else {
+			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
+		}
+		while(<$FH>) {
+			chomp;
+			my $entryId = $_;
+			if($entryId =~ m/^\S+:\S+/) {
+				my $entryStr = &soap_fetch_data($entryId, $formatName, $styleName);
+				print $entryStr, "\n" if($entryStr);
+			}
+		}
+		close($FH) unless($filename eq '-');
+	}
+	else {
+		my $entryStr = &soap_fetch_data($query, $formatName, $styleName);
+		print $entryStr, "\n" if($entryStr);
+	}
 	print_debug_message( 'print_fetch_data', 'End', 1 );
 }
 
@@ -466,6 +489,26 @@ sub print_fetch_batch {
 	my $idListStr = shift;
 	my $formatName = shift;
 	my $styleName = shift;
+	# Read identifiers from file?
+	if ( $idListStr eq '-' || $idListStr =~ m/^@/) {
+		my $tmpIdListStr = '';
+		my $FH;
+		my $filename = $idListStr;
+		$filename =~ s/^@//;
+		if($filename eq '-') {
+			$FH = *STDIN;
+		}
+		else {
+			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
+		}
+		while(<$FH>) {
+			chomp;
+			$tmpIdListStr .= ',' if(length($tmpIdListStr) > 0);
+			$tmpIdListStr .= $_;
+		}
+		$idListStr = $tmpIdListStr;
+		close($FH) unless($filename eq '-');
+	}
 	my $entriesStr = &soap_fetch_batch($dbName, $idListStr, $formatName, $styleName);
 	print $entriesStr, "\n" if($entriesStr);
 	print_debug_message( 'print_fetch_batch', 'End', 1 );
