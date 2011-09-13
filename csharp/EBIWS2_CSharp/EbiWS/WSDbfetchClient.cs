@@ -7,6 +7,7 @@
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -444,6 +445,62 @@ namespace EbiWS {
 		}
 		
 		/// <summary>
+		/// Fetch database entries on-by-one using identifiers, in DB:ID 
+		/// format, read from a file or STDIN. Unlike FetchBatch this 
+		/// ensures that the order of the entries returned is the same as 
+		/// the order of the identifiers, but at the cost of making 
+		/// multiple requests and thus is slower that FetchBatch.
+		/// </summary>
+		/// <param name="fileName">
+		/// Name of the file containing the identifiers to fetch. If the file 
+		/// name is '-' then identifers are read from STDIN, If the file name
+		/// begins with an '@' it is removed before the file is opened.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="formatName">
+		/// Data format name to use for fetched data.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="styleName">
+		/// Result style to use for fetched data.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// An array of fetched entry data.
+		/// A <see cref="System.String[]"/>
+		/// </returns>
+		public string[] FetchFileData(string fileName, string formatName, string styleName) {
+			PrintDebugMessage("FetchFileData", "Begin", 1);
+			// Trim '@' from start of file name, if present.
+			if(fileName.StartsWith("@")) fileName = fileName.Substring(1);
+			// Open file.
+			TextReader inFile = null;
+			if(fileName.Equals("-")) { // STDIN.
+				inFile = Console.In;
+			}
+			else { // Data file.
+				inFile = new StreamReader(fileName);
+			}
+			// Identifier per line, so read each line, trim, fetch the entry and add to the list.
+			List<string> resultList = new List<string>();
+			string line = null;
+			while((line = inFile.ReadLine()) != null) {
+				PrintDebugMessage("FetchFileData", line, 21);
+				if(line.Contains(":") && line.Length > 3) {
+					string query = line.Trim();
+					PrintDebugMessage("FetchFileData", "query: " + query, 2);
+					resultList.Add(FetchData(query, formatName, styleName));
+				}
+			}
+			// Close the file.
+			if(inFile != null && inFile != Console.In) {
+				inFile.Close();
+			}
+			PrintDebugMessage("FetchFileData", "End", 1);
+			return resultList.ToArray();
+		}
+		
+		/// <summary>
 		/// Print an entry.
 		/// </summary>
 		/// <param name="query">
@@ -460,8 +517,16 @@ namespace EbiWS {
 		/// </param>
 		public void PrintFetchData(string query, string formatName, string styleName) {
 			PrintDebugMessage("PrintFetchData", "Begin", 1);
-			string result = FetchData(query, formatName, styleName);
-			Console.WriteLine(result);
+			// Get identifers from STDIN or file.
+			if(query.Equals("-") || query.StartsWith("@")) {
+				string[] resultList = FetchFileData(query, formatName, styleName);
+				PrintStrList(resultList);
+			}
+			// Supplied identifier.
+			else {
+				string result = FetchData(query, formatName, styleName);
+				Console.WriteLine(result);
+			}
 			PrintDebugMessage("PrintFetchData", "End", 1);
 		}
 		
@@ -496,6 +561,40 @@ namespace EbiWS {
 			return entriesStr;
 		}
 		
+		public string GetIdentifierListFromFile(string fileName) {
+			PrintDebugMessage("GetIdentifierListFromFile", "Begin", 11);
+			string retVal = null;
+			// Trim '@' from start of file name, if present.
+			if(fileName.StartsWith("@")) fileName = fileName.Substring(1);
+			// Open file.
+			TextReader inFile = null;
+			if(fileName.Equals("-")) { // STDIN.
+				inFile = Console.In;
+			}
+			else { // Data file.
+				inFile = new StreamReader(fileName);
+			}
+			// Identifier per line, so read each line, trim and add to Id list.
+			StringBuilder strBuf = new StringBuilder();
+			string line = null;
+			while((line = inFile.ReadLine()) != null) {
+				PrintDebugMessage("GetIdentifierListFromFile", line, 21);
+				line = line.Trim();
+				if(line.Length > 0) {
+					if(strBuf.Length > 0) strBuf.Append(",");
+					strBuf.Append(line);
+				}
+			}
+			// Close the file.
+			if(inFile != null && inFile != Console.In) {
+				inFile.Close();
+			}
+			retVal = strBuf.ToString();
+			PrintDebugMessage("GetIdentifierListFromFile", "retVal: " + retVal, 12);
+			PrintDebugMessage("GetIdentifierListFromFile", "End", 11);
+			return retVal;
+		}
+		
 		/// <summary>
 		/// Print a set of entries.
 		/// </summary>
@@ -517,7 +616,16 @@ namespace EbiWS {
 		/// </param>
 		public void PrintFetchBatch(string dbName, string idListStr, string formatName, string styleName) {
 			PrintDebugMessage("PrintFetchBatch", "Begin", 1);
-			string result = FetchBatch(dbName, idListStr, formatName, styleName);
+			string fetchIdListStr = null;
+			// Identifier list from STDIN or file.
+			if(idListStr.Equals("-") || idListStr.StartsWith("@")) {
+				fetchIdListStr = GetIdentifierListFromFile(idListStr);
+			}
+			// Supplied identifier list.
+			else {
+				fetchIdListStr = idListStr;
+			}
+			string result = FetchBatch(dbName, fetchIdListStr, formatName, styleName);
 			Console.WriteLine(result);
 			PrintDebugMessage("PrintFetchBatch", "End", 1);
 		}
