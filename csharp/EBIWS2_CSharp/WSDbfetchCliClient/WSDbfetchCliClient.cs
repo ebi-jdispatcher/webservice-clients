@@ -30,19 +30,21 @@ Fetching an entry: fetchData
 
 WSDbfetchCliClient.exe fetchData <dbName:id> [format [style]]
 
-dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT)
-format     format to retrive (e.g. uniprot)
-style      style to retrive (e.g. raw)
+dbName:id  Database name and entry ID or accession (e.g. UNIPROT:WAP_RAT).
+           Use '-' to read from STDIN or '@fileName' to read from a file.
+format     Data format to retrive (e.g. fasta).
+style      Result style to retrive (e.g. raw).
 
 Fetching entries: fetchBatch
 
 WSDbfetchCliClient.exe fetchBatch <dbName> <idList> [format [style]]
 
-dbName     database name (e.g. UNIPROT)
-idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
+dbName     Database name (e.g. UNIPROT)
+idList     List of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
            Maximum of 200 IDs or accessions.
-format     format to retrive (e.g. uniprot)
-style      style to retrive (e.g. raw)
+           Use '-' to read from STDIN or '@fileName' to read from a file.
+format     Data format to retrive (e.g. fasta).
+style      Result style to retrive (e.g. raw).
 
 Further information:
 
