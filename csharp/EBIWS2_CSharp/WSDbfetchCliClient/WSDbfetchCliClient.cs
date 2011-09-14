@@ -12,9 +12,11 @@ namespace EbiWS
 	{
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"WSDbfetch
-======
+=========
 
-WSDbfetchCliClient.exe <method> [arguments...]
+WSDbfetchCliClient.exe [options...] <method> [arguments...]
+
+Methods:
 
 A number of methods are available:
 
@@ -45,6 +47,12 @@ idList     List of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
            Use '-' to read from STDIN or '@fileName' to read from a file.
 format     Data format to retrive (e.g. fasta).
 style      Result style to retrive (e.g. raw).
+
+Options:
+
+  --help        this help/usage message.
+  --debugLevel  set level of debug output.
+  --endpoint    use alternative service endpoint.
 
 Further information:
 
@@ -155,6 +163,12 @@ Support/Feedback:
 					case "getFormatStyles": // Styles for a format of a database.
 						this.PrintGetFormatStyles(args[++i], args[++i]);
 						break;
+				case "getDatabaseInfo": // Database information.
+					this.PrintGetDatabaseInfo(args[++i]);
+					break;
+				case "getDatabaseInfoList": // Database information for all.
+					this.PrintGetDatabaseInfoList();
+					break;
 					case "fetchData": // Fetch an entry.
 						string query = args[++i];
 						if(args.Length > (i + 1)) formatName = args[++i];

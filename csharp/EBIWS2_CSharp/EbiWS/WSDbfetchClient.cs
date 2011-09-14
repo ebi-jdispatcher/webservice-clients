@@ -122,6 +122,7 @@ namespace EbiWS {
 					foreach(Object subObj in (Object[])info.GetValue(obj)) {
 						strBuilder.Append("\t" + subObj);
 					}
+					strBuilder.Append("\n");
 				}
 				else {
 					strBuilder.Append(info.Name + ": " + info.GetValue(obj) + "\n");
@@ -156,6 +157,7 @@ namespace EbiWS {
 					{
 						strBuilder.Append("\t" + subObj);
 					}
+					strBuilder.Append("\n");
 				}
 				else
 				{
@@ -189,7 +191,7 @@ namespace EbiWS {
 				SrvProxy = new WSDBFetchDoclitServerService();
 				SetProxyEndPoint(); // Set explicit service endpoint, if defined.
 				SetProxyUserAgent(); // Set user-agent for client.
-				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
+				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy.ToString(), 12);
 			}
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
@@ -198,7 +200,15 @@ namespace EbiWS {
 		private void SetProxyEndPoint() {
 			PrintDebugMessage("SetProxyEndPoint", "Begin", 11);
 			if(ServiceEndPoint != null && ServiceEndPoint.Length > 0) {
-				SrvProxy.Url = ServiceEndPoint;
+				// For .NET discovery document.
+				if(ServiceEndPoint.EndsWith("?DISCO") || ServiceEndPoint.EndsWith(".disco")) {
+					SrvProxy.Url = ServiceEndPoint;
+					SrvProxy.Discover();
+				}
+				// Sepecification of a service endpoint.
+				else {
+					SrvProxy.Url = ServiceEndPoint;
+				}
 			}
 			ServiceEndPoint = SrvProxy.Url;
 			PrintDebugMessage("SetProxyEndPoint", "Service endpoint: " + SrvProxy.Url, 12);
@@ -339,6 +349,80 @@ namespace EbiWS {
 			string[] result = GetSupportedStyles();
 			PrintStrList(result);
 			PrintDebugMessage("PrintGetSupportedStyles", "End", 1);
+		}
+		
+		/// <summary>
+		/// Get detailed information about a database.
+		/// </summary>
+		/// <param name="dbName">Database name.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="DatabaseInfo"/>
+		/// </returns>
+		public DatabaseInfo GetDatabaseInfo(string dbName) {
+			PrintDebugMessage("GetDatabaseInfo", "Begin", 1);
+			ServiceProxyConnect();
+			DatabaseInfo result = SrvProxy.getDatabaseInfo(dbName);
+			PrintDebugMessage("GetDatabaseInfo", this.ObjectValueToString(result), 11);
+			PrintDebugMessage("GetDatabaseInfo", "End", 1);
+			return result;
+		}
+		
+		/// <summary>
+		/// Output details of a database.
+		/// </summary>
+		/// <param name="dbName">
+		/// Database name.
+		/// A <see cref="System.String"/>
+		/// </param>
+		public void PrintGetDatabaseInfo(string dbName) {
+			PrintDebugMessage("PrintGetDatabaseInfo", "Begin", 1);
+			DatabaseInfo dbInfo = GetDatabaseInfo(dbName);
+			PrintDatabaseInfo(dbInfo);
+			PrintDebugMessage("PrintGetDatabaseInfo", "End", 1);
+		}
+		
+		/// <summary>
+		/// Output detailed information about a database. Used in 
+		/// PrintGetDatabaseInfo and PrintGetDatabaseInfoList.
+		/// </summary>
+		/// <param name="dbInfo">
+		/// Database information.
+		/// A <see cref="DatabaseInfo"/>
+		/// </param>
+		protected void PrintDatabaseInfo(DatabaseInfo dbInfo) {
+			PrintDebugMessage("PrintDatabaseInfo", "Begin", 11);
+			// TODO: specific output for DatabaseInfo.
+			Console.WriteLine(this.ObjectValueToString(dbInfo));
+			PrintDebugMessage("PrintDatabaseInfo", "End", 11);
+		}
+		
+		/// <summary>
+		/// Get detailed information about the available databases.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="DatabaseInfo[]"/>
+		/// </returns>
+		public DatabaseInfo[] GetDatabaseInfoList() {
+			PrintDebugMessage("GetDatabaseInfoList", "Begin", 1);
+			ServiceProxyConnect();
+			DatabaseInfo[] result = SrvProxy.getDatabaseInfoList();
+			PrintDebugMessage("GetDatabaseInfoList", this.ObjectValueToString(result), 11);
+			PrintDebugMessage("GetDatabaseInfoList", "End", 1);
+			return result;
+		}
+		
+		/// <summary>
+		/// Output detailed information about the available databases.
+		/// </summary>
+		public void PrintGetDatabaseInfoList() {
+			PrintDebugMessage("PrintGetDatabaseInfoList", "Begin", 1);
+			DatabaseInfo[] dbInfoList = GetDatabaseInfoList();
+			foreach(DatabaseInfo dbInfo in dbInfoList) {
+				PrintDatabaseInfo(dbInfo);
+			}
+			PrintDebugMessage("PrintGetDatabaseInfoList", "End", 1);
 		}
 		
 		/// <summary>
@@ -561,6 +645,19 @@ namespace EbiWS {
 			return entriesStr;
 		}
 		
+		/// <summary>
+		/// Read a list of identifers from a file or STDIN. Used in 
+		/// PrintFetchBatch.
+		/// </summary>
+		/// <param name="fileName">
+		/// Name of the file to read from. If '-' STDIN is used. An initial 
+		/// '@' is trimed before opening the file.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// Comma separated list of identifers.
+		/// A <see cref="System.String"/>
+		/// </returns>
 		public string GetIdentifierListFromFile(string fileName) {
 			PrintDebugMessage("GetIdentifierListFromFile", "Begin", 11);
 			string retVal = null;
