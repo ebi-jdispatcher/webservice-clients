@@ -476,7 +476,7 @@ begin
 
   # Job based actions
   elsif argHash['jobid']
-    printOutputMessage("JobID: " + argHash['jobid'], 1)
+    ebiWsApp.printOutputMessage("JobID: " + argHash['jobid'], 1)
     # Get job status
     if argHash['status'] 
       ebiWsApp.printStatus(argHash['jobid'])
