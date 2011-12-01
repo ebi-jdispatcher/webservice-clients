@@ -1015,7 +1015,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/pfa/phobius_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

@@ -172,7 +172,7 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-'$Revision: 2042 $' =~ m/(\d+)/;
+'$Revision$' =~ m/(\d+)/;
 $soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
@@ -986,7 +986,9 @@ sub usage {
 EMBOSS Transeq
 ==========
 
-Prediction of transmembrane topology and signal peptides from the amino acid sequence of a protein. 
+ Translate nucleic acid sequences to their corresponding peptide sequences. 
+ It can translate to the three forward and three reverse frames, and output multiple 
+ frame translations at once.
 
 [Required]
 
@@ -1043,7 +1045,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/emboss_transeq_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/st/emboss_transeq_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
