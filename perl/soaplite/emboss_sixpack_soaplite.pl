@@ -995,9 +995,8 @@ sub usage {
 EMBOSS Sixpack
 ==========
 
- Translate nucleic acid sequences to their corresponding peptide sequences. 
- It can translate to the three forward and three reverse frames, and output multiple 
- frame translations at once.
+Sixpack reads a DNA sequence and outputs the three forward and (optionally) three 
+reverse translations in a visual manner. 
 
 [Required]
 
