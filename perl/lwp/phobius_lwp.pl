@@ -953,7 +953,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/sss/phobius_rest
+  http://www.ebi.ac.uk/Tools/webservices/services/pfa/phobius_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
