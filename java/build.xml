@@ -129,6 +129,18 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-emboss_backtranseq" description="Axis 1.x: generate stubs for EMBOSS backtranseq (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.backtranseq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranseq?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_backtranambig" description="Axis 1.x: generate stubs for EMBOSS backtranambig (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.backtranambig" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranambig?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-emboss_matcher" description="Axis 1.x: generate stubs for EMBOSS matcher (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.matcher" />
@@ -141,10 +153,22 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-emboss_sixpack" description="Axis 1.x: generate stubs for EMBOSS sixpack (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.sixpack" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_sixpack?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-emboss_stretcher" description="Axis 1.x: generate stubs for EMBOSS stretcher (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.stretcher" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_stretcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_transeq" description="Axis 1.x: generate stubs for EMBOSS transeq (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.transeq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_transeq?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_water" description="Axis 1.x: generate stubs for EMBOSS water (SOAP)">
@@ -302,6 +326,26 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/EmbossBacktranseq_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranseq/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranseqClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossBacktranambig_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranambigClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranambig/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranambigClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/EmbossMatcher_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EmbossMatcherClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/matcher/**">
@@ -322,11 +366,31 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/EmbossSixpack_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossSixpackClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/sixpack/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossSixpackClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/EmbossStretcher_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EmbossStretcherClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/stretcher/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossStretcherClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossTranseq_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossTranseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/transeq/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossTranseqClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
