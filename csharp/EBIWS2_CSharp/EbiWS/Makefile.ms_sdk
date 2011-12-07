@@ -49,6 +49,7 @@ EBeyeClient.cs \
 EmbossMatcherClient.cs \
 EmbossNeedleClient.cs \
 EmbossStretcherClient.cs \
+EmbossTranseqClient.cs \
 EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
@@ -77,6 +78,7 @@ $(STUBSRCDIR)\FastmWs\Reference.cs \
 $(STUBSRCDIR)\EmbossMatcherWs\Reference.cs \
 $(STUBSRCDIR)\EmbossNeedleWs\Reference.cs \
 $(STUBSRCDIR)\EmbossStretcherWs\Reference.cs \
+$(STUBSRCDIR)\EmbossTranseqWs\Reference.cs \
 $(STUBSRCDIR)\EmbossWaterWs\Reference.cs \
 $(STUBSRCDIR)\IPRScanWs\Reference.cs \
 $(STUBSRCDIR)\KalignWs\Reference.cs \
@@ -135,6 +137,9 @@ $(STUBSRCDIR)\EmbossNeedleWs\Reference.cs:
 
 $(STUBSRCDIR)\EmbossStretcherWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossStretcherWs /out:$@ "$(WSDLBASE)/emboss_stretcher?wsdl"
+
+$(STUBSRCDIR)\EmbossTranseqWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossTranseqWs /out:$@ "$(WSDLBASE)/emboss_transeq?wsdl"
 
 $(STUBSRCDIR)\EmbossWaterWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossWaterWs /out:$@ "$(WSDLBASE)/emboss_water?wsdl"
