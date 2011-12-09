@@ -44,6 +44,10 @@ EBeyeClient.cs \
 EmbossMatcherClient.cs \
 EmbossNeedleClient.cs \
 EmbossStretcherClient.cs \
+EmbossTranseqClient.cs \
+EmbossSixpackClient.cs \
+EmbossBacktranseqClient.cs \
+EmbossBacktranambigClient.cs \
 EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
@@ -72,6 +76,10 @@ $(STUBSRCDIR)/FastmWs/Reference.cs \
 $(STUBSRCDIR)/EmbossMatcherWs/Reference.cs \
 $(STUBSRCDIR)/EmbossNeedleWs/Reference.cs \
 $(STUBSRCDIR)/EmbossStretcherWs/Reference.cs \
+$(STUBSRCDIR)/EmbossTranseqWs/Reference.cs \
+$(STUBSRCDIR)/EmbossSixpackWs/Reference.cs \
+$(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs \
+$(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs \
 $(STUBSRCDIR)/EmbossWaterWs/Reference.cs \
 $(STUBSRCDIR)/IPRScanWs/Reference.cs \
 $(STUBSRCDIR)/KalignWs/Reference.cs \
@@ -140,6 +148,18 @@ $(STUBSRCDIR)/EmbossNeedleWs/Reference.cs:
 
 $(STUBSRCDIR)/EmbossStretcherWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossStretcherWs -out:$@ "$(WSDLBASE)/emboss_stretcher?wsdl"
+
+$(STUBSRCDIR)/EmbossTranseqWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossTranseqWs -out:$@ "$(WSDLBASE)/emboss_transeq?wsdl"
+
+$(STUBSRCDIR)/EmbossSixpackWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossSixpackWs -out:$@ "$(WSDLBASE)/emboss_sixpack?wsdl"
+
+$(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranseqWs -out:$@ "$(WSDLBASE)/emboss_backtranseq?wsdl"
+
+$(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranambigWs -out:$@ "$(WSDLBASE)/emboss_backtranambig?wsdl"
 
 $(STUBSRCDIR)/EmbossWaterWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossWaterWs -out:$@ "$(WSDLBASE)/emboss_water?wsdl"

@@ -1,21 +1,21 @@
 /* $Id$
  * ======================================================================
- * JDispatcher EMBOSS transeq (SOAP) client.
+ * JDispatcher EMBOSS backtranseq (SOAP) client.
  *
  * See:
- * http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_transeq_soap
+ * http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_backtranseq_soap
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.EmbossTranseqWs; // "Web Reference" or wsdl.exe generated stubs.
+using EbiWS.EmbossBacktranseqWs; // "Web Reference" or wsdl.exe generated stubs.
 
 namespace EbiWS
 {
 	/// <summary>
-	/// Client for EMBL-EBI EMBOSS transeq (SOAP) web service.
+	/// Client for EMBL-EBI EMBOSS backtranseq (SOAP) web service.
 	/// </summary>	
-	public class EmbossTranseqClient : EbiWS.AbstractWsClient
+	public class EmbossBacktranseqClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
 		public JDispatcherService SrvProxy
@@ -32,10 +32,10 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		// Client object revision.
-		private string revision = "$Revision$";
+		private string revision = "$Revision: 2006 $";
 		
 		// Default constructor. Required for abstract class constructor.
-		public EmbossTranseqClient()
+		public EmbossBacktranseqClient()
 		{
 		}
 		
