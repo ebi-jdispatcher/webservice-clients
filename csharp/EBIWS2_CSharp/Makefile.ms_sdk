@@ -20,6 +20,9 @@ EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
 EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
 EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
+EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe \
+EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe \
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
@@ -66,6 +69,15 @@ EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Rel
 
 EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk
 	
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -126,6 +138,9 @@ clean:
 	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -154,6 +169,9 @@ distclean:
 	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean

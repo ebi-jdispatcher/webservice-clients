@@ -18,6 +18,10 @@ build-EBeyeCliClient \
 build-EmbossMatcherCliClient \
 build-EmbossNeedleCliClient \
 build-EmbossStretcherCliClient \
+build-EmbossTranseqCliClient \
+build-EmbossSixpackCliClient \
+build-EmbossBacktranseqCliClient \
+build-EmbossBacktranambigCliClient \
 build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
@@ -61,6 +65,18 @@ build-EmbossNeedleCliClient: build-EbiWS
 
 build-EmbossStretcherCliClient: build-EbiWS
 	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossTranseqCliClient: build-EbiWS
+	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossSixpackCliClient: build-EbiWS
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossBacktranseqCliClient: build-EbiWS
+	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossBacktranambigCliClient: build-EbiWS
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono
 
 build-EmbossWaterCliClient: build-EbiWS
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono
@@ -122,6 +138,10 @@ clean-EBeyeCliClient \
 clean-EmbossMatcherCliClient \
 clean-EmbossNeedleCliClient \
 clean-EmbossStretcherCliClient \
+clean-EmbossTranseqCliClient \
+clean-EmbossSixpackCliClient \
+clean-EmbossBacktranseqCliClient \
+clean-EmbossBacktranambigCliClient \
 clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
@@ -165,6 +185,18 @@ clean-EmbossNeedleCliClient:
 
 clean-EmbossStretcherCliClient:
 	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossTranseqCliClient:
+	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossSixpackCliClient:
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossBacktranseqCliClient:
+	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossBacktranambigCliClient:
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossWaterCliClient:
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono clean
