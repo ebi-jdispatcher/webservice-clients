@@ -76,9 +76,13 @@
 		<antcall target="axis1-stubs-clustalw2phylogeny" />
 		<antcall target="axis1-stubs-dbclustal" />
 		<antcall target="axis1-stubs-ebeye" />
+		<antcall target="axis1-stubs-emboss_backtranambig" />
+		<antcall target="axis1-stubs-emboss_backtranseq" />
 		<antcall target="axis1-stubs-emboss_matcher" />
 		<antcall target="axis1-stubs-emboss_needle" />
+		<antcall target="axis1-stubs-emboss_sixpack" />
 		<antcall target="axis1-stubs-emboss_stretcher" />
+		<antcall target="axis1-stubs-emboss_transeq" />
 		<antcall target="axis1-stubs-emboss_water" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
