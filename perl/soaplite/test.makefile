@@ -23,7 +23,10 @@ msa \
 pfa \
 phylogeny \
 psa \
-sss
+sfc \
+so \
+sss \
+st
 
 clean: \
 dbfetch_clean \
@@ -32,10 +35,14 @@ msa_clean \
 pfa_clean \
 phylogeny_clean \
 psa_clean \
-sss_clean
+sfc_clean \
+so_clean \
+sss_clean \
+st_clean
 
 # Multiple Sequence Alignment (MSA)
 msa: \
+clustalo \
 clustalw2 \
 dbclustal \
 kalign \
@@ -43,9 +50,10 @@ mafft \
 muscle \
 mview \
 prank \
-tcoffee \
+tcoffee
 
 msa_clean: \
+clustalo_clean \
 clustalw2_clean \
 dbclustal_clean \
 kalign_clean \
@@ -86,6 +94,22 @@ emboss_stretcher_clean \
 emboss_water_clean \
 lalign_clean
 
+# TODO: Sequence Format Conversion (SFC)
+sfc: \
+emboss_seqret \
+readseq
+
+sfc_clean: \
+emboss_seqret_clean \
+readseq_clean
+
+# TODO: Sequence Operations (SO)
+so: \
+seqcksum
+
+so_clean: \
+seqcksum_clean
+
 # Sequence Similarity Search (SSS)
 sss: \
 fasta \
@@ -103,7 +127,38 @@ psiblast_clean \
 psisearch_clean \
 wublast_clean
 
-# ClustalW 2.0.x
+# Sequence Translation (ST)
+st: \
+emboss_backtranambig \
+emboss_backtranseq \
+emboss_sixpack \
+emboss_transeq
+
+st_clean: \
+emboss_backtranambig_clean \
+emboss_backtranseq_clean \
+emboss_sixpack_clean \
+emboss_transeq_clean
+
+# Clustal Omega
+clustalo: clustalo_params clustalo_param_detail clustalo_align clustalo_align_stdin_stdout
+
+clustalo_params:
+	${PERL} clustalo_soaplite.pl --params ${JDispatcher_params_suffix}
+
+clustalo_param_detail:
+	${PERL} clustalo_soaplite.pl --paramDetail outfmt
+
+clustalo_align:
+	${PERL} clustalo_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.tfa
+
+clustalo_align_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} clustalo_soaplite.pl --email ${EMAIL} --quiet --outformat aln-clustal --outfile - - > clustalo-blah.aln
+
+clustalo_clean:
+	rm -f clustalo-*
+
+# ClustalW 2.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
 
 clustalw2_params:
@@ -121,20 +176,20 @@ clustalw2_align_stdin_stdout:
 clustalw2_clean:
 	rm -f clustalw2-*
 
-# ClustalW 2.0.x Phylogeny
-clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin
+# ClustalW 2.x Phylogeny
+clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
 
 clustalw2phylogeny_params:
-	${PERL} clustalw2_phylogeny_soaplite.pl --params ${JDispatcher_params_suffix}
+	${PERL} clustalw2phylogeny_soaplite.pl --params ${JDispatcher_params_suffix}
 
 clustalw2phylogeny_param_detail:
-	${PERL} clustalw2_phylogeny_soaplite.pl --paramDetail tree
+	${PERL} clustalw2phylogeny_soaplite.pl --paramDetail tree
 
 clustalw2phylogeny_file:
-	${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.aln
+	${PERL} clustalw2phylogeny_soaplite.pl --email ${EMAIL} ../test_data/multi_prot.aln
 
 clustalw2phylogeny_stdin_stdout:
-	cat ../test_data/multi_prot.aln | ${PERL} clustalw2_phylogeny_soaplite.pl --email ${EMAIL} --quiet --outfile - - > clustalw2_phylogeny-blah.ph
+	cat ../test_data/multi_prot.aln | ${PERL} clustalw2phylogeny_soaplite.pl --email ${EMAIL} --quiet --outfile - - > clustalw2_phylogeny-blah.ph
 
 clustalw2phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
@@ -267,6 +322,48 @@ ebeye_listFieldsInformation:
 
 ebeye_clean:
 
+# EMBOSS backtranambig
+emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout
+
+emboss_backtranambig_params:
+	${PERL} emboss_backtranambig_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_backtranambig_param_detail:
+	${PERL} emboss_backtranambig_soaplite.pl --paramDetail codontable
+
+emboss_backtranambig_dbid:
+	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --sequence uniprot:wap_rat
+
+emboss_backtranambig_file:
+	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_backtranambig_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranambig-blah.txt
+
+emboss_backtranambig_clean:
+	rm -f emboss_backtranambig-*
+
+# EMBOSS backtranseq
+emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout
+
+emboss_backtranseq_params:
+	${PERL} emboss_backtranseq_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_backtranseq_param_detail:
+	${PERL} emboss_backtranseq_soaplite.pl --paramDetail codontable
+
+emboss_backtranseq_dbid:
+	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --sequence uniprot:wap_rat
+
+emboss_backtranseq_file:
+	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_backtranseq_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranseq-blah.txt
+
+emboss_backtranseq_clean:
+	rm -f emboss_backtranseq-*
+
 # EMBOSS matcher
 emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
 
@@ -303,6 +400,32 @@ emboss_needle_file:
 emboss_needle_clean:
 	rm -f emboss_needle-*
 
+# TODO: EMBOSS seqret
+emboss_seqret:
+
+emboss_seqret_clean:
+
+# EMBOSS sixpack
+emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout
+
+emboss_sixpack_params:
+	${PERL} emboss_sixpack_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_sixpack_param_detail:
+	${PERL} emboss_sixpack_soaplite.pl --paramDetail codontable
+
+emboss_sixpack_dbid:
+	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --sequence embl:L12345
+
+emboss_sixpack_file:
+	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_sixpack_stdin_stdout:
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_sixpack-blah.txt
+
+emboss_sixpack_clean:
+	rm -f emboss_sixpack-*
+
 # EMBOSS stretcher
 emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
 
@@ -320,6 +443,27 @@ emboss_stretcher_file:
 
 emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
+
+# EMBOSS transeq
+emboss_transeq: emboss_transeq_params emboss_transeq_param_detail emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout
+
+emboss_transeq_params:
+	${PERL} emboss_transeq_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_transeq_param_detail:
+	${PERL} emboss_transeq_soaplite.pl --paramDetail codontable
+
+emboss_transeq_dbid:
+	${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --sequence embl:L12345
+
+emboss_transeq_file:
+	${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_transeq_stdin_stdout:
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_transeq-blah.txt
+
+emboss_transeq_clean:
+	rm -f emboss_transeq-*
 
 # EMBOSS water
 emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
@@ -404,6 +548,11 @@ iprscan_multifasta_file:
 
 iprscan_clean:
 	rm -f iprscan-*
+
+# TODO: InterProScan 5
+iprscan5:
+
+iprscan5_clean:
 
 # Kalign
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
@@ -495,7 +644,7 @@ mview_stdin_stdout:
 mview_clean:
 	rm -f mview-*
 
-# NCBI BLAST
+# NCBI BLAST or NCBI BLAST+
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout
 
 ncbiblast_params:
@@ -596,6 +745,16 @@ psisearch_stdin_stdout:
 
 psisearch_clean:
 	rm -f psisearch-*
+
+# TODO: Readseq
+readseq:
+
+readseq_clean:
+
+# TODO: seqcksum
+seqcksum:
+
+seqcksum_clean:
 
 # T-Coffee
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
