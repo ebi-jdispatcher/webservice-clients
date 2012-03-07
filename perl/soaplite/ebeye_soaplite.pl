@@ -911,16 +911,30 @@ sub toNestedArray {
 	print_debug_message( 'toNestedArray', 'Begin', 11 );
 	my ( $xpath, $obj ) = @_;
 	print_debug_message( 'toNestedArray', 'xpath: ' . $xpath, 12 );
-	print_debug_message( 'toNestedArray', "obj:\n" . Dumper($obj), 12 );
+	print_debug_message( 'toNestedArray', "obj:\n" . Dumper($obj), 13 );
 	my (@returnArray) = ();
 	my (@tmpArray)    = $obj->dataof("$xpath/ArrayOfString");
+	print_debug_message( 'toNestedArray', "scalar(tmpArray): " . scalar(@tmpArray), 11 );
 	print_debug_message( 'toNestedArray', "tmpArray:\n" . Dumper(\@tmpArray), 13 );
 	if($SOAP::Lite::VERSION > 0.60) {
 		# SOAP::Lite recent versions... simplify the data structure by 
 		# removing a layer of nesting. 
 		foreach my $item (@tmpArray) {
-			print_debug_message( 'toNestedArray', 'item: ' . $item, 13 );
-			push @returnArray, $item->value()->{'string'};
+			print_debug_message( 'toNestedArray', 'item: ' . $item, 12 );
+			my $itemValueRef = ref($item->value());
+			my $itemValue = undef;
+			if($itemValueRef eq 'REF') {
+				my (@tmpArray2) = ();
+				my (@subArray) = ${$item->value()}->value();
+				print_debug_message( 'toNestedArray', 'scalar(subArray): ' . scalar(@subArray), 12 );
+				foreach my $tmpItem (@subArray) {
+					push @tmpArray2, $tmpItem->value();
+				}
+				push(@returnArray, \@tmpArray2);
+			}
+			else {
+				push @returnArray, $item->value()->{'string'};
+			}
 		}
 	}
 	else {
@@ -1049,11 +1063,19 @@ sub print_get_results {
 	foreach my $entry (@$resultList) {
 		if(ref($entry) eq 'ARRAY') {
 			foreach my $field (@$entry) {
-				print $field, "\n";
+				if(defined($field)) {
+					print $field, "\n";
+				} else {
+					print "\n";
+				}
 			}
 		}
 		else {
-			print $entry, "\n";
+			if(defined($entry)) {
+				print $entry, "\n";
+			} else {
+				print "\n";
+			}
 		}
 	}
 	print_debug_message( 'print_get_results', 'End', 1 );
@@ -1072,7 +1094,11 @@ sub print_get_entry {
 	my ( $domain, $query, $fields ) = @_;
 	my (@fieldDataArray) = soap_get_entry( $domain, $query, $fields );
 	foreach my $fieldData (@fieldDataArray) {
-		print $fieldData, "\n";
+		if(defined($fieldData)) {
+			print $fieldData, "\n";
+		} else {
+			print "\n";
+		}
 	}
 	print_debug_message( 'print_get_entry', 'End', 1 );
 }
@@ -1091,7 +1117,11 @@ sub print_get_entries {
 	my $entryList = soap_get_entries( $domain, $entries, $fields );
 	foreach my $entry (@$entryList) {
 		foreach my $field (@$entry) {
-			print $field, "\n";
+			if(defined($field)) {
+				print $field, "\n";
+			} else {
+				print "\n";
+			}
 		}
 	}
 	print_debug_message( 'print_get_entries', 'End', 1 );
