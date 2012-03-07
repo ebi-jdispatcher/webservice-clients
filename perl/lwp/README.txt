@@ -20,8 +20,10 @@ Requirements
 Tests
 -----
 
-A make file of simple test commands is supplied to check that the clints work 
+A make file of simple test commands is supplied to check that the clients work 
 as expected. This can be run using:
 
   make -f test.makefile
 
+---
+$Id$
