@@ -74,6 +74,7 @@ GetOptions(
 	# Tool specific options
 	'format|f=s'    => \$tool_params{'format'},      # output format (short|long|grp|raw)
 	'sequence=s'    => \$params{'sequence'},         # Query sequence
+	'multifasta'    => \$params{'multifasta'},       # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},            # User e-mail address
@@ -609,8 +610,14 @@ sub multi_submit_job {
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
@@ -643,8 +650,14 @@ sub list_file_submit_job {
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( my $LISTFILE, '<', $filename )
-	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);

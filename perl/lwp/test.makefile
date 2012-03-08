@@ -437,7 +437,7 @@ emboss_water_clean:
 	rm -f emboss_water-*
 
 # FASTA
-fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_multifasta_file
+fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_id_list_file_stdin_stdout fasta_multifasta_file fasta_multifasta_file_stdin_stdout
 
 fasta_params:
 	${PERL} fasta_lwp.pl --params
@@ -457,8 +457,14 @@ fasta_stdin_stdout:
 fasta_id_list_file:
 	${PERL} fasta_lwp.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
+fasta_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} fasta_lwp.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --sequence @- --quiet --outformat out --outfile - > fasta-idfile.txt
+
 fasta_multifasta_file:
 	${PERL} fasta_lwp.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+fasta_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} fasta_lwp.pl --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta --sequence - > fasta-file.txt
 
 fasta_clean:
 	rm -f fasta-*
@@ -482,7 +488,7 @@ fastm_clean:
 	rm -f fastm-*
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_multifasta_file
+iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
 iprscan_params:
 	${PERL} iprscan_lwp.pl --params
@@ -491,19 +497,25 @@ iprscan_param_detail:
 	${PERL} iprscan_lwp.pl --paramDetail appl
 
 iprscan_file:
-	${PERL} iprscan_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 iprscan_dbid:
-	${PERL} iprscan_lwp.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms UNIPROT:ABCC9_HUMAN
 
 iprscan_stdin_stdout:
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --quiet --outformat out --outfile - - > iprscan-blah.txt
 
 iprscan_id_list_file:
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+iprscan_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --sequence @- > iprscan-idfile.txt
 
 iprscan_multifasta_file:
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+iprscan_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --multifasta --sequence - > iprscan-file.txt
 
 iprscan_clean:
 	rm -f iprscan-*
@@ -606,7 +618,7 @@ mview_clean:
 	rm -f mview-*
 
 # NCBI BLAST or NCBI BLAST+
-ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_multifasta_file
+ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
 
 ncbiblast_params:
 	${PERL} ncbiblast_lwp.pl --params
@@ -626,14 +638,20 @@ ncbiblast_stdin_stdout:
 ncbiblast_id_list_file:
 	${PERL} ncbiblast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
+ncbiblast_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} ncbiblast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --sequence @- > ncbiblast-idfile.txt
+
 ncbiblast_multifasta_file:
 	${PERL} ncbiblast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+ncbiblast_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} ncbiblast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta --sequence - > ncbiblast-file.txt
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
 
 # Phobius
-phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout
+phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout phobius_id_list_file phobius_id_list_file_stdin_stdout phobius_multifasta_file phobius_multifasta_file_stdin_stdout
 
 phobius_params:
 	${PERL} phobius_lwp.pl --params
@@ -650,6 +668,18 @@ phobius_dbid:
 phobius_stdin_stdout:
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} phobius_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > phobius-blah.txt
 
+phobius_id_list_file:
+	${PERL} phobius_lwp.pl --email ${EMAIL} @../test_data/uniprot_id_list.txt
+
+phobius_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} phobius_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > phobius-idfile.txt
+
+phobius_multifasta_file:
+	${PERL} phobius_lwp.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+phobius_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} phobius_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta --sequence - > phobius-file.txt
+
 phobius_clean:
 	rm -f phobius-*
 
@@ -661,7 +691,7 @@ prank_clean:
 	rm -f prank-*
 
 # PSI-BLAST
-psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout
+psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout psiblast_id_list_file psiblast_id_list_file_stdin_stdout psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
 
 psiblast_params:
 	${PERL} psiblast_lwp.pl --params
@@ -678,11 +708,23 @@ psiblast_dbid:
 psiblast_stdin_stdout:
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psiblast-blah.txt
 
+psiblast_id_list_file:
+	${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --sequence @../test_data/uniprot_id_list.txt
+
+psiblast_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --sequence @- --quiet --outformat out --outfile - >  psiblast-idfile.txt
+
+psiblast_multifasta_file:
+	${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --multifasta --sequence ../test_data/multi_prot.tfa
+
+psiblast_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --multifasta --sequence - --quiet --outformat out --outfile - >  psiblast-file.txt
+
 psiblast_clean:
 	rm -f psiblast-*
 
 # PSI-Search
-psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout
+psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout psisearch_id_list_file psisearch_id_list_file_stdin_stdout psisearch_multifasta_file psisearch_multifasta_file_stdin_stdout
 
 psisearch_params:
 	${PERL} psisearch_lwp.pl --params
@@ -698,6 +740,18 @@ psisearch_dbid:
 
 psisearch_stdin_stdout:
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psisearch-blah.txt
+
+psisearch_id_list_file:
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --sequence @../test_data/uniprot_id_list.txt
+
+psisearch_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} psiblast_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --sequence @- --quiet --outformat out --outfile - >  psisearch-idfile.txt
+
+psisearch_multifasta_file:
+	${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --multifasta --sequence ../test_data/multi_prot.tfa
+
+psisearch_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} psisearch_lwp.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --multifasta --sequence - --quiet --outformat out --outfile - >  psisearch-file.txt
 
 psisearch_clean:
 	rm -f psisearch-*
@@ -735,7 +789,7 @@ tcoffee_clean:
 	rm -f tcoffee-*
 
 # WU-BLAST
-wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_multifasta_file
+wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_id_list_file_stdin_stdout wublast_multifasta_file wublast_multifasta_file_stdin_stdout
 
 wublast_params:
 	${PERL} wublast_lwp.pl --params
@@ -755,8 +809,14 @@ wublast_stdin_stdout:
 wublast_id_list_file:
 	${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
+wublast_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --sequence @- --quiet --outformat out --outfile - > wublast-idfile.txt
+
 wublast_multifasta_file:
 	${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+wublast_multifasta_file_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} wublast_lwp.pl --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta --sequence - --quiet --outformat out --outfile - > wublast-file.txt
 
 wublast_clean:
 	rm -f wublast-*
