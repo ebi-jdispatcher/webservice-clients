@@ -832,7 +832,6 @@ Generate a phylogentic tree from a multiple sequence alignment.
       --paramDetail : str  : display details for input parameter
       --quiet       :      : decrease output
       --verbose     :      : increase output
-      --trace       :      : show SOAP messages being interchanged 
    
 Synchronous job:
 

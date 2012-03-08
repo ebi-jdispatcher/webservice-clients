@@ -1018,7 +1018,6 @@ Rapid sequence database search programs utilizing the PSI-Search algorithm.
       --paramDetail   : str  : display details for input parameter
       --quiet         :      : decrease output
       --verbose       :      : increase output
-      --trace         :      : show SOAP messages being interchanged
 
 Synchronous job:
 

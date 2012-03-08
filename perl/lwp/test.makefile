@@ -18,7 +18,10 @@ msa \
 pfa \
 phylogeny \
 psa \
-sss
+sfc \
+so \
+sss \
+st
 
 clean: \
 dbfetch_clean \
@@ -26,10 +29,14 @@ msa_clean \
 pfa_clean \
 phylogeny_clean \
 psa_clean \
-sss_clean
+sfc_clean \
+so_clean \
+sss_clean \
+st_clean
 
 # Multiple Sequence Alignment (MSA)
 msa: \
+clustalo \
 clustalw2 \
 dbclustal \
 kalign \
@@ -40,6 +47,7 @@ prank \
 tcoffee \
 
 msa_clean: \
+clustalo_clean \
 clustalw2_clean \
 dbclustal_clean \
 kalign_clean \
@@ -80,6 +88,22 @@ emboss_stretcher_clean \
 emboss_water_clean \
 lalign_clean
 
+# TODO: Sequence Format Conversion (SFC)
+sfc: \
+emboss_seqret \
+readseq
+
+sfc_clean: \
+emboss_seqret_clean \
+readseq_clean
+
+# TODO: Sequence Operations (SO)
+so: \
+seqcksum
+
+so_clean: \
+seqcksum_clean
+
 # Sequence Similarity Search (SSS)
 sss: \
 fasta \
@@ -97,7 +121,38 @@ psiblast_clean \
 psisearch_clean \
 wublast_clean
 
-# ClustalW 2.0.x
+# Sequence Translation (ST)
+st: \
+emboss_backtranambig \
+emboss_backtranseq \
+emboss_sixpack \
+emboss_transeq
+
+st_clean: \
+emboss_backtranambig_clean \
+emboss_backtranseq_clean \
+emboss_sixpack_clean \
+emboss_transeq_clean
+
+# Clustal Omega
+clustalo: clustalo_params clustalo_param_detail clustalo_align clustalo_align_stdin_stdout
+
+clustalo_params:
+	${PERL} clustalo_lwp.pl --params
+
+clustalo_param_detail:
+	${PERL} clustalo_lwp.pl --paramDetail outfmt
+
+clustalo_align:
+	${PERL} clustalo_lwp.pl --email ${EMAIL} ../test_data/multi_prot.tfa
+
+clustalo_align_stdin_stdout:
+	cat ../test_data/multi_prot.tfa | ${PERL} clustalo_lwp.pl --email ${EMAIL} --quiet --outformat aln-clustal --outfile - - > clustalo-blah.aln
+
+clustalo_clean:
+	rm -f clustalo-*
+
+# ClustalW 2.x
 clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
 
 clustalw2_params:
@@ -166,14 +221,84 @@ dbfetch_getDbFormats:
 dbfetch_getFormatStyles:
 	${PERL} dbfetch_lwp.pl getFormatStyles uniprotkb default > dbfetch-getFormatStyles.txt
 
-dbfetch_fetchData:
+dbfetch_fetchData: dbfetch_fetchData_string dbfetch_fetchData_file dbfetch_fetchData_stdin
+
+dbfetch_fetchData_string:
 	${PERL} dbfetch_lwp.pl fetchData 'uniprotkb:wap_rat' > dbfetch-fetchData.txt
 
-dbfetch_fetchBatch:
-	${PERL} dbfetch_lwp.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' > dbfetch-fetchBatch.txt
+dbfetch_fetchData_file:
+	${PERL} dbfetch_lwp.pl fetchData @../test_data/uniprot_id_list.txt fasta raw > dbfetch-fetchDataFile.txt
+
+dbfetch_fetchData_stdin:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} dbfetch_lwp.pl fetchData @- fasta raw > dbfetch-fetchDataStdin.txt
+
+dbfetch_fetchBatch: dbfetch_fetchBatch_string dbfetch_fetchBatch_file dbfetch_fetchBatch_stdin
+
+dbfetch_fetchBatch_string:
+	${PERL} dbfetch_lwp.pl fetchBatch uniprotkb 'wap_rat,wap_mouse' fasta raw > dbfetch-fetchBatch.txt
+
+dbfetch_fetchBatch_file:
+	${PERL} dbfetch_lwp.pl fetchBatch uniprotkb @../test_data/uniprot_id_list_b.txt fasta raw > dbfetch-fetchBatchFile.txt
+
+dbfetch_fetchBatch_stdin:
+	cat ../test_data/uniprot_id_list_b.txt | ${PERL} dbfetch_lwp.pl fetchBatch uniprotkb - fasta raw > dbfetch-fetchBatchStdin.txt
 
 dbfetch_clean:
 	rm -f dbfetch-*
+
+# EMBOSS backtranambig
+emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
+
+emboss_backtranambig_params:
+	${PERL} emboss_backtranambig_lwp.pl --params
+
+emboss_backtranambig_param_detail:
+	${PERL} emboss_backtranambig_lwp.pl --paramDetail codontable
+
+emboss_backtranambig_dbid:
+	${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --sequence uniprot:wap_rat
+
+emboss_backtranambig_file:
+	${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_backtranambig_id_list_file:
+	${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_backtranambig_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranambig-blah.txt
+
+emboss_backtranambig_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_backtranambig-list.txt
+
+emboss_backtranambig_clean:
+	rm -f emboss_backtranambig-*
+
+# EMBOSS backtranseq
+emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
+
+emboss_backtranseq_params:
+	${PERL} emboss_backtranseq_lwp.pl --params
+
+emboss_backtranseq_param_detail:
+	${PERL} emboss_backtranseq_lwp.pl --paramDetail codontable
+
+emboss_backtranseq_dbid:
+	${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --sequence uniprot:wap_rat
+
+emboss_backtranseq_file:
+	${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_backtranseq_id_list_file:
+	${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_backtranseq_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranseq-blah.txt
+
+emboss_backtranseq_id_list_file_stdin_stdout:
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_backtranambig-list.txt
+
+emboss_backtranseq_clean:
+	rm -f emboss_backtranseq-*
 
 # EMBOSS matcher
 emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
@@ -188,7 +313,7 @@ emboss_matcher_dbid:
 	${PERL} emboss_matcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
 emboss_matcher_file:
-	echo 'TODO:' $@
+	${PERL} emboss_matcher_lwp.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 emboss_matcher_clean:
 	rm -f emboss_matcher-*
@@ -206,10 +331,44 @@ emboss_needle_dbid:
 	${PERL} emboss_needle_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
 emboss_needle_file:
-	echo 'TODO:' $@
+	${PERL} emboss_needle_lwp.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 emboss_needle_clean:
 	rm -f emboss_needle-*
+
+# TODO: EMBOSS seqret
+emboss_seqret:
+	echo 'TODO:' $@
+
+emboss_seqret_clean:
+	rm -f emboss_seqret-*
+
+# EMBOSS sixpack
+emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout
+
+emboss_sixpack_params:
+	${PERL} emboss_sixpack_lwp.pl --params
+
+emboss_sixpack_param_detail:
+	${PERL} emboss_sixpack_lwp.pl --paramDetail codontable
+
+emboss_sixpack_dbid:
+	${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --sequence embl:L12345
+
+emboss_sixpack_file:
+	${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_sixpack_id_list_file:
+	${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_sixpack_stdin_stdout:
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_sixpack-blah.txt
+
+emboss_sixpack_id_list_file_stdin_stdout:
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_sixpack-list.txt
+
+emboss_sixpack_clean:
+	rm -f emboss_sixpack-*
 
 # EMBOSS stretcher
 emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
@@ -224,10 +383,37 @@ emboss_stretcher_dbid:
 	${PERL} emboss_stretcher_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
 emboss_stretcher_file:
-	echo 'TODO:' $@
+	${PERL} emboss_stretcher_lwp.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
+
+# EMBOSS transeq
+emboss_transeq: emboss_transeq_params emboss_transeq_param_detail emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
+
+emboss_transeq_params:
+	${PERL} emboss_transeq_lwp.pl --params
+
+emboss_transeq_param_detail:
+	${PERL} emboss_transeq_lwp.pl --paramDetail codontable
+
+emboss_transeq_dbid:
+	${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --sequence embl:L12345
+
+emboss_transeq_file:
+	${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_transeq_id_list_file:
+	${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_transeq_stdin_stdout:
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_transeq-blah.txt
+
+emboss_transeq_id_list_file_stdin_stdout:
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_transeq-list.txt
+
+emboss_transeq_clean:
+	rm -f emboss_transeq-*
 
 # EMBOSS water
 emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
@@ -242,7 +428,7 @@ emboss_water_dbid:
 	${PERL} emboss_water_lwp.pl --email ${EMAIL} --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
 emboss_water_file:
-	echo 'TODO:' $@
+	${PERL} emboss_water_lwp.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 emboss_water_clean:
 	rm -f emboss_water-*
@@ -319,6 +505,13 @@ iprscan_multifasta_file:
 iprscan_clean:
 	rm -f iprscan-*
 
+# TODO: InterProScan 5
+iprscan5:
+	echo 'TODO:' $@
+
+iprscan5_clean:
+	rm -f iprscan5-*
+
 # Kalign
 kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
 
@@ -350,7 +543,7 @@ lalign_dbid:
 	${PERL} lalign_lwp.pl --email ${EMAIL} --stype protein --asequence uniprot:wap_rat --bsequence uniprot:wap_mouse
 
 lalign_file:
-	echo 'TODO:' $@
+	${PERL} lalign_lwp.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 lalign_clean:
 	rm -f lalign-*
@@ -409,7 +602,7 @@ mview_stdin_stdout:
 mview_clean:
 	rm -f mview-*
 
-# NCBI BLAST
+# NCBI BLAST or NCBI BLAST+
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_multifasta_file
 
 ncbiblast_params:
@@ -457,6 +650,13 @@ phobius_stdin_stdout:
 phobius_clean:
 	rm -f phobius-*
 
+# TODO: PRANK
+prank:
+	echo 'TODO:' $@
+
+prank_clean:
+	rm -f prank-*
+
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout
 
@@ -499,12 +699,19 @@ psisearch_stdin_stdout:
 psisearch_clean:
 	rm -f psisearch-*
 
-# TODO PRANK
-prank:
+# TODO: Readseq
+readseq:
 	echo 'TODO:' $@
 
-prank_clean:
-	rm -f prank-*
+readseq_clean:
+	rm -f readseq-*
+
+# TODO: seqcksum
+seqcksum:
+	echo 'TODO:' $@
+
+seqcksum_clean:
+	rm -f seqcksum-*
 
 # T-Coffee
 tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout

@@ -913,8 +913,8 @@ Back-translate a protein sequence(s) to ambiguous nucleotide sequence(s).
 
 [Required]
 
-  seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
      --codontable     : str  : codon table

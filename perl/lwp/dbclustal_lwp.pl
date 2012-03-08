@@ -817,34 +817,33 @@ hit sequences with the local alignments found by BLAST preserved.
 
 [Required]
 
-      --sequence       : file : query sequence used in BLAST search
-      --blastreport    : file : BLAST report output
+      --sequence      : file : query sequence used in BLAST search
+      --blastreport   : file : BLAST report output
 
 [Optional]
 
-      --upidlistfile   : file : list of BLAST hit identifiers
-      --output         : str  : output alignment format, see 
+      --upidlistfile  : file : list of BLAST hit identifiers
+      --output        : str  : output alignment format, see 
                                 --paramDetail output
 
 [General]
 
-  -h, --help        :      : prints this help text
-      --async       :      : forces to make an asynchronous query
-      --email       : str  : e-mail address
-      --title       : str  : title for job
-      --status      :      : get job status
-      --resultTypes :      : get available result types for job
-      --polljob     :      : poll for the status of a job
-      --jobid       : str  : jobid that was returned when an asynchronous job 
-                             was submitted.
-      --outfile     : str  : file name for results (default is jobid;
-                             "-" for STDOUT)
-      --outformat   : str  : result format to retrieve
-      --params      :      : list input parameters
-      --paramDetail : str  : display details for input parameter
-      --quiet       :      : decrease output
-      --verbose     :      : increase output
-      --trace       :      : show SOAP messages being interchanged 
+  -h, --help          :      : prints this help text
+      --async         :      : forces to make an asynchronous query
+      --email         : str  : e-mail address
+      --title         : str  : title for job
+      --status        :      : get job status
+      --resultTypes   :      : get available result types for job
+      --polljob       :      : poll for the status of a job
+      --jobid         : str  : jobid that was returned when an asynchronous job 
+                               was submitted.
+      --outfile       : str  : file name for results (default is jobid;
+                               "-" for STDOUT)
+      --outformat     : str  : result format to retrieve
+      --params        :      : list input parameters
+      --paramDetail   : str  : display details for input parameter
+      --quiet         :      : decrease output
+      --verbose       :      : increase output
    
 Synchronous job:
 

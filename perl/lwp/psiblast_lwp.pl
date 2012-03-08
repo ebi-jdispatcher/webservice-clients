@@ -1014,7 +1014,6 @@ Rapid sequence database search programs utilizing the PSI-BLAST algorithm.
       --paramDetail   : str  : display details for input parameter
       --quiet         :      : decrease output
       --verbose       :      : increase output
-      --trace         :      : show SOAP messages being interchanged
 
 Synchronous job:
 
