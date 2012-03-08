@@ -1,6 +1,7 @@
+# $Id$
 # ======================================================================
 #
-# Test sample SOAP::Lite clients run.
+# Test sample LWP clients run.
 #
 # ======================================================================
 
@@ -60,10 +61,12 @@ tcoffee_clean
 # Protein Function Analysis (PFA)
 pfa: \
 iprscan \
+iprscan5 \
 phobius
 
 pfa_clean: \
 iprscan_clean \
+iprscan5_clean \
 phobius_clean
 
 # Phylogeny
