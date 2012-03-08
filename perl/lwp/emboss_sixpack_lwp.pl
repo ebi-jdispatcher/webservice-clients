@@ -650,8 +650,14 @@ sub list_file_submit_job {
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( my $LISTFILE, '<', $filename )
-	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
@@ -931,16 +937,16 @@ Print program usage message.
 
 sub usage {
 	print STDERR <<EOF
-Emboss Sixpack
-==========
+EMBOSS sixpack
+==============
 
 Sixpack reads a DNA sequence and outputs the three forward and (optionally) three 
 reverse translations in a visual manner. 
 
 [Required]
 
-  seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
      --codontable     : str  : codon table to use
