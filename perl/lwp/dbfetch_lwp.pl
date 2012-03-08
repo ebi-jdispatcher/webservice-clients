@@ -168,6 +168,10 @@ sub rest_request {
 		die 'http status: ' . $response->code . ' ' . $response->message
  . '  ' . $1;
 	}
+	# dbfetch error document. 
+	elsif ( $response->content() =~ m/^ERROR \d+ [^\n\r]+[\n\r]+$/ ) {
+		die $response->content();
+	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
 	# Return the response data
@@ -446,7 +450,34 @@ Print an entry.
 
 sub print_fetch_data {
     print_debug_message( 'print_fetch_data', 'Begin', 1 );
-    print &rest_fetch_data(@_);
+	my $query = shift;
+	my $formatName = shift || 'default';
+	my $styleName = shift || 'raw';
+	# Read identifiers from file?
+	if($query eq '-' || $query =~ m/^@/) {
+		my $FH;
+		my $filename = $query;
+		$filename =~ s/^@//;
+		if($filename eq '-') {
+			$FH = *STDIN;
+		}
+		else {
+			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
+		}
+		while(<$FH>) {
+			chomp;
+			my $entryId = $_;
+			if($entryId =~ m/^\S+:\S+/) {
+				my $entryStr = &rest_fetch_data($entryId, $formatName, $styleName);
+				print $entryStr, "\n" if($entryStr);
+			}
+		}
+		close($FH) unless($filename eq '-');
+	}
+	else {
+		my $entryStr = &rest_fetch_data($query, $formatName, $styleName);
+		print $entryStr, "\n" if($entryStr);
+	}
     print_debug_message( 'print_fetch_data', 'End', 1 );
 }
 
@@ -480,7 +511,32 @@ Print a set of entries.
 
 sub print_fetch_batch {
     print_debug_message( 'print_fetch_batch', 'Begin', 1 );
-    print &rest_fetch_batch(@_);
+	my $dbName = shift;
+	my $idListStr = shift;
+	my $formatName = shift || 'default';
+	my $styleName = shift || 'raw';
+	# Read identifiers from file?
+	if ( $idListStr eq '-' || $idListStr =~ m/^@/) {
+		my $tmpIdListStr = '';
+		my $FH;
+		my $filename = $idListStr;
+		$filename =~ s/^@//;
+		if($filename eq '-') {
+			$FH = *STDIN;
+		}
+		else {
+			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
+		}
+		while(<$FH>) {
+			chomp;
+			$tmpIdListStr .= ',' if(length($tmpIdListStr) > 0);
+			$tmpIdListStr .= $_;
+		}
+		$idListStr = $tmpIdListStr;
+		close($FH) unless($filename eq '-');
+	}
+	my $entriesStr = &rest_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+	print $entriesStr, "\n" if($entriesStr);
     print_debug_message( 'print_fetch_batch', 'End', 1 );
 }
 
