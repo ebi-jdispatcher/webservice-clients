@@ -49,11 +49,11 @@ use warnings;
 # Load libraries
 use English;
 use LWP;
+use HTTP::Request::Common;
 use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psiblast';
@@ -322,9 +322,10 @@ sub rest_run {
 		}
 	}
 
-	# Submit the job as a POST
+	# TODO Submit the job as a multi-part POST
 	my $url = $baseUrl . '/run';
-	my $response = $ua->post( $url, \%tmp_params );
+	my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
+	my $response = $ua->request( $request );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
 		'request: ' . $response->request()->content(), 11 );
@@ -332,7 +333,12 @@ sub rest_run {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		if(defined($1)) {
+			die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		}
+		else {
+			die 'http status: ' . $response->code . ' ' . $response->message;
+		}
 	}
 
 	# The job id is returned
@@ -763,7 +769,8 @@ sub load_params {
 	# Selected hit identifier list for building PSSM.
 	if(defined($params{'selectedHits'})) {
 		if(-f $params{'selectedHits'}) {
-			$tool_params{'selectedHits'} = &read_file( $params{'selectedHits'});
+			# Reference to a file for file upload.
+			$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
 		}
 		else {
 			$tool_params{'selectedHits'} = $params{'selectedHits'};
@@ -773,10 +780,11 @@ sub load_params {
 	# PSI-BLAST checkpoint from previous iteration.
 	if(defined($params{'cpfile'})) {
 		if(-f $params{'cpfile'}) {
-			$tool_params{'cpfile'} = uri_escape(&read_file( $params{'cpfile'} ));
+			# TODO Reference to a file for file upload.
+			$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
 		}
 		else {
-			$tool_params{'cpfile'} = uri_escape($params{'cpfile'});
+			$tool_params{'cpfile'} = $params{'cpfile'};
 		}
 	}
 

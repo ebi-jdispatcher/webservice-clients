@@ -601,10 +601,16 @@ sub multi_submit_job {
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			push( @filename_list, $ARGV[0] );
 		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
+		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			push( @filename_list, $params{'sequence'} );
+		}
+		else {
+			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
 		}
 	}
 
