@@ -431,7 +431,7 @@ public class ClustalW2PhylogenyClient extends uk.ac.ebi.webservices.AbstractWsTo
 				}
 				// Unknown...
 				else {
-					System.err.println("Error: jobid specified without releated action option");
+					System.err.println("Error: jobid specified without related action option");
 					printUsage();
 					exitVal = 2;
 				}

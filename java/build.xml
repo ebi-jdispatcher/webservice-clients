@@ -49,7 +49,7 @@
 	<target name="stubs" depends="axis1-stubs,jaxws-stubs" description="Generate all stubs." />
 	<target name="compile" depends="axis1-compile,jaxws-compile" description="Compile all clients." />
 	<target name="jar" depends="axis1-jar,jaxws-jar" description="Package clients into jars." />
-	
+
 	<!-- Clean-up build directory -->
 	<target name="clean" description="Delete compiled classes">
 		<delete includeemptydirs="true">
@@ -68,18 +68,22 @@
 
 	<!-- Axis 1.x -->
 	<target name="axis1" depends="axis1-jar" description="Axis 1.x: generate stubs and build SOAP clients" />
-	
+
 	<!-- Generate Axis 1.x stubs for all services -->
 	<target name="axis1-stubs" depends="resolve" description="Axis 1.x: generate code stubs for SOAP clients">
 		<antcall target="axis1-stubs-clustalo" />
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-clustalw2phylogeny" />
+		<antcall target="axis1-stubs-dalilite"/>
 		<antcall target="axis1-stubs-dbclustal" />
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-emboss_backtranambig" />
 		<antcall target="axis1-stubs-emboss_backtranseq" />
 		<antcall target="axis1-stubs-emboss_matcher" />
 		<antcall target="axis1-stubs-emboss_needle" />
+		<antcall target="axis1-stubs-emboss_pepinfo"/>
+		<antcall target="axis1-stubs-emboss_pepstats"/>
+		<antcall target="axis1-stubs-emboss_pepwindow"/>
 		<antcall target="axis1-stubs-emboss_sixpack" />
 		<antcall target="axis1-stubs-emboss_stretcher" />
 		<antcall target="axis1-stubs-emboss_transeq" />
@@ -89,7 +93,8 @@
 		<antcall target="axis1-stubs-iprscan" />
 		<antcall target="axis1-stubs-kalign" />
 		<antcall target="axis1-stubs-lalign" />
-		<antcall target="axis1-stubs-mafft" />
+		<antcall target="axis1-stubs-mafft"/>
+		<antcall target="axis1-stubs-maxsprout"/>
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-mview" />
 		<antcall target="axis1-stubs-ncbiblast" />
@@ -97,6 +102,8 @@
 		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
+		<antcall target="axis1-stubs-radar"/>
+		<antcall target="axis1-stubs-saps"/>
 		<antcall target="axis1-stubs-tcoffee" />
 		<antcall target="axis1-stubs-wsdbfetch" />
 		<antcall target="axis1-stubs-wublast" />
@@ -119,6 +126,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalw2phylogeny" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2_phylogeny?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-dalilite" description="Axis 1.x: generate stubs for DaliLite (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.dalilite" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dalilite?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-dbclustal" description="Axis 1.x: generate stubs for DbClustal (SOAP)">
@@ -155,6 +168,24 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.needle" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_pepinfo" description="Axis 1.x: generate stubs for EMBOSS pepinfo (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.pepinfo" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepinfo?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_pepstats" description="Axis 1.x: generate stubs for EMBOSS pepstats (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.pepstats" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_pepwindow" description="Axis 1.x: generate stubs for EMBOSS pepwindow (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.pepwindow" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepwindow?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_sixpack" description="Axis 1.x: generate stubs for EMBOSS sixpack (SOAP)">
@@ -217,6 +248,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-maxsprout" description="Axis 1.x: generate stubs for MaxSprout (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.maxsprout" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/maxsprout?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-muscle" description="Axis 1.x: generate stubs for MUSCLE (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.muscle" />
@@ -257,6 +294,18 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psisearch" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-radar" description="Axis 1.x: generate stubs for Radar (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.radar" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/radar?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-saps" description="Axis 1.x: generate stubs for Saps (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.saps" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-tcoffee" description="Axis 1.x: generate stubs for T-COFFEE (SOAP)">
@@ -307,6 +356,14 @@
 		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2PhylogenyClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/DaliLite_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/DaliliteClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DaliliteClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -365,6 +422,36 @@
 			includes="uk/ac/ebi/webservices/axis1/EmbossNeedleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/needle/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossNeedleClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossPepinfo_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepinfoClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepinfo/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepinfoClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossPepstats_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepstatsClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepstats/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepstatsClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossPepwindow_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepwindowClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepwindow/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepwindowClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -470,6 +557,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/Maxsprout_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/MaxsproutClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/maxsprout/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MaxsproutClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Muscle_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MuscleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/muscle/**">
@@ -529,6 +626,26 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/Radar_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/RadarClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/radar/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.RadarClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/Saps_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/SapsClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/saps/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.SapsClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Tcoffee_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/TcoffeeClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/tcoffee/**">
@@ -566,10 +683,14 @@
 		<antcall target="axis1-distclean-stubs-clustalo" />
 		<antcall target="axis1-distclean-stubs-clustalw2" />
 		<antcall target="axis1-distclean-stubs-clustalw2phylogeny" />
+		<antcall target="axis1-distclean-stubs-dalilite" />
 		<antcall target="axis1-distclean-stubs-dbclustal" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-emboss_matcher" />
 		<antcall target="axis1-distclean-stubs-emboss_needle" />
+		<antcall target="axis1-distclean-stubs-emboss_pepinfo" />
+		<antcall target="axis1-distclean-stubs-emboss_pepstats" />
+		<antcall target="axis1-distclean-stubs-emboss_pepwindow" />
 		<antcall target="axis1-distclean-stubs-emboss_stretcher" />
 		<antcall target="axis1-distclean-stubs-emboss_water" />
 		<antcall target="axis1-distclean-stubs-fasta" />
@@ -578,6 +699,7 @@
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-lalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
+		<antcall target="axis1-distclean-stubs-maxsprout"/>
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
@@ -585,6 +707,8 @@
 		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
+		<antcall target="axis1-distclean-stubs-radar"/>
+		<antcall target="axis1-distclean-stubs-saps"/>
 		<antcall target="axis1-distclean-stubs-tcoffee" />
 		<antcall target="axis1-distclean-stubs-wsdbfetch" />
 		<antcall target="axis1-distclean-stubs-wublast" />
@@ -608,6 +732,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="clustalw2phylogeny" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-dalilite" description="Axis 1.x: remove DaliLite (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/dalilite" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="dalilite" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-dbclustal" description="Axis 1.x: remove DbClustal (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/dbclustal" includes="*/**" />
@@ -629,6 +759,24 @@
 	<target name="axis1-distclean-stubs-emboss_needle" description="Axis 1.x: remove EMBOSS needle stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/needle" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="needle" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_pepinfo" description="Axis 1.x: remove EMBOSS pepinfo stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/pepinfo" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="pepinfo" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_pepstats" description="Axis 1.x: remove EMBOSS pepstats stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/needle" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="pepstats" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_pepwindow" description="Axis 1.x: remove EMBOSS pepwindow stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/pepwindow" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="needle" />
 	    </delete>
 	</target>
@@ -680,6 +828,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="mafft" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-maxsprout" description="Axis 1.x: remove MaxSprout (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/maxsprout" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="maxsprout" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-muscle" description="Axis 1.x: remove MUSCLE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/muscle" includes="*/**" />
@@ -722,6 +876,16 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-radar" description="Axis 1.x: remove RADAR (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/radar"/>
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-saps" description="Axis 1.x: remove SAPS (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/saps"/>
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-tcoffee" description="Axis 1.x: remove T-COFFEE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/tcoffee" includes="*/**" />
@@ -740,10 +904,10 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="wublast" />
 	    </delete>
 	</target>
-	
+
 	<!-- JAX-WS -->
 	<target name="jaxws" depends="jaxws-jar" description="JAX-WS RI: generate stubs and build SOAP clients" />
-	
+
 	<!-- Generate JAX-WS stubs for all services -->
 	<target name="jaxws-stubs" depends="resolve" description="JAX-WS RI: generate code stubs for SOAP clients">
 		<antcall target="jaxws-stubs-clustalo" />
@@ -1023,7 +1187,7 @@
 		<antcall target="jaxws-distclean-stubs-tcoffee" />
 		<antcall target="jaxws-distclean-stubs-wublast" />
 	</target>
-	
+
 	<target name="jaxws-distclean-stubs-clustalo" description="JAX-WS RI: remove ClustalO (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/clustalo" includes="*/**" />

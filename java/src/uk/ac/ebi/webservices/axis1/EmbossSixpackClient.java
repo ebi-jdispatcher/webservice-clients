@@ -429,7 +429,7 @@ public class EmbossSixpackClient extends uk.ac.ebi.webservices.AbstractWsToolCli
 				}
 				// Unknown...
 				else {
-					System.err.println("Error: jobid specified without releated action option");
+					System.err.println("Error: jobid specified without related action option");
 					printUsage();
 					exitVal = 2;
 				}

@@ -404,7 +404,7 @@ public class EmbossBacktranseqClient extends uk.ac.ebi.webservices.AbstractWsToo
 				}
 				// Unknown...
 				else {
-					System.err.println("Error: jobid specified without releated action option");
+					System.err.println("Error: jobid specified without related action option");
 					printUsage();
 					exitVal = 2;
 				}

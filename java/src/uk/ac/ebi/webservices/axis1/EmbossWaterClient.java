@@ -418,7 +418,7 @@ public class EmbossWaterClient extends uk.ac.ebi.webservices.AbstractWsToolClien
 				}
 				// Unknown...
 				else {
-					System.err.println("Error: jobid specified without releated action option");
+					System.err.println("Error: jobid specified without related action option");
 					printUsage();
 					exitVal = 2;
 				}

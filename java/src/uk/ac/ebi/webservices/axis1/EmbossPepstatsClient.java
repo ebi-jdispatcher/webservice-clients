@@ -1,6 +1,6 @@
 /* $Id$
  * ======================================================================
- * JDispatcher Kalign (SOAP) web service Java client using Axis 1.x.
+ * JDispatcher EMBOSS pepstats (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -12,45 +12,44 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import org.apache.commons.cli.*;
-import uk.ac.ebi.webservices.axis1.stubs.kalign.*;
+import uk.ac.ebi.webservices.axis1.stubs.emboss.pepstats.*;
 
-/** <p>JDispatcher Kalign (SOAP) web service Java client using Apache 
+/** <p>JDispatcher EMBOSS pepstats (SOAP) web service Java client using Apache 
  * Axis 1.x.</p>
  * 
  * <p>See:</p>
  * <ul>
- * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/msa/kalign_soap">http://www.ebi.ac.uk/Tools/webservices/services/msa/kalign_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/stat/emboss_pepstats_soap">http://www.ebi.ac.uk/Tools/webservices/services/stat/emboss_pepstats_soap</a></li>
  * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
  */
-public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
+public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Proxy object for web service. */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Client version/revision for use in user-agent string. */
-	private String revision = "$Revision$";
+	private String revision = "$Revision: 1816 $";
 	/** Tool specific usage for help. */
-	private static final String usageMsg = "Kalign\n"
-		+ "======\n"
+	private static final String usageMsg = "EMBOSS Pepstats\n"
+		+ "================\n"
 		+ "\n"
-		+ "A fast and accurate multiple sequence alignment algorithm.\n"
-		+ "\n"
+		+ "Calculate statistics of protein properties.\n"
+		+ "\n"    
 		+ "[Required]\n"
 		+ "\n"
-		+ "  -m, --stype       : str  : input sequence type, see --paramDetail stype\n"
-		+ "  seqFile           : file : sequences to align (\"-\" for STDIN)\n"
+		+ "      --sequence     : file : input sequence\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "  -f, --format      : str  : alignment format, see --paramDetail format\n"
-		+ "  -g, --gapopen     : real : gap creation penalty\n"
-		+ "  -e, --gapext      : real : gap extension penalty\n"
-		+ "  -t, --termgap     : real : terminal gap penalty\n"
-		+ "  -b, --bonus       : real : bonus score\n";
+		+ "      --termini      :      : include charge at N and C terminus\n"
+		+ "      --notermini    :      : not include charge at N and C terminus\n"
+		+ "      --mono         :      : use monoisotopic weights\n"
+		+ "      --nomono       :      : not use monoisotopic weights\n";	
+
 
 	/** Default constructor.
 	 */
-	public KalignClient() {
+	public EmbossPepstatsClient() {
 		// Set the HTTP user agent string for (java.net) requests.
 		this.setUserAgent();
 	}
@@ -295,6 +294,7 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		return retVal;
 	}
 
+	
 	/** Submit a job to the service.
 	 * 
 	 * @param params Input parameters for the job.
@@ -315,6 +315,7 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		return jobId;
 	}
 
+	
 	/** Populate input parameters structure from command-line options.
 	 * 
 	 * @param line Command line options
@@ -325,12 +326,10 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("m")) params.setStype(line.getOptionValue("m"));
-		if (line.hasOption("f")) params.setFormat(line.getOptionValue("f"));
-		if (line.hasOption("g")) params.setGapopen(new Float(line.getOptionValue("g")));
-		if (line.hasOption("e")) params.setGapext(new Float(line.getOptionValue("e")));
-		if (line.hasOption("t")) params.setTermgap(new Float(line.getOptionValue("t")));
-		if (line.hasOption("b")) params.setBonus(new Float(line.getOptionValue("b")));
+		if (line.hasOption("termini")) params.setTermini(new Boolean(true));
+		else if (line.hasOption("notermini")) params.setTermini(new Boolean(false));
+		if (line.hasOption("mono")) params.setMono(new Boolean(true));
+		else if (line.hasOption("nomono")) params.setMono(new Boolean(false));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -348,17 +347,15 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("m", "stype", true, "Sequence type");
-		options.addOption("f", "format", true, "Alignment format");
-		options.addOption("g", "gapopen", true, "Gap creation penalty");
-		options.addOption("e", "gapext", true, "Gap extension penalty");
-		options.addOption("t", "termgap", true, "Terminal gap penalty");
-		options.addOption("b", "bonus", true, "Bonus score");
-		options.addOption("sequence", true, "Input sequences/alignment");
+		options.addOption("termini", false, "Include charge at N and C terminus");
+		options.addOption("notermini", false, "Not include charge at N and C terminus");
+		options.addOption("mono", false, "Use monoisotopic weights");
+		options.addOption("nomono", false, "Not use monoisotopic weights");
+		options.addOption("sequence", true, "Input sequence");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
 		// Create an instance of the client
-		KalignClient client = new KalignClient();
+		EmbossPepstatsClient client = new EmbossPepstatsClient();
 		try {
 			// Parse the command-line
 			CommandLine cli = cliParser.parse(options, args);
@@ -424,10 +421,11 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				}
 			}
 			// Submit a job
-			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
+			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 1)) {
 				// Create job submission parameters from command-line
 				InputParameters params = client.loadParams(cli);
-				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
+				String dataOption = null;
+				dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
 				params.setSequence(new String(client.loadData(dataOption)));
 				// Submit the job
 				String email = null, title = null;
@@ -437,7 +435,7 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar Kalign_Axis1.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar EmbossPepstats_Axis1.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);

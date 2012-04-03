@@ -1,6 +1,6 @@
-/* $Id$
+/* $Id: DaliliteClient.java 1816 2011-04-05 09:51:24Z hpm $
  * ======================================================================
- * JDispatcher Kalign (SOAP) web service Java client using Axis 1.x.
+ * JDispatcher DaliLite (SOAP) web service Java client using Axis 1.x.
  * ----------------------------------------------------------------------
  * Tested with:
  *   Sun Java 1.5.0_17 with Apache Axis 1.4 on CentOS 5.2.
@@ -10,47 +10,60 @@ package uk.ac.ebi.webservices.axis1;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import javax.xml.rpc.ServiceException;
-import org.apache.commons.cli.*;
-import uk.ac.ebi.webservices.axis1.stubs.kalign.*;
 
-/** <p>JDispatcher Kalign (SOAP) web service Java client using Apache 
+import javax.xml.rpc.ServiceException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.UnrecognizedOptionException;
+
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.InputParameters;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.JDispatcherService_PortType;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.JDispatcherService_Service;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.JDispatcherService_ServiceLocator;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.WsParameterDetails;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.WsParameterValue;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.WsProperty;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.WsRawOutputParameter;
+import uk.ac.ebi.webservices.axis1.stubs.dalilite.WsResultType;
+
+/** <p>JDispatcher DaliLite (SOAP) web service Java client using Apache 
  * Axis 1.x.</p>
  * 
  * <p>See:</p>
  * <ul>
- * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/msa/kalign_soap">http://www.ebi.ac.uk/Tools/webservices/services/msa/kalign_soap</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/structure/dalilite_soap">http://www.ebi.ac.uk/Tools/webservices/services/structure/dalilite_soap</a></li>
  * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
  */
-public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
+public class DaliliteClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	/** Proxy object for web service. */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Client version/revision for use in user-agent string. */
-	private String revision = "$Revision$";
+	private String revision = "$Revision: 1816 $";
 	/** Tool specific usage for help. */
-	private static final String usageMsg = "Kalign\n"
-		+ "======\n"
+	private static final String usageMsg = "DaliLite\n"
+		+ "=============\n"
 		+ "\n"
-		+ "A fast and accurate multiple sequence alignment algorithm.\n"
-		+ "\n"
+		+ "Pairwise structure comparison.\n"
+		+ "\n"    
 		+ "[Required]\n"
 		+ "\n"
-		+ "  -m, --stype       : str  : input sequence type, see --paramDetail stype\n"
-		+ "  seqFile           : file : sequences to align (\"-\" for STDIN)\n"
+		+ "      --structure1     : file : first structure to compare\n"
+		+ "      --structure2     : file : second structure to compare\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "  -f, --format      : str  : alignment format, see --paramDetail format\n"
-		+ "  -g, --gapopen     : real : gap creation penalty\n"
-		+ "  -e, --gapext      : real : gap extension penalty\n"
-		+ "  -t, --termgap     : real : terminal gap penalty\n"
-		+ "  -b, --bonus       : real : bonus score\n";
-
+		+ "      --chainid1     : str  : chain id for the first structure\n"
+		+ "      --chainid2     : str  : chain id for the second structure\n";
+	
+	
 	/** Default constructor.
 	 */
-	public KalignClient() {
+	public DaliliteClient() {
 		// Set the HTTP user agent string for (java.net) requests.
 		this.setUserAgent();
 	}
@@ -229,6 +242,17 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("printResultTypes", "End", 1);
 	}
 	
+	
+	
+	public int getNAlignments(String jobid) throws IOException, javax.xml.rpc.ServiceException
+	{
+		byte[] b = this.srvProxy.getResult(jobid, "nalignments", null);
+		
+		return Integer.parseInt(new String(b));		
+	}
+	
+	
+	
 	/** Get the results for a job and save them to files.
 	 * 
 	 * @param jobid The job identifier.
@@ -251,41 +275,98 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Get result types
 		WsResultType[] resultTypes = getResultTypes(jobid);
 		int retValN = 0;
-		if(outformat == null) {
-			retVal = new String[resultTypes.length];
+		int n =0;
+		
+		if(outformat == null)
+		{
+			n = getNAlignments(jobid);
+			retVal = new String[resultTypes.length + (n-1) *2];
 		} else {
 			retVal = new String[1];
 		}
+		
+		
 		for(int i = 0; i < resultTypes.length; i++) {
 			printProgressMessage("File type: " + resultTypes[i].getIdentifier(), 2);
 			// Get the results
-			if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
-				byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), null);
-				if(resultbytes == null) {
-					System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
-				}
-				else {
-					printProgressMessage("Result bytes length: " + resultbytes.length, 2);
-					// Write the results to a file
-					String result = new String(resultbytes);
-					if(basename.equals("-")) { // STDOUT
-						if(resultTypes[i].getMediaType().startsWith("text")) { // String
-							System.out.print(result);
+
+			if(resultTypes[i].getIdentifier().equals("calphatraces") || resultTypes[i].getIdentifier().equals("rt"))
+			{
+				WsRawOutputParameter[] parameters = new WsRawOutputParameter[1];
+				String[] a = new String[1]; 
+				WsRawOutputParameter p = new WsRawOutputParameter("alignmentno", a);
+				parameters[0] = p;
+				
+				for(int j=1;j<=n;j++)
+				{
+					if(outformat == null || outformat.equals(resultTypes[i].getIdentifier()))
+					{
+						a[0] = String.valueOf(j);
+						
+						byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), parameters);
+						if(resultbytes == null) {
+							System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
 						}
-						else { // Binary
-							System.out.print(resultbytes);
+						else {
+							printProgressMessage("Result bytes length: " + resultbytes.length, 2);
+							// Write the results to a file
+							String result = new String(resultbytes);
+							if(basename.equals("-")) { // STDOUT
+								if(resultTypes[i].getMediaType().startsWith("text")) { // String
+									System.out.print(result);
+								}
+								else { // Binary
+									System.out.print(resultbytes);
+								}
+							}
+							else { // File
+								String filename = basename + "." + resultTypes[i].getIdentifier()
+										+ "." + j + "." + resultTypes[i].getFileSuffix();
+								if(resultTypes[i].getMediaType().startsWith("text")) { // String
+									writeFile(new File(filename), result);
+								}
+								else { // Binary
+									writeFile(new File(filename), resultbytes);
+								}
+								retVal[retValN] = filename;
+								retValN++;
+							}
 						}
 					}
-					else { // File
-						String filename = basename + "." + resultTypes[i].getIdentifier() + "." + resultTypes[i].getFileSuffix();
-						if(resultTypes[i].getMediaType().startsWith("text")) { // String
-							writeFile(new File(filename), result);
+
+				}
+			}
+			else
+			{
+
+				if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
+					byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), null);
+					if(resultbytes == null) {
+						System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
+					}
+					else {
+						printProgressMessage("Result bytes length: " + resultbytes.length, 2);
+						// Write the results to a file
+						String result = new String(resultbytes);
+						if(basename.equals("-")) { // STDOUT
+							if(resultTypes[i].getMediaType().startsWith("text")) { // String
+								System.out.print(result);
+							}
+							else { // Binary
+								System.out.print(resultbytes);
+							}
 						}
-						else { // Binary
-							writeFile(new File(filename), resultbytes);
+						else { // File
+							String filename = basename + "." + resultTypes[i].getIdentifier() + "." + resultTypes[i].getFileSuffix();
+							if(resultTypes[i].getMediaType().startsWith("text")) { // String
+								writeFile(new File(filename), result);
+							}
+							else { // Binary
+								writeFile(new File(filename), resultbytes);
+							}
+							retVal[retValN] = filename;
+							retValN++;
 						}
-						retVal[retValN] = filename;
-						retValN++;
 					}
 				}
 			}
@@ -324,13 +405,11 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	public InputParameters loadParams(CommandLine line) throws IOException {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
+
 		// Tool specific options
-		if (line.hasOption("m")) params.setStype(line.getOptionValue("m"));
-		if (line.hasOption("f")) params.setFormat(line.getOptionValue("f"));
-		if (line.hasOption("g")) params.setGapopen(new Float(line.getOptionValue("g")));
-		if (line.hasOption("e")) params.setGapext(new Float(line.getOptionValue("e")));
-		if (line.hasOption("t")) params.setTermgap(new Float(line.getOptionValue("t")));
-		if (line.hasOption("b")) params.setBonus(new Float(line.getOptionValue("b")));
+		if (line.hasOption("chainid1")) params.setChainid1(line.getOptionValue("chainid1"));
+		if (line.hasOption("chainid2")) params.setChainid2(line.getOptionValue("chainid2"));
+
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -348,17 +427,14 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("m", "stype", true, "Sequence type");
-		options.addOption("f", "format", true, "Alignment format");
-		options.addOption("g", "gapopen", true, "Gap creation penalty");
-		options.addOption("e", "gapext", true, "Gap extension penalty");
-		options.addOption("t", "termgap", true, "Terminal gap penalty");
-		options.addOption("b", "bonus", true, "Bonus score");
-		options.addOption("sequence", true, "Input sequences/alignment");
+		options.addOption("chainid1", true, "Chain id for the first structure");
+		options.addOption("chainid2", true, "Chain id for the second structure");
+		options.addOption("structure1", true, "First input structure");
+		options.addOption("structure2", true, "Second input structure");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command line parser    
 		// Create an instance of the client
-		KalignClient client = new KalignClient();
+		DaliliteClient client = new DaliliteClient();
 		try {
 			// Parse the command-line
 			CommandLine cli = cliParser.parse(options, args);
@@ -424,11 +500,14 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				}
 			}
 			// Submit a job
-			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
+			else if(cli.hasOption("email") && ((cli.hasOption("structure1") && cli.hasOption("structure2")) || cli.getArgs().length > 1)) {
 				// Create job submission parameters from command-line
 				InputParameters params = client.loadParams(cli);
-				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
-				params.setSequence(new String(client.loadData(dataOption)));
+				String dataOption = null;
+				dataOption = (cli.hasOption("structure1")) ? cli.getOptionValue("structure1") : cli.getArgs()[0];
+				params.setStructure1(new String(client.loadData(dataOption)));
+				dataOption = (cli.hasOption("structure2")) ? cli.getOptionValue("structure2") : cli.getArgs()[1];
+				params.setStructure2(new String(client.loadData(dataOption)));
 				// Submit the job
 				String email = null, title = null;
 				if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
@@ -437,7 +516,7 @@ public class KalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar Kalign_Axis1.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar Dalilite_Axis1.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);
