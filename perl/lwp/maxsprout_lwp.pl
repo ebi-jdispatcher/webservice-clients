@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-emboss_needle_lwp.pl
+maxsprout_lwp.pl
 
 =head1 DESCRIPTION
 
-EMBOSS needle (REST) web service Perl client using L<LWP>.
+maxsprout (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
@@ -28,7 +28,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_needle_rest>
+L<http://www.ebi.ac.uk/Tools/webservices/services/structure/maxsprout_rest>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -37,7 +37,7 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 VERSION
 
-$Id$
+$Id: maxsprout_lwp.pl 1858 2011-05-13 10:29:10Z hpm $
 
 =cut
 
@@ -53,9 +53,11 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
+use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_needle';
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/maxsprout';
+
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -72,42 +74,34 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-    'stype=s'        => \$tool_params{'stype'},      # Sequence type: DNA or protein
-    'matrix|m=s'     => \$tool_params{'matrix'},     # Scoring matrix
-    'gapopen|g=f'    => \$tool_params{'gapopen'},    # Gap creation penalty
-    'gapext|x=f'     => \$tool_params{'gapext'},     # Gap extension penalty
-    'endopen=f'      => \$tool_params{'endopen'},    # End gap creation penalty
-    'endextend=f'    => \$tool_params{'endextend'},  # End gap extension penalty
-    'format|o=s'     => \$tool_params{'format'},     # Alignment format
-    'endweight'      => \$params{'endweight'},       # Enable end gap scoring
-    'noendweight'    => \$params{'noendweight'},     # Disable end gap scoring
-    'asequence=s'    => \$params{'asequence'},       # First input sequence
-    'bsequence=s'    => \$params{'bsequence'},       # Second input sequence
+	'coordinates=s' => \$params{'coordinates'},     # structure data file
+	
+	# Compatability options, old command-line
+	'pdbFile=s'     => \$params{'coordinates'},     # structure data file
 
 	# Generic options
-	'email=s'       => \$params{'email'},          # User e-mail address
-	'title=s'       => \$params{'title'},          # Job title
-	'outfile=s'     => \$params{'outfile'},        # Output file name
-	'outformat=s'   => \$params{'outformat'},      # Output file type
-	'jobid=s'       => \$params{'jobid'},          # JobId
-	'help|h'        => \$params{'help'},           # Usage help
-	'async'         => \$params{'async'},          # Asynchronous submission
-	'polljob'       => \$params{'polljob'},        # Get results
-	'resultTypes'   => \$params{'resultTypes'},    # Get result types
-	'status'        => \$params{'status'},         # Get status
-	'params'        => \$params{'params'},         # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
-	'quiet'         => \$params{'quiet'},          # Decrease output level
-	'verbose'       => \$params{'verbose'},        # Increase output level
-	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
-	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
+	'email=s'       => \$params{'email'},           # User e-mail address
+	'title=s'       => \$params{'title'},           # Job title
+	'outfile=s'     => \$params{'outfile'},         # Output file name
+	'outformat=s'   => \$params{'outformat'},       # Output file type
+	'jobid=s'       => \$params{'jobid'},           # JobId
+	'help|h'        => \$params{'help'},            # Usage help
+	'async'         => \$params{'async'},           # Asynchronous submission
+	'polljob'       => \$params{'polljob'},         # Get results
+	'resultTypes'   => \$params{'resultTypes'},     # Get result types
+	'status'        => \$params{'status'},          # Get status
+	'params'        => \$params{'params'},          # List input parameters
+	'paramDetail=s' => \$params{'paramDetail'},     # Get details for parameter
+	'quiet'         => \$params{'quiet'},           # Decrease output level
+	'verbose'       => \$params{'verbose'},         # Increase output level
+	'debugLevel=i'  => \$params{'debugLevel'},      # Debug output level
+	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
 # Debug mode: LWP version
-&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
-	1 );
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1 );
 
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
@@ -125,6 +119,7 @@ if ( $params{'help'} || $numOpts == 0 ) {
 # Debug mode: show the base URL
 &print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
 
+
 if (
 	!(
 		   $params{'polljob'}
@@ -133,8 +128,10 @@ if (
 		|| $params{'params'}
 		|| $params{'paramDetail'}
 	)
-	&& !( ( defined( $ARGV[0] ) && defined( $ARGV[1] ) ) ||
-		  ( defined( $params{'asequence'} ) && defined( $params{'bsequence'} ) ) )
+	&& !(
+		( defined( $ARGV[0] ) && defined( $ARGV[1] ) )
+		|| (   defined( $params{'coordinates'} ) )
+	)
   )
 {
 
@@ -172,7 +169,7 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 # Submit a job
 else {
 
-	# Load the sequence data and submit.
+	# Load the structure data and submit.
 	&submit_job( &load_data() );
 }
 
@@ -197,8 +194,8 @@ sub rest_request {
 
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	'$Revision: 1858 $' =~ m/(\d+)/;
+	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
 
 	# Perform the request
@@ -209,7 +206,10 @@ sub rest_request {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -230,7 +230,7 @@ sub rest_get_parameters {
 	my $url                = $baseUrl . '/parameters/';
 	my $param_list_xml_str = rest_request($url);
 	my $param_list_xml     = XMLin($param_list_xml_str);
-	my (@param_list)       = @{ $param_list_xml->{'id'} };
+	my (@param_list)       = $param_list_xml->{'id'};
 	print_debug_message( 'rest_get_parameters', 'End', 1 );
 	return (@param_list);
 }
@@ -298,7 +298,10 @@ sub rest_run {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 
 	# The job id is returned
@@ -372,6 +375,38 @@ sub rest_get_result {
 	return $result;
 }
 
+=head2 rest_get_result_perchain()
+
+Get result data of a specified type for a finished MaxSprout job for the given chain.
+
+  my $result = rest_get_result($job_id, $result_type, $chainno);
+
+=cut
+
+sub rest_get_result_perchain {
+	print_debug_message( 'rest_get_result', 'Begin', 1 );
+	my $job_id      = shift;
+	my $type        = shift;
+	my $chainno = shift;
+
+	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id,            1 );
+	print_debug_message( 'rest_get_result', 'type: ' . $type,               1 );
+	print_debug_message( 'rest_get_result', 'chainno: ' . $chainno, 1 );
+
+	my $url =
+	    $baseUrl
+	  . '/result/'
+	  . $job_id . '/'
+	  . $type
+	  . '?chainno='
+	  . $chainno;
+	my $result = &rest_request($url);
+	print_debug_message( 'rest_get_result', length($result) . ' characters',
+		1 );
+	print_debug_message( 'rest_get_result', 'End', 1 );
+	return $result;
+}
+
 ### Service actions and utility functions ###
 
 =head2 print_debug_message()
@@ -430,17 +465,24 @@ sub print_param_details {
 		}
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
-		if(defined($value->{'properties'})) {
-			foreach my $key (sort(keys(%{$value->{'properties'}{'property'}}))) {
-				if(ref($value->{'properties'}{'property'}{$key}) eq 'HASH' && 
-					defined($value->{'properties'}{'property'}{$key}{'value'})) {
-					print "\t", $key, "\t", 
-						$value->{'properties'}{'property'}{$key}{'value'}, "\n";
+		if ( defined( $value->{'properties'} ) ) {
+			foreach my $key (
+				sort( keys( %{ $value->{'properties'}{'property'} } ) ) )
+			{
+				if (
+					ref( $value->{'properties'}{'property'}{$key} ) eq 'HASH'
+					&& defined(
+						$value->{'properties'}{'property'}{$key}{'value'}
+					)
+				  )
+				{
+					print "\t", $key, "\t",
+					  $value->{'properties'}{'property'}{$key}{'value'}, "\n";
 				}
 				else {
-					print "\t", $value->{'properties'}{'property'}{'key'}, 
-						"\t", $value->{'properties'}{'property'}{'value'}, "\n";
-					last;					
+					print "\t", $value->{'properties'}{'property'}{'key'},
+					  "\t", $value->{'properties'}{'property'}{'value'}, "\n";
+					last;
 				}
 			}
 		}
@@ -533,9 +575,8 @@ Submit a job to the service.
 sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
-	# Set input sequence
-	$tool_params{'asequence'} = shift;
-	$tool_params{'bsequence'} = shift;
+	# Set input structures
+	$tool_params{'coordinates'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -563,7 +604,7 @@ sub submit_job {
 
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
+Load structure data, from file or direct specification of input data with 
 command-line option.
 
   my (@data) = load_data();
@@ -574,40 +615,24 @@ sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
 	my @retSeq = ();
 
-	# First sequence
+	# Coordinates
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq[0] = &read_file( $ARGV[0] );
+			$retSeq[0] = uri_escape(&read_file( $ARGV[0] ));
 		}
-		else {                                     # DB:ID or raw sequence
+		else {                                     # DB:ID or raw structure
 			$retSeq[0] = $ARGV[0];
 		}
 	}
-	if ( $params{'asequence'} ) {                   # Via --sequence
-		if ( -f $params{'asequence'} || $params{'asequence'} eq '-' ) {    # File
-			$retSeq[0] = &read_file( $params{'asequence'} );
+	if ( $params{'coordinates'} ) {                 # Via --coordinates
+		if ( -f $params{'coordinates'} || $params{'coordinates'} eq '-' ) { # File
+			$retSeq[0] = uri_escape(&read_file( $params{'coordinates'} ));
 		}
-		else {    # DB:ID or sequence
-			$retSeq[0] = $params{'asequence'};
-		}
-	}
-	# Second sequence
-	if ( defined( $ARGV[1] ) ) {    # Bare option
-		if ( -f $ARGV[1] || $ARGV[1] eq '-' ) {    # File
-			$retSeq[1] = &read_file( $ARGV[1] );
-		}
-		else {                                     # DB:ID or raw sequence
-			$retSeq[1] = $ARGV[1];
+		else {    # DB:ID or structure
+			$retSeq[0] = $params{'coordinates'};
 		}
 	}
-	if ( $params{'bsequence'} ) {                   # Via --sequence
-		if ( -f $params{'bsequence'} || $params{'bsequence'} eq '-' ) {    # File
-			$retSeq[1] = &read_file( $params{'bsequence'} );
-		}
-		else {    # DB:ID or sequence
-			$retSeq[1] = $params{'bsequence'};
-		}
-	}
+
 	print_debug_message( 'load_data', 'End', 1 );
 	return @retSeq;
 }
@@ -622,15 +647,6 @@ Load job parameters from command-line options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
-	
-	# Enable/disable endweight
-	if($params{'endweight'}) {
-		$tool_params{'endweight'} = 'true';
-	}
-	elsif($params{'noendweight'}) {
-		$tool_params{'endweight'} = 'false';
-	}
-	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
@@ -705,6 +721,9 @@ sub get_results {
 	# Get list of data types
 	my (@resultTypes) = rest_get_result_types($jobid);
 
+	my $nchains = rest_get_result( $jobid, "nchains" );
+	print "Number of chains: $nchains\n";
+
 	# Get the data and write it to a file
 	if ( defined( $params{'outformat'} ) ) {    # Specified data type
 		my $selResultType;
@@ -738,17 +757,44 @@ sub get_results {
 			if ( $outputLevel > 1 ) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
-			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( $params{'outfile'} eq '-' ) {
-				write_file( $params{'outfile'}, $result );
+
+			if (   $resultType->{'identifier'} eq 'out'
+				|| $resultType->{'identifier'} eq 'log' )
+			{
+				for (my $chainno=1; $chainno<=$nchains; $chainno++)
+				{
+					my $result =
+					  rest_get_result_perchain( $jobid, $resultType->{'identifier'}, $chainno );
+					if ( $params{'outfile'} eq '-' ) {
+						write_file( $params{'outfile'}, $result );
+					}
+					else {
+						write_file(
+							$params{'outfile'} . '.'
+							  . $resultType->{'identifier'} . '.'
+							  . $chainno . '.'
+							  . $resultType->{'fileSuffix'},
+							$result
+						);
+					}					
+				}
+
 			}
-			else {
-				write_file(
-					$params{'outfile'} . '.'
-					  . $resultType->{'identifier'} . '.'
-					  . $resultType->{'fileSuffix'},
-					$result
-				);
+			else
+			{
+				my $result =
+				  rest_get_result( $jobid, $resultType->{'identifier'} );
+				if ( $params{'outfile'} eq '-' ) {
+					write_file( $params{'outfile'}, $result );
+				}
+				else {
+					write_file(
+						$params{'outfile'} . '.'
+						  . $resultType->{'identifier'} . '.'
+						  . $resultType->{'fileSuffix'},
+						$result
+					);
+				}
 			}
 		}
 	}
@@ -824,46 +870,37 @@ Print program usage message.
 
 sub usage {
 	print STDERR <<EOF
-EMBOSS needle
+MaxSprout
 =============
 
-Global pairwise sequence alignment using EMBOSS needle.
+Protein backbone and side chain co-ordinates from a C(alpha) trace.
 
 [Required]
 
-      --asequence     : file : first sequence to align
-      --bsequence     : file : second sequence to align
+      --coordinates    : file : coordinates
 
 [Optional]
 
-      --stype         : str  : sequence type, see --paramDetail stype
-  -m, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -g, --gapopen       : real : gap open penalty
-  -x, --gapext        : real : gap extension penalty
-      --endweight     :      : enable end gap penalty
-      --noendweight   :      : disable end gap penalty
-      --endopen       : real : end gap open penalty
-      --endextend     : real : end gap extension penalty
-  -o, --format        : str  : output alignment format, see --paramDetail format
 
 [General]
 
-  -h, --help          :      : prints this help text
-      --async         :      : forces to make an asynchronous query
-      --email         : str  : e-mail address
-      --title         : str  : title for job
-      --status        :      : get job status
-      --resultTypes   :      : get available result types for job
-      --polljob       :      : poll for the status of a job
-      --jobid         : str  : jobid that was returned when an asynchronous job 
-                               was submitted.
-      --outfile       : str  : file name for results (default is jobid;
-                               "-" for STDOUT)
-      --outformat     : str  : result format to retrieve
-      --params        :      : list input parameters
-      --paramDetail   : str  : display details for input parameter
-      --quiet         :      : decrease output
-      --verbose       :      : increase output
+  -h, --help        :      : prints this help text
+      --async       :      : forces to make an asynchronous query
+      --email       : str  : e-mail address
+      --title       : str  : title for job
+      --status      :      : get job status
+      --resultTypes :      : get available result types for job
+      --polljob     :      : poll for the status of a job
+      --jobid       : str  : jobid that was returned when an asynchronous job 
+                             was submitted.
+      --outfile     : str  : file name for results (default is jobid;
+                             "-" for STDOUT)
+      --outformat   : str  : result format to retrieve
+      --params      :      : list input parameters
+      --paramDetail : str  : display details for input parameter
+      --quiet       :      : decrease output
+      --verbose     :      : increase output
+      --trace       :      : show SOAP messages being interchanged
    
 Synchronous job:
 
@@ -886,7 +923,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_needle_rest
+  http://www.ebi.ac.uk/Tools/webservices/services/structure/maxsprout_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

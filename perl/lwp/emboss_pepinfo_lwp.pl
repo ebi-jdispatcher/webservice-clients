@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-emboss_needle_lwp.pl
+emboss_pepinfo_lwp.pl
 
 =head1 DESCRIPTION
 
-EMBOSS needle (REST) web service Perl client using L<LWP>.
+Emboss Pepinfo (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
@@ -19,7 +19,7 @@ L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
 
 =item *
-L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04)
+L<LWP> 5.820, L<XML::Simple> 2.18 and Perl 5.10.0 (Ubuntu 9.04)
 
 =back
 
@@ -28,7 +28,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_needle_rest>
+L<http://www.ebi.ac.uk/Tools/webservices/services/seqstats/emboss_pepinfo_rest>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -37,7 +37,7 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 VERSION
 
-$Id$
+$Id: emboss_pepinfo_lwp.pl 2079 2012-03-08 10:11:17Z hpm $
 
 =cut
 
@@ -55,7 +55,7 @@ use File::Basename;
 use Data::Dumper;
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_needle';
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_pepinfo';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -72,42 +72,32 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-    'stype=s'        => \$tool_params{'stype'},      # Sequence type: DNA or protein
-    'matrix|m=s'     => \$tool_params{'matrix'},     # Scoring matrix
-    'gapopen|g=f'    => \$tool_params{'gapopen'},    # Gap creation penalty
-    'gapext|x=f'     => \$tool_params{'gapext'},     # Gap extension penalty
-    'endopen=f'      => \$tool_params{'endopen'},    # End gap creation penalty
-    'endextend=f'    => \$tool_params{'endextend'},  # End gap extension penalty
-    'format|o=s'     => \$tool_params{'format'},     # Alignment format
-    'endweight'      => \$params{'endweight'},       # Enable end gap scoring
-    'noendweight'    => \$params{'noendweight'},     # Disable end gap scoring
-    'asequence=s'    => \$params{'asequence'},       # First input sequence
-    'bsequence=s'    => \$params{'bsequence'},       # Second input sequence
+	'windowsize=i'  => \$params{'windowsize'},       # Window size for hydropathy averaging
+	'sequence=s'    => \$params{'sequence'},         # Query sequence
 
 	# Generic options
-	'email=s'       => \$params{'email'},          # User e-mail address
-	'title=s'       => \$params{'title'},          # Job title
-	'outfile=s'     => \$params{'outfile'},        # Output file name
-	'outformat=s'   => \$params{'outformat'},      # Output file type
-	'jobid=s'       => \$params{'jobid'},          # JobId
-	'help|h'        => \$params{'help'},           # Usage help
-	'async'         => \$params{'async'},          # Asynchronous submission
-	'polljob'       => \$params{'polljob'},        # Get results
-	'resultTypes'   => \$params{'resultTypes'},    # Get result types
-	'status'        => \$params{'status'},         # Get status
-	'params'        => \$params{'params'},         # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
-	'quiet'         => \$params{'quiet'},          # Decrease output level
-	'verbose'       => \$params{'verbose'},        # Increase output level
-	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
-	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
+	'email=s'       => \$params{'email'},            # User e-mail address
+	'title=s'       => \$params{'title'},            # Job title
+	'outfile=s'     => \$params{'outfile'},          # Output file name
+	'outformat=s'   => \$params{'outformat'},        # Output file type
+	'jobid=s'       => \$params{'jobid'},            # JobId
+	'help|h'        => \$params{'help'},             # Usage help
+	'async'         => \$params{'async'},            # Asynchronous submission
+	'polljob'       => \$params{'polljob'},          # Get results
+	'resultTypes'   => \$params{'resultTypes'},      # Get result types
+	'status'        => \$params{'status'},           # Get status
+	'params'        => \$params{'params'},           # List input parameters
+	'paramDetail=s' => \$params{'paramDetail'},      # Get details for parameter
+	'quiet'         => \$params{'quiet'},            # Decrease output level
+	'verbose'       => \$params{'verbose'},          # Increase output level
+	'debugLevel=i'  => \$params{'debugLevel'},       # Debug output level
+	'baseUrl=s'     => \$baseUrl,                    # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
 # Debug mode: LWP version
-&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
-	1 );
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1 );
 
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
@@ -133,8 +123,7 @@ if (
 		|| $params{'params'}
 		|| $params{'paramDetail'}
 	)
-	&& !( ( defined( $ARGV[0] ) && defined( $ARGV[1] ) ) ||
-		  ( defined( $params{'asequence'} ) && defined( $params{'bsequence'} ) ) )
+	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
   )
 {
 
@@ -172,8 +161,26 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 # Submit a job
 else {
 
-	# Load the sequence data and submit.
-	&submit_job( &load_data() );
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
 
 =head1 FUNCTIONS
@@ -197,8 +204,8 @@ sub rest_request {
 
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	'$Revision: 2079 $' =~ m/(\d+)/;
+	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
 
 	# Perform the request
@@ -209,7 +216,10 @@ sub rest_request {
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -294,11 +304,15 @@ sub rest_run {
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
 		'request: ' . $response->request()->content(), 11 );
+	print_debug_message( 'rest_run', 'response: ' . $response->content(), 11 );
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $1;
 	}
 
 	# The job id is returned
@@ -423,7 +437,14 @@ sub print_param_details {
 	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
+	my @paramDetailList;
+	exit(0) unless $paramDetail->{'values'}->{'value'};
+	if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+		@paramDetailList = @{ $paramDetail->{'values'}->{'value'} };
+	} else {
+		push(@paramDetailList, $paramDetail->{'values'}->{'value'});
+	}
+	foreach my $value ( @paramDetailList ) {
 		print $value->{'value'};
 		if ( $value->{'defaultValue'} eq 'true' ) {
 			print "\t", 'default';
@@ -534,8 +555,7 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
 	# Set input sequence
-	$tool_params{'asequence'} = shift;
-	$tool_params{'bsequence'} = shift;
+	$tool_params{'sequence'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -561,55 +581,127 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
+}
+
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
-command-line option.
+Load sequence data from file or option specified on the command-line.
 
-  my (@data) = load_data();
+  &load_data();
 
 =cut
 
 sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
-	my @retSeq = ();
+	my $retSeq;
 
-	# First sequence
+	# Query sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq[0] = &read_file( $ARGV[0] );
+			$retSeq = &read_file( $ARGV[0] );
 		}
-		else {                                     # DB:ID or raw sequence
-			$retSeq[0] = $ARGV[0];
+		else {                                     # DB:ID or sequence
+			$retSeq = $ARGV[0];
 		}
 	}
-	if ( $params{'asequence'} ) {                   # Via --sequence
-		if ( -f $params{'asequence'} || $params{'asequence'} eq '-' ) {    # File
-			$retSeq[0] = &read_file( $params{'asequence'} );
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			$retSeq = &read_file( $params{'sequence'} );
 		}
 		else {    # DB:ID or sequence
-			$retSeq[0] = $params{'asequence'};
-		}
-	}
-	# Second sequence
-	if ( defined( $ARGV[1] ) ) {    # Bare option
-		if ( -f $ARGV[1] || $ARGV[1] eq '-' ) {    # File
-			$retSeq[1] = &read_file( $ARGV[1] );
-		}
-		else {                                     # DB:ID or raw sequence
-			$retSeq[1] = $ARGV[1];
-		}
-	}
-	if ( $params{'bsequence'} ) {                   # Via --sequence
-		if ( -f $params{'bsequence'} || $params{'bsequence'} eq '-' ) {    # File
-			$retSeq[1] = &read_file( $params{'bsequence'} );
-		}
-		else {    # DB:ID or sequence
-			$retSeq[1] = $params{'bsequence'};
+			$retSeq = $params{'sequence'};
 		}
 	}
 	print_debug_message( 'load_data', 'End', 1 );
-	return @retSeq;
+	return $retSeq;
 }
 
 =head2 load_params()
@@ -623,16 +715,10 @@ Load job parameters from command-line options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 	
-	# Enable/disable endweight
-	if($params{'endweight'}) {
-		$tool_params{'endweight'} = 'true';
-	}
-	elsif($params{'noendweight'}) {
-		$tool_params{'endweight'} = 'false';
-	}
+	if ( $params{'windowsize'} ) {
+		$tool_params{'hwindow'} = $params{'windowsize'};
+	}	
 	
-	print_debug_message( 'load_params',
-		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -824,27 +910,19 @@ Print program usage message.
 
 sub usage {
 	print STDERR <<EOF
-EMBOSS needle
-=============
+EMBOSS pepinfo
+==============
 
-Global pairwise sequence alignment using EMBOSS needle.
+pepinfo reads a DNA sequence and outputs the three forward and (optionally) three 
+reverse translations in a visual manner. 
 
 [Required]
 
-      --asequence     : file : first sequence to align
-      --bsequence     : file : second sequence to align
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
-
-      --stype         : str  : sequence type, see --paramDetail stype
-  -m, --matrix        : str  : scoring matrix, see --paramDetail matrix
-  -g, --gapopen       : real : gap open penalty
-  -x, --gapext        : real : gap extension penalty
-      --endweight     :      : enable end gap penalty
-      --noendweight   :      : disable end gap penalty
-      --endopen       : real : end gap open penalty
-      --endextend     : real : end gap extension penalty
-  -o, --format        : str  : output alignment format, see --paramDetail format
+     --hwindow        :      : window size for hydropathy averaging
 
 [General]
 
@@ -886,7 +964,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_needle_rest
+  http://www.ebi.ac.uk/Tools/webservices/services/seqstats/emboss_pepinfo_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

@@ -12,6 +12,8 @@ PERL = perl
 #EMAIL = email@example.org
 EMAIL = support@ebi.ac.uk
 
+
+
 # Run all test sets
 all: \
 dbfetch \
@@ -22,7 +24,9 @@ psa \
 sfc \
 so \
 sss \
-st
+st \
+seqstats \
+structure
 
 clean: \
 dbfetch_clean \
@@ -33,7 +37,10 @@ psa_clean \
 sfc_clean \
 so_clean \
 sss_clean \
-st_clean
+st_clean \
+seqstats_clean \
+structure_clean
+
 
 # Multiple Sequence Alignment (MSA)
 msa: \
@@ -62,12 +69,14 @@ tcoffee_clean
 pfa: \
 iprscan \
 iprscan5 \
-phobius
+phobius \
+radar
 
 pfa_clean: \
 iprscan_clean \
 iprscan5_clean \
-phobius_clean
+phobius_clean \
+radar_clean
 
 # Phylogeny
 phylogeny: \
@@ -123,6 +132,29 @@ ncbiblast_clean \
 psiblast_clean \
 psisearch_clean \
 wublast_clean
+
+# Sequence Statistics
+seqstats: \
+emboss_pepinfo \
+emboss_pepstats \
+emboss_pepwindow \
+saps
+
+seqstats_clean: \
+emboss_pepinfo_clean \
+emboss_pepstats_clean \
+emboss_pepwindow_clean \
+saps_clean
+
+# Structural Analysis
+structure: \
+dalilite \
+maxsprout
+
+structure_clean: \
+dalilite_clean \
+maxsprout_clean
+
 
 # Sequence Translation (ST)
 st: \
@@ -190,6 +222,26 @@ clustalw2phylogeny_stdin_stdout:
 
 clustalw2phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
+
+
+# DaliLite
+dalilite: dalilite_params dalilite_param_detail dalilite_file dalilite_pdbid
+
+dalilite_params:
+	${PERL} dalilite_lwp.pl --params
+
+dalilite_param_detail:
+	${PERL} dalilite_lwp.pl --paramDetail structure1
+
+dalilite_file:
+	${PERL} dalilite_lwp.pl --email ${EMAIL} --structure1 ../test_data/pdb11as.ent --structure2 ../test_data/pdb12as.ent --chainid1=A --chainid2=A --outfile dalilite-fileinput
+
+dalilite_pdbid:
+	${PERL} dalilite_lwp.pl --email ${EMAIL} --structure1 pdb:1a06 --structure2 pdb:1a07 --chainid1=A --chainid2=A --outfile dalilite-pdbidinput
+
+dalilite_clean:
+	rm -rf dalilite-*
+
 
 # DbClustal
 dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
@@ -338,6 +390,84 @@ emboss_needle_file:
 
 emboss_needle_clean:
 	rm -f emboss_needle-*
+
+
+# EMBOSS pepinfo
+emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail emboss_pepinfo_dbid emboss_pepinfo_file
+
+emboss_pepinfo_params:
+	${PERL} emboss_pepinfo_lwp.pl --params
+
+emboss_pepinfo_param_detail:
+	${PERL} emboss_pepinfo_lwp.pl --paramDetail hwindow
+
+emboss_pepinfo_dbid:
+	${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepinfo_file:
+	${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --hwindow 20
+
+emboss_pepinfo_clean:
+	rm -f emboss_pepinfo-*
+
+
+# EMBOSS pepstats
+emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail emboss_pepstats_dbid emboss_pepstats_file
+
+emboss_pepstats_params:
+	${PERL} emboss_pepstats_lwp.pl --params
+
+emboss_pepstats_param_detail:
+	${PERL} emboss_pepstats_lwp.pl --paramDetail termini
+
+emboss_pepstats_dbid:
+	${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepstats_file:
+	${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --termini false
+
+emboss_pepstats_clean:
+	rm -f emboss_pepstats-*
+
+
+# EMBOSS pepwindow
+emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail emboss_pepwindow_dbid emboss_pepwindow_file
+
+emboss_pepwindow_params:
+	${PERL} emboss_pepwindow_lwp.pl --params
+
+emboss_pepwindow_param_detail:
+	${PERL} emboss_pepwindow_lwp.pl --paramDetail windowsize
+
+emboss_pepwindow_dbid:
+	${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepwindow_file:
+	${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --windowsize 20
+
+emboss_pepwindow_clean:
+	rm -f emboss_pepwindow-*
+
+
+
+# SAPS
+saps: saps_params saps_param_detail saps_dbid saps_file
+
+saps_params:
+	${PERL} saps_lwp.pl --params
+
+saps_param_detail:
+	${PERL} saps_lwp.pl --paramDetail species
+
+saps_dbid:
+	${PERL} saps_lwp.pl --email ${EMAIL} --sequence uniprot:p12344
+
+saps_file:
+	${PERL} saps_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --outputtype documented
+
+saps_clean:
+	rm -f saps-*
+
 
 # TODO: EMBOSS seqret
 emboss_seqret:
@@ -581,6 +711,26 @@ mafft_stdin_stdout:
 mafft_clean:
 	rm -f mafft-*
 
+
+# MaxSprout
+maxsprout: maxsprout_params maxsprout_param_detail maxsprout_file maxsprout_pdbid
+
+maxsprout_params:
+	${PERL} maxsprout_lwp.pl --params
+
+maxsprout_param_detail:
+	${PERL} maxsprout_lwp.pl --paramDetail coordinates
+
+maxsprout_file:
+	${PERL} maxsprout_lwp.pl --email ${EMAIL} --coordinates ../test_data/pdb11as.ent --outfile maxsprout-fileinput
+
+maxsprout_pdbid:
+	${PERL} maxsprout_lwp.pl --email ${EMAIL} --coordinates pdb:4adx --outfile maxsprout-pdbidinput
+
+maxsprout_clean:
+	rm -rf maxsprout-*
+
+
 # MUSCLE
 muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
 
@@ -755,6 +905,26 @@ psisearch_multifasta_file_stdin_stdout:
 
 psisearch_clean:
 	rm -f psisearch-*
+
+
+# Radar
+radar: radar_params radar_param_detail radar_file radar_dbid
+
+radar_params:
+	${PERL} radar_lwp.pl --params
+
+radar_param_detail:
+	${PERL} radar_lwp.pl --paramDetail sequence
+
+radar_file:
+	${PERL} radar_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+radar_dbid:
+	${PERL} radar_lwp.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+
+radar_clean:
+	rm -f radar-*
+
 
 # TODO: Readseq
 readseq:
