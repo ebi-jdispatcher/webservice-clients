@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-clustalo_soaplite.pl
+maxsprout_soaplite.pl
 
 =head1 DESCRIPTION
 
-ClustalO (SOAP) web service Perl client using L<SOAP::Lite>.
+MaxSprout (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 
@@ -22,7 +22,7 @@ L<SOAP::Lite> 0.69 and Perl 5.8.8
 L<SOAP::Lite> 0.71 and Perl 5.8.8
 
 =item *
-L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04)
 
 =back
 
@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalo_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/structure/maxsprout_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -40,7 +40,7 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 VERSION
 
-$Id$
+$Id: maxsprout_soaplite.pl 1956 2011-08-05 15:48:55Z hpm $
 
 =cut
 
@@ -62,7 +62,7 @@ use Data::Dumper;
 use constant MAX_RETRIES => 3;
 
 # WSDL URL for service
-my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/clustalo?wsdl';
+my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/maxsprout?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -79,22 +79,10 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'guidetreeout' => \$params{'guidetreeout'}, # Enable output guide tree
-	'noguidetreeout' => \$params{'noguidetreeout'}, # Disable output guide tree
-	'dismatout' => \$params{'dismatout'}, # Enable output distance matrix
-	'nodismatout' => \$params{'nodismatout'}, # Disable output distance matrix");
-	'dealign' => \$params{'dealign'}, # Dealign input sequences
-	'nodealign' => \$params{'nodealign'}, # Dealign input sequences
-	'mbed' => \$params{'mbed'}, # Mbed-like clustering guide-tree
-	'nombed' => \$params{'nombed'}, # Mbed-like clustering guide-tree
-	'mbediteration' => \$params{'mbediteration'}, # Mbed-like clustering iteration
-	'nombediteration' => \$params{'nombediteration'}, # Mbed-like clustering iteration
-	'iterations=i' => \$tool_params{'iterations'}, # Number of iterations
-	'gtiterations=i' => \$tool_params{'gtiterations'}, # Maximum guide tree iterations
-	'hmmiterations=i' => \$tool_params{'hmmiterations'}, # Maximum HMM iterations
-	'outfmt=s' => \$tool_params{'outfmt'}, # Output alignment format
-	'stype=s' => \$tool_params{'stype'}, # Input sequence type
-    'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
+	'coordinates=s' => \$params{'coordinates'},     # structure coordinates file
+
+	# Compatability options, old command-line
+	'pdbFile=s'     => \$params{'coordinates'},     # structure coordinates file
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -180,7 +168,8 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-$soap->transport->agent(&get_agent_string() . $soap->transport->agent());
+'$Revision: 1956 $' =~ m/(\d+)/;
+$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
@@ -192,7 +181,8 @@ if (
 		|| $params{'params'}
 		|| $params{'paramDetail'}
 	)
-	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
+	&& !( ( defined( $ARGV[0] ) && defined( $ARGV[1] ) ) ||
+		  ( defined( $params{'coordinates'} ) ) )
   )
 {
 
@@ -236,25 +226,6 @@ else {
 =head1 FUNCTIONS
 
 =cut
-
-=head2 get_agent_string()
-
-Get the user agent string for the client.
-
-  my $agent_str = &get_agent_string();
-
-=cut
-
-sub get_agent_string {
-	print_debug_message( 'get_agent_string', 'Begin', 11 );
-	my $clientVersion = '0';
-	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
-		$clientVersion = $1;
-	}
-	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
-	print_debug_message( 'get_agent_string', 'End', 11 );
-	return 	$agent_str;
-}
 
 ### Wrappers for SOAP operations ###
 
@@ -404,6 +375,49 @@ sub soap_get_result {
 	print_debug_message( 'soap_get_result', 'End', 1 );
 	return $result;
 }
+
+
+=head2 soap_get_resultforchain()
+
+Get result data of a specified type/chain for a finished job.
+
+  my $result = &soap_get_resultforalignment($job_id, $result_type, $alignmentno);
+
+=cut
+
+sub soap_get_resultforchain
+{
+	print_debug_message( 'soap_get_result', 'Begin', 1 );
+	my $jobid = shift;
+	my $type  = shift;
+	my $chainno = shift;
+	
+	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'soap_get_result', 'type: ' . $type,   1 );
+	print_debug_message( 'soap_get_result', 'chainno: ' . $chainno,   1 );
+
+	my (@paramsList) = ();
+
+	push @paramsList,
+	  SOAP::Data->name( 'parameter' => \SOAP::Data->value(
+		SOAP::Data->name('name' => 'chainno'),
+		SOAP::Data->name('value' => \SOAP::Data->value(
+			SOAP::Data->name('string' => $chainno)))
+	));
+	
+	my $res = $soap->getResult(
+		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
+		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } ),
+		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )
+		  ->attr( { 'xmlns' => '' } )
+	);
+	my $result = decode_base64( $res->valueof('//output') );
+	print_debug_message( 'soap_get_result', length($result) . ' characters',
+		1 );
+	print_debug_message( 'soap_get_result', 'End', 1 );
+	return $result;
+}
+
 
 ### Service actions and utility functions ###
 
@@ -603,7 +617,7 @@ sub print_result_types {
 
 Submit a job to the service.
 
-  &submit_job($seq);
+  &submit_job($seq1, $seq2);
 
 =cut
 
@@ -611,7 +625,7 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
 
 	# Set input sequence
-	$tool_params{'sequence'} = shift;
+	$tool_params{'coordinates'} = shift;
 
 	# Load parameters
 	&load_params();
@@ -642,33 +656,34 @@ sub submit_job {
 Load sequence data, from file or direct specification of input data with 
 command-line option.
 
-  my $data = load_data();
+  my (@data) = load_data();
 
 =cut
 
 sub load_data {
 	print_debug_message( 'load_data', 'Begin', 1 );
-	my $retSeq;
+	my @retSeq = ();
 
-	# Query sequence
+	# First sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq = &read_file( $ARGV[0] );
+			$retSeq[0] = &read_file( $ARGV[0] );
 		}
-		else {                                     # DB:ID or sequence
-			$retSeq = $ARGV[0];
+		else {                                     # DB:ID or raw structure
+			$retSeq[0] = $ARGV[0];
 		}
 	}
-	if ( $params{'sequence'} ) {                   # Via --sequence
-		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$retSeq = &read_file( $params{'sequence'} );
+	if ( $params{'coordinates'} ) {                   # Via --structure
+		if ( -f $params{'coordinates'} || $params{'coordinates'} eq '-' ) {    # File
+			$retSeq[0] = &read_file( $params{'coordinates'} );
 		}
 		else {    # DB:ID or sequence
-			$retSeq = $params{'sequence'};
+			$retSeq[0] = $params{'coordinates'};
 		}
 	}
+
 	print_debug_message( 'load_data', 'End', 1 );
-	return $retSeq;
+	return @retSeq;
 }
 
 =head2 load_params()
@@ -684,43 +699,6 @@ this function only provides additional processing required from some options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
-
-	# Enable/disable output guide tree.
-	if ( $params{'guidetreeout'} ) {
-		$tool_params{'guidetreeout'} = 1;
-	}
-	elsif ( $params{'noguidetreeout'} ) {
-		$tool_params{'guidetreeout'} = 0;
-	}
-	# Enable/disable output distance matrix.
-	if ( $params{'dismatout'} ) {
-		$tool_params{'dismatout'} = 1;
-	}
-	elsif ( $params{'nodismatout'} ) {
-		$tool_params{'dismatout'} = 0;
-	}
-	# Enable/disable dealign input sequences.
-	if ( $params{'dealign'} ) {
-		$tool_params{'dealign'} = 1;
-	}
-	elsif( $params{'nodealign'} ) {
-		$tool_params{'dealign'} = 0;
-	}
-	# Enable/disable mbed-like clustering guide-tree
-	if ( $params{'mbed'} ) {
-		$tool_params{'mbed'} = 1;
-	}
-	elsif ( $params{'nombed'} ) {
-		$tool_params{'mbed'} = 0;
-	}
-	# Enable/disable mbed-like clustering iteration
-	if ( $params{'mbediteration'} ) {
-		$tool_params{'mbediteration'} = 1;
-	}
-	elsif ( $params{'nombediteration'} ) {
-		$tool_params{'mbediteration'} = 0;
-	}
-	
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
@@ -794,6 +772,10 @@ sub get_results {
 		# Get list of data types
 		my (@resultTypes) = soap_get_result_types($jobid);
 
+		my $nchains = soap_get_result( $jobid, "nchains" );
+		print "Number of chains: $nchains\n";
+
+
 		# Get the data and write it to a file
 		if ( defined( $params{'outformat'} ) ) {    # Specified data type
 			my $selResultType;
@@ -829,6 +811,33 @@ sub get_results {
 			for my $resultType (@resultTypes) {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
 				  if ( $outputLevel > 1 );
+
+			if (   $resultType->{'identifier'} eq 'out'
+				|| $resultType->{'identifier'} eq 'log' )
+			{
+				for (my $chainno=1; $chainno<=$nchains; $chainno++)
+				{
+
+				my $result =
+				  soap_get_resultforchain( $jobid,
+				   $resultType->{'identifier'}, $chainno );
+				   
+				if ( $params{'outfile'} eq '-' ) {
+					write_file( $params{'outfile'}, $result );
+				}
+				else {
+					write_file(
+						$params{'outfile'} . '.'
+						  . $resultType->{'identifier'} . '.'
+						  . $chainno . '.'
+						  . $resultType->{'fileSuffix'},
+						$result
+					);
+				}
+				}
+			}
+			else
+			{
 				my $result =
 				  soap_get_result( $jobid, $resultType->{'identifier'} );
 				if ( $params{'outfile'} eq '-' ) {
@@ -842,6 +851,8 @@ sub get_results {
 						$result
 					);
 				}
+			}
+
 			}
 		}
 	}
@@ -918,36 +929,17 @@ Print program usage.
 
 sub usage {
 	print STDERR <<EOF
-Clustal Omega
-=============
+MaxSprout
+========
 
-Multiple sequence alignment using Clustal Omega.
+Protein backbone and side chain co-ordinates from a C(alpha) trace.
 
 [Required]
 
-  seqFile            : file : sequences to align ("-" for STDIN)
+      --coordinates    : file : coordinates
 
 [Optional]
 
-  --stype            : str  : input sequence type, see --paramDetail stype.
-  --guidetreeout     :      : enable output of guide tree.
-  --noguidetreeout   :      : disable output of guide tree.
-  --dismatout        :      : enable output of distance matrix.
-  --nodismatout      :      : disable output of distance matrix.
-  --dealign          :      : enable de-alignment of input sequences.
-  --nodealign        :      : disable de-alignment of input sequences.
-  --mbed             :      : enable mbed-like clustering guide-tree.
-  --nombed           :      : disable mbed-like clustering guide-tree.
-  --mbediteration    :      : enable mbed-like clustering iteration.
-  --nombediteration  :      : disable mbed-like clustering iteration.
-  --iterations       : int  : number of iterations, see 
-                              --paramDetail iterations.
-  --gtiterations     : int  : maximum guide tree iterations, see 
-                              --paramDetail gtiterations.
-  --hmmiterations    : int  : maximum HMM iterations, see 
-                              --paramDetail hmmiterations.
-  --outfmt           : str  : output alignment format, see 
-                              --paramDetail outfmt.
 
 [General]
 
@@ -990,7 +982,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalo_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/structure/maxsprout_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

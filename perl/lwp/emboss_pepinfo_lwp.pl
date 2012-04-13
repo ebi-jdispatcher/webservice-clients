@@ -72,7 +72,7 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'windowsize=i'  => \$params{'windowsize'},       # Window size for hydropathy averaging
+	'hwindow=i'     => \$params{'hwindow'},          # Window size for hydropathy averaging
 	'sequence=s'    => \$params{'sequence'},         # Query sequence
 
 	# Generic options
@@ -715,9 +715,6 @@ Load job parameters from command-line options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 	
-	if ( $params{'windowsize'} ) {
-		$tool_params{'hwindow'} = $params{'windowsize'};
-	}	
 	
 	print_debug_message( 'load_params', 'End', 1 );
 }

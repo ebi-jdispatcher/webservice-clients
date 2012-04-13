@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-clustalo_soaplite.pl
+emboss_pepinfo_soaplite.pl
 
 =head1 DESCRIPTION
 
-ClustalO (SOAP) web service Perl client using L<SOAP::Lite>.
+EMBOSS Pepinfo (SOAP) web service Perl client using L<SOAP::Lite>.
 
 Tested with:
 
@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalo_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/seqstats/emboss_pepinfo_soap>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -40,7 +40,7 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 VERSION
 
-$Id$
+$Id: emboss_pepinfo_soaplite.pl 2043 2011-12-01 10:37:18Z wli $
 
 =cut
 
@@ -62,7 +62,7 @@ use Data::Dumper;
 use constant MAX_RETRIES => 3;
 
 # WSDL URL for service
-my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/clustalo?wsdl';
+my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_pepinfo?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -79,23 +79,9 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	'guidetreeout' => \$params{'guidetreeout'}, # Enable output guide tree
-	'noguidetreeout' => \$params{'noguidetreeout'}, # Disable output guide tree
-	'dismatout' => \$params{'dismatout'}, # Enable output distance matrix
-	'nodismatout' => \$params{'nodismatout'}, # Disable output distance matrix");
-	'dealign' => \$params{'dealign'}, # Dealign input sequences
-	'nodealign' => \$params{'nodealign'}, # Dealign input sequences
-	'mbed' => \$params{'mbed'}, # Mbed-like clustering guide-tree
-	'nombed' => \$params{'nombed'}, # Mbed-like clustering guide-tree
-	'mbediteration' => \$params{'mbediteration'}, # Mbed-like clustering iteration
-	'nombediteration' => \$params{'nombediteration'}, # Mbed-like clustering iteration
-	'iterations=i' => \$tool_params{'iterations'}, # Number of iterations
-	'gtiterations=i' => \$tool_params{'gtiterations'}, # Maximum guide tree iterations
-	'hmmiterations=i' => \$tool_params{'hmmiterations'}, # Maximum HMM iterations
-	'outfmt=s' => \$tool_params{'outfmt'}, # Output alignment format
-	'stype=s' => \$tool_params{'stype'}, # Input sequence type
-    'sequence=s'    => \$params{'sequence'},       # Input sequences/alignment
-
+	'windowsize=i'  => \$params{'windowsize'},      # Window size
+	'sequence=s'    => \$params{'sequence'},        # Query sequence file or DB:ID
+	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
@@ -180,7 +166,8 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-$soap->transport->agent(&get_agent_string() . $soap->transport->agent());
+'$Revision: 2043 $' =~ m/(\d+)/;
+$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
@@ -229,32 +216,32 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
-	# Load the sequence data and submit.
-	&submit_job( &load_data() );
+
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
+	# Entry identifier list file.
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
+	{
+		my $list_filename = $params{'sequence'} || $ARGV[0];
+		$list_filename =~ s/^\@//;
+		&list_file_submit_job($list_filename);
+	}
+
+	# Default: single sequence/identifier.
+	else {
+
+		# Load the sequence data and submit.
+		&submit_job( &load_data() );
+	}
 }
 
 =head1 FUNCTIONS
 
 =cut
-
-=head2 get_agent_string()
-
-Get the user agent string for the client.
-
-  my $agent_str = &get_agent_string();
-
-=cut
-
-sub get_agent_string {
-	print_debug_message( 'get_agent_string', 'Begin', 11 );
-	my $clientVersion = '0';
-	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
-		$clientVersion = $1;
-	}
-	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
-	print_debug_message( 'get_agent_string', 'End', 11 );
-	return 	$agent_str;
-}
 
 ### Wrappers for SOAP operations ###
 
@@ -637,6 +624,96 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option(s).
+		foreach my $fileOpt (@ARGV) {
+			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File or STDIN.
+				push( @filename_list, $fileOpt );
+			}
+			else {
+				warn "Warning: input file \"$fileOpt\" not found"; 
+			}
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+	}
+	if(scalar(@filename_list) < 1) {
+		die 'Error: no files found to process.';
+	}
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		print_debug_message( 'multi_submit_job', 'filename: ' . $filename, 2 );
+		open( my $INFILE, '<', $filename )
+		  or die "Error: unable to open file $filename ($!)";
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/\w+/ ) {
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as 
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+	my $filename         = shift;
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+
+	# Iterate over identifiers, submitting each job
+	open( my $LISTFILE, '<', $filename )
+	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	while (<$LISTFILE>) {
+		my $line = $_;
+		chomp($line);
+		if ( $line ne '' ) {
+			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
+			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
+				print STDERR "Submitting job for: $line\n"
+				  if ( $outputLevel > 0 );
+				&submit_job($line);
+			}
+			else {
+				print STDERR
+"Warning: line \"$line\" is not recognised as an identifier\n";
+			}
+		}
+		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+	}
+	close $LISTFILE;
+}
+
 =head2 load_data()
 
 Load sequence data, from file or direct specification of input data with 
@@ -684,41 +761,9 @@ this function only provides additional processing required from some options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
-
-	# Enable/disable output guide tree.
-	if ( $params{'guidetreeout'} ) {
-		$tool_params{'guidetreeout'} = 1;
-	}
-	elsif ( $params{'noguidetreeout'} ) {
-		$tool_params{'guidetreeout'} = 0;
-	}
-	# Enable/disable output distance matrix.
-	if ( $params{'dismatout'} ) {
-		$tool_params{'dismatout'} = 1;
-	}
-	elsif ( $params{'nodismatout'} ) {
-		$tool_params{'dismatout'} = 0;
-	}
-	# Enable/disable dealign input sequences.
-	if ( $params{'dealign'} ) {
-		$tool_params{'dealign'} = 1;
-	}
-	elsif( $params{'nodealign'} ) {
-		$tool_params{'dealign'} = 0;
-	}
-	# Enable/disable mbed-like clustering guide-tree
-	if ( $params{'mbed'} ) {
-		$tool_params{'mbed'} = 1;
-	}
-	elsif ( $params{'nombed'} ) {
-		$tool_params{'mbed'} = 0;
-	}
-	# Enable/disable mbed-like clustering iteration
-	if ( $params{'mbediteration'} ) {
-		$tool_params{'mbediteration'} = 1;
-	}
-	elsif ( $params{'nombediteration'} ) {
-		$tool_params{'mbediteration'} = 0;
+	
+	if ( $params{'windowsize'} ) {
+		$tool_params{'hwindow'} = $params{'windowsize'};
 	}
 	
 	print_debug_message( 'load_params',
@@ -739,7 +784,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if MAX_RETRIES attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if MAX_RETRIES attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -863,6 +908,7 @@ standard input.
 sub read_file {
 	print_debug_message( 'read_file', 'Begin', 1 );
 	my $filename = shift;
+	print_debug_message( 'read_file', 'filename: ' . $filename, 2 );
 	my ( $content, $buffer );
 	if ( $filename eq '-' ) {
 		while ( sysread( STDIN, $buffer, 1024 ) ) {
@@ -893,6 +939,7 @@ standard output.
 sub write_file {
 	print_debug_message( 'write_file', 'Begin', 1 );
 	my ( $filename, $data ) = @_;
+	print_debug_message( 'write_file', 'filename: ' . $filename, 2 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Creating result file: ' . $filename . "\n";
 	}
@@ -918,56 +965,38 @@ Print program usage.
 
 sub usage {
 	print STDERR <<EOF
-Clustal Omega
-=============
+EMBOSS Pepinfo
+================
 
-Multiple sequence alignment using Clustal Omega.
+ Pepinfo plot amino acid properties of a protein sequence.
 
 [Required]
 
-  seqFile            : file : sequences to align ("-" for STDIN)
+  seqFile             : file : query sequence ("-" for STDIN, \@filename for
+                               identifier list file)
 
 [Optional]
-
-  --stype            : str  : input sequence type, see --paramDetail stype.
-  --guidetreeout     :      : enable output of guide tree.
-  --noguidetreeout   :      : disable output of guide tree.
-  --dismatout        :      : enable output of distance matrix.
-  --nodismatout      :      : disable output of distance matrix.
-  --dealign          :      : enable de-alignment of input sequences.
-  --nodealign        :      : disable de-alignment of input sequences.
-  --mbed             :      : enable mbed-like clustering guide-tree.
-  --nombed           :      : disable mbed-like clustering guide-tree.
-  --mbediteration    :      : enable mbed-like clustering iteration.
-  --nombediteration  :      : disable mbed-like clustering iteration.
-  --iterations       : int  : number of iterations, see 
-                              --paramDetail iterations.
-  --gtiterations     : int  : maximum guide tree iterations, see 
-                              --paramDetail gtiterations.
-  --hmmiterations    : int  : maximum HMM iterations, see 
-                              --paramDetail hmmiterations.
-  --outfmt           : str  : output alignment format, see 
-                              --paramDetail outfmt.
+     --windowsize     :      : window size
 
 [General]
 
-  -h, --help         :      : prints this help text
-      --async        :      : forces to make an asynchronous query
-      --email        : str  : e-mail address
-      --title        : str  : title for job
-      --status       :      : get job status
-      --resultTypes  :      : get available result types for job
-      --polljob      :      : poll for the status of a job
-      --jobid        : str  : jobid that was returned when an asynchronous job 
-                              was submitted.
-      --outfile      : str  : file name for results (default is jobid;
-                              "-" for STDOUT)
-      --outformat    : str  : result format to retrieve
-      --params       :      : list input parameters
-      --paramDetail  : str  : display details for input parameter
-      --quiet        :      : decrease output
-      --verbose      :      : increase output
-      --trace        :      : show SOAP messages being interchanged 
+  -h, --help          :      : prints this help text
+      --async         :      : forces to make an asynchronous query
+      --email         : str  : e-mail address
+      --title         : str  : title for job
+      --status        :      : get job status
+      --resultTypes   :      : get available result types for job
+      --polljob       :      : poll for the status of a job
+      --jobid         : str  : jobid that was returned when an asynchronous job 
+                               was submitted.
+      --outfile       : str  : file name for results (default is jobid;
+                               "-" for STDOUT)
+      --outformat     : str  : result format to retrieve
+      --params        :      : list input parameters
+      --paramDetail   : str  : display details for input parameter
+      --quiet         :      : decrease output
+      --verbose       :      : increase output
+      --trace         :      : show SOAP messages being interchanged 
 
 Synchronous job:
 
@@ -990,7 +1019,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalo_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/seqstats/emboss_pepinfo_soap
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:

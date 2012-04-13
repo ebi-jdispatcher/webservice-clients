@@ -26,7 +26,9 @@ psa \
 sfc \
 so \
 sss \
-st
+st \
+seqstats \
+structure
 
 clean: \
 dbfetch_clean \
@@ -38,7 +40,9 @@ psa_clean \
 sfc_clean \
 so_clean \
 sss_clean \
-st_clean
+st_clean \
+seqstats_clean \
+structure_clean
 
 # Multiple Sequence Alignment (MSA)
 msa: \
@@ -66,11 +70,13 @@ tcoffee_clean
 # Protein Function Analysis (PFA)
 pfa: \
 iprscan \
-phobius
+phobius \
+radar
 
 pfa_clean: \
 iprscan_clean \
-phobius_clean
+phobius_clean \
+radar_clean
 
 # Phylogeny
 phylogeny: \
@@ -140,6 +146,30 @@ emboss_backtranseq_clean \
 emboss_sixpack_clean \
 emboss_transeq_clean
 
+# Sequence Statistics
+seqstats: \
+emboss_pepinfo \
+emboss_pepstats \
+emboss_pepwindow \
+saps
+
+seqstats_clean: \
+emboss_pepinfo_clean \
+emboss_pepstats_clean \
+emboss_pepwindow_clean \
+saps_clean
+
+
+# Structural Analysis (STRUCTURE)
+structure: \
+dalilite \
+maxsprout
+
+structure_clean: \
+dalilite_clean \
+maxsprout_clean
+
+
 # Clustal Omega
 clustalo: clustalo_params clustalo_param_detail clustalo_align clustalo_align_stdin_stdout
 
@@ -193,6 +223,26 @@ clustalw2phylogeny_stdin_stdout:
 
 clustalw2phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
+
+
+# DaliLite
+dalilite: dalilite_params dalilite_param_detail dalilite_file dalilite_pdbid
+
+dalilite_params:
+	${PERL} dalilite_soaplite.pl --params ${JDispatcher_params_suffix}
+
+dalilite_param_detail:
+	${PERL} dalilite_soaplite.pl --paramDetail chainid1
+
+dalilite_file:
+	${PERL} dalilite_soaplite.pl --email ${EMAIL} --structure1 ../test_data/pdb11as.ent --structure2 ../test_data/pdb12as.ent
+
+dalilite_pdbid:
+	${PERL} dalilite_soaplite.pl --email ${EMAIL} --structure1 pdb:1a06 --structure2 pdb:1a07 --chainid1=A --chainid2=A --outfile dalilite-pdbidinput
+
+dalilite_clean:
+	rm -f dalilite-*
+
 
 # DbClustal
 dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
@@ -399,6 +449,73 @@ emboss_needle_file:
 
 emboss_needle_clean:
 	rm -f emboss_needle-*
+
+
+# EMBOSS pepinfo
+emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
+
+emboss_pepinfo_params:
+	${PERL} emboss_pepinfo_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_pepinfo_param_detail:
+	${PERL} emboss_pepinfo_soaplite.pl --paramDetail hwindow
+
+emboss_pepinfo_dbid:
+	${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepinfo_file:
+	${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_pepinfo_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepinfo-blah.txt
+
+emboss_pepinfo_clean:
+	rm -f emboss_pepinfo-*
+
+
+# EMBOSS pepstats
+emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
+
+emboss_pepstats_params:
+	${PERL} emboss_pepstats_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_pepstats_param_detail:
+	${PERL} emboss_pepstats_soaplite.pl --paramDetail termini
+
+emboss_pepstats_dbid:
+	${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepstats_file:
+	${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_pepstats_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepstats-blah.txt
+
+emboss_pepstats_clean:
+	rm -f emboss_pepstats-*
+
+
+# EMBOSS pepwindow
+emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
+
+emboss_pepwindow_params:
+	${PERL} emboss_pepwindow_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_pepwindow_param_detail:
+	${PERL} emboss_pepwindow_soaplite.pl --paramDetail windowsize
+
+emboss_pepwindow_dbid:
+	${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --sequence uniprot:p12344
+
+emboss_pepwindow_file:
+	${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_pepwindow_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepwindow-blah.txt
+
+emboss_pepwindow_clean:
+	rm -f emboss_pepwindow-*
+
 
 # TODO: EMBOSS seqret
 emboss_seqret:
@@ -608,6 +725,26 @@ mafft_stdin_stdout:
 mafft_clean:
 	rm -f mafft-*
 
+
+# MAXSPROUT
+maxsprout: maxsprout_params maxsprout_param_detail maxsprout_file maxsprout_pdbid
+
+maxsprout_params:
+	${PERL} maxsprout_soaplite.pl --params ${JDispatcher_params_suffix}
+
+maxsprout_param_detail:
+	${PERL} maxsprout_soaplite.pl --paramDetail coordinates
+
+maxsprout_file:
+	${PERL} maxsprout_soaplite.pl --email ${EMAIL} --coordinates ../test_data/pdb11as.ent --outfile maxsprout-fileinput
+
+maxsprout_pdbid:
+	${PERL} maxsprout_soaplite.pl --email ${EMAIL} --coordinates pdb:2a4x --outfile maxsprout-pdbidinput
+
+maxsprout_clean:
+	rm -rf maxsprout-*
+
+
 # MUSCLE
 muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
 
@@ -745,6 +882,49 @@ psisearch_stdin_stdout:
 
 psisearch_clean:
 	rm -f psisearch-*
+
+
+# Radar
+radar: radar_params radar_file radar_dbid radar_stdin_stdout
+
+radar_params:
+	${PERL} radar_soaplite.pl --params ${JDispatcher_params_suffix}
+
+radar_file:
+	${PERL} radar_soaplite.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+radar_dbid:
+	${PERL} radar_soaplite.pl --email ${EMAIL} UNIPROT:ABCC9_HUMAN
+
+radar_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} radar_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > radar-blah.txt
+
+radar_clean:
+	rm -f radar-*
+
+
+
+# SAPS
+saps: saps_params saps_param_detail saps_dbid saps_file saps_stdin_stdout
+
+saps_params:
+	${PERL} saps_soaplite.pl --params ${JDispatcher_params_suffix}
+
+saps_param_detail:
+	${PERL} saps_soaplite.pl --paramDetail positiveresidues
+
+saps_dbid:
+	${PERL} saps_soaplite.pl --email ${EMAIL} --sequence uniprot:p12344
+
+saps_file:
+	${PERL} saps_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+saps_stdin_stdout:
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} saps_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > saps-blah.txt
+
+saps_clean:
+	rm -f saps-*
+
 
 # TODO: Readseq
 readseq:
