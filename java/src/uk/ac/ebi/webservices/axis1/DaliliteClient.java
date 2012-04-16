@@ -171,19 +171,21 @@ public class DaliliteClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		System.out.println(paramDetail.getName() + "\t" + paramDetail.getType());
 		System.out.println(paramDetail.getDescription());
 		WsParameterValue[] valueList = paramDetail.getValues();
-		for(int i = 0; i < valueList.length; i++) {
-			System.out.print(valueList[i].getValue());
-			if(valueList[i].isDefaultValue()) {
-				System.out.println("\tdefault");
-			}
-			else {
-				System.out.println();
-			}
-			System.out.println("\t" + valueList[i].getLabel());
-			WsProperty[] valuePropertiesList = valueList[i].getProperties();
-			if(valuePropertiesList != null) {
-				for(int j = 0; j < valuePropertiesList.length; j++) {
-					System.out.println("\t" + valuePropertiesList[j].getKey() + "\t" + valuePropertiesList[j].getValue());
+		if(valueList!=null) {
+			for(int i = 0; i < valueList.length; i++) {
+				System.out.print(valueList[i].getValue());
+				if(valueList[i].isDefaultValue()) {
+					System.out.println("\tdefault");
+				}
+				else {
+					System.out.println();
+				}
+				System.out.println("\t" + valueList[i].getLabel());
+				WsProperty[] valuePropertiesList = valueList[i].getProperties();
+				if(valuePropertiesList != null) {
+					for(int j = 0; j < valuePropertiesList.length; j++) {
+						System.out.println("\t" + valuePropertiesList[j].getKey() + "\t" + valuePropertiesList[j].getValue());
+					}
 				}
 			}
 		}
