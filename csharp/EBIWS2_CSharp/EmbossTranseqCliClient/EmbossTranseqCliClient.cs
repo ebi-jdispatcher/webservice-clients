@@ -14,7 +14,7 @@ namespace EbiWS
 		private string usageMsg = @"EMBOSS transeq
 ================
 
-Global pairwise sequence alignment using EMBOSS transeq.
+Translate nucleic acid sequences.
 
 [Required]
 

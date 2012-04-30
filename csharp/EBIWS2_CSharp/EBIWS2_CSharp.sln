@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.csproj", "{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EbiWS", "EbiWS\EbiWS.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
@@ -49,6 +49,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbClustalCliClient", "DbClu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MViewCliClient", "MViewCliClient\MViewCliClient.csproj", "{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossTranseqCliClient", "EmbossTranseqCliClient\EmbossTranseqCliClient.csproj", "{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossSixpackCliClient", "EmbossSixpackCliClient\EmbossSixpackCliClient.csproj", "{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxsproutCliClient", "MaxsproutCliClient\MaxsproutCliClient.csproj", "{69120A06-8828-4ED4-9C71-8633849F20BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "DaliliteCliClient\DaliliteCliClient.csproj", "{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepinfoCliClient", "EmbossPepinfoCliClient\EmbossPepinfoCliClient.csproj", "{7D89005A-831D-4388-8630-8C37ED0920AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +85,14 @@ Global
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}.Release|Any CPU.Build.0 = Release|Any CPU
 		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{503C3DEB-B994-4B9A-9AD4-76653994206A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +105,10 @@ Global
 		{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69120A06-8828-4ED4-9C71-8633849F20BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69120A06-8828-4ED4-9C71-8633849F20BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69120A06-8828-4ED4-9C71-8633849F20BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69120A06-8828-4ED4-9C71-8633849F20BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -107,6 +129,10 @@ Global
 		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BBCBB66-7185-446F-B4B0-08CBB721C87E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D89005A-831D-4388-8630-8C37ED0920AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D89005A-831D-4388-8630-8C37ED0920AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D89005A-831D-4388-8630-8C37ED0920AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D89005A-831D-4388-8630-8C37ED0920AA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85F8B007-D263-4D3A-838D-23798E1F32A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -115,6 +141,10 @@ Global
 		{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -151,8 +181,24 @@ Global
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.Build.0 = Release|Any CPU
+		.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		.Debug|Any CPU.Build.0 = Debug|Any CPU
+		.Release|Any CPU.ActiveCfg = Release|Any CPU
+		.Release|Any CPU.Build.0 = Release|Any CPU
+		.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		.Debug|Any CPU.Build.0 = Debug|Any CPU
+		.Release|Any CPU.ActiveCfg = Release|Any CPU
+		.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 120
+		$1.TabWidth = 4
+		$1.EolMarker = Windows
+		$1.inheritsSet = Mono
+		$1.inheritsScope = text/plain
+		$1.scope = text/plain
 	EndGlobalSection
 EndGlobal
