@@ -11,7 +11,7 @@ CSC = gmcs
 CSFLAGS = -r:System.Web.Services
 
 # WSDL to C# tool
-WSDL2CS = wsdl2
+WSDL2CS = wsdl
 # WSDL to C# flags
 WSDL2CSFLAGS = -namespace:EbiWS
 
@@ -39,6 +39,7 @@ coreSrc = AbstractWsClient.cs \
 ClustalOClient.cs \
 ClustalW2Client.cs \
 ClustalW2PhylogenyClient.cs \
+DaliliteClient.cs \
 DbClustalClient.cs \
 EBeyeClient.cs \
 EmbossMatcherClient.cs \
@@ -48,6 +49,9 @@ EmbossTranseqClient.cs \
 EmbossSixpackClient.cs \
 EmbossBacktranseqClient.cs \
 EmbossBacktranambigClient.cs \
+EmbossPepinfoClient.cs \
+EmbossPepwindowClient.cs \
+EmbossPepstatsClient.cs \
 EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
@@ -55,12 +59,15 @@ IPRScanClient.cs \
 KalignClient.cs \
 LalignClient.cs \
 MafftClient.cs \
+MaxsproutClient.cs \
 MuscleClient.cs \
 MViewClient.cs \
 NcbiBlastClient.cs \
 PhobiusClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
+RadarClient.cs \
+SapsClient.cs \
 TcoffeeClient.cs \
 WSDbfetchClient.cs \
 WuBlastClient.cs
@@ -69,6 +76,7 @@ stubSrc = \
 $(STUBSRCDIR)/ClustalOWs/Reference.cs \
 $(STUBSRCDIR)/ClustalW2PhylogenyWs/Reference.cs \
 $(STUBSRCDIR)/ClustalW2Ws/Reference.cs \
+$(STUBSRCDIR)/DaliliteWs/Reference.cs \
 $(STUBSRCDIR)/DbClustalWs/Reference.cs \
 $(STUBSRCDIR)/EBeyeWs/Reference.cs \
 $(STUBSRCDIR)/FastaWs/Reference.cs \
@@ -80,11 +88,15 @@ $(STUBSRCDIR)/EmbossTranseqWs/Reference.cs \
 $(STUBSRCDIR)/EmbossSixpackWs/Reference.cs \
 $(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs \
 $(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs \
+$(STUBSRCDIR)/EmbossPepinfoWs/Reference.cs \
+$(STUBSRCDIR)/EmbossPepstatsWs/Reference.cs \
+$(STUBSRCDIR)/EmbossPepwindowWs/Reference.cs \
 $(STUBSRCDIR)/EmbossWaterWs/Reference.cs \
 $(STUBSRCDIR)/IPRScanWs/Reference.cs \
 $(STUBSRCDIR)/KalignWs/Reference.cs \
 $(STUBSRCDIR)/LalignWs/Reference.cs \
 $(STUBSRCDIR)/MafftWs/Reference.cs \
+$(STUBSRCDIR)/MaxsproutWs/Reference.cs \
 $(STUBSRCDIR)/MuscleWs/Reference.cs \
 $(STUBSRCDIR)/MViewWs/Reference.cs \
 $(STUBSRCDIR)/NcbiBlastWs/Reference.cs \
@@ -92,6 +104,8 @@ $(STUBSRCDIR)/PhobiusWs/Reference.cs \
 $(STUBSRCDIR)/PrankWs/Reference.cs \
 $(STUBSRCDIR)/PsiBlastWs/Reference.cs \
 $(STUBSRCDIR)/PsiSearchWs/Reference.cs \
+$(STUBSRCDIR)/RadarWs/Reference.cs \
+$(STUBSRCDIR)/SapsWs/Reference.cs \
 $(STUBSRCDIR)/TcoffeeWs/Reference.cs \
 $(STUBSRCDIR)/WSDbfetchWs/Reference.cs \
 $(STUBSRCDIR)/WuBlastWs/Reference.cs
@@ -128,6 +142,9 @@ $(STUBSRCDIR)/ClustalW2Ws/Reference.cs:
 $(STUBSRCDIR)/ClustalW2PhylogenyWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2PhylogenyWs -out:$@ "$(WSDLBASE)/clustalw2_phylogeny?wsdl"
 
+$(STUBSRCDIR)/DaliliteWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).DaliliteWs -out:$@ "$(WSDLBASE)/dalilite?wsdl"
+
 $(STUBSRCDIR)/DbClustalWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).DbClustalWs -out:$@ "$(WSDLBASE)/dbclustal?wsdl"
 
@@ -161,6 +178,15 @@ $(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs:
 $(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranambigWs -out:$@ "$(WSDLBASE)/emboss_backtranambig?wsdl"
 
+$(STUBSRCDIR)/EmbossPepinfoWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs -out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"
+
+$(STUBSRCDIR)/EmbossPepstatsWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs -out:$@ "http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl"
+
+$(STUBSRCDIR)/EmbossPepwindowWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepwindowWs -out:$@ "$(WSDLBASE)/emboss_pepwindow?wsdl"
+
 $(STUBSRCDIR)/EmbossWaterWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossWaterWs -out:$@ "$(WSDLBASE)/emboss_water?wsdl"
 
@@ -175,6 +201,9 @@ $(STUBSRCDIR)/LalignWs/Reference.cs:
 
 $(STUBSRCDIR)/MafftWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).MafftWs -out:$@ "$(WSDLBASE)/mafft?wsdl"
+
+$(STUBSRCDIR)/MaxsproutWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MaxsproutWs -out:$@ "$(WSDLBASE)/maxsprout?wsdl"
 
 $(STUBSRCDIR)/MuscleWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).MuscleWs -out:$@ "$(WSDLBASE)/muscle?wsdl"
@@ -196,6 +225,12 @@ $(STUBSRCDIR)/PsiBlastWs/Reference.cs:
 
 $(STUBSRCDIR)/PsiSearchWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).PsiSearchWs -out:$@ "$(WSDLBASE)/psisearch?wsdl"
+
+$(STUBSRCDIR)/RadarWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).RadarWs -out:$@ "$(WSDLBASE)/radar?wsdl"
+
+$(STUBSRCDIR)/SapsWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs -out:$@ "http://wwwdev.ebi.ac.uk/Tools/services/soap/saps?wsdl"
 
 $(STUBSRCDIR)/TcoffeeWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs -out:$@ "$(WSDLBASE)/tcoffee?wsdl"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,6 +9,8 @@
     <OutputType>Library</OutputType>
     <AssemblyName>EbiWS</AssemblyName>
     <RootNamespace>EbiWS</RootNamespace>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <newfilesearch>OnLoad</newfilesearch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,8 +71,12 @@
     <Compile Include="WebReferences\EmbossSixpackWs\Reference.cs" />
     <Compile Include="WebReferences\EmbossBacktranseqWs\Reference.cs" />
     <Compile Include="WebReferences\EmbossBacktranambigWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossPepinfoWs\Reference.cs" />
     <Compile Include="WebReferences\EmbossWaterWs\Reference.cs" />
     <Compile Include="WebReferences\LalignWs\Reference.cs" />
+    <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
+    <Compile Include="WebReferences\MaxsproutWs\Reference.cs" />
     <Compile Include="EmbossMatcherClient.cs" />
     <Compile Include="EmbossNeedleClient.cs" />
     <Compile Include="EmbossStretcherClient.cs" />
@@ -78,13 +84,23 @@
     <Compile Include="EmbossSixpackClient.cs" />
     <Compile Include="EmbossBacktranseqClient.cs" />
     <Compile Include="EmbossBacktranambigClient.cs" />
+    <Compile Include="EmbossPepinfoClient.cs" />
     <Compile Include="EmbossWaterClient.cs" />
     <Compile Include="LalignClient.cs" />
-    <Compile Include="WebReferences\PrankWs\Reference.cs" />
-    <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
     <Compile Include="ClustalOClient.cs" />
     <Compile Include="DbClustalClient.cs" />
+    <Compile Include="MaxsproutClient.cs" />
     <Compile Include="MViewClient.cs" />
+    <Compile Include="EmbossPepstatsClient.cs" />
+    <Compile Include="EmbossPepwindowClient.cs" />
+    <Compile Include="WebReferences\EmbossPepstatsWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossPepwindowWs\Reference.cs" />
+    <Compile Include="WebReferences\RadarWs\Reference.cs" />
+    <Compile Include="WebReferences\SapsWs\Reference.cs" />
+    <Compile Include="DaliliteClient.cs" />
+    <Compile Include="RadarClient.cs" />
+    <Compile Include="SapsClient.cs" />
+    <Compile Include="WebReferences\DaliliteWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -113,10 +129,12 @@
     <None Include="WebReferences\EmbossSixpackWs\Reference.map" />
     <None Include="WebReferences\EmbossBacktranseqWs\Reference.map" />
     <None Include="WebReferences\EmbossBacktranambigWs\Reference.map" />
+    <None Include="WebReferences\EmbossPepinfoWs\Reference.map" />
     <None Include="WebReferences\EmbossWaterWs\Reference.map" />
     <None Include="WebReferences\LalignWs\Reference.map" />
     <None Include="WebReferences\PrankWs\Reference.map" />
     <None Include="WebReferences\ClustalOWs\Reference.map" />
+    <None Include="WebReferences\MaxsproutWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
