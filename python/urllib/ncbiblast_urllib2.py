@@ -7,6 +7,7 @@
 # Tested with:
 #  Python 2.5.2 (Ubuntu 8.04 LTS)
 #  Python 2.6.5 (Ubuntu 10.04 LTS)
+#  Python 2.7.3 (Ubuntu 12.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
@@ -89,14 +90,16 @@ def printDebugMessage(functionName, message, level):
     if(level <= debugLevel):
         print >>sys.stderr, '[' + functionName + '] ' + message
 
-# User-agent for request.
+# User-agent for request (see RFC2616).
 def getUserAgent():
     printDebugMessage('getUserAgent', 'Begin', 11)
+    # Agent string for urllib2 library.
     urllib_agent = 'Python-urllib/%s' % urllib2.__version__
     clientRevision = '$Revision$'
     clientVersion = '0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
+    # Prepend client specific agent string.
     user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
         clientVersion, os.path.basename( __file__ ),
         platform.python_version(), platform.system(),
@@ -111,9 +114,11 @@ def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
     try:
+        # Set the User-agent.
         user_agent = getUserAgent()
         http_headers = { 'User-Agent' : user_agent }
         req = urllib2.Request(url, None, http_headers)
+        # Make the request (HTTP GET).
         reqH = urllib2.urlopen(req)
         result = reqH.read()
         reqH.close()
@@ -195,7 +200,12 @@ def serviceRun(email, title, params):
     printDebugMessage('serviceRun', 'requestData: ' + requestData, 2)
     # Errors are indicated by HTTP status codes.
     try:
-        reqH = urllib2.urlopen(requestUrl, requestData)
+        # Set the HTTP User-agent.
+        user_agent = getUserAgent()
+        http_headers = { 'User-Agent' : user_agent }
+        req = urllib2.Request(requestUrl, None, http_headers)
+        # Make the submission (HTTP POST).
+        reqH = urllib2.urlopen(req, requestData)
         jobId = reqH.read()
         reqH.close()
     except urllib2.HTTPError, ex:
