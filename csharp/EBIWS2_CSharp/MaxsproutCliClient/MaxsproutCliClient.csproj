@@ -49,13 +49,4 @@
       <Name>EbiWS</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\basmati-wcf" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\basmati-wcf\maxsprout.wsdl" />
-  </ItemGroup>
 </Project>
