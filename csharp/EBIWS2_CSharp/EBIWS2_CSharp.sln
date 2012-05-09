@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "Dalili
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepinfoCliClient", "EmbossPepinfoCliClient\EmbossPepinfoCliClient.csproj", "{7D89005A-831D-4388-8630-8C37ED0920AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadarCliClient", "RadarCliClient\RadarCliClient.csproj", "{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,10 @@ Global
 		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE7BBA6F-3566-449A-8CED-D6B5B616E415}.Release|Any CPU.ActiveCfg = Release|Any CPU

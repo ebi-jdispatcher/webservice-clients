@@ -1,0 +1,47 @@
+# $Id: Makefile.mono 1891 2011-06-24 16:07:32Z wli $
+# ======================================================================
+#
+# Makefile to build C# Radar client using Mono.
+#
+# ======================================================================
+
+# C# compiler
+CSC = gmcs
+# C# compiler flags
+CSFLAGS = -r:System.Web.Services
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)/Debug
+RELEASEBINDIR = $(BINDIR)/Release
+
+# Core assembly project
+EBIWS = ../EbiWS
+
+all: RadarCliClient
+
+### Radar command-line client ###
+
+RadarCliClient: $(DEBUGBINDIR)/RadarCliClient.exe $(RELEASEBINDIR)/RadarCliClient.exe
+
+$(DEBUGBINDIR)/RadarCliClient.exe: RadarCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ RadarCliClient.cs
+
+$(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
+
+$(RELEASEBINDIR)/RadarCliClient.exe: RadarCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ RadarCliClient.cs
+
+$(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	cp $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll* $(RELEASEBINDIR)/
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/

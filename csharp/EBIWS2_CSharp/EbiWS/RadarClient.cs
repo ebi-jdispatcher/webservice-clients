@@ -1,9 +1,9 @@
 /* $Id: RadarClient.cs 2006 2011-09-01 13:51:24Z hpm $
  * ======================================================================
- * JDispatcher Radar (SOAP) web service .NET/Mono client.
- *
+ * JDispatcher SOAP client for Radar
+ * 
  * See:
- * http://www.ebi.ac.uk/Tools/webservices/services/pfa/Radar_soap
+ * http://www.ebi.ac.uk/Tools/webservices/services/Radar_soap
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
@@ -13,8 +13,8 @@ using EbiWS.RadarWs; // "Web Reference" or wsdl.exe generated stubs.
 namespace EbiWS
 {
 	/// <summary>
-	/// Client for EMBL-EBI Radar (SOAP) web service.
-	/// </summary>	
+	/// Client for EMBL-EBI Radar SOAP web service.
+	/// </summary>
 	public class RadarClient : EbiWS.AbstractWsClient
 	{
 		/// <summary>Webservice proxy object</summary>
@@ -31,15 +31,16 @@ namespace EbiWS
 			set { inParams = value; }
 		}
 		private InputParameters inParams = null;
+		/// <summary>Multiple fasta formatted sequences as input.</summary>
+		protected Boolean multifasta = false;
 		// Client object revision.
-		private string revision = "$Revision";
+		private string revision = "$Revision: 2006 $";
 		
 		// Default constructor. Required for abstract class constructor.
 		public RadarClient()
 		{
 		}
 		
-		// Implementation of abstract method (AbsractWsClient.ServiceProxyConnect()).
 		// Implementation of abstract method (AbsractWsClient.ServiceProxyConnect()).
 		protected override void ServiceProxyConnect()
 		{
@@ -128,6 +129,38 @@ namespace EbiWS
 				}
 			}
 			PrintDebugMessage("PrintParamDetail", "End", 1);
+		}
+
+		/// <summary>Submit job(s) to the service.</summary>
+		protected void SubmitJobs() {
+			PrintDebugMessage("SubmitJobs", "Begin", 1);
+			// Three modes...
+			// 1. Multiple fasta sequence input.
+			if(this.multifasta) {
+				SetSequenceFile(InParams.sequence);
+				string inSeq = null;
+				while((inSeq = NextSequence()) != null) {
+					InParams.sequence = inSeq;
+					SubmitJob();
+				}
+				CloseSequenceFile();
+			}
+			// 2. Entry identifier list input.
+			else if(InParams.sequence.StartsWith("@")) {
+				SetIdentifierFile(InParams.sequence.Substring(1));
+				string inId = null;
+				while((inId = NextIdentifier()) != null) {
+					InParams.sequence = inId;
+					SubmitJob();
+				}
+				CloseIdentifierFile();
+			}
+			// 3. Simple sequence input.
+			else {
+				InParams.sequence = LoadData(InParams.sequence);
+				SubmitJob();
+			}
+			PrintDebugMessage("SubmitJobs", "End", 1);
 		}
 
 		// Implementation of abstract method (AbsractWsClient.SubmitJob()).
@@ -238,11 +271,11 @@ namespace EbiWS
 			PrintDebugMessage("GetResults", "outformat: " + outformat, 2);
 			PrintDebugMessage("GetResults", "outFileBase: " + outFileBase, 2);
 			this.ServiceProxyConnect(); // Ensure we have a service proxy
-			// Check status, and wait if not finished
+			// Check status, and wait if not finisheds
 			ClientPoll(jobId);
 			// Use JobId if output file name is not defined
-			if (outFileBase == null) OutFile = jobId;
-			else OutFile = outFileBase;
+			string tmpOutFile = jobId;
+			if (outFileBase != null) tmpOutFile = outFileBase;
 			// Get list of data types
 			wsResultType[] resultTypes = GetResultTypes(jobId);
 			PrintDebugMessage("GetResults", "resultTypes: " + resultTypes.Length + " available", 2);
@@ -260,14 +293,14 @@ namespace EbiWS
 				// Text data
 				if (selResultType.mediaType.StartsWith("text"))
 				{
-					if (OutFile == "-") WriteTextFile(OutFile, res);
-					else WriteTextFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
+					if (tmpOutFile == "-") WriteTextFile(tmpOutFile, res);
+					else WriteTextFile(tmpOutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
 				}
 				// Binary data
 				else
 				{
-					if (OutFile == "-") WriteBinaryFile(OutFile, res);
-					else WriteBinaryFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
+					if (tmpOutFile == "-") WriteBinaryFile(tmpOutFile, res);
+					else WriteBinaryFile(tmpOutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
 				}
 			}
 			else
@@ -280,18 +313,51 @@ namespace EbiWS
 					// Text data
 					if (resultType.mediaType.StartsWith("text"))
 					{
-						if (OutFile == "-") WriteTextFile(OutFile, res);
-						else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						if (tmpOutFile == "-") WriteTextFile(tmpOutFile, res);
+						else WriteTextFile(tmpOutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
 					}
 					// Binary data
 					else
 					{
-						if (OutFile == "-") WriteBinaryFile(OutFile, res);
-						else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						if (tmpOutFile == "-") WriteBinaryFile(tmpOutFile, res);
+						else WriteBinaryFile(tmpOutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
 					}
 				}
 			}
 			PrintDebugMessage("GetResults", "End", 1);
+		}
+
+		/// <summary>Get entry Ids from job result</summary>
+		/// <param name="jobId">Job identifer for result to get Ids from</param>
+		/// <results>List of entry Ids as a string array</results>
+		public string[] GetIds(string jobId)
+		{
+			PrintDebugMessage("GetIds", "Begin", 1);
+			PrintDebugMessage("GetIds", "jobId: " + jobId, 2);
+			string[] retVal = null;
+			this.ServiceProxyConnect(); // Ensure we have a service proxy
+			// Check status, and wait if not finished
+			ClientPoll(jobId);
+			// Get the Ids
+			byte[] content = GetResult(jobId, "ids");
+			System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+			String tempStr = enc.GetString(content);
+			char[] sepList = { '\n' };
+			retVal = tempStr.Split(sepList);
+			PrintDebugMessage("GetIds", "got " + retVal.Length + " Ids", 2);
+			PrintDebugMessage("GetIds", "End", 1);
+			return retVal;
+		}
+
+		/// <summary>Print entry Ids from job result</summary>
+		/// <param name="jobId">Job identifer for result to get Ids from</param>
+		public void PrintGetIds()
+		{
+			PrintDebugMessage("PrintGetIds", "Begin", 1);
+			PrintDebugMessage("PrintGetIds", "JobId: " + JobId, 2);
+			string[] idList = GetIds(JobId);
+			foreach (string id in idList) Console.WriteLine(id);
+			PrintDebugMessage("PrintGetIds", "End", 1);
 		}
 	}
 }

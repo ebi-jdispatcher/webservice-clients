@@ -37,6 +37,7 @@ build-NcbiBlastCliClient \
 build-PhobiusCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
+build-RadarCliClient \
 build-TcoffeeCliClient \
 build-WSDbfetchCliClient \
 build-WuBlastCliClient
@@ -125,6 +126,9 @@ build-PsiBlastCliClient: build-EbiWS
 build-PsiSearchCliClient: build-EbiWS
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono
 
+build-RadarCliClient: build-EbiWS
+	cd RadarCliClient && $(MAKE) -f Makefile.mono
+
 build-TcoffeeCliClient: build-EbiWS
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono
 
@@ -164,6 +168,7 @@ clean-NcbiBlastCliClient \
 clean-PhobiusCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
+clean-RadarCliClient \
 clean-TcoffeeCliClient \
 clean-WSDbfetchCliClient \
 clean-WuBlastCliClient
@@ -249,6 +254,9 @@ clean-PsiBlastCliClient:
 clean-PsiSearchCliClient:
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-RadarCliClient:
+	cd RadarCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -265,6 +273,7 @@ distclean-EbiWS \
 distclean-ClustalOCliClient \
 distclean-ClustalW2CliClient \
 distclean-ClustalW2PhylogenyCliClient \
+distclean-DaliliteCliClient \
 distclean-DbClustalCliClient \
 distclean-EBeyeCliClient \
 distclean-FastaCliClient \
@@ -279,6 +288,7 @@ distclean-NcbiBlastCliClient \
 distclean-PhobiusCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
+distclean-RadarCliClient \
 distclean-TcoffeeCliClient \
 distclean-WSDbfetchCliClient \
 distclean-WuBlastCliClient
@@ -294,6 +304,9 @@ distclean-ClustalW2CliClient:
 
 distclean-ClustalW2PhylogenyCliClient:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-DaliliteCliClient:
+	cd DaliliteCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-DbClustalCliClient:
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono distclean
@@ -336,6 +349,9 @@ distclean-PsiBlastCliClient:
 
 distclean-PsiSearchCliClient:
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-RadarCliClient:
+	cd RadarCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono distclean
