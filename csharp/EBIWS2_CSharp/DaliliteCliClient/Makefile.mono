@@ -1,0 +1,47 @@
+# $Id: Makefile.mono 1948 2011-08-04 12:22:06Z hpm $
+# ======================================================================
+#
+# Makefile to build C# Dalilite client using Mono.
+#
+# ======================================================================
+
+# C# compiler
+CSC = gmcs
+# C# compiler flags
+CSFLAGS = -r:System.Web.Services
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)/Debug
+RELEASEBINDIR = $(BINDIR)/Release
+
+# Core assembly project
+EBIWS = ../EbiWS
+
+all: DaliliteCliClient
+
+### Dalilite command-line client ###
+
+DaliliteCliClient: $(DEBUGBINDIR)/DaliliteCliClient.exe $(RELEASEBINDIR)/DaliliteCliClient.exe
+
+$(DEBUGBINDIR)/DaliliteCliClient.exe: DaliliteCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ DaliliteCliClient.cs
+
+$(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
+
+$(RELEASEBINDIR)/DaliliteCliClient.exe: DaliliteCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ DaliliteCliClient.cs
+
+$(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	cp $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll* $(RELEASEBINDIR)/
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/

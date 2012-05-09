@@ -1,6 +1,5 @@
-/* $Id: ClustalW2CliClient.cs 1597 2010-09-25 08:08:23Z hpm $
- * ======================================================================
- * jDispatcher SOAP command-line client for ClustalW2 Phylogeny (SOAP)
+/* ======================================================================
+ * Command-line client for jDispatcher Dalilite webservice
  * ====================================================================== */
 using System;
 using System.IO;
@@ -14,19 +13,18 @@ namespace EbiWS
 		private string usageMsg = @"Dalilite
 ===================
 
-Generate a phylogentic tree from a multiple sequence alignment.
+Compute optimal and suboptimal protein structural alignments
+between two input sets of atomic coordinates.
     
 [Required]
 
-  seqFile            : file : aligned sequences (""-"" for STDIN)
+  structure1         : file : first structure to align
+  structure1         : file : first structure to align
 
 [Optional]
 
-  -t, --tree         : str  : output tree format, see --paramDetail tree      
-  -K, --kimura       :      : use Kimura's distance correction   
-  -I, --tossgaps     :      : exclude columns containing gaps
-  -C, --clustering   : str  : clustering method, see --paramDetail clustering
-  -P, --pim          :      : enable percentage identity matrix
+  --chainid1         : str  : limit alignments to this chain in the first structure
+  --chainid2         : str  : limit alignments to this chain in the second structure
 ";
 
 		/// <summary>Execution entry point</summary>
