@@ -24,6 +24,9 @@ EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
 EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
 EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe \
 EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe \
+EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe \
+EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe \
+EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe \
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
@@ -38,6 +41,7 @@ PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 RadarCliClient\bin\Release\RadarCliClient.exe \
+SapsCliClient\bin\Release\SapsCliClient.exe \
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe \
 WuBlastCliClient\bin\Release\WuBlastCliClient.exe
@@ -84,6 +88,15 @@ EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin
 EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk
 	
+EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk
+
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk
 

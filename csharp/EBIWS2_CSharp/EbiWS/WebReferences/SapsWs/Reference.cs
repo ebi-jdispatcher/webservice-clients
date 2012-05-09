@@ -41,7 +41,7 @@ namespace EbiWS.SapsWs {
         
         /// <remarks/>
         public JDispatcherService() {
-            this.Url = "http://wwwdev.ebi.ac.uk/Tools/services/soap/saps";
+            this.Url = "http://www.ebi.ac.uk/Tools/services/soap/saps";
         }
         
         /// <remarks/>

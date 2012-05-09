@@ -1,28 +1,29 @@
-/* $Id: EmbossPepinfoCliClient.cs 2064 2011-12-09 11:35:01Z wli $
+/* $Id: EmbossPepstatsCliClient.cs 2064 2011-12-09 11:35:01Z wli $
  * ======================================================================
  * jDispatcher EMBOSS pepinfo (SOAP) command-line client.
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.EmbossPepinfoWs;
+using EbiWS.EmbossPepstatsWs;
 
 namespace EbiWS
 {
-	class EmbossPepinfoCliClient : EbiWS.EmbossPepinfoClient
+	class EmbossPepstatsCliClient : EbiWS.EmbossPepstatsClient
 	{
 		/// <summary>Tool specific usage</summary>
-		private string usageMsg = @"EMBOSS pepinfo
+		private string usageMsg = @"EMBOSS pepstats
 ================
 
-Translate nucleic acid sequences.
+Calculates statistics of protein properties.
 
 [Required]
 
-  --sequence       : file : input sequences
+  --sequence     : file : input sequence
 
 [Optional]
 
-  --hwindow      : int  : Window size for hydropathy averaging
+  --termini      :   : include charge at N and C terminus
+  --mono         :   : monoisotopic weights
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -32,7 +33,7 @@ Translate nucleic acid sequences.
 		{
 			int retVal = 0; // Return value
 			// Create an instance of the wrapper object
-			EmbossPepinfoCliClient wsApp = new EmbossPepinfoCliClient();
+			EmbossPepstatsCliClient wsApp = new EmbossPepstatsCliClient();
 			// If no arguments print usage and return
 			if (args.Length < 1)
 			{
@@ -192,16 +193,23 @@ Translate nucleic acid sequences.
 					case "/endpoint":
 						goto case "--endpoint";
 
-						// Tool specific options
-				case "--hwindow": // window size
-					InParams.hwindow = Convert.ToInt32(args[++i]);
-					InParams.hwindowSpecified = true;
+				// Tool specific options
+				case "--termini":
+					InParams.termini = true;
+					InParams.terminiSpecified = true;
 					break;
-				case "/hwindow":
-					goto case "--hwindow";
+				case "/termini":
+					goto case "--termini";
 
-					
-					// Input data/sequence options.
+
+				case "--mono":
+					InParams.mono = true;
+					InParams.monoSpecified = true;
+					break;
+				case "/mono":
+					goto case "--mono";
+
+				// Input data/sequence options.
 				case "--sequence": // Input sequence.
 					InParams.sequence = LoadData(args[++i]);
 					Action = "submit";

@@ -1,28 +1,30 @@
-/* $Id: EmbossPepinfoCliClient.cs 2064 2011-12-09 11:35:01Z wli $
+/* $Id: SapsCliClient.cs 2064 2011-12-09 11:35:01Z wli $
  * ======================================================================
  * jDispatcher EMBOSS pepinfo (SOAP) command-line client.
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.EmbossPepinfoWs;
+using EbiWS.SapsWs;
 
 namespace EbiWS
 {
-	class EmbossPepinfoCliClient : EbiWS.EmbossPepinfoClient
+	class SapsCliClient : EbiWS.SapsClient
 	{
 		/// <summary>Tool specific usage</summary>
-		private string usageMsg = @"EMBOSS pepinfo
+		private string usageMsg = @"Saps
 ================
 
-Translate nucleic acid sequences.
+Evaluate a wide variety of protein sequence properties
 
 [Required]
 
-  --sequence       : file : input sequences
+  --sequence      : file : input sequence
 
 [Optional]
 
-  --hwindow      : int  : Window size for hydropathy averaging
+  --outputtype       : str : output type, see --paramDetail outputtype
+  --species          : str : species, see --paramDetail species
+  --positiveresidues : str : positive residues, see --paramDetail positiveresidues
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -32,7 +34,7 @@ Translate nucleic acid sequences.
 		{
 			int retVal = 0; // Return value
 			// Create an instance of the wrapper object
-			EmbossPepinfoCliClient wsApp = new EmbossPepinfoCliClient();
+			SapsCliClient wsApp = new SapsCliClient();
 			// If no arguments print usage and return
 			if (args.Length < 1)
 			{
@@ -192,13 +194,24 @@ Translate nucleic acid sequences.
 					case "/endpoint":
 						goto case "--endpoint";
 
-						// Tool specific options
-				case "--hwindow": // window size
-					InParams.hwindow = Convert.ToInt32(args[++i]);
-					InParams.hwindowSpecified = true;
+				// Tool specific options
+				case "--outputtype":
+					InParams.outputtype = args[++i];
 					break;
-				case "/hwindow":
-					goto case "--hwindow";
+				case "/outputtype":
+					goto case "--outputtype";
+
+				case "--species":
+					InParams.species = args[++i];
+					break;
+				case "/species":
+					goto case "--species";
+
+				case "--positiveresidues":
+					InParams.positiveresidues = args[++i];
+					break;
+				case "/positiveresiudues":
+					goto case "--positiveresidues";
 
 					
 					// Input data/sequence options.

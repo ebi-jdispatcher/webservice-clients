@@ -6,9 +6,9 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Exe</OutputType>
-    <RootNamespace>EmbossPepinfoCliClient</RootNamespace>
-    <AssemblyName>EmbossPepinfoCliClient</AssemblyName>
-    <ProjectGuid>{7D89005A-831D-4388-8630-8C37ED0920AA}</ProjectGuid>
+    <RootNamespace>SapsCliClient</RootNamespace>
+    <AssemblyName>SapsCliClient</AssemblyName>
+    <ProjectGuid>{9EC67901-3170-4941-BDAA-F60E09D48C2F}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,6 +18,12 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterExecute" />
+      </CustomCommands>
+    </CustomCommands>
+    <Commandlineparameters>--params</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -30,7 +36,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmbossPepinfoCliClient.cs" />
+    <Compile Include="SapsCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

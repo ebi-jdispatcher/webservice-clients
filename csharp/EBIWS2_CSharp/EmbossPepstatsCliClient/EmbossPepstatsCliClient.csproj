@@ -6,9 +6,9 @@
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Exe</OutputType>
-    <RootNamespace>EmbossPepinfoCliClient</RootNamespace>
-    <AssemblyName>EmbossPepinfoCliClient</AssemblyName>
-    <ProjectGuid>{7D89005A-831D-4388-8630-8C37ED0920AA}</ProjectGuid>
+    <RootNamespace>EmbossPepstatsCliClient</RootNamespace>
+    <AssemblyName>EmbossPepstatsCliClient</AssemblyName>
+    <ProjectGuid>{0632CFD9-ED94-4EA3-8F70-651C7B0C2753}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,7 +30,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmbossPepinfoCliClient.cs" />
+    <Compile Include="EmbossPepstatsCliClient.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

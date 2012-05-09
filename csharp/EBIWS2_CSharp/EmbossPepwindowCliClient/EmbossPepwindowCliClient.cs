@@ -1,14 +1,14 @@
-/* $Id: EmbossPepinfoCliClient.cs 2064 2011-12-09 11:35:01Z wli $
+/* $Id: EmbossPepwindowCliClient.cs 2064 2011-12-09 11:35:01Z wli $
  * ======================================================================
  * jDispatcher EMBOSS pepinfo (SOAP) command-line client.
  * ====================================================================== */
 using System;
 using System.IO;
-using EbiWS.EmbossPepinfoWs;
+using EbiWS.EmbossPepwindowWs;
 
 namespace EbiWS
 {
-	class EmbossPepinfoCliClient : EbiWS.EmbossPepinfoClient
+	class EmbossPepwindowCliClient : EbiWS.EmbossPepwindowClient
 	{
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"EMBOSS pepinfo
@@ -22,7 +22,7 @@ Translate nucleic acid sequences.
 
 [Optional]
 
-  --hwindow      : int  : Window size for hydropathy averaging
+  --windowsize      : int  : Window size
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -32,7 +32,7 @@ Translate nucleic acid sequences.
 		{
 			int retVal = 0; // Return value
 			// Create an instance of the wrapper object
-			EmbossPepinfoCliClient wsApp = new EmbossPepinfoCliClient();
+			EmbossPepwindowCliClient wsApp = new EmbossPepwindowCliClient();
 			// If no arguments print usage and return
 			if (args.Length < 1)
 			{
@@ -193,12 +193,12 @@ Translate nucleic acid sequences.
 						goto case "--endpoint";
 
 						// Tool specific options
-				case "--hwindow": // window size
-					InParams.hwindow = Convert.ToInt32(args[++i]);
-					InParams.hwindowSpecified = true;
+				case "--windowsize": // window size
+					InParams.windowsize = Convert.ToInt32(args[++i]);
+					InParams.windowsizeSpecified = true;
 					break;
-				case "/hwindow":
-					goto case "--hwindow";
+				case "/windowsize":
+					goto case "--windowsize";
 
 					
 					// Input data/sequence options.

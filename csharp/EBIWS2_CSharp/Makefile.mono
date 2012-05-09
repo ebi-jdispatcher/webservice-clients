@@ -23,6 +23,9 @@ build-EmbossTranseqCliClient \
 build-EmbossSixpackCliClient \
 build-EmbossBacktranseqCliClient \
 build-EmbossBacktranambigCliClient \
+build-EmbossPepinfoCliClient \
+build-EmbossPepstatsCliClient \
+build-EmbossPepwindowCliClient \
 build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
@@ -38,6 +41,7 @@ build-PhobiusCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
 build-RadarCliClient \
+build-SapsCliClient \
 build-TcoffeeCliClient \
 build-WSDbfetchCliClient \
 build-WuBlastCliClient
@@ -84,6 +88,15 @@ build-EmbossBacktranseqCliClient: build-EbiWS
 build-EmbossBacktranambigCliClient: build-EbiWS
 	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono
 
+build-EmbossPepinfoCliClient: build-EbiWS
+	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossPepstatsCliClient: build-EbiWS
+	cd EmbossPepstatsCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossPepwindowCliClient: build-EbiWS
+	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono
+
 build-EmbossWaterCliClient: build-EbiWS
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono
 
@@ -129,6 +142,9 @@ build-PsiSearchCliClient: build-EbiWS
 build-RadarCliClient: build-EbiWS
 	cd RadarCliClient && $(MAKE) -f Makefile.mono
 
+build-SapsCliClient: build-EbiWS
+	cd SapsCliClient && $(MAKE) -f Makefile.mono
+
 build-TcoffeeCliClient: build-EbiWS
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono
 
@@ -154,6 +170,9 @@ clean-EmbossTranseqCliClient \
 clean-EmbossSixpackCliClient \
 clean-EmbossBacktranseqCliClient \
 clean-EmbossBacktranambigCliClient \
+clean-EmbossPepinfoCliClient \
+clean-EmbossPepstatsCliClient \
+clean-EmbossPepwindowCliClient \
 clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
@@ -169,6 +188,7 @@ clean-PhobiusCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
 clean-RadarCliClient \
+clean-SapsCliClient \
 clean-TcoffeeCliClient \
 clean-WSDbfetchCliClient \
 clean-WuBlastCliClient
@@ -184,6 +204,9 @@ clean-ClustalW2CliClient:
 
 clean-ClustalW2PhylogenyCliClient:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-DaliliteCliClient:
+	cd DaliliweCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-DbClustalCliClient:
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono clean
@@ -211,6 +234,15 @@ clean-EmbossBacktranseqCliClient:
 
 clean-EmbossBacktranambigCliClient:
 	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossPepinfoCliClient:
+	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossPepstatsCliClient:
+	cd EmbossPepstatsCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossPepwindowCliClient:
+	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossWaterCliClient:
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono clean
@@ -256,6 +288,9 @@ clean-PsiSearchCliClient:
 
 clean-RadarCliClient:
 	cd RadarCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-SapsCliClient:
+	cd SapsCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono clean

@@ -41,7 +41,7 @@ namespace EbiWS.EmbossPepstatsWs {
         
         /// <remarks/>
         public JDispatcherService() {
-            this.Url = "http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_pepstats";
+            this.Url = "http://www.ebi.ac.uk/Tools/services/soap/emboss_pepstats";
         }
         
         /// <remarks/>
