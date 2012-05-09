@@ -13,6 +13,7 @@ build-EbiWS \
 build-ClustalOCliClient \
 build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
+build-DaliliteCliClient \
 build-DbClustalCliClient \
 build-EBeyeCliClient \
 build-EmbossMatcherCliClient \
@@ -51,6 +52,9 @@ build-ClustalW2CliClient: build-EbiWS
 
 build-ClustalW2PhylogenyCliClient: build-EbiWS
 	cd ClustalW2PhylogenyCliClient && $(MAKE) -f Makefile.mono
+
+build-DaliliteCliClient: build-EbiWS
+	cd DaliliteCliClient && $(MAKE) -f Makefile.mono
 
 build-DbClustalCliClient: build-EbiWS
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono
