@@ -134,7 +134,6 @@
     <None Include="WebReferences\LalignWs\Reference.map" />
     <None Include="WebReferences\PrankWs\Reference.map" />
     <None Include="WebReferences\ClustalOWs\Reference.map" />
-    <None Include="WebReferences\MaxsproutWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

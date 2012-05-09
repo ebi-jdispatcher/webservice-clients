@@ -1,9 +1,9 @@
 /* $Id$
  * ======================================================================
- * JDispatcher EMBOSS sixpack (SOAP) client.
+ * JDispatcher MaxSprout (SOAP) client.
  *
  * See:
- * http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_sixpack_soap
+ * http://www.ebi.ac.uk/Tools/webservices/services/structure/maxsprout_soap
  * http://www.ebi.ac.uk/Tools/webservices/tutorials/csharp
  * ====================================================================== */
 using System;
@@ -13,7 +13,7 @@ using EbiWS.MaxsproutWs; // "Web Reference" or wsdl.exe generated stubs.
 namespace EbiWS
 {
 	/// <summary>
-	/// Client for EMBL-EBI EMBOSS sixpack (SOAP) web service.
+	/// Client for EMBL-EBI MaxSprout (SOAP) web service.
 	/// </summary>	
 	public class MaxsproutClient : EbiWS.AbstractWsClient
 	{
@@ -225,6 +225,45 @@ namespace EbiWS
 			return result;
 		}
 
+
+		//
+		public int GetNChains(string jobId)
+		{
+			PrintDebugMessage("GetNChains", "Begin", 1);
+			PrintDebugMessage("GetNChains", "jobId: " + jobId, 1);
+			byte[] result = null;
+						
+			result = SrvProxy.getResult(jobId, "nchains", null);
+			string s = System.Text.Encoding.UTF8.GetString(result);
+			PrintDebugMessage("GetNChains", " ret: " + s, 1);
+			PrintDebugMessage("GetNChains", "End", 1);
+			int ret = Int32.Parse(s);
+			return ret;
+		}
+
+		
+		//
+		public byte[] GetResultForChain(string jobId, string format, int chain)
+		{
+			PrintDebugMessage("GetResultForChain", "Begin", 1);
+			PrintDebugMessage("GetResultForChain", "jobId: " + jobId, 1);
+			PrintDebugMessage("GetResultForChain", "format: " + format, 1);
+			byte[] result = null;
+			
+			wsRawOutputParameter[] outparams = new wsRawOutputParameter[1];
+			outparams[0] = new wsRawOutputParameter();
+			outparams[0].name = "chainno";
+			outparams[0].value = new string[1];
+			outparams[0].value[0] = chain.ToString("G");
+
+			PrintDebugMessage("GetResultForChain", "chainno:" + outparams[0].value[0], 1);
+
+			result = SrvProxy.getResult(jobId, format, outparams);
+			PrintDebugMessage("GetResultForChain", "End", 1);
+			return result;
+		}
+
+		
 		// Implementation of abstract method (AbsractWsClient.GetResults()).
 		/// <summary>Get the job results</summary>
 		/// <param name="jobId">Job identifier to get the results from.</param>
@@ -245,6 +284,9 @@ namespace EbiWS
 			// Get list of data types
 			wsResultType[] resultTypes = GetResultTypes(jobId);
 			PrintDebugMessage("GetResults", "resultTypes: " + resultTypes.Length + " available", 2);
+			
+			int nchains = GetNChains(jobId);
+			
 			// Get the data and write it to a file
 			Byte[] res = null;
 			if (outformat != null)
@@ -256,41 +298,53 @@ namespace EbiWS
 				}
 				PrintDebugMessage("GetResults", "resultType:\n" + ObjectValueToString(selResultType), 2);
 				res = GetResult(jobId, selResultType.identifier);
-				// Text data
-				if (selResultType.mediaType.StartsWith("text"))
-				{
-					if (OutFile == "-") WriteTextFile(OutFile, res);
-					else WriteTextFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
-				}
-				// Binary data
-				else
-				{
-					if (OutFile == "-") WriteBinaryFile(OutFile, res);
-					else WriteBinaryFile(OutFile + "." + selResultType.identifier + "." + selResultType.fileSuffix, res);
-				}
+				
+				saveResult(OutFile, res, selResultType);
+
 			}
 			else
-			{ // Data types available
+			{   // Data types available
 				// Write a file for each output type
 				foreach (wsResultType resultType in resultTypes)
 				{
-					PrintDebugMessage("GetResults", "resultType:\n" + ObjectValueToString(resultType), 2);
-					res = GetResult(jobId, resultType.identifier);
-					// Text data
-					if (resultType.mediaType.StartsWith("text"))
+					if( resultType.identifier == "out" || resultType.identifier == "log")
 					{
-						if (OutFile == "-") WriteTextFile(OutFile, res);
-						else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						
+						for(int i=1; i<=nchains; i++)
+						{
+							res = GetResultForChain(jobId, resultType.identifier, i);
+							saveResult(OutFile+"."+i, res, resultType);
+						}
 					}
-					// Binary data
 					else
 					{
-						if (OutFile == "-") WriteBinaryFile(OutFile, res);
-						else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						PrintDebugMessage("GetResults", "resultType:\n" + ObjectValueToString(resultType), 2);
+						res = GetResult(jobId, resultType.identifier);
+						saveResult(OutFile, res, resultType);
 					}
 				}
 			}
 			PrintDebugMessage("GetResults", "End", 1);
 		}
+		
+			
+		protected void saveResult(string OutFile, byte[] res, wsResultType resultType)
+		{
+			
+			// Text data
+			if (resultType.mediaType.StartsWith("text"))
+			{
+				if (OutFile == "-") WriteTextFile(OutFile, res);
+				else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+			}
+			// Binary data
+			else
+			{
+				if (OutFile == "-") WriteBinaryFile(OutFile, res);
+				else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+			}
+		}
+
 	}
+	
 }

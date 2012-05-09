@@ -225,6 +225,44 @@ namespace EbiWS
 			PrintDebugMessage("GetResult", "End", 1);
 			return result;
 		}
+		
+		
+		//
+		public int GetNAlignments(string jobId)
+		{
+			PrintDebugMessage("GetNAlignments", "Begin", 1);
+			PrintDebugMessage("GetNAlignments", "jobId: " + jobId, 1);
+			byte[] result = null;
+						
+			result = SrvProxy.getResult(jobId, "nalignments", null);
+			string s = System.Text.Encoding.UTF8.GetString(result);
+			PrintDebugMessage("GetNAlignments", " ret: " + s, 1);
+			PrintDebugMessage("GetNAlignments", "End", 1);
+			int ret = Int32.Parse(s);
+			return ret;
+		}
+		
+		//
+		public byte[] GetResultForAlignment(string jobId, string format, int alignment)
+		{
+			PrintDebugMessage("GetResultForAlignment", "Begin", 1);
+			PrintDebugMessage("GetResultForAlignment", "jobId: " + jobId, 1);
+			PrintDebugMessage("GetResultForAlignment", "format: " + format, 1);
+			byte[] result = null;
+			
+			wsRawOutputParameter[] outparams = new wsRawOutputParameter[1];
+			outparams[0] = new wsRawOutputParameter();
+			outparams[0].name = "alignmentno";
+			outparams[0].value = new string[1];
+			outparams[0].value[0] = alignment.ToString("G");
+
+			PrintDebugMessage("GetResultForAlignment", "alignmentno:" + outparams[0].value[0], 1);
+
+			result = SrvProxy.getResult(jobId, format, outparams);
+			PrintDebugMessage("GetResultForAlignment", "End", 1);
+			return result;
+		}
+
 
 		// Implementation of abstract method (AbsractWsClient.GetResults()).
 		/// <summary>Get the job results</summary>
@@ -246,6 +284,9 @@ namespace EbiWS
 			// Get list of data types
 			wsResultType[] resultTypes = GetResultTypes(jobId);
 			PrintDebugMessage("GetResults", "resultTypes: " + resultTypes.Length + " available", 2);
+			
+			int nalignments = GetNAlignments(jobId);
+
 			// Get the data and write it to a file
 			Byte[] res = null;
 			if (outformat != null)
@@ -271,27 +312,48 @@ namespace EbiWS
 				}
 			}
 			else
-			{ // Data types available
+			{   // Data types available
 				// Write a file for each output type
 				foreach (wsResultType resultType in resultTypes)
 				{
-					PrintDebugMessage("GetResults", "resultType:\n" + ObjectValueToString(resultType), 2);
-					res = GetResult(jobId, resultType.identifier);
-					// Text data
-					if (resultType.mediaType.StartsWith("text"))
+					if(resultType.identifier == "calphatraces" || resultType.identifier == "rt")
 					{
-						if (OutFile == "-") WriteTextFile(OutFile, res);
-						else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						
+						for(int i=1; i<=nalignments; i++)
+						{
+							res = GetResultForAlignment(jobId, resultType.identifier, i);
+							saveResult(OutFile+"."+i, res, resultType);
+						}
+						continue;
 					}
-					// Binary data
 					else
 					{
-						if (OutFile == "-") WriteBinaryFile(OutFile, res);
-						else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+						PrintDebugMessage("GetResults", "resultType:\n" + ObjectValueToString(resultType), 2);
+						res = GetResult(jobId, resultType.identifier);
+						saveResult(OutFile, res, resultType);
 					}
 				}
 			}
 			PrintDebugMessage("GetResults", "End", 1);
 		}
+
+		
+		protected void saveResult(string OutFile, byte[] res, wsResultType resultType)
+		{
+			
+			// Text data
+			if (resultType.mediaType.StartsWith("text"))
+			{
+				if (OutFile == "-") WriteTextFile(OutFile, res);
+				else WriteTextFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+			}
+			// Binary data
+			else
+			{
+				if (OutFile == "-") WriteBinaryFile(OutFile, res);
+				else WriteBinaryFile(OutFile + "." + resultType.identifier + "." + resultType.fileSuffix, res);
+			}
+		}
+
 	}
 }
