@@ -62,7 +62,7 @@ use Data::Dumper;
 use constant MAX_RETRIES => 3;
 
 # WSDL URL for service
-my $WSDL = 'http://wwwdev.ebi.ac.uk/Tools/services/soap/saps?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl';
 
 
 # Set interval for checking status
