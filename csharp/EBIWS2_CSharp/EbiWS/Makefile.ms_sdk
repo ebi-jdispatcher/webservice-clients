@@ -177,7 +177,7 @@ $(STUBSRCDIR)\EmbossPepinfoWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs /out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"
 
 $(STUBSRCDIR)\EmbossPepstatsWs\Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs /out:$@ "http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs /out:$@ "http://www.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl"
 
 $(STUBSRCDIR)\EmbossPepwindowWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepwindowWs /out:$@ "$(WSDLBASE)/emboss_pepwindow?wsdl"
@@ -225,7 +225,7 @@ $(STUBSRCDIR)\RadarWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).RadarWs /out:$@ "$(WSDLBASE)/radar?wsdl"
 
 $(STUBSRCDIR)\SapsWs\Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs /out:$@ "http://wwwdev.ebi.ac.uk/Tools/services/soap/saps?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs /out:$@ "http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl"
 
 $(STUBSRCDIR)\TcoffeeWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs /out:$@ "$(WSDLBASE)/tcoffee?wsdl"
