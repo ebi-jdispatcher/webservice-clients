@@ -191,7 +191,7 @@ def fetchData(query, format='default', style='default'):
 def fetchBatch(db, idListStr, format='default', style='default'):
     printDebugMessage('fetchBatch', 'Begin', 1)
     requestUrl = baseUrl + '/' + db + '/' + idListStr + '/' + format + '?style=' + style
-    printDebugMessage('fetchBatch', 'Begin', 1)
+    result = restRequest(requestUrl)
     printDebugMessage('fetchBatch', 'End', 1)
     return result
 
