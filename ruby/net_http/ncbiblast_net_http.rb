@@ -501,6 +501,7 @@ begin
 
   # Submit a job
   elsif(ARGV[0] || argHash['sequence'])
+    # TODO: implement input sequence fetch from file.
     if(ARGV[0])
       params['sequence'] = ARGV[0]
     end
@@ -539,4 +540,5 @@ begin
 # Catch any exceptions and display
 rescue StandardError => ex
   puts ex
+  exit(2)
 end
