@@ -376,4 +376,5 @@ begin
 rescue StandardError => ex
   $stderr.puts 'Exception'
   $stderr.puts ex
+  exit(2)
 end
