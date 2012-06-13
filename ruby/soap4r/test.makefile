@@ -55,10 +55,10 @@ dbfetch_fetchData_string:
 	${RUBY} wsdbfetch_soap4r.rb fetchData 'UNIPROTKB:WAP_RAT' > dbfetch-fetchData.txt
 
 dbfetch_fetchData_file: test_data
-	${RUBY} wsdbfetch_soap4r.rb fetchData @../test_data/uniprot_id_list.txt > dbfetch-fetchDataFile.txt
+	echo 'TODO:' $@
 
 dbfetch_fetchData_stdin: test_data
-	cat ../test_data/uniprot_id_list.txt | ${RUBY} wsdbfetch_soap4r.rb fetchData @- > dbfetch-fetchDataStdin.txt
+	echo 'TODO:' $@
 
 dbfetch_fetchBatch: dbfetch_fetchBatch_string dbfetch_fetchBatch_file dbfetch_fetchBatch_stdin
 
@@ -66,10 +66,10 @@ dbfetch_fetchBatch_string:
 	${RUBY} wsdbfetch_soap4r.rb fetchBatch uniprotkb 'WAP_RAT,WAP_MOUSE' > dbfetch-fetchBatch.txt
 
 dbfetch_fetchBatch_file: test_data
-	${RUBY} wsdbfetch_soap4r.rb fetchBatch uniprotkb @../test_data/uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
+	echo 'TODO:' $@
 
 dbfetch_fetchBatch_stdin: test_data
-	cat ../test_data/uniprot_id_list_b.txt | ${RUBY} wsdbfetch_soap4r.rb fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
+	echo 'TODO:' $@
 
 dbfetch_clean:
 	rm -f dbfetch-*
