@@ -50,6 +50,9 @@
 	<target name="compile" depends="axis1-compile,jaxws-compile" description="Compile all clients." />
 	<target name="jar" depends="axis1-jar,jaxws-jar" description="Package clients into jars." />
 
+	<!-- Tests -->
+	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
+	
 	<!-- Clean-up build directory -->
 	<target name="clean" description="Delete compiled classes">
 		<delete includeemptydirs="true">
@@ -678,6 +681,11 @@
 		</jar>
 	</target>
 
+	<!-- Test Axis 1.x jars -->
+	<target name="axis1-test" depends="axis1-jar" description="Axis 1.x: test jars.">
+		<ant antfile="test_build.xml" inheritAll="true" target="axis1-test" />
+	</target>
+	
 	<!-- Clean-up Axis 1.x generate files -->
 	<target name="axis1-distclean-stubs" description="Axis 1.x: remove generated stubs">
 		<antcall target="axis1-distclean-stubs-clustalo" />
@@ -1160,6 +1168,11 @@
 		<!-- TODO WU-BLAST -->
 	</target>
 
+	<!-- Test JAX-WS jars -->
+	<target name="jaxws-test" depends="jaxws-jar" description="JAX-WS RI: test jars.">
+		<ant antfile="test_build.xml" inheritAll="false" target="jaxws-test" />
+	</target>
+
 	<!-- Clean-up JAX-WS generated files -->
 	<target name="jaxws-distclean-stubs" description="JAX-WS RI: remove generated stubs">
 		<antcall target="jaxws-distclean-stubs-clustalo" />
@@ -1339,11 +1352,4 @@
 	    </delete>
 	</target>
 
-	<!-- TODO: Client tests -->
-	<!--target name="axis1-test" depends="axis1-jar">
-		<ant dir="test" inheritAll="false" />
-	</target>
-	<target name="jaxws-test" depends="jaxws-jar">
-		<ant dir="test" inheritAll="false" />
-	</target -->
 </project>
