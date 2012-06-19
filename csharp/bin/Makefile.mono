@@ -15,11 +15,19 @@ EbiWS.dll \
 ClustalOCliClient.exe \
 ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient.exe \
+DaliliteCliClient.exe \
 DbClustalCliClient.exe \
 EBeyeCliClient.exe \
+EmbossBacktranambigCliClient.exe \
+EmbossBacktranseqCliClient.exe \
 EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient.exe \
+EmbossPepinfoCliClient.exe \
+EmbossPepstatsCliClient.exe \
+EmbossPepwindowCliClient.exe \
+EmbossSixpackCliClient.exe \
 EmbossStretcherCliClient.exe \
+EmbossTranseqCliClient.exe \
 EmbossWaterCliClient.exe \
 FastaCliClient.exe \
 FastmCliClient.exe \
@@ -27,12 +35,15 @@ IPRScanCliClient.exe \
 KalignCliClient.exe \
 LalignCliClient.exe \
 MafftCliClient.exe \
+MaxsproutCliClient.exe \
 MuscleCliClient.exe \
 MViewCliClient.exe \
 NcbiBlastCliClient.exe \
 PhobiusCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
+RadarCliClient.exe \
+SapsCliClient.exe \
 TcoffeeCliClient.exe \
 WSDbfetchCliClient.exe \
 WuBlastCliClient.exe
@@ -53,12 +64,24 @@ ClustalW2PhylogenyCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/ClustalW2PhylogenyCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+DaliliteCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/DaliliteCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 DbClustalCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/DbClustalCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EBeyeCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EBeyeCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossBacktranambigCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossBacktranambigCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossBacktranseqCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossBacktranseqCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EmbossMatcherCliClient.exe: EbiWS.dll
@@ -69,8 +92,28 @@ EmbossNeedleCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossNeedleCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+EmbossPepinfoCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossPepinfoCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossPepstatsCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossPepstatsCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossPepwindowCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossPepwindowCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossSixpackCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossSixpackCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 EmbossStretcherCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossStretcherCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossTranseqCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossTranseqCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EmbossWaterCliClient.exe: EbiWS.dll
@@ -101,6 +144,10 @@ MafftCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/MafftCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+MaxsproutCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/MaxsproutCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 MuscleCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/MuscleCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
@@ -123,6 +170,14 @@ PsiBlastCliClient.exe: EbiWS.dll
 
 PsiSearchCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PsiSearchCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+RadarCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/RadarCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+SapsCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/SapsCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 TcoffeeCliClient.exe: EbiWS.dll
