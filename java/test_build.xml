@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test" basedir="." default="test">
+	<description>Sample Java client tests for EMBL-EBI tool web services.</description>
+	<property name="lib.dir" value="lib"/>
+	<property name="jar.dir" value="jar"/>
+	<!-- Add jars in library directory to classpath -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+	
+	<!-- All tests -->
+	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
+	
+	<!-- Apache Axis 1.x client tests -->
+	<target name="axis1-test" description="Axis 1.x: client smoke tests">
+		<antcall target="axis1-test-ncbiblast" />
+	</target>
+	
+	<target name="axis1-test-ncbiblast">
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--help" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--params" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java>
+		<!-- STDIN and STDOUT -->
+		<!-- java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar" input="" output="">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java -->
+	</target>
+	
+	<!-- JAX-WS RI client tests -->
+	<target name="jaxws-test" description="JAX-WS RI: client smoke tests">
+		<antcall target="jaxws-test-ncbiblast" />
+	</target>
+
+	<target name="jaxws-test-ncbiblast">
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--help" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--params" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java>
+	</target>
+</project>
