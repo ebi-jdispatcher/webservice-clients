@@ -193,26 +193,28 @@ Global pairwise sequence alignment using EMBOSS backtranambig.
 						goto case "--endpoint";
 
 						// Tool specific options
-				case "--codontable": // Codon table
-					InParams.codontable = args[++i];
-					break;
-				case "/codontable":
-					goto case "--codontable";
+					case "--codontable": // Codon table
+						InParams.codontable = args[++i];
+						break;
+					case "/codontable":
+						goto case "--codontable";
 				
-					// Input data/sequence options.
-				case "--sequence": // Input sequence.
-					InParams.sequence = LoadData(args[++i]);
-					Action = "submit";
-					break;
-				default:
-					// Check for unknown option
-					if (args[i].StartsWith("--") || args[i].LastIndexOf('/') == 0)
-					{
-						Console.Error.WriteLine("Error: unknown option: " + args[i] + "\n");
-						Action = "exit";
-						return;
-					}
-					break;
+						// Input data/sequence option
+					case "--sequence": // Input sequence
+						i++;
+						goto default;
+					default:
+						// Check for unknown option
+						if (args[i].StartsWith("--") || args[i].LastIndexOf('/') == 0)
+						{
+							Console.Error.WriteLine("Error: unknown option: " + args[i] + "\n");
+							Action = "exit";
+							return;
+						}
+						// Must be data argument
+						InParams.sequence = LoadData(args[i]);
+						Action = "submit";
+						break;
 				}
 			}
 			PrintDebugMessage("ParseCommand", "End", 1);
