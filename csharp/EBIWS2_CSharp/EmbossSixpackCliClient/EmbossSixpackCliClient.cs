@@ -24,13 +24,18 @@ Global pairwise sequence alignment using EMBOSS sixpack.
 
 
   --codontable   : str  : codon table, see --paramDetail codontable
-  --firstorf     :      : enable to count the beginning of a sequence as a possible ORF
-  --nofirstorf   :      : disable counting the beginning of a sequence as a possible ORF
-  --lastorf      :      : enable to count the end of a sequence as a possible ORF
-  --nolastorf    :      : disable counting the end of a sequence as a possible ORF
+  --firstorf     :      : enable to count the beginning of a sequence as a 
+                          possible ORF
+  --nofirstorf   :      : disable counting the beginning of a sequence as a 
+                          possible ORF
+  --lastorf      :      : enable to count the end of a sequence as a possible 
+                          ORF
+  --nolastorf    :      : disable counting the end of a sequence as a possible 
+                          ORF
   --reverse      :      : enable to reverse
   --noreverse    :      : disable reversing
-  --orfminsize   : str  : minimum size of Open Reading Frames (ORFs) to display in the translations
+  --orfminsize   : str  : minimum size of Open Reading Frames (ORFs) to display 
+                          in the translations
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -248,20 +253,22 @@ Global pairwise sequence alignment using EMBOSS sixpack.
 				case "/noreverse":
 					goto case "--noreverse";
 				
-					// Input data/sequence options.
-				case "--sequence": // Input sequence.
-					InParams.sequence = LoadData(args[++i]);
-					Action = "submit";
-					break;
-				default:
-					// Check for unknown option
-					if (args[i].StartsWith("--") || args[i].LastIndexOf('/') == 0)
-					{
-						Console.Error.WriteLine("Error: unknown option: " + args[i] + "\n");
-						Action = "exit";
-						return;
-					}
-					break;
+						// Input data/sequence option
+					case "--sequence": // Input sequence
+						i++;
+						goto default;
+					default:
+						// Check for unknown option
+						if (args[i].StartsWith("--") || args[i].LastIndexOf('/') == 0)
+						{
+							Console.Error.WriteLine("Error: unknown option: " + args[i] + "\n");
+							Action = "exit";
+							return;
+						}
+						// Must be data argument
+						InParams.sequence = LoadData(args[i]);
+						Action = "submit";
+						break;
 				}
 			}
 			PrintDebugMessage("ParseCommand", "End", 1);
