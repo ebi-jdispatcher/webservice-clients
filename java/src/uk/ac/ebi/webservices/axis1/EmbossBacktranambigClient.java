@@ -28,7 +28,7 @@ public class EmbossBacktranambigClient extends uk.ac.ebi.webservices.AbstractWsT
 	/** Proxy object for web service. */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Client version/revision for use in user-agent string. */
-	private String revision = "$Revision: 1816 $";
+	private String revision = "$Revision$";
 	/** Tool specific usage for help. */
 	private static final String usageMsg = "EMBOSS backtranambig\n"
 		+ "================\n"
