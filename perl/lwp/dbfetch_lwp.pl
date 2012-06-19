@@ -197,6 +197,7 @@ sub dbfetch_error_check {
 	my $statusCode = -1;
 	if ( $content =~ m/^ERROR (\d+) [^\n\r]+[\n\r]+$/ ) {
 		$statusCode = $1;
+		# "ID not found" or "No entries found."
 		if ( $statusCode == 4 || $statusCode == 12 ) {
 			warn $content;
 		}
