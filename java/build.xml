@@ -53,6 +53,11 @@
 	<!-- Tests -->
 	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
 	
+	<!-- Clean-up test output -->
+	<target name="test-clean" description="Clean-up test output.">
+		<ant antfile="test_build.xml" inheritAll="true" target="test-clean" />
+	</target>
+	
 	<!-- Clean-up build directory -->
 	<target name="clean" description="Delete compiled classes">
 		<delete includeemptydirs="true">
@@ -1170,7 +1175,7 @@
 
 	<!-- Test JAX-WS jars -->
 	<target name="jaxws-test" depends="jaxws-jar" description="JAX-WS RI: test jars.">
-		<ant antfile="test_build.xml" inheritAll="false" target="jaxws-test" />
+		<ant antfile="test_build.xml" inheritAll="true" target="jaxws-test" />
 	</target>
 
 	<!-- Clean-up JAX-WS generated files -->
