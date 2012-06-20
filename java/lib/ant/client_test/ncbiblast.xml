@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-NCBI-BLAST">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-ncbiblast" description="Axis 1.x: NCBI BLAST (SOAP) test">
+		<echo message="NCBI BLAST (SOAP): usage/help message" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--help" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): parameter names" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--params" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): parameter details" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): File query" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): DB:ID query" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): Query sequence from STDIN and result to STDOUT" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta" output="ncbiblast-blah.txt">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--quiet" />
+			<arg value="--outformat" />
+			<arg value="out" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+		<echo message="NCBI BLAST (SOAP): ID list query file" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): ID list query from STDIN and result to STDOUT" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar" input="test_data/uniprot_id_list.txt" output="ncbiblast-idfile.txt">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--quiet" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Query ID list from STDIN -->
+		</java>
+		<echo message="NCBI BLAST (SOAP): multifasta query file" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+		<echo message="NCBI BLAST (SOAP): multifasta query from STDIN and result to STDOUT" />
+		<java fork="true" jar="${jar.dir}/NCBIBlast_Axis1.jar" input="test_data/multi_prot.tfa" output="ncbiblast-file.txt">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="blastp" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--quiet" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-ncbiblast" description="JAX-WS RI: NCBI BLAST (SOAP) test">
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--help" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--params" />
+		</java>
+		<java fork="true" jar="${jar.dir}/NCBIBlast_JAXWS.jar">
+			<jvmarg value="-Djava.ext.dirs=${lib.dir}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java>
+	</target>
+
+	<!-- Clean-up -->
+	<target name="test-clean-ncbiblast" description="NCBI BLAST (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="ncbiblast-**"/>
+		</delete>
+	</target>
+	
+</project>
+
