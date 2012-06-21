@@ -293,7 +293,9 @@ sub rest_run {
 	my $response = $ua->post( $url, \%tmp_params );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
-		'request: ' . $response->request()->content(), 11 );
+		'request:' ."\n" . $response->request()->as_string(), 11 );
+	print_debug_message( 'rest_run',
+		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {

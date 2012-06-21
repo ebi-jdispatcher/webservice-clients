@@ -54,6 +54,7 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
+use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psiblast';
@@ -322,13 +323,16 @@ sub rest_run {
 		}
 	}
 
-	# TODO Submit the job as a multi-part POST
 	my $url = $baseUrl . '/run';
-	my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
-	my $response = $ua->request( $request );
+	my $response = $ua->post( $url, \%tmp_params );
+	# TODO: Submit the job as a multi-part POST
+	#my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
+	#my $response = $ua->request( $request );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
-		'request: ' . $response->request()->content(), 11 );
+		'request:' ."\n" . $response->request()->as_string(), 11 );
+	print_debug_message( 'rest_run',
+		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
 
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
@@ -769,8 +773,10 @@ sub load_params {
 	# Selected hit identifier list for building PSSM.
 	if(defined($params{'selectedHits'})) {
 		if(-f $params{'selectedHits'}) {
-			# Reference to a file for file upload.
-			$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
+			# Pass file contents as the parameter value (form-data).
+			$tool_params{'selectedHits'} = uri_escape(&read_file( $params{'selectedHits'} ));
+			# TODO: for multi-part POST reference file for file upload.
+			#$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
 		}
 		else {
 			$tool_params{'selectedHits'} = $params{'selectedHits'};
@@ -780,8 +786,10 @@ sub load_params {
 	# PSI-BLAST checkpoint from previous iteration.
 	if(defined($params{'cpfile'})) {
 		if(-f $params{'cpfile'}) {
-			# TODO Reference to a file for file upload.
-			$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
+			# Pass file contents as the parameter value (form-data).
+			$tool_params{'cpfile'} = uri_escape(&read_file( $params{'cpfile'} ));
+			# TODO: for multi-part POST reference file for file upload.
+			#$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
 		}
 		else {
 			$tool_params{'cpfile'} = $params{'cpfile'};
