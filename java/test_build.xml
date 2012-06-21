@@ -14,7 +14,57 @@
 	</path>
 	
 	<!-- Import client test suites -->
+	<!-- Misc. -->
+	<!-- import file="${ant.import.lib.dir}/client_test/wsdbfetch.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/ebeye.xml" / -->
+	<!-- Multiple Sequence Alignment (MSA) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/clustalo.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/clustalw2.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/dbclustal.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/kalign.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/mafft.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/muscle.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/mview.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/prank.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/tcoffee.xml" / -->
+	<!-- Protein Function Analysis (PFA) -->
+	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
+	<!-- import file="${ant.import.lib.dir}/client_test/iprscan5.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/phobius.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/radar.xml" / -->
+	<!-- Phylogeny -->
+	<!-- import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" / -->
+	<!-- Pairwise Sequence Alignment (PSA) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_matcher.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_needle.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_stretcher.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_water.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/lalign.xml" / -->
+	<!-- Sequence Statistics -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepwindow.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/saps.xml" / -->
+	<!-- TODO: Sequence Format Conversion (SFC) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_seqret.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/readseq.xml" / -->
+	<!-- TODO: Sequence Operations (SO) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/seqcksum.xml" / -->
+	<!-- Sequence Similarity Search (SSS) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/fasta.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/fastm.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/ncbiblast.xml" />
+	<!-- import file="${ant.import.lib.dir}/client_test/psiblast.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/psisearch.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/wublast.xml" / -->
+	<!-- Sequence Translation (ST) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranambig.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranseq.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_sixpack.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/emboss_transeq.xml" / -->
+	<!-- Structure Analysis -->
+	<!-- import file="${ant.import.lib.dir}/client_test/dalilite.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/maxsprout.xml" / -->
 	
 	<!-- Run all tests -->
 	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
