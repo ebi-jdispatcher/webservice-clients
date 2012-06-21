@@ -6,6 +6,8 @@
 	<property name="lib.dir" value="lib" />
 	<property name="jar.dir" value="jar" />
 	<property name="test.email" value="support@ebi.ac.uk" />
+	<property name="jvm.extra.jars" value="-Djava.ext.dirs=${lib.dir}" />
+	
 	<!-- Add jars in library directory to classpath -->
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />

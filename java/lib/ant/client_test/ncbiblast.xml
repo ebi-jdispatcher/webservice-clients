@@ -48,6 +48,27 @@
 		<antcall target="test-ncbiblast-paramdetail">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
+		<antcall target="test-ncbiblast-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ncbiblast-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
 	</target>
 
 	<target name="test-ncbiblast-help">
@@ -117,7 +138,7 @@
 	
 	<target name="test-ncbiblast-sequence-stdin">
 		<echo message="NCBI BLAST (SOAP): Query sequence from STDIN and result to STDOUT" />
-		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta" output="ncbiblast-blah.txt">
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
 			<jvmarg value="${jvm.extra.jars}" />
 			<arg value="--email" />
 			<arg value="${test.email}" />
@@ -131,9 +152,8 @@
 			<arg value="10" />
 			<arg value="--stype" />
 			<arg value="protein" />
-			<arg value="--quiet" />
 			<arg value="--outformat" />
-			<arg value="out" />
+			<arg value="ids" />
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
 			<arg value="-" /> <!-- Query sequence from STDIN -->
@@ -166,7 +186,7 @@
 	
 	<target name="test-ncbiblast-idlist-stdin">
 		<echo message="NCBI BLAST (SOAP): ID list query from STDIN and result to STDOUT" />
-		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt" output="ncbiblast-idfile.txt">
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
 			<jvmarg value="${jvm.extra.jars}" />
 			<arg value="--email" />
 			<arg value="${test.email}" />
@@ -180,7 +200,6 @@
 			<arg value="10" />
 			<arg value="--stype" />
 			<arg value="protein" />
-			<arg value="--quiet" />
 			<arg value="--outformat" />
 			<arg value="ids" /> <!-- Hit identifiers -->
 			<arg value="--outfile" />
@@ -216,7 +235,7 @@
 	
 	<target name="test-ncbiblast-multifasta-stdin">
 		<echo message="NCBI BLAST (SOAP): multifasta query from STDIN and result to STDOUT" />
-		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa" output="ncbiblast-file.txt">
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
 			<jvmarg value="${jvm.extra.jars}" />
 			<arg value="--email" />
 			<arg value="${test.email}" />
@@ -230,7 +249,6 @@
 			<arg value="10" />
 			<arg value="--stype" />
 			<arg value="protein" />
-			<arg value="--quiet" />
 			<arg value="--outformat" />
 			<arg value="ids" /> <!-- Hit identifiers -->
 			<arg value="--outfile" />
