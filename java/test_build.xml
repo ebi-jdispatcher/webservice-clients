@@ -15,10 +15,10 @@
 	
 	<!-- Import client test suites -->
 	<!-- Misc. -->
-	<!-- import file="${ant.import.lib.dir}/client_test/wsdbfetch.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/ebeye.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/wsdbfetch.xml" />
+	<import file="${ant.import.lib.dir}/client_test/ebeye.xml" />
 	<!-- Multiple Sequence Alignment (MSA) -->
-	<!-- import file="${ant.import.lib.dir}/client_test/clustalo.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/clustalo.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/clustalw2.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/dbclustal.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/kalign.xml" / -->
@@ -71,16 +71,39 @@
 	
 	<!-- Clean-up test output -->
 	<target name="test-clean" description="Clean-up test output">
+		<!-- Misc. -->
+		<antcall target="test-clean-wsdbfetch" />
+		<antcall target="test-clean-ebeye" />
+		<!-- Multiple Sequence Alignment (MSA) -->
+		<antcall target="test-clean-clustalo" />
+		
+		<!-- Protein Function Analysis (PFA) -->
+		<antcall target="test-clean-iprscan" />
+		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="test-clean-ncbiblast" />
 	</target>
 	
 	<!-- Apache Axis 1.x client tests -->
 	<target name="axis1-test" description="Axis 1.x: client smoke tests">
+		<!-- Misc. -->
+		<antcall target="axis1-test-wsdbfetch" />
+		<antcall target="axis1-test-ebeye" />
+		<!-- Multiple Sequence Alignment (MSA) -->
+		<antcall target="axis1-test-clustalo" />
+		<!-- Protein Function Analysis (PFA) -->
+		<antcall target="axis1-test-iprscan" />
+		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="axis1-test-ncbiblast" />
 	</target>
 	
 	<!-- JAX-WS RI client tests -->
 	<target name="jaxws-test" description="JAX-WS RI: client smoke tests">
+		<!-- Misc. -->
+		<antcall target="jaxws-test-wsdbfetch" />
+		<antcall target="jaxws-test-ebeye" />
+		<!-- Protein Function Analysis (PFA) -->
+		<antcall target="jaxws-test-iprscan" />
+		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="jaxws-test-ncbiblast" />
 	</target>
 
