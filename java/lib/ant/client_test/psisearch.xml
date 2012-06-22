@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-PSI-Search">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-psisearch" description="Axis 1.x: PSI-Search (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/PSISearch_Axis1.jar" />
+		<antcall target="test-psisearch-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psisearch-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psisearch-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<!-- antcall target="test-psisearch-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-psisearch" description="JAX-WS RI: PSI-Search (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/PSISearch_JAXWS.jar" />
+		<antcall target="test-psisearch-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psisearch-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psisearch-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psisearch-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<!-- antcall target="test-psisearch-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-psisearch-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+	</target>
+
+	<target name="test-psisearch-help">
+		<echo message="PSI-Search (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-params">
+		<echo message="PSI-Search (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-paramdetail">
+		<echo message="PSI-Search (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-sequence-file">
+		<echo message="PSI-Search (SOAP): File query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-sequence-dbid">
+		<echo message="PSI-Search (SOAP): DB:ID query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-sequence-stdin">
+		<echo message="PSI-Search (SOAP): Query sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--outformat" />
+			<arg value="ids" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-psisearch-idlist-file">
+		<echo message="PSI-Search (SOAP): ID list query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-idlist-stdin">
+		<echo message="PSI-Search (SOAP): ID list query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Query ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-psisearch-multifasta-file">
+		<echo message="PSI-Search (SOAP): multifasta query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-psisearch-multifasta-stdin">
+		<echo message="PSI-Search (SOAP): multifasta query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-psisearch" description="PSI-Search (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="psisearch-**"/>
+		</delete>
+	</target>
+	
+</project>
