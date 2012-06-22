@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-MView">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-mview" description="Axis 1.x: MView (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/MView_Axis1.jar" />
+		<antcall target="test-mview-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-mview-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-mview-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-mview-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-mview-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-mview" description="JAX-WS RI: MView (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/MView_JAXWS.jar" />
+		<antcall target="test-mview-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-mview-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-mview-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-mview-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-mview-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-mview-help">
+		<echo message="MView (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-mview-params">
+		<echo message="MView (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-mview-paramdetail">
+		<echo message="MView (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="outputformat" />
+		</java>
+	</target>
+	
+	<target name="test-mview-sequence-file">
+		<echo message="MView (SOAP): Sequences from file and result to files" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--sequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt" />
+			<arg value="--alignment" />
+			<arg value="--ruler" />
+			<arg value="--consensus" />
+			<arg value="--htmlmarkup" />
+			<arg value="off" />
+		</java>
+	</target>
+	
+	<target name="test-mview-sequence-stdin">
+		<echo message="MView (SOAP): Sequences from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.blastp.out.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--alignment" />
+			<arg value="--ruler" />
+			<arg value="--consensus" />
+			<arg value="--htmlmarkup" />
+			<arg value="off" />
+			<arg value="--outformat" />
+			<arg value="out" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-mview" description="MView (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="mview-**"/>
+		</delete>
+	</target>
+	
+</project>
+
