@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-MUSCLE">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-muscle" description="Axis 1.x: MUSCLE (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/Muscle_Axis1.jar" />
+		<antcall target="test-muscle-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-muscle-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-muscle-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-muscle-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-muscle-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-muscle" description="JAX-WS RI: MUSCLE (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Muscle_JAXWS.jar" />
+		<antcall target="test-muscle-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-muscle-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-muscle-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-muscle-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-muscle-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-muscle-help">
+		<echo message="MUSCLE (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-muscle-params">
+		<echo message="MUSCLE (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-muscle-paramdetail">
+		<echo message="MUSCLE (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="format" />
+		</java>
+	</target>
+	
+	<target name="test-muscle-sequence-file">
+		<echo message="MUSCLE (SOAP): Sequences from file and result to files" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--format" />
+			<arg value="clw" />
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-muscle-sequence-stdin">
+		<echo message="MUSCLE (SOAP): Sequences from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--format" />
+			<arg value="clw" />
+			<arg value="--outformat" />
+			<arg value="aln-clustalw" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input sequences from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-muscle" description="MUSCLE (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="muscle-**"/>
+		</delete>
+	</target>
+	
+</project>
+
