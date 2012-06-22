@@ -19,21 +19,21 @@
 	<import file="${ant.import.lib.dir}/client_test/ebeye.xml" />
 	<!-- Multiple Sequence Alignment (MSA) -->
 	<import file="${ant.import.lib.dir}/client_test/clustalo.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/clustalw2.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/dbclustal.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/kalign.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/mafft.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/muscle.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/mview.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/clustalw2.xml" />
+	<import file="${ant.import.lib.dir}/client_test/dbclustal.xml" />
+	<import file="${ant.import.lib.dir}/client_test/kalign.xml" />
+	<import file="${ant.import.lib.dir}/client_test/mafft.xml" />
+	<import file="${ant.import.lib.dir}/client_test/muscle.xml" />
+	<import file="${ant.import.lib.dir}/client_test/mview.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/prank.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/tcoffee.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/tcoffee.xml" />
 	<!-- Protein Function Analysis (PFA) -->
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/iprscan5.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/phobius.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/radar.xml" / -->
 	<!-- Phylogeny -->
-	<!-- import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" />
 	<!-- Pairwise Sequence Alignment (PSA) -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_matcher.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_needle.xml" / -->
@@ -51,19 +51,19 @@
 	<!-- TODO: Sequence Operations (SO) -->
 	<!-- import file="${ant.import.lib.dir}/client_test/seqcksum.xml" / -->
 	<!-- Sequence Similarity Search (SSS) -->
-	<!-- import file="${ant.import.lib.dir}/client_test/fasta.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/fastm.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/fasta.xml" />
+	<import file="${ant.import.lib.dir}/client_test/fastm.xml" />
 	<import file="${ant.import.lib.dir}/client_test/ncbiblast.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/psiblast.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/psisearch.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/wublast.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/psiblast.xml" />
+	<import file="${ant.import.lib.dir}/client_test/psisearch.xml" />
+	<import file="${ant.import.lib.dir}/client_test/wublast.xml" />
 	<!-- Sequence Translation (ST) -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranambig.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranseq.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_sixpack.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_transeq.xml" / -->
 	<!-- Structure Analysis -->
-	<!-- import file="${ant.import.lib.dir}/client_test/dalilite.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/dalilite.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/maxsprout.xml" / -->
 	
 	<!-- Run all tests -->
@@ -76,11 +76,27 @@
 		<antcall target="test-clean-ebeye" />
 		<!-- Multiple Sequence Alignment (MSA) -->
 		<antcall target="test-clean-clustalo" />
-		
+		<antcall target="test-clean-clustalw2" />
+		<antcall target="test-clean-dbclustal" />
+		<antcall target="test-clean-kalign" />
+		<antcall target="test-clean-mafft" />
+		<antcall target="test-clean-muscle" />
+		<antcall target="test-clean-mview" />
+		<antcall target="test-clean-tcoffee" />
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="test-clean-iprscan" />
+		<antcall target="test-clean-phobius" />
+		<!-- Phylogeny -->
+		<antcall target="test-clean-clustalw2_phylogeny" />
 		<!-- Sequence Similarity Search (SSS) -->
+		<antcall target="test-clean-fasta" />
+		<antcall target="test-clean-fastm" />
 		<antcall target="test-clean-ncbiblast" />
+		<antcall target="test-clean-psiblast" />
+		<antcall target="test-clean-psisearch" />
+		<antcall target="test-clean-wublast" />
+		<!-- Structure Analysis -->
+		<antcall target="test-clean-dalilite" />
 	</target>
 	
 	<!-- Apache Axis 1.x client tests -->
@@ -90,10 +106,27 @@
 		<antcall target="axis1-test-ebeye" />
 		<!-- Multiple Sequence Alignment (MSA) -->
 		<antcall target="axis1-test-clustalo" />
+		<antcall target="axis1-test-clustalw2" />
+		<antcall target="axis1-test-dbclustal" />
+		<antcall target="axis1-test-kalign" />
+		<antcall target="axis1-test-mafft" />
+		<antcall target="axis1-test-muscle" />
+		<antcall target="axis1-test-mview" />
+		<antcall target="axis1-test-tcoffee" />
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="axis1-test-iprscan" />
+		<antcall target="axis1-test-phobius" />
+		<!-- Phylogeny -->
+		<antcall target="axis1-test-clustalw2_phylogeny" />
 		<!-- Sequence Similarity Search (SSS) -->
+		<antcall target="axis1-test-fasta" />
+		<antcall target="axis1-test-fastm" />
 		<antcall target="axis1-test-ncbiblast" />
+		<antcall target="axis1-test-psiblast" />
+		<antcall target="axis1-test-psisearch" />
+		<antcall target="axis1-test-wublast" />
+		<!-- Structure Analysis -->
+		<antcall target="axis1-test-dalilite" />
 	</target>
 	
 	<!-- JAX-WS RI client tests -->
