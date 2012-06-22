@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-DaliLite">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-dalilite" description="Axis 1.x: DaliLite (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/DaliLite_Axis1.jar" />
+		<antcall target="test-dalilite-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-dalilite-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-dalilite-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-dalilite-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-dalilite-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-dalilite" description="JAX-WS RI: DaliLite (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/DaliLite_JAXWS.jar" />
+		<antcall target="test-dalilite-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-dalilite-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-dalilite-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-dalilite-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-dalilite-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-dalilite-help">
+		<echo message="DaliLite (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-dalilite-params">
+		<echo message="DaliLite (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-dalilite-paramdetail">
+		<echo message="DaliLite (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="structure1" />
+		</java>
+	</target>
+	
+	<target name="test-dalilite-file">
+		<echo message="DaliLite (SOAP): Input from files and result to files" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--structure1" />
+			<arg value="test_data/pdb11as.ent" />
+			<arg value="--chainid1" />
+			<arg value="A" />
+			<arg value="--structure2" />
+			<arg value="test_data/pdb12as.ent" />
+			<arg value="--chainid2" />
+			<arg value="A" />
+		</java>
+	</target>
+	
+	<target name="test-dalilite-dbid">
+		<echo message="DaliLite (SOAP): DB:ID input and result to files" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--structure1" />
+			<arg value="PDB:11AS" />
+			<arg value="--chainid1" />
+			<arg value="A" />
+			<arg value="--structure2" />
+			<arg value="PDB:12AS" />
+			<arg value="--chainid2" />
+			<arg value="A" />
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-dalilite" description="DaliLite (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="dalilite-**"/>
+		</delete>
+	</target>
+	
+</project>
+
