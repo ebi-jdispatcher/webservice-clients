@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-FASTM">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-fastm" description="Axis 1.x: FASTM (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/Fastm_Axis1.jar" />
+		<antcall target="test-fastm-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-fastm-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-fastm-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-fastm-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-fastm-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-fastm" description="JAX-WS RI: FASTM (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Fastm_JAXWS.jar" />
+		<antcall target="test-fastm-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-fastm-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-fastm-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-fastm-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-fastm-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-fastm-help">
+		<echo message="FASTM (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-fastm-params">
+		<echo message="FASTM (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-fastm-paramdetail">
+		<echo message="FASTM (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="program" />
+		</java>
+	</target>
+	
+	<target name="test-fastm-sequence-file">
+		<echo message="FASTM (SOAP): File query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="fastm" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--expupperlim" />
+			<arg value="1.0" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="test_data/peptides.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-fastm-sequence-stdin">
+		<echo message="FASTM (SOAP): Query sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/peptides.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--program" />
+			<arg value="fastm" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--expupperlim" />
+			<arg value="1.0" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-fastm" description="FASTM (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="fastm-**"/>
+		</delete>
+	</target>
+	
+</project>
+
