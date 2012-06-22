@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-ClustalW2-Phylogeny">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-clustalw2_phylogeny" description="Axis 1.x: ClustalW2 Phylogeny (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" />
+		<antcall target="test-clustalw2phylogeny-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-clustalw2_phylogeny" description="JAX-WS RI: ClustalW2 Phylogeny (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/ClustalW2Phylogeny_JAXWS.jar" />
+		<antcall target="test-clustalw2phylogeny-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-clustalw2phylogeny-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-clustalw2phylogeny-help">
+		<echo message="ClustalW2 Phylogeny (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-clustalw2phylogeny-params">
+		<echo message="ClustalW2 Phylogeny (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-clustalw2phylogeny-paramdetail">
+		<echo message="ClustalW2 Phylogeny (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="tree" />
+		</java>
+	</target>
+	
+	<target name="test-clustalw2phylogeny-sequence-file">
+		<echo message="ClustalW2 Phylogeny (SOAP): Sequences from file and result to files" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="test_data/multi_prot.aln" />
+		</java>
+	</target>
+	
+	<target name="test-clustalw2phylogeny-sequence-stdin">
+		<echo message="ClustalW2 Phylogeny (SOAP): Sequences from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.aln">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="aln-clustalw" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input sequences from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-clustalw2_phylogeny" description="ClustalW2 Phylogeny (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="clustalw2_phylogeny-**"/>
+		</delete>
+	</target>
+	
+</project>
+
