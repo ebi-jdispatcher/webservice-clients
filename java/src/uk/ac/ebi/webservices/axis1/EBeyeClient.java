@@ -41,6 +41,21 @@ public class EBeyeClient {
 	private static final String usageMsg = "EB-eye\n"
 		+ "======\n"
 		+ "\n"
+		+ "-h, --help\n"
+		+ "  This help/usage message.\n"
+		+ "\n"
+		//+ "-q, --quiet\n"
+		//+ "  Decrease output messages.\n"
+		//+ "\n"
+		//+ "-v, --verbose\n"
+		//+ "  Increase output messages.\n"
+		//+ "\n"
+		+ "--debugLevel <level>\n"
+		+ "  Set debug output level.\n"
+		+ "\n"
+		+ "--endpoint <endpoint>\n"
+		+ "  Override service endpoint used.\n"
+		+ "\n"
 		+ "--listDomains\n"
 		+ "  Returns a list of all the domains identifiers which can be used in a query.\n"
 		+ "\n"
@@ -1217,6 +1232,8 @@ public class EBeyeClient {
 	 *            Command-line options description.
 	 */
 	public static void addCliOptions(Options options) {
+		// --help
+		options.addOption("h", "help", false, "Help/usage message");
 		// --quiet
 		options.addOption("q", "quiet", false, "Decrease output");
 		// --verbose

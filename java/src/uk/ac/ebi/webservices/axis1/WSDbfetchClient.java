@@ -35,17 +35,32 @@ public class WSDbfetchClient {
 	private static final String usageMsg = "WSDbfetch\n"
 		+ "=========\n"
 		+ "\n"
-		+ "Usage: java -jar WSDbfetch.jar <method> [arguments...]\n"
+		+ "Usage: java -jar WSDbfetch.jar [options...] <method> [arguments...]\n"
+		+ "\n"
+		+ "Options\n"
+		+ "-------\n"
+		+ "\n"
+		+ "  -h, --help            Help/usage message.\n"
+		//+ "  -q, --quiet           Decrease output messages.\n"
+		//+ "  -v, --verbose         Increase output messages.\n"
+		+ "  --debugLevel <level>  Set debug output level.\n"
+		+ "  --endpoint <endpoint> Override service endpoint used.\n"
+		+ "\n"
+		+ "Methods\n"
+		+ "-------\n"
 		+ "\n"
 		+ "A number of methods are available:\n"
 		+ "\n"
-		+ "  getSupportedDBs - list available databases\n"
-		+ "  getSupportedFormats - list available databases with formats\n"
-		+ "  getSupportedStyles - list available databases with styles\n"
-		+ "  getDbFormats - list formats for a specifed database\n"
-		+ "  getFormatStyles - list styles for a specified database and format\n"
-		+ "  fetchData - retrive an database entry. See below for details of arguments.\n"
-		+ "  fetchBatch - retrive database entries. See below for details of arguments.\n"
+		+ "  getSupportedDBs       - list available databases\n"
+		+ "  getSupportedFormats   - list available databases with formats\n"
+		+ "  getSupportedStyles    - list available databases with styles\n"
+		+ "  getDbFormats <db>     - list formats for a specifed database\n"
+		+ "  getFormatStyles <db> <format>\n"
+		+ "    - list styles for a specified database and format\n"
+		+ "  fetchData <query> <format> <style>\n"
+		+ "    - retrive an database entry. See below for details of arguments.\n"
+		+ "  fetchBatch <db> <idList> <format> <style>\n"
+		+ "    - retrive database entries. See below for details of arguments.\n"
 		+ "\n"
 		+ "Fetching an entry: fetchData\n"
 		+ "\n"
@@ -63,7 +78,19 @@ public class WSDbfetchClient {
 		+ "  idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).\n"
 		+ "             Maximum of 200 IDs or accessions.\n"
 		+ "  format     format to retrive (e.g. uniprot)\n"
-		+ "  style      style to retrive (e.g. raw)\n";
+		+ "  style      style to retrive (e.g. raw)\n"
+		+ "\n"
+		+ "Further Information\n"
+		+ "-------------------\n"
+		+ "\n"
+		+ "  http://www.ebi.ac.uk/Tools/webservices/services/dbfetch\n"
+		+ "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n"
+		+ "\n"
+		+ "Support/Feedback\n"
+		+ "----------------\n"
+		+ "\n"
+		+ "  http://www.ebi.ac.uk/support/\n" 
+		+ "\n";
 
 	/** Default constructor.
 	 */
@@ -471,6 +498,8 @@ public class WSDbfetchClient {
 	 * @param options Command-line options description.
 	 */
 	public static void addCliOptions(Options options) {
+		// --help
+		options.addOption("h", "help", false, "Help/usage message");
 		// --quiet
 		options.addOption("q", "quiet", false, "Decrease output");
 		// --verbose
