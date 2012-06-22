@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-PSI-BLAST">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-psiblast" description="Axis 1.x: PSI-BLAST (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/PSIBlast_Axis1.jar" />
+		<antcall target="test-psiblast-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psiblast-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psiblast-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<!-- antcall target="test-psiblast-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psiblast-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psiblast-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-psiblast-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-psiblast" description="JAX-WS RI: PSI-BLAST (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/PSIBlast_JAXWS.jar" />
+		<antcall target="test-psiblast-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-psiblast-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-psiblast-help">
+		<echo message="PSI-BLAST (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-params">
+		<echo message="PSI-BLAST (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-paramdetail">
+		<echo message="PSI-BLAST (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-sequence-file">
+		<echo message="PSI-BLAST (SOAP): File query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-sequence-dbid">
+		<echo message="PSI-BLAST (SOAP): DB:ID query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-sequence-stdin">
+		<echo message="PSI-BLAST (SOAP): Query sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-psiblast-idlist-file">
+		<echo message="PSI-BLAST (SOAP): ID list query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-idlist-stdin">
+		<echo message="PSI-BLAST (SOAP): ID list query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Query ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-psiblast-multifasta-file">
+		<echo message="PSI-BLAST (SOAP): multifasta query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-psiblast-multifasta-stdin">
+		<echo message="PSI-BLAST (SOAP): multifasta query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="uniprotkb_swissprot" />
+			<arg value="--scores" />
+			<arg value="10" />
+			<arg value="--alignments" />
+			<arg value="10" />
+			<arg value="--stype" />
+			<arg value="protein" />
+			<arg value="--outformat" />
+			<arg value="ids" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-psiblast" description="PSI-BLAST (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="psiblast-**"/>
+		</delete>
+	</target>
+	
+</project>
+
