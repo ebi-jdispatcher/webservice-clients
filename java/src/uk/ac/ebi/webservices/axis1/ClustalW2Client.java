@@ -411,12 +411,12 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("s", "score", true, "Pairwise score representation");
 		options.addOption("d", "topdiags", true, "Number of best diags.");
 		options.addOption("p", "pairgap", true, "Gap penalty (pairwise)");
-		options.addOption("pwmatrix", "", true, "Protein matrix (pairwise)");
-		options.addOption("pwdnamatrix", "", true, "DNA matrix (pairwise)");
-		options.addOption("pwgapopen", "", true, "Gap open penalty (pairwise)");
-		options.addOption("pwgapext", "", true, "Gap extension penalty (pairwise)");
+		options.addOption("pwmatrix", "pwmatrix", true, "Protein matrix (pairwise)");
+		options.addOption("pwdnamatrix", "pwdnamatrix", true, "DNA matrix (pairwise)");
+		options.addOption("pwgapopen", "pwgapopen", true, "Gap open penalty (pairwise)");
+		options.addOption("pwgapext", "pwgapext", true, "Gap extension penalty (pairwise)");
 		options.addOption("m", "matrix", true, "Protein scoring matrix (multi)");
-		options.addOption("dnamatrix", "", true, "DNA scoring matrix (multi)");
+		options.addOption("dnamatrix", "dnamatrix", true, "DNA scoring matrix (multi)");
 		options.addOption("g", "gapopen", true, "Gap creation penalty (multi)");
 		options.addOption("noendgaps", false, "Terminal gaps scored");
 		options.addOption("x", "gapext", true, "Gap extension penalty (multi)");
@@ -535,9 +535,9 @@ public class ClustalW2Client extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Catch all exceptions
 		catch(Exception e) {
 			System.err.println ("ERROR: " + e.getMessage());
-			if(client.getDebugLevel() > 0) {
+			//if(client.getDebugLevel() > 0) {
 				e.printStackTrace();
-			}
+			//}
 			exitVal = 3;
 		}
 		System.exit(exitVal);
