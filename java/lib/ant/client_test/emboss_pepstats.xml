@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-pepstats">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_pepstats" description="Axis 1.x: EMBOSS pepstats (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossPepstats_Axis1.jar" />
+		<antcall target="test-emboss_pepstats-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<!-- antcall target="test-emboss_pepstats-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_pepstats" description="JAX-WS RI: EMBOSS pepstats (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossPepstats_JAXWS.jar" />
+		<antcall target="test-emboss_pepstats-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_pepstats-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<!-- antcall target="test-emboss_pepstats-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_pepstats-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+	</target>
+
+	<target name="test-emboss_pepstats-help">
+		<echo message="EMBOSS pepstats (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-params">
+		<echo message="EMBOSS pepstats (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-paramdetail">
+		<echo message="EMBOSS pepstats (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="termini" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-sequence-file">
+		<echo message="EMBOSS pepstats (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-sequence-dbid">
+		<echo message="EMBOSS pepstats (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-sequence-stdin">
+		<echo message="EMBOSS pepstats (SOAP): Input sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-idlist-file">
+		<echo message="EMBOSS pepstats (SOAP): ID list input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-idlist-stdin">
+		<echo message="EMBOSS pepstats (SOAP): ID list input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Input ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-multifasta-file">
+		<echo message="EMBOSS pepstats (SOAP): multifasta input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_pepstats-multifasta-stdin">
+		<echo message="EMBOSS pepstats (SOAP): multifasta input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_pepstats" description="EMBOSS pepstats (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_pepstats-**"/>
+		</delete>
+	</target>
+	
+</project>
+
