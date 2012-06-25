@@ -369,11 +369,13 @@ public abstract class AbstractWsToolClient {
 
 	/** <p>The input data can be passed as:</p>
 	 * <ul>
-	 * <li>filename</li>
-	 * <li>entry identifier (e.g. UNIPROT:WAP_RAT)</li>
-	 * <li>raw data</li>
+	 * <li>a filename</li>
+	 * <li>an entry identifier (e.g. UNIPROT:WAP_RAT)</li>
+	 * <li>raw data (e.g. "MRCSISLVLG")</li>
+	 * <li>data from standard input (STDIN)</li>
 	 * </ul>
-	 * <p>This method gets the data to be passed to the service, checking for a file and loading it if necessary.</p>
+	 * <p>This method gets the data to be passed to the service, checking for 
+	 * a file and loading it if necessary.</p>
 	 * 
 	 * @param fileOptionStr Filename or entry identifier.
 	 * @return Data to use as input as a byte array.
@@ -384,12 +386,13 @@ public abstract class AbstractWsToolClient {
 		printDebugMessage("loadData", "fileOptionStr: " + fileOptionStr, 2);
 		byte[] retVal = null;
 		if(fileOptionStr != null) {
-			if(fileOptionStr.equals("-")) { // STDIN
+			if(fileOptionStr.equals("-")) { // STDIN.
+				// TODO: wait for input from STDIN.
 				retVal = readStream(System.in);
 			}
-			else if(new File(fileOptionStr).exists()) { // File
+			else if(new File(fileOptionStr).exists()) { // File.
 				retVal = readFile(new File(fileOptionStr));
-			} else { // Entry Id
+			} else { // Entry Id or raw data.
 				retVal = fileOptionStr.getBytes();
 			}
 		}
