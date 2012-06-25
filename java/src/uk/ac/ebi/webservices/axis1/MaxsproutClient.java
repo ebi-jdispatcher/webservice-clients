@@ -232,24 +232,34 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printDebugMessage("printResultTypes", "End", 1);
 	}
 	
-	
-	
-	public int getNChains(String jobid) throws IOException, javax.xml.rpc.ServiceException
-	{
-		byte[] b = this.srvProxy.getResult(jobid, "nchains", null);
-		
-		return Integer.parseInt(new String(b));		
+	/** Get number of chains in job result.
+	 * 
+	 * @param jobid Job identifier.
+	 * @return Number of chains.
+	 * @throws IOException
+	 * @throws javax.xml.rpc.ServiceException
+	 */
+	public int getNChains(String jobid) throws javax.xml.rpc.ServiceException	{
+		printDebugMessage("getNChains", "Begin", 11);
+		int retVal = -1;
+		try {
+			byte[] b = this.srvProxy.getResult(jobid, "nchains", null);
+			retVal = Integer.parseInt(new String(b));
+		}
+		catch (IOException ex) {
+			printDebugMessage("getNChains", "Result type 'nchains' not available", 12);
+		}
+		printDebugMessage("getNChains", "End", 11);
+		return retVal;
 	}
-	
-	
 	
 	/** Get the results for a job and save them to files.
 	 * 
 	 * @param jobid The job identifier.
 	 * @param outfile The base name of the file to save the results to. If
 	 * null the jobid will be used.
-	 * @param outformat The name of the data format to save, e.g. toolraw 
-	 * or toolxml. If null all available data formats will be saved.
+	 * @param outformat The name of the data format to save, e.g. 'out' 
+	 * or 'xml'. If null all available data formats will be saved.
 	 * @return Array of filenames
 	 * @throws IOException
 	 * @throws javax.xml.rpc.ServiceException
@@ -265,34 +275,35 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Get result types
 		WsResultType[] resultTypes = getResultTypes(jobid);
 		int retValN = 0;
-		int n =0;
+		int numChains = 0;
 		
-		if(outformat == null)
-		{
-			n = getNChains(jobid);
-			retVal = new String[resultTypes.length + (n-1) *2];
+		if(outformat == null) {
+			// Get number of chains in results.
+			numChains = getNChains(jobid);
+			if ( numChains > 0 ) {
+				// There are .out and .log files for each chain.
+				retVal = new String[resultTypes.length + (numChains - 1) * 2];
+			} else {
+				// No chain results only basic files.
+				retVal = new String[resultTypes.length];
+			}
 		} else {
 			retVal = new String[1];
 		}
-		
-		
 		for(int i = 0; i < resultTypes.length; i++) {
 			printProgressMessage("File type: " + resultTypes[i].getIdentifier(), 2);
-			// Get the results
-
-			if(resultTypes[i].getIdentifier().equals("out") || resultTypes[i].getIdentifier().equals("log"))
-			{
+			// For .out and .log files get the result for each chain.
+			if(resultTypes[i].getIdentifier().equals("out") || resultTypes[i].getIdentifier().equals("log")) {
+				// Create a parameter to use for specifying the chain to fetch. 
 				WsRawOutputParameter[] parameters = new WsRawOutputParameter[1];
-				String[] a = new String[1]; 
-				WsRawOutputParameter p = new WsRawOutputParameter("chainno", a);
-				parameters[0] = p;
-				
-				for(int j=1;j<=n;j++)
-				{
-					if(outformat == null || outformat.equals(resultTypes[i].getIdentifier()))
-					{
-						a[0] = String.valueOf(j);
-						
+				String[] valueList = new String[1];
+				WsRawOutputParameter wsParam = new WsRawOutputParameter("chainno", valueList);
+				parameters[0] = wsParam;
+				// For each chain...
+				for(int chainN = 1; chainN <= numChains; chainN++) {
+					if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
+						valueList[0] = String.valueOf(chainN);
+						// Fetch result for chain.
 						byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), parameters);
 						if(resultbytes == null) {
 							System.err.println("Null result for " + resultTypes[i].getIdentifier() + "!");
@@ -311,7 +322,7 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 							}
 							else { // File
 								String filename = basename + "." + resultTypes[i].getIdentifier()
-										+ "." + j + "." + resultTypes[i].getFileSuffix();
+										+ "." + chainN + "." + resultTypes[i].getFileSuffix();
 								if(resultTypes[i].getMediaType().startsWith("text")) { // String
 									writeFile(new File(filename), result);
 								}
@@ -326,9 +337,8 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 
 				}
 			}
-			else
-			{
-
+			// Other result types can be simply fetched.
+			else {
 				if(outformat == null || outformat.equals(resultTypes[i].getIdentifier())) {
 					byte[] resultbytes = this.srvProxy.getResult(jobid, resultTypes[i].getIdentifier(), null);
 					if(resultbytes == null) {
