@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-backtranseq">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_backtranseq" description="Axis 1.x: EMBOSS backtranseq (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossBacktranseq_Axis1.jar" />
+		<antcall target="test-emboss_backtranseq-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<!-- antcall target="test-emboss_backtranseq-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_backtranseq" description="JAX-WS RI: EMBOSS backtranseq (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossBacktranseq_JAXWS.jar" />
+		<antcall target="test-emboss_backtranseq-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_backtranseq-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<!-- antcall target="test-emboss_backtranseq-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-emboss_backtranseq-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+	</target>
+
+	<target name="test-emboss_backtranseq-help">
+		<echo message="EMBOSS backtranseq (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-params">
+		<echo message="EMBOSS backtranseq (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-paramdetail">
+		<echo message="EMBOSS backtranseq (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="codontable" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-sequence-file">
+		<echo message="EMBOSS backtranseq (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-sequence-dbid">
+		<echo message="EMBOSS backtranseq (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-sequence-stdin">
+		<echo message="EMBOSS backtranseq (SOAP): Input sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-idlist-file">
+		<echo message="EMBOSS backtranseq (SOAP): ID list input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-idlist-stdin">
+		<echo message="EMBOSS backtranseq (SOAP): ID list input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Input ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-multifasta-file">
+		<echo message="EMBOSS backtranseq (SOAP): multifasta input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_backtranseq-multifasta-stdin">
+		<echo message="EMBOSS backtranseq (SOAP): multifasta input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_backtranseq" description="EMBOSS backtranseq (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_backtranseq-**"/>
+		</delete>
+	</target>
+	
+</project>
