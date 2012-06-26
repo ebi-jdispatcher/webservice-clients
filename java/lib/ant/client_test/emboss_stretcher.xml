@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-stretcher">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_stretcher" description="Axis 1.x: EMBOSS stretcher (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossStretcher_Axis1.jar" />
+		<antcall target="test-emboss_stretcher-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_stretcher" description="JAX-WS RI: EMBOSS stretcher (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossStretcher_JAXWS.jar" />
+		<antcall target="test-emboss_stretcher-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_stretcher-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-emboss_stretcher-help">
+		<echo message="EMBOSS stretcher (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_stretcher-params">
+		<echo message="EMBOSS stretcher (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_stretcher-paramdetail">
+		<echo message="EMBOSS stretcher (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_stretcher-sequence-file">
+		<echo message="EMBOSS stretcher (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_stretcher-sequence-dbid">
+		<echo message="EMBOSS stretcher (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="UNIPROT:WAP_MOUSE" />
+			<arg value="--bsequence" />
+			<arg value="UNIPROT:WAP_RAT" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_stretcher" description="EMBOSS stretcher (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_stretcher-**"/>
+		</delete>
+	</target>
+	
+</project>
