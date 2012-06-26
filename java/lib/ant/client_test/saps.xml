@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-SAPS">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-saps" description="Axis 1.x: SAPS (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/Saps_Axis1.jar" />
+		<antcall target="test-saps-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-saps-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-saps-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-saps-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-saps-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-saps-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<!-- antcall target="test-saps-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-saps-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-saps-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+		<!-- antcall target="test-saps-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall -->
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-saps" description="JAX-WS RI: SAPS (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Saps_JAXWS.jar" />
+		<antcall target="test-saps-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-saps-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-saps-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-saps-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-saps-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-saps-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<!-- antcall target="test-saps-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-saps-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-saps-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+		<!-- antcall target="test-saps-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall -->
+	</target>
+
+	<target name="test-saps-help">
+		<echo message="SAPS (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-saps-params">
+		<echo message="SAPS (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-saps-paramdetail">
+		<echo message="SAPS (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="species" />
+		</java>
+	</target>
+	
+	<target name="test-saps-sequence-file">
+		<echo message="SAPS (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-saps-sequence-dbid">
+		<echo message="SAPS (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-saps-sequence-stdin">
+		<echo message="SAPS (SOAP): Input sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Input sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-saps-idlist-file">
+		<echo message="SAPS (SOAP): ID list input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-saps-idlist-stdin">
+		<echo message="SAPS (SOAP): ID list input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Input ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-saps-multifasta-file">
+		<echo message="SAPS (SOAP): multifasta input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-saps-multifasta-stdin">
+		<echo message="SAPS (SOAP): multifasta input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Output -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-saps" description="SAPS (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="saps-**"/>
+		</delete>
+	</target>
+	
+</project>
+
