@@ -423,7 +423,7 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 				}
 			}
 			// Submit a job
-			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 1)) {
+			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
 				// Create job submission parameters from command-line
 				InputParameters params = client.loadParams(cli);
 				String dataOption = null;
