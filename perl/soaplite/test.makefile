@@ -382,7 +382,10 @@ ebeye_listFieldsInformation:
 ebeye_clean:
 
 # EMBOSS backtranambig
-emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
+emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail \
+emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout \
+emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout \
+emboss_backtranambig_multifasta_file emboss_backtranambig_multifasta_file_stdin_stdout
 
 emboss_backtranambig_params:
 	${PERL} emboss_backtranambig_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -396,20 +399,29 @@ emboss_backtranambig_dbid:
 emboss_backtranambig_file: test_data
 	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-emboss_backtranambig_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_backtranambig_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranambig-blah.txt
 
+emboss_backtranambig_id_list_file: test_data
+	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
 emboss_backtranambig_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranambig-blah.txt
+
+emboss_backtranambig_multifasta_file: test_data
+	echo 'TODO:' $@
+
+emboss_backtranambig_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
 emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
 
 # EMBOSS backtranseq
-emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
+emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail \
+emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout \
+emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout \
+emboss_backtranseq_multifasta_file emboss_backtranseq_multifasta_file_stdin_stdout
 
 emboss_backtranseq_params:
 	${PERL} emboss_backtranseq_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -423,13 +435,19 @@ emboss_backtranseq_dbid:
 emboss_backtranseq_file: test_data
 	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-emboss_backtranseq_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_backtranseq_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranseq-blah.txt
 
+emboss_backtranseq_id_list_file: test_data
+	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
 emboss_backtranseq_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranseq-blah.txt
+
+emboss_backtranseq_multifasta_file: test_data
+	echo 'TODO:' $@
+
+emboss_backtranseq_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
 emboss_backtranseq_clean:
@@ -542,7 +560,10 @@ emboss_seqret_clean:
 	rm -f emboss_seqret-*
 
 # EMBOSS sixpack
-emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout
+emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail \
+emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout \
+emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout \
+emboss_sixpack_multifasta_file emboss_sixpack_multifasta_file_stdin_stdout
 
 emboss_sixpack_params:
 	${PERL} emboss_sixpack_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -556,13 +577,19 @@ emboss_sixpack_dbid:
 emboss_sixpack_file: test_data
 	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
 
-emboss_sixpack_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_sixpack_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_sixpack-blah.txt
 
+emboss_sixpack_id_list_file: test_data
+	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
 emboss_sixpack_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_sixpack-blah.txt
+
+emboss_sixpack_multifasta_file: test_data
+	echo 'TODO:' $@
+
+emboss_sixpack_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
 emboss_sixpack_clean:
@@ -587,7 +614,10 @@ emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
 
 # EMBOSS transeq
-emboss_transeq: emboss_transeq_params emboss_transeq_param_detail emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
+emboss_transeq: emboss_transeq_params emboss_transeq_param_detail \
+emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout \
+emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout \
+emboss_transeq_multifasta_file emboss_transeq_multifasta_file_stdin_stdout
 
 emboss_transeq_params:
 	${PERL} emboss_transeq_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -601,13 +631,19 @@ emboss_transeq_dbid:
 emboss_transeq_file: test_data
 	${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
 
-emboss_transeq_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_transeq_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_transeq-blah.txt
 
+emboss_transeq_id_list_file: test_data
+	${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
 emboss_transeq_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_transeq-blah.txt
+
+emboss_transeq_multifasta_file: test_data
+	echo 'TODO:' $@
+
+emboss_transeq_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
 emboss_transeq_clean:
