@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-water">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_water" description="Axis 1.x: EMBOSS water (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossWater_Axis1.jar" />
+		<antcall target="test-emboss_water-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_water-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_water-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_water-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_water-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_water" description="JAX-WS RI: EMBOSS water (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossWater_JAXWS.jar" />
+		<antcall target="test-emboss_water-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_water-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_water-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_water-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_water-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-emboss_water-help">
+		<echo message="EMBOSS water (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_water-params">
+		<echo message="EMBOSS water (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_water-paramdetail">
+		<echo message="EMBOSS water (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_water-sequence-file">
+		<echo message="EMBOSS water (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_water-sequence-dbid">
+		<echo message="EMBOSS water (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="UNIPROT:WAP_MOUSE" />
+			<arg value="--bsequence" />
+			<arg value="UNIPROT:WAP_RAT" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_water" description="EMBOSS water (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_water-**"/>
+		</delete>
+	</target>
+	
+</project>
