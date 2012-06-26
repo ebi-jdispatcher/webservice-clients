@@ -23,7 +23,8 @@ Generate stubs for a specific SOAP library, e.g. Apache Axis 1.x:
 
   ant axis1-stubs
 
-Generate stubs for a specific service for a specific library, e.g. WSWUBlast:
+Generate stubs for a specific service for a specific library, e.g. WU-BLAST 
+(SOAP):
 
   ant axis1-stubs-wublast
 
@@ -39,7 +40,7 @@ or
 
   ant compile
 
-To compile just the code for one of the SOAP libraries, e.g. Axis 1.x:
+To compile just the code for one of the SOAP libraries, e.g. Apache Axis 1.x:
 
   ant axis1-compile
 
@@ -47,13 +48,26 @@ To compile just the code for one of the SOAP libraries, e.g. Axis 1.x:
 
   ant jar
 
-To package just the code for one of the SOAP libraries, e.g. Axis 1.x:
+To package just the code for one of the SOAP libraries, e.g. Apache Axis 1.x:
 
   ant axis1-jar
 
-4. Package the dependencies downloaded by Ivy:
+4. Package the dependencies downloaded by Apache Ivy:
 
   ant package-dependencies
+  
+5. Test the generated client jars:
+
+  ant test
+  
+To test just the jars for one of the SOAP libraries, e.g. Apache Axis 1.x:
+
+  ant axis1-test
+
+To test just the jar for a specific service and SOAP library, e.g. WU-BLAST 
+(SOAP) using Apache Axis 1.x:
+
+  ant axis1-test-wublast
 
 Running Clients
 ---------------
@@ -74,3 +88,6 @@ Support
 
 If you have problems with the clients or any suggestions for our Web Services
 then please contact us via the Support form http://www.ebi.ac.uk/support/
+
+---
+$Id$
