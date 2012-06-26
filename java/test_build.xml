@@ -31,20 +31,23 @@
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/iprscan5.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/radar.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/radar.xml" />
 	<!-- Phylogeny -->
 	<import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" />
 	<!-- Pairwise Sequence Alignment (PSA) -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_matcher.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_needle.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_stretcher.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_water.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/lalign.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/emboss_matcher.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_needle.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_stretcher.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_water.xml" />
+	<!-- import file="{ant.import.lib.dir}/client_test/genewise.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/lalign.xml" />
+	<!-- import file="{ant.import.lib.dir}/client_test/promoterwise.xml" / -->
+	<!-- import file="{ant.import.lib.dir}/client_test/wisedba.xml" / -->
 	<!-- Sequence Statistics -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_pepwindow.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/saps.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_pepwindow.xml" />
+	<import file="${ant.import.lib.dir}/client_test/saps.xml" />
 	<!-- TODO: Sequence Format Conversion (SFC) -->
 	<!-- import file="${ant.import.lib.dir}/client_test/emboss_seqret.xml" / -->
 	<!-- import file="${ant.import.lib.dir}/client_test/readseq.xml" / -->
@@ -58,13 +61,13 @@
 	<import file="${ant.import.lib.dir}/client_test/psisearch.xml" />
 	<import file="${ant.import.lib.dir}/client_test/wublast.xml" />
 	<!-- Sequence Translation (ST) -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranambig.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_backtranseq.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_sixpack.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/emboss_transeq.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/emboss_backtranambig.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_backtranseq.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_sixpack.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_transeq.xml" />
 	<!-- Structure Analysis -->
 	<import file="${ant.import.lib.dir}/client_test/dalilite.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/maxsprout.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/maxsprout.xml" />
 	
 	<!-- Run all tests -->
 	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
@@ -82,12 +85,34 @@
 		<antcall target="test-clean-mafft" />
 		<antcall target="test-clean-muscle" />
 		<antcall target="test-clean-mview" />
+		<!-- antcall target="test-clean-prank" / -->
 		<antcall target="test-clean-tcoffee" />
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="test-clean-iprscan" />
+		<!-- antcall target="test-clean-iprscan5" / -->
 		<antcall target="test-clean-phobius" />
+		<antcall target="test-clean-radar" />
 		<!-- Phylogeny -->
 		<antcall target="test-clean-clustalw2_phylogeny" />
+		<!-- Pairwise Sequence Alignment (PSA) -->
+		<antcall target="test-clean-emboss_matcher" />
+		<antcall target="test-clean-emboss_needle" />
+		<antcall target="test-clean-emboss_stretcher" />
+		<antcall target="test-clean-emboss_water" />
+		<!-- antcall target="test-clean-genewise" / -->
+		<antcall target="test-clean-lalign" />
+		<!-- antcall target="test-clean-promoterwise" / -->
+		<!-- antcall target="test-clean-wisedba" / -->
+		<!-- Sequence Statistics -->
+		<antcall target="test-clean-emboss_pepinfo" />
+		<antcall target="test-clean-emboss_pepstats" />
+		<antcall target="test-clean-emboss_pepwindow" />
+		<antcall target="test-clean-saps" />
+		<!-- TODO: Sequence Format Conversion (SFC) -->
+		<!-- antcall target="test-clean-emboss_seqret" / -->
+		<!-- antcall target="test-clean-readseq" / -->
+		<!-- TODO: Sequence Operations (SO) -->
+		<!-- antcall target="test-clean-seqcksum" / -->
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="test-clean-fasta" />
 		<antcall target="test-clean-fastm" />
@@ -95,8 +120,14 @@
 		<antcall target="test-clean-psiblast" />
 		<antcall target="test-clean-psisearch" />
 		<antcall target="test-clean-wublast" />
+		<!-- Sequence Translation (ST) -->
+		<antcall target="test-clean-emboss_backtranambig" />
+		<antcall target="test-clean-emboss_backtranseq" />
+		<antcall target="test-clean-emboss_sixpack" />
+		<antcall target="test-clean-emboss_transeq" />
 		<!-- Structure Analysis -->
 		<antcall target="test-clean-dalilite" />
+		<antcall target="test-clean-maxsprout" />
 	</target>
 	
 	<!-- Apache Axis 1.x client tests -->
