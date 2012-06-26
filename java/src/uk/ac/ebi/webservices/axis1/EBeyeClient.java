@@ -163,13 +163,18 @@ public class EBeyeClient {
 	 */
 	private void setUserAgent() {
 		printDebugMessage("setUserAgent", "Begin", 1);
-		// Java web calls use the http.agent property as a prefix to the default user-agent.
-		String clientVersion = this.revision.substring(11, this.revision.length() - 2);
-		String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
-		if(System.getProperty("http.agent") != null) {
-			System.setProperty("http.agent", clientUserAgent + " " + System.getProperty("http.agent"));
+		String currentUserAgent = System.getProperty("http.agent");
+		if(currentUserAgent == null || !currentUserAgent.startsWith("EBI-Sample-Client/")) {
+			// Java web calls use the http.agent property as a prefix to the default user-agent.
+			String clientVersion = this.revision.substring(11, this.revision.length() - 2);
+			String clientUserAgent = "EBI-Sample-Client/" + clientVersion + " (" + this.getClass().getName() + "; " + System.getProperty("os.name") +")";
+			if(currentUserAgent != null) {
+				System.setProperty("http.agent", clientUserAgent + " " + currentUserAgent);
+			}
+			else {
+				System.setProperty("http.agent", clientUserAgent);
+			}
 		}
-		else System.setProperty("http.agent", clientUserAgent);
 		printDebugMessage("setUserAgent", "End", 1);
 	}
 
