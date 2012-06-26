@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-needle">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_needle" description="Axis 1.x: EMBOSS needle (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossNeedle_Axis1.jar" />
+		<antcall target="test-emboss_needle-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_needle-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_needle-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_needle-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_needle-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_needle" description="JAX-WS RI: EMBOSS needle (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossNeedle_JAXWS.jar" />
+		<antcall target="test-emboss_needle-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_needle-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_needle-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_needle-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_needle-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-emboss_needle-help">
+		<echo message="EMBOSS needle (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_needle-params">
+		<echo message="EMBOSS needle (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_needle-paramdetail">
+		<echo message="EMBOSS needle (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_needle-sequence-file">
+		<echo message="EMBOSS needle (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_needle-sequence-dbid">
+		<echo message="EMBOSS needle (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="UNIPROT:WAP_MOUSE" />
+			<arg value="--bsequence" />
+			<arg value="UNIPROT:WAP_RAT" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_needle" description="EMBOSS needle (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_needle-**"/>
+		</delete>
+	</target>
+	
+</project>
