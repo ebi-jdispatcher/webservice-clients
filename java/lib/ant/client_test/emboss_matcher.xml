@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-EMBOSS-matcher">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-emboss_matcher" description="Axis 1.x: EMBOSS matcher (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/EmbossMatcher_Axis1.jar" />
+		<antcall target="test-emboss_matcher-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-emboss_matcher" description="JAX-WS RI: EMBOSS matcher (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/EmbossMatcher_JAXWS.jar" />
+		<antcall target="test-emboss_matcher-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-emboss_matcher-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-emboss_matcher-help">
+		<echo message="EMBOSS matcher (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_matcher-params">
+		<echo message="EMBOSS matcher (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_matcher-paramdetail">
+		<echo message="EMBOSS matcher (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="matrix" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_matcher-sequence-file">
+		<echo message="EMBOSS matcher (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-emboss_matcher-sequence-dbid">
+		<echo message="EMBOSS matcher (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="UNIPROT:WAP_MOUSE" />
+			<arg value="--bsequence" />
+			<arg value="UNIPROT:WAP_RAT" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-emboss_matcher" description="EMBOSS matcher (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="emboss_matcher-**"/>
+		</delete>
+	</target>
+	
+</project>
