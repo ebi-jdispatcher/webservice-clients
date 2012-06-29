@@ -25,21 +25,21 @@
 		<antcall target="test-wsdbfetch-fetchData-query">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-wsdbfetch-fetchData-file">
+		<antcall target="test-wsdbfetch-fetchData-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-wsdbfetch-fetchData-stdin">
+		</antcall>
+		<antcall target="test-wsdbfetch-fetchData-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 		<antcall target="test-wsdbfetch-fetchBatch-query">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-wsdbfetch-fetchBatch-file">
+		<antcall target="test-wsdbfetch-fetchBatch-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-wsdbfetch-fetchBatch-stdin">
+		</antcall>
+		<antcall target="test-wsdbfetch-fetchBatch-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->
@@ -66,21 +66,21 @@
 		<antcall target="test-wsdbfetch-fetchData-query">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
-		<!-- antcall target="test-wsdbfetch-fetchData-file">
+		<antcall target="test-wsdbfetch-fetchData-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-wsdbfetch-fetchData-stdin">
+		</antcall>
+		<antcall target="test-wsdbfetch-fetchData-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
+		</antcall>
 		<antcall target="test-wsdbfetch-fetchBatch-query">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
-		<!-- antcall target="test-wsdbfetch-fetchBatch-file">
+		<antcall target="test-wsdbfetch-fetchBatch-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-wsdbfetch-fetchBatch-stdin">
+		</antcall>
+		<antcall target="test-wsdbfetch-fetchBatch-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
+		</antcall>
 	</target>
 
 	<target name="test-wsdbfetch-help">

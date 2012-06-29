@@ -4,6 +4,13 @@
  * ====================================================================== */
 package uk.ac.ebi.webservices.jaxws;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +40,8 @@ public class WSDbfetchClient {
 	private String serviceWsdl = null;
 	/** Service proxy */
 	private WSDBFetchServer srvProxy = null;
+	/** Chunk size to use when fetching multiple entries with fetchBatch. */
+	private int fetchChunkSize = 100;
 	/** Client version/revision */
 	private String revision = "$Revision$";
 	/** Client user-agent string. */
@@ -395,10 +404,29 @@ public class WSDbfetchClient {
 	 * @throws DbfNoEntryFoundException_Exception 
 	 * @throws DbfException_Exception 
 	 * @throws DbfConnException_Exception 
+	 * @throws IOException 
 	 */
-	public void printFetchData(String query, String formatName, String styleName) throws DbfConnException_Exception, DbfException_Exception, DbfNoEntryFoundException_Exception, DbfParamsException_Exception, InputException_Exception {
+	public void printFetchData(String query, String formatName, String styleName) throws DbfConnException_Exception, DbfException_Exception, DbfNoEntryFoundException_Exception, DbfParamsException_Exception, InputException_Exception, IOException {
 		printDebugMessage("printFetchData", "Begin", 1);
-		System.out.println(fetchData(query, formatName, styleName));
+		// Direct query or file?
+		if ( query.startsWith("@") || query.equals("-") ) {
+			// List input from file or STDIN.
+			BufferedReader inRead = readerFromFile(query);
+			if(inRead != null) {
+				String line = null;
+				while((line = inRead.readLine()) != null) {
+					String dbIdStr = line.trim();
+					String entryStr = this.fetchData(dbIdStr, formatName, styleName);
+					System.out.println(entryStr);
+				}
+				inRead.close();
+			}
+		}
+		else {
+			// Directly specified query.
+			String entryStr = this.fetchData(query, formatName, styleName);
+			System.out.println(entryStr);
+		}
 		printDebugMessage("printFetchData", "End", 1);
 	}
 	
@@ -438,11 +466,69 @@ public class WSDbfetchClient {
 	 * @throws DbfNoEntryFoundException_Exception 
 	 * @throws DbfException_Exception 
 	 * @throws DbfConnException_Exception 
+	 * @throws IOException 
 	 */
-	public void printFetchBatch(String dbName, String idListStr, String formatName, String styleName) throws DbfConnException_Exception, DbfException_Exception, DbfNoEntryFoundException_Exception, DbfParamsException_Exception, InputException_Exception {
+	public void printFetchBatch(String dbName, String idListStr, String formatName, String styleName) throws DbfConnException_Exception, DbfException_Exception, DbfNoEntryFoundException_Exception, DbfParamsException_Exception, InputException_Exception, IOException {
 		printDebugMessage("printFetchBatch", "Begin", 1);
-		System.out.println(fetchBatch(dbName, idListStr, formatName, styleName));
+		// Directly specified list or list file?
+		if ( idListStr.startsWith("@") || idListStr.equals("-") ) {
+			// List input from file or STDIN.
+			BufferedReader inRead = readerFromFile(idListStr);
+			if(inRead != null) {
+				String line = null;
+				StringBuffer idListStrBuf = new StringBuffer();
+				int idNum = 0;
+				while((line = inRead.readLine()) != null) {
+					String idStr = line.trim();
+					if(idNum > 0) idListStrBuf.append(",");
+					idListStrBuf.append(idStr);
+					idNum++;
+					if(idNum >= fetchChunkSize) { // Chunk identifiers.
+						String entryStr = this.fetchBatch(dbName, idListStrBuf.toString(), formatName, styleName);
+						System.out.println(entryStr);
+						idNum = 0;
+						idListStrBuf = new StringBuffer();
+					}
+				}
+				// Last chunk.
+				if(idNum > 0) {
+					String entryStr = this.fetchBatch(dbName, idListStrBuf.toString(), formatName, styleName);
+					System.out.println(entryStr);
+				}
+				inRead.close();
+			}
+		}
+		else {
+			// Directly specified list.
+			String entriesStr = this.fetchBatch(dbName, idListStr, formatName, styleName);
+			System.out.println(entriesStr);
+		}
 		printDebugMessage("printFetchBatch", "End", 1);
+	}
+	
+	/** Get a BufferedReader for a file or standard input (STDIN) given a 
+	 * file name string.
+	 * 
+	 * @param inFileNameStr File name string or '-' for STDIN.
+	 * @return A BufferedReader for the input stream.
+	 * @throws FileNotFoundException
+	 */
+	private BufferedReader readerFromFile(String inFileNameStr) throws FileNotFoundException {
+		String fileNameStr = null;
+		if(inFileNameStr.startsWith("@")) {
+			fileNameStr = inFileNameStr.substring(1);
+		}
+		InputStreamReader inRead = null;
+		if(fileNameStr.equals("-")) { // STDIN
+			InputStream inStream = System.in;
+			inRead = new InputStreamReader(inStream);
+		}
+		else { // File.
+			File file = new File(fileNameStr);
+			inRead = new FileReader(file);
+		}
+		BufferedReader inBufRead = new BufferedReader(inRead);
+		return inBufRead;
 	}
 	
 	/** Build the option descriptions for processing the command-line arguments.
