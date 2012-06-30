@@ -20,7 +20,7 @@ Imports System.Text
 <Assembly: AssemblyVersionAttribute("1.0.*")> 
 Namespace EbiWS
     ' Generic exception for use in clients.
-    <Serializable>
+    <SerializableAttribute()> _
     Public Class ClientException
         Inherits Exception
         ' Default constructor.
