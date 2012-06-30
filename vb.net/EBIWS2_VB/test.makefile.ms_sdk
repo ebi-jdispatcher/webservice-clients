@@ -18,8 +18,9 @@ all: dbfetch ebeye iprscan ncbiblast
 clean: dbfetch_clean ebeye_clean iprscan_clean ncbiblast_clean
 
 # Fetch/update test data.
-test_data: ..\test_data\
-	REM -if [ -d ../test_data ]; then svn update ../test_data ; else svn co ${TEST_DATA_SVN} ../test_data ; fi
+test_data:
+	echo TODO: $@
+	REM Fetch the test data from Subversion...
 
 # WSDbfetch Document/literal SOAP
 dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
@@ -42,28 +43,28 @@ dbfetch_getFormatStyles:
 dbfetch_fetchData: dbfetch_fetchData_string dbfetch_fetchData_file dbfetch_fetchData_stdin
 
 dbfetch_fetchData_string:
-	 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData 'UNIPROTKB:WAP_RAT' > dbfetch-fetchData.txt
+	 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData "UNIPROTKB:WAP_RAT" > dbfetch-fetchData.txt
 
 dbfetch_fetchData_file: test_data
-	echo 'TODO:' $@
-	# WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData @..\test_data\uniprot_id_list.txt > dbfetch-fetchDataFile.txt
+	echo TODO: $@
+	REM WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData @..\test_data\uniprot_id_list.txt > dbfetch-fetchDataFile.txt
 
 dbfetch_fetchData_stdin: test_data
-	echo 'TODO:' $@
-	#type ..\test_data\uniprot_id_list.txt |  WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData @- > dbfetch-fetchDataStdin.txt
+	echo TODO: $@
+	REM type ..\test_data\uniprot_id_list.txt |  WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchData @- > dbfetch-fetchDataStdin.txt
 
 dbfetch_fetchBatch: dbfetch_fetchBatch_string dbfetch_fetchBatch_file dbfetch_fetchBatch_stdin
 
 dbfetch_fetchBatch_string:
-	 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb 'WAP_RAT,WAP_MOUSE' > dbfetch-fetchBatch.txt
+	 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb "WAP_RAT,WAP_MOUSE" > dbfetch-fetchBatch.txt
 
 dbfetch_fetchBatch_file: test_data
-	echo 'TODO:' $@
-	# WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb @..\test_data\uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
+	echo TODO: $@
+	REM WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb @..\test_data\uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
 
 dbfetch_fetchBatch_stdin: test_data
-	echo 'TODO:' $@
-	#type ..\test_data\uniprot_id_list_b.txt |  WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
+	echo TODO: $@
+	REM type ..\test_data\uniprot_id_list_b.txt |  WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
 
 dbfetch_clean:
 	del /f dbfetch-*
@@ -78,49 +79,49 @@ ebeye_listDomains:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listDomains
 
 ebeye_getNumberOfResults:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getNumberOfResults uniprot 'azurin'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getNumberOfResults uniprot "azurin"
 
 ebeye_getResultsIds:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResultsIds uniprot 'azurin' 1 10
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResultsIds uniprot "azurin" 1 10
 
 ebeye_getAllResultsIds:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getAllResultsIds uniprot 'azurin'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getAllResultsIds uniprot "azurin"
 
 ebeye_listFields:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listFields uniprot
 
 ebeye_getResults:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResults uniprot "azurin" "id,acc,name,status" 1 10
 
 ebeye_getEntry:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntry uniprot "WAP_RAT" "id,acc,name,status"
 
 ebeye_getEntries:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntries uniprot "WAP_RAT,WAP_MOUSE" "id,acc,name,status"
 
 ebeye_getEntryFieldUrls:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntryFieldUrls uniprot "WAP_RAT" "id"
 
 ebeye_getEntriesFieldUrls:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntriesFieldUrls uniprot "WAP_RAT,WAP_MOUSE" "id"
 
 ebeye_getDomainsReferencedInDomain:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsReferencedInDomain uniprot
 
 ebeye_getDomainsReferencedInEntry:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsReferencedInEntry uniprot 'WAP_RAT'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsReferencedInEntry uniprot "WAP_RAT"
 
 ebeye_listAdditionalReferenceFields:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listAdditionalReferenceFields uniprot
 
 ebeye_getReferencedEntries:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntries uniprot 'WAP_RAT' interpro
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntries uniprot "WAP_RAT" interpro
 
 ebeye_getReferencedEntriesSet:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesSet uniprot "WAP_RAT,WAP_MOUSE" interpro "id,name"
 
 ebeye_getReferencedEntriesFlatSet:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesFlatSet uniprot "WAP_RAT,WAP_MOUSE" interpro "id,name"
 
 ebeye_getDomainsHierarchy:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsHierarchy
@@ -128,10 +129,10 @@ ebeye_getDomainsHierarchy:
 ebeye_getDetailledNumberOfResults: ebeye_getDetailledNumberOfResults_flat ebeye_getDetailledNumberOfResults_tree
 
 ebeye_getDetailledNumberOfResults_flat:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi 'azurin' true
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi "azurin" true
 
 ebeye_getDetailledNumberOfResults_tree:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi 'azurin' false
+	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi "azurin" false
 
 ebeye_listFieldsInformation:
 	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listFieldsInformation uniprot
@@ -151,7 +152,7 @@ iprscan_file: test_data
 	 IPRScanCliClient\bin\Release\IPRScanCliClient.exe --email $(EMAIL) ..\test_data\SWISSPROT_ABCC9_HUMAN.fasta
 
 iprscan_dbid:
-	 IPRScanCliClient\bin\Release\IPRScanCliClient.exe --email $(EMAIL) 'UNIPROT:ABCC9_HUMAN'
+	 IPRScanCliClient\bin\Release\IPRScanCliClient.exe --email $(EMAIL) "UNIPROT:ABCC9_HUMAN"
 
 iprscan_stdin_stdout: test_data
 	type ..\test_data\SWISSPROT_ABCC9_HUMAN.fasta |  IPRScanCliClient\bin\Release\IPRScanCliClient.exe --email $(EMAIL) --quiet --outformat out --outfile - - > iprscan-blah.txt
@@ -184,7 +185,7 @@ ncbiblast_file: test_data
 	 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe --email $(EMAIL) --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ..\test_data\SWISSPROT_ABCC9_HUMAN.fasta
 
 ncbiblast_dbid:
-	 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe --email $(EMAIL) --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
+	 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe --email $(EMAIL) --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein "UNIPROT:ABCC9_HUMAN"
 
 ncbiblast_stdin_stdout: test_data
 	type ..\test_data\SWISSPROT_ABCC9_HUMAN.fasta |  NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe --email $(EMAIL) --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
