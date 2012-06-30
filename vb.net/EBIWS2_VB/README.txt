@@ -4,6 +4,8 @@ Visual Basic .NET Sample Clients
 Sample clients for a selection of EMBL-EBI SOAP web services implemented in 
 Visual Basic .NET.
 
+This is a Microsoft Visual Basic 2008 Express solution.
+
 Service Stubs
 -------------
 
@@ -69,11 +71,11 @@ fails to compile.
 5. Provided code will not compile with the Mono 1.2 VB.NET implementation. 
 The code uses "Next varName" to close "For" loops and this is not supported 
 by the VB compiler used in Mono 1.2. Commenting out the 'varName' will allow 
-to compile to complete, However the produced clients so not function 
+to compile to complete, However the produced clients do not function 
 correctly.
 
 Workaround:
-To creste clients that work on both MS .NET and Mono environments, compile 
+To create clients that work on both MS .NET and Mono environments, compile 
 the project on MS Windows using the MS SDK or Visual Studio. The generated 
 .dll and .exe files can then be used on both platforms. Alternativly, since 
 the same API is used, the EbiWS.dll from the C# project can be used with the 
