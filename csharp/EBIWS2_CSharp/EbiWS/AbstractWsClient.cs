@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+[assembly: AssemblyVersionAttribute("1.0.*")]
 namespace EbiWS
 {
 	/// <summary>
@@ -45,10 +46,10 @@ namespace EbiWS
 	/// <summary>
 	/// Abstract definition of a client to the EMBL-EBI tool Web Services.
 	/// </summary>
-	public abstract class AbstractWsClient
+    public abstract class AbstractWsClient : IDisposable
 	{
 		/// <value>
-		/// Level of output produced. Used to implment --quiet and --verbose.
+		/// Level of output produced. Used to implement --quiet and --verbose.
 		/// </value>
 		public int OutputLevel {
 			get{return outputLevel;}
@@ -869,5 +870,20 @@ Asynchronous job:
 			GetResults(JobId, OutFormat, OutFile);
 			PrintDebugMessage("GetResults", "End", 1);
 		}
-	}
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.identifierFileReader.Close();
+                this.sequenceFileReader.Close();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
 }
