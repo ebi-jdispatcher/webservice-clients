@@ -260,7 +260,6 @@ For more information see:
 						goto case "--stype";
 					case "--matrix": // Scoring matrix
 						InParams.matrix = args[++i];
-						Action = "submit";
 						break;
 					case "-m":
 						goto case "--matrix";
@@ -270,7 +269,6 @@ For more information see:
 						goto case "--matrix";
 					case "--exp": // E-value threshold
 						InParams.exp = args[++i];
-						Action = "submit";
 						break;
 					case "-E":
 						goto case "--exp";
@@ -280,7 +278,6 @@ For more information see:
 						goto case "--exp";
 					case "--filter": // Low complexity filter
 						InParams.filter = args[++i];
-						Action = "submit";
 						break;
 					case "-f":
 						goto case "--filter";
@@ -290,13 +287,13 @@ For more information see:
 						goto case "--filter";
 					case "--align": // Alignment format
 						InParams.align = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.alignSpecified = true;
 						break;
 					case "/align":
 						goto case "--align";
 					case "--scores": // Maximum number of scores to report
 						InParams.scores = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.scoresSpecified = true;
 						break;
 					case "-s":
 						goto case "--scores";
@@ -306,7 +303,7 @@ For more information see:
 						goto case "--scores";
 					case "--alignments": // Maximum number of alignments to report
 						InParams.alignments = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.alignmentsSpecified = true;
 						break;
 					case "/alignments":
 						goto case "--alignments";
@@ -320,7 +317,7 @@ For more information see:
 						goto case "--alignments";
 					case "--dropoff": // Drop-off score
 						InParams.dropoff = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.dropoffSpecified = true;
 						break;
 					case "-d":
 						goto case "--dropoff";
@@ -330,7 +327,7 @@ For more information see:
 						goto case "--dropoff";
 					case "--opengap": // Gap open penalty
 						InParams.gapopen = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.gapopenSpecified = true;
 						break;
 					case "-o":
 						goto case "--opengap";
@@ -340,7 +337,7 @@ For more information see:
 						goto case "--opengap";
 					case "--extendgap": // Gap extension penalty
 						InParams.gapext = Convert.ToInt32(args[++i]);
-						Action = "submit";
+						InParams.gapextSpecified = true;
 						break;
 					case "-e":
 						goto case "--extendgap";
@@ -350,7 +347,6 @@ For more information see:
 						goto case "--extendgap";
 					case "--gapalign": // Enable gapped alignments.
 						InParams.gapalign = true;
-						Action = "submit";
 						break;
 					case "-g":
 						goto case "--gapalign";
@@ -360,7 +356,6 @@ For more information see:
 						goto case "--gapalign";
 					case "--nogapalign": // Disable gapped alignments.
 						InParams.gapalign = false;
-						Action = "submit";
 						break;
 					case "/nogapalign":
 						goto case "--gapalign";
