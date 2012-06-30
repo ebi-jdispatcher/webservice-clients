@@ -390,14 +390,16 @@ emboss_backtranambig_dbid:
 emboss_backtranambig_file: test_data
 	${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-emboss_backtranambig_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_backtranambig_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranambig-blah.txt
 
+emboss_backtranambig_id_list_file: test_data
+	echo 'TODO:' $@
+	#${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
 emboss_backtranambig_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
+	#cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
@@ -417,14 +419,16 @@ emboss_backtranseq_dbid:
 emboss_backtranseq_file: test_data
 	${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-emboss_backtranseq_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_backtranseq_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranseq-blah.txt
 
+emboss_backtranseq_id_list_file: test_data
+	echo 'TODO:' $@
+	#${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
 emboss_backtranseq_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
+	#cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
@@ -550,14 +554,16 @@ emboss_sixpack_dbid:
 emboss_sixpack_file: test_data
 	${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
 
-emboss_sixpack_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_sixpack_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_sixpack-blah.txt
 
+emboss_sixpack_id_list_file: test_data
+	echo 'TODO:' $@
+	#${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
+
 emboss_sixpack_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
+	#cat ../test_data/embl_id_list.txt | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 emboss_sixpack_clean:
 	rm -f emboss_sixpack-*
@@ -595,14 +601,16 @@ emboss_transeq_dbid:
 emboss_transeq_file: test_data
 	${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
 
-emboss_transeq_id_list_file: test_data
-	echo 'TODO:' $@
-
 emboss_transeq_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_transeq-blah.txt
 
+emboss_transeq_id_list_file: test_data
+	echo 'TODO:' $@
+	#${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
+
 emboss_transeq_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
+	#cat ../test_data/embl_id_list.txt | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 emboss_transeq_clean:
 	rm -f emboss_transeq-*
@@ -644,16 +652,16 @@ fasta_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} FastaCliClient/bin/Release/FastaCliClient.exe --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > fasta-blah.txt
 
 fasta_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} FastaCliClient/bin/Release/FastaCliClient.exe --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 fasta_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} FastaCliClient/bin/Release/FastaCliClient.exe --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @-
 
 fasta_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} FastaCliClient/bin/Release/FastaCliClient.exe --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 fasta_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} FastaCliClient/bin/Release/FastaCliClient.exe --email ${EMAIL} --program fasta --database uniprotkb_swissprot --eupper 1.0 --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta -
 
 fasta_clean:
 	rm -f fasta-*
@@ -698,13 +706,13 @@ iprscan_id_list_file: test_data
 	${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 iprscan_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 iprscan_multifasta_file: test_data
-	${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+	${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
 
 iprscan_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
 
 iprscan_clean:
 	rm -f iprscan-*
@@ -843,16 +851,16 @@ ncbiblast_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
 
 ncbiblast_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 ncbiblast_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @-
 
 ncbiblast_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 ncbiblast_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta -
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
@@ -876,16 +884,16 @@ phobius_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} PhobiusCliClient/bin/Release/PhobiusCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > phobius-blah.txt
 
 phobius_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} PhobiusCliClient/bin/Release/PhobiusCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 phobius_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} PhobiusCliClient/bin/Release/PhobiusCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 phobius_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} PhobiusCliClient/bin/Release/PhobiusCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
 
 phobius_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} PhobiusCliClient/bin/Release/PhobiusCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
 
 phobius_clean:
 	rm -f phobius-*
@@ -970,7 +978,7 @@ radar_params:
 	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --params
 
 radar_param_detail:
-	echo 'TODO:' $@
+	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --paramDetail sequence
 
 radar_file: test_data
 	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
@@ -980,6 +988,8 @@ radar_dbid:
 
 radar_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > radar-blah.txt
+
+# TODO: identifier list files and multiple fasta format sequences.
 
 radar_clean:
 	rm -f radar-*
@@ -1056,16 +1066,16 @@ wublast_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} WuBlastCliClient/bin/Release/WuBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > wublast-blah.txt
 
 wublast_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} WuBlastCliClient/bin/Release/WuBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 wublast_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} WuBlastCliClient/bin/Release/WuBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @-
 
 wublast_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} WuBlastCliClient/bin/Release/WuBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 wublast_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} WuBlastCliClient/bin/Release/WuBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta -
 
 wublast_clean:
 	rm -f wublast-*
