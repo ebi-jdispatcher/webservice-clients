@@ -378,123 +378,147 @@ Environment.NewLine & _
 						Exit Select
 					Case "--align" ' Alignment format
 						i += 1 ' Shift to parameter value.
-						InParams.align = Convert.ToInt32(args(i))
+                        InParams.align = Convert.ToInt32(args(i))
+                        InParams.alignSpecified = True
 						Action = "submit"
 						Exit Select
 					Case "/align"
 						i += 1 ' Shift to parameter value.
-						InParams.align = Convert.ToInt32(args(i))
+                        InParams.align = Convert.ToInt32(args(i))
+                        InParams.alignSpecified = True
 						Action = "submit"
 						Exit Select
 					Case "--scores" ' Maximum number of scores to report
 						i += 1 ' Shift to parameter value.
-						InParams.scores = Convert.ToInt32(args(i))
+                        InParams.scores = Convert.ToInt32(args(i))
+                        InParams.scoresSpecified = True
 						Action = "submit"
 						Exit Select
 					Case "-s"
 						i += 1 ' Shift to parameter value.
 						InParams.scores = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.scoresSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/scores"
 						i += 1 ' Shift to parameter value.
 						InParams.scores = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.scoresSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/s"
 						i += 1 ' Shift to parameter value.
 						InParams.scores = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.scoresSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--alignments" ' Maximum number of alignments to report
 						i += 1 ' Shift to parameter value.
-						InParams.alignments = Convert.ToInt32(args(i))
+                        InParams.alignments = Convert.ToInt32(args(i))
+                        InParams.alignmentsSpecified = True
 						Action = "submit"
 						Exit Select
 					Case "/alignments"
 						i += 1 ' Shift to parameter value.
 						InParams.alignments = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.alignmentsSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--numal"
 						i += 1 ' Shift to parameter value.
 						InParams.alignments = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.alignmentsSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/numal"
 						i += 1 ' Shift to parameter value.
 						InParams.alignments = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.alignmentsSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "-n"
 						i += 1 ' Shift to parameter value.
 						InParams.alignments = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.alignmentsSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/n"
 						i += 1 ' Shift to parameter value.
 						InParams.alignments = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.alignmentsSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--dropoff" ' Drop-off score.
 						i += 1 ' Shift to parameter value.
 						InParams.dropoff = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.dropoffSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "-d"
 						i += 1 ' Shift to parameter value.
 						InParams.dropoff = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.dropoffSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/dropoff"
 						i += 1 ' Shift to parameter value.
 						InParams.dropoff = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.dropoffSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/d"
 						i += 1 ' Shift to parameter value.
 						InParams.dropoff = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.dropoffSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--opengap" ' Gap open penalty
 						i += 1 ' Shift to parameter value.
 						InParams.gapopen = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapopenSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "-o"
 						i += 1 ' Shift to parameter value.
 						InParams.gapopen = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapopenSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/opengap"
 						i += 1 ' Shift to parameter value.
 						InParams.gapopen = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapopenSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/o"
 						i += 1 ' Shift to parameter value.
 						InParams.gapopen = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapopenSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--extendgap" ' Gap extension penalty.
 						i += 1 ' Shift to parameter value.
 						InParams.gapext = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapextSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "-e"
 						i += 1 ' Shift to parameter value.
 						InParams.gapext = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapextSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/extendgap"
 						i += 1 ' Shift to parameter value.
 						InParams.gapext = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapextSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "/e"
 						i += 1 ' Shift to parameter value.
 						InParams.gapext = Convert.ToInt32(args(i))
-						Action = "submit"
+                        InParams.gapextSpecified = True
+                        Action = "submit"
 						Exit Select
 					Case "--gapalign" ' Use gapped alignments
 						InParams.gapalign = True
