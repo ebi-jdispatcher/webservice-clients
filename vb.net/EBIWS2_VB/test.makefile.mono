@@ -1,7 +1,7 @@
 # $Id$
 # ======================================================================
 #
-# Test sample EMBL-EBI C# .NET based web services clients.
+# Test sample EMBL-EBI Visual Basic .NET based web services clients.
 #
 # ======================================================================
 
@@ -32,7 +32,7 @@ iprscan_clean \
 ncbiblast_clean
 
 # Fetch/update test data.
-test_data:
+test_data: ../test_data/
 	-if [ -d ../test_data ]; then svn update ../test_data ; else svn co ${TEST_DATA_SVN} ../test_data ; fi
 
 # WSDbfetch Document/literal SOAP
@@ -59,10 +59,12 @@ dbfetch_fetchData_string:
 	${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchData 'UNIPROTKB:WAP_RAT' > dbfetch-fetchData.txt
 
 dbfetch_fetchData_file: test_data
-	${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchData @../test_data/uniprot_id_list.txt > dbfetch-fetchDataFile.txt
+	echo 'TODO:' $@
+	#${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchData @../test_data/uniprot_id_list.txt > dbfetch-fetchDataFile.txt
 
 dbfetch_fetchData_stdin: test_data
-	cat ../test_data/uniprot_id_list.txt | ${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchData @- > dbfetch-fetchDataStdin.txt
+	echo 'TODO:' $@
+	#cat ../test_data/uniprot_id_list.txt | ${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchData @- > dbfetch-fetchDataStdin.txt
 
 dbfetch_fetchBatch: dbfetch_fetchBatch_string dbfetch_fetchBatch_file dbfetch_fetchBatch_stdin
 
@@ -70,10 +72,12 @@ dbfetch_fetchBatch_string:
 	${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchBatch uniprotkb 'WAP_RAT,WAP_MOUSE' > dbfetch-fetchBatch.txt
 
 dbfetch_fetchBatch_file: test_data
-	${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchBatch uniprotkb @../test_data/uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
+	echo 'TODO:' $@
+	#${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchBatch uniprotkb @../test_data/uniprot_id_list_b.txt > dbfetch-fetchBatchFile.txt
 
 dbfetch_fetchBatch_stdin: test_data
-	cat ../test_data/uniprot_id_list_b.txt | ${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
+	echo 'TODO:' $@
+	#cat ../test_data/uniprot_id_list_b.txt | ${MONO} WSDbfetchCliClient/bin/Release/WSDbfetchCliClient.exe fetchBatch uniprotkb - > dbfetch-fetchBatchStdin.txt
 
 dbfetch_clean:
 	rm -f dbfetch-*
@@ -170,13 +174,13 @@ iprscan_id_list_file: test_data
 	${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 iprscan_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
 
 iprscan_multifasta_file: test_data
 	${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
 
 iprscan_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} IPRScanCliClient/bin/Release/IPRScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
 
 iprscan_clean:
 	rm -f iprscan-*
@@ -200,16 +204,16 @@ ncbiblast_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
 
 ncbiblast_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 ncbiblast_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - @-
 
 ncbiblast_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 ncbiblast_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} NcbiBlastCliClient/bin/Release/NcbiBlastCliClient.exe --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --outformat ids --outfile - --multifasta -
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
