@@ -54,8 +54,6 @@ use English;
 use LWP;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-
-#use YAML;
 use YAML::Syck;
 use Data::Dumper;
 
@@ -162,15 +160,32 @@ sub rest_request {
 	'$Revision$' =~ m/(\d+)/;
 	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
+	# Enable compression if available.
+	my $can_accept = HTTP::Message::decodable;
+	print_debug_message( 'rest_request', 'can_accept: ' . $can_accept,
+		12 );
 
 	# Perform the request
-	my $response = $ua->get($requestUrl);
+	my $response = $ua->get($requestUrl, 
+		'Accept-Encoding' => $can_accept,
+	);
 	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
 		11 );
+	print_debug_message( 'rest_request',
+		'response length: ' . length($response->content()), 11 );
+	print_debug_message( 'rest_request',
+		'request:' ."\n" . $response->request()->as_string(), 12 );
+	print_debug_message( 'rest_request',
+		'response: ' . "\n" . $response->as_string(), 12 );
 
+	my $retVal = $response->decoded_content();
+	# If unable to decode use direct content.
+	if ( !defined($retVal) ) {
+		$retVal = $response->content();
+	}
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
-		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
+		$retVal =~ m/<h1>([^<]+)<\/h1>/;
 		die 'http status: '
 		  . $response->code . ' '
 		  . $response->message . '  '
@@ -178,8 +193,8 @@ sub rest_request {
 	}
 	print_debug_message( 'rest_request', 'End', 11 );
 
-	# Return the response data
-	return $response->content();
+	# Return the response data.
+	return $retVal;
 }
 
 =head2 dbfetch_error_check()
