@@ -353,6 +353,7 @@ public class WSDbfetchClient {
 	 */
 	public String[] getDbFormats(String dbName) throws ServiceException, DbfParamsException, RemoteException {
 		printDebugMessage("getDbFormats", "Begin", 1);
+		printDebugMessage("getDbFormats", "dbName: " + dbName, 2);
 		String[] retVal = null;
 		srvProxyConnect(); // Ensure we have a service proxy
 		retVal = this.srvProxy.getDbFormats(dbName);
@@ -385,6 +386,8 @@ public class WSDbfetchClient {
 	 */
 	public String[] getFormatStyles(String dbName, String formatName) throws DbfParamsException, RemoteException, ServiceException {
 		printDebugMessage("getFormatStyles", "Begin", 1);
+		printDebugMessage("getFormatStyles", "dbName: " + dbName, 2);
+		printDebugMessage("getFormatStyles", "formatName: " + formatName, 2);
 		String[] retVal = null;
 		srvProxyConnect(); // Ensure we have a service proxy
 		retVal = this.srvProxy.getFormatStyles(dbName, formatName);
@@ -425,6 +428,9 @@ public class WSDbfetchClient {
 	 */
 	public String fetchData(String query, String formatName, String styleName) throws ServiceException, DbfConnException, DbfNoEntryFoundException, DbfParamsException, DbfException, InputException, RemoteException {
 		printDebugMessage("fetchData", "Begin", 1);
+		printDebugMessage("fetchData", "query: " + query, 2);
+		printDebugMessage("fetchData", "formatName: " + formatName, 2);
+		printDebugMessage("fetchData", "styleName: " + styleName, 2);
 		if(formatName == null || formatName.length() < 1) formatName = "default";
 		if(styleName == null || styleName.length() < 1) styleName = "default";
 		String retVal = null;
@@ -483,7 +489,10 @@ public class WSDbfetchClient {
 	 */
 	public String fetchBatch(String dbName, String idListStr, String formatName, String styleName) throws ServiceException, DbfConnException, DbfNoEntryFoundException, DbfParamsException, DbfException, InputException, RemoteException {
 		printDebugMessage("fetchBatch", "Begin", 1);
+		printDebugMessage("fetchBatch", "dbName: " + dbName, 2);
 		printDebugMessage("fetchBatch", "idListStr: " + idListStr, 2);
+		printDebugMessage("fetchBatch", "formatName: " + formatName, 2);
+		printDebugMessage("fetchBatch", "styleName: " + styleName, 2);
 		String retVal = null;
 		if(dbName == null || dbName.length() < 1) dbName = "default";
 		if(formatName == null || formatName.length() < 1) formatName = "default";
