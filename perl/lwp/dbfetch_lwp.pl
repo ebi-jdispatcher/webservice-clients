@@ -160,14 +160,14 @@ sub rest_request {
 	'$Revision$' =~ m/(\d+)/;
 	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
 	$ua->env_proxy;
-	# Enable compression if available.
+	# Available compression methods.
 	my $can_accept = HTTP::Message::decodable;
 	print_debug_message( 'rest_request', 'can_accept: ' . $can_accept,
 		12 );
 
 	# Perform the request
 	my $response = $ua->get($requestUrl, 
-		'Accept-Encoding' => $can_accept,
+		'Accept-Encoding' => $can_accept, # HTTP compression.
 	);
 	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
 		11 );
@@ -178,8 +178,9 @@ sub rest_request {
 	print_debug_message( 'rest_request',
 		'response: ' . "\n" . $response->as_string(), 12 );
 
+	# Unpack possibly compressed response.
 	my $retVal = $response->decoded_content();
-	# If unable to decode use direct content.
+	# If unable to decode use orginal content.
 	if ( !defined($retVal) ) {
 		$retVal = $response->content();
 	}
