@@ -126,8 +126,13 @@ $serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
 # Create the service interface, setting the fault handler to throw exceptions
 my $soap = SOAP::Lite->proxy(
 	$serviceEndpoint,
-	timeout => 6000,    # HTTP connection timeout
-	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	timeout => 6000,    # HTTP connection timeout.
+	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy.
+	options => {
+		# HTTP compression (requires Compress::Zlib)
+		compress_threshold => 100000000, # Large to prevent request compression.
+		#compress_threshold => 1024, # TEST: request compression.
+	},
   )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
@@ -562,6 +567,7 @@ sub from_wsdl {
 	my $fetchAttemptCount = 0;
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
+		# TODO: enable response compression when fetching WSDL.
 		$wsdlStr = get($WSDL);
 		$fetchAttemptCount++;
 		if(defined($wsdlStr) && $wsdlStr ne '') {
