@@ -110,15 +110,19 @@ GetOptions(
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )  { $outputLevel-- }
 
+# Get the script filename for use in usage messages
+my $scriptName = basename( $0, () );
+
+# Derive a user-agent string for the client.
+'$Revision$' =~ m/(\d+)/;
+my $client_agent = "EBI-Sample-Client/$1 ($scriptName; $OSNAME) ";
+
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
 	1 );
 
 # Debug mode: print the parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ), 11 );
-
-# Get the script filename for use in usage messages
-my $scriptName = basename( $0, () );
 
 # Print usage and exit if requested
 if ( $params{'help'} || $numOpts == 0 ) {
@@ -152,7 +156,12 @@ $serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
 my $soap = SOAP::Lite->proxy(
 	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
-	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	options => {
+		# HTTP compression (requires Compress::Zlib)
+		compress_threshold => 100000000, # Large to prevent request compression.
+		#compress_threshold => 1024, # TEST: request compression.
+	},
   )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
@@ -169,8 +178,7 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-'$Revision$' =~ m/(\d+)/;
-$soap->transport->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $soap->transport->agent());
+$soap->transport->agent($client_agent . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Handle command
@@ -874,9 +882,22 @@ sub from_wsdl {
 	my (@retVal) = ();
 	my $wsdlStr;
 	my $fetchAttemptCount = 0;
+	# Create a user agent
+	my $ua = LWP::UserAgent->new();
+	$ua->agent( $client_agent . $ua->agent() ); # User-agent.
+	$ua->env_proxy; # HTTP proxy.
+	my $can_accept = HTTP::Message::decodable; # Available encodings.
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
-		$wsdlStr = get($WSDL);
+		my $response = $ua->get($WSDL, 
+			'Accept-Encoding' => $can_accept, # HTTP compression.
+		);
+		if ( $params{'trace'} ) { # Request/response trace.
+			print( $response->request()->as_string(), "\n" );
+			print( $response->as_string(), "\n" );
+		}
+		$wsdlStr = $response->decoded_content();
+		$wsdlStr = $response->content() if (!defined($wsdlStr));
 		$fetchAttemptCount++;
 		if(defined($wsdlStr) && $wsdlStr ne '') {
 			# Extract service endpoint.
