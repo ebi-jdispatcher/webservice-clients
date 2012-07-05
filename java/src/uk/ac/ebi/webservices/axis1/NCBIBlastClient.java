@@ -17,7 +17,6 @@ import javax.xml.rpc.ServiceException;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.*;
 
-import uk.ac.ebi.webservices.axis1.stubs.ebeye.EBISearchService_ServiceLocator;
 import uk.ac.ebi.webservices.axis1.stubs.ncbiblast.*;
 
 /**

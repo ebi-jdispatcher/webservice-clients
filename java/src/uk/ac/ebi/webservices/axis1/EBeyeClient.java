@@ -20,7 +20,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.axis1.stubs.ebeye.*;
-import uk.ac.ebi.webservices.axis1.stubs.wsdbfetch.WSDBFetchDoclitServerServiceLocator;
 
 /** <p>EB-eye web service Java client using Apache Axis 1.x.</p>
  * 
