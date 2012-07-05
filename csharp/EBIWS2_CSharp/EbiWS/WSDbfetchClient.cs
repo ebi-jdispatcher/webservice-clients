@@ -191,6 +191,7 @@ namespace EbiWS {
 				SrvProxy = new WSDBFetchDoclitServerService();
 				SetProxyEndPoint(); // Set explicit service endpoint, if defined.
 				SetProxyUserAgent(); // Set user-agent for client.
+				SrvProxy.EnableDecompression = true; // Enable response compression.
 				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy.ToString(), 12);
 			}
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
