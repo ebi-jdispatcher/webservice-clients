@@ -332,6 +332,7 @@
 
 	<!-- Compile Axis 1.x code into classes -->
 	<target name="axis1-compile" description="Axis 1.x: compile SOAP clients">
+		<copy file="${src.dir}/client-config.wsdd" todir="${build.dir}" />
 		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/" />
 	</target>
 
@@ -382,7 +383,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EBeyeClient.** uk/ac/ebi/webservices/axis1/stubs/ebeye/**">
+			includes="uk/ac/ebi/webservices/axis1/EBeyeClient** uk/ac/ebi/webservices/axis1/stubs/ebeye/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EBeyeClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -590,7 +591,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/NCBIBlast_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/**">
+			includes="uk/ac/ebi/webservices/axis1/NCBIBlastClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ncbiblast/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.NCBIBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
