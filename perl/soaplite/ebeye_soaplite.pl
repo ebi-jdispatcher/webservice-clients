@@ -160,7 +160,7 @@ my $soap = SOAP::Lite->proxy(
 	options => {
 		# HTTP compression (requires Compress::Zlib)
 		compress_threshold => 100000000, # Large to prevent request compression.
-		#compress_threshold => 1024, # TEST: request compression.
+		#compress_threshold => 100, # TEST: request compression.
 	},
   )->uri($serviceNamespace)->on_fault(
 
