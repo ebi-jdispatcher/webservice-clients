@@ -12,6 +12,9 @@ import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
 
+import javax.xml.rpc.Call;
+import javax.xml.rpc.ServiceException;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -223,7 +226,7 @@ public class WSDbfetchClient {
 	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 2);
 		if(this.srvProxy == null) {
-			WSDBFetchDoclitServerService service = new WSDBFetchDoclitServerServiceLocator();
+			WSDBFetchDoclitServerService service = new WSDBFetchDoclitServerServiceLocatorExtended();
 			if(this.getServiceEndPoint() != null) {
 				try {
 					this.srvProxy = service.getWSDbfetchDoclit(new java.net.URL(this.getServiceEndPoint()));
@@ -239,6 +242,21 @@ public class WSDbfetchClient {
 			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);
+	}
+	
+	/** Wrapper for WSDBFetchDoclitServerServiceLocator to enable HTTP compression.
+	 */
+	private class WSDBFetchDoclitServerServiceLocatorExtended extends WSDBFetchDoclitServerServiceLocator {
+		private static final long serialVersionUID = 1L;
+
+		public Call createCall() throws ServiceException {
+			Call call = super.createCall();
+			// Enable response compression.
+			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
+			// TEST: Enable request compression (requires service support)
+			//call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
+			return call;
+		}
 	}
 
 	/** Get the web service proxy.
