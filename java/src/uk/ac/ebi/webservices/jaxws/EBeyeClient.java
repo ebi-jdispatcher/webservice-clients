@@ -7,7 +7,9 @@ package uk.ac.ebi.webservices.jaxws;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.xml.rpc.ServiceException;
@@ -175,16 +177,30 @@ public class EBeyeClient {
 		printDebugMessage("setUserAgent", "End", 1);
 	}
 	
-	/** Set the HTTP User-Agent for web services requests via the JAX-WS service proxy.
+	/** Set the HTTP headers for web services requests via the JAX-WS service 
+	 * proxy to specify the User-Agent and HTTP compression support. 
 	 */
-	private void setPortUserAgent() {
-		printDebugMessage("setPortUserAgent", "Begin", 1);
-		if(this.clientUserAgent != null && this.clientUserAgent.length() > 0) {
-			((BindingProvider)this.srvProxy).getRequestContext().put(
-				MessageContext.HTTP_REQUEST_HEADERS,
-			    Collections.singletonMap("User-Agent",Collections.singletonList(this.clientUserAgent)));
+	private void setPortHttpHeaders() {
+		printDebugMessage("setPortHttpHeaders", "Begin", 1);
+		if(this.srvProxy != null) {
+			Map<String, Object> ctxt = ((BindingProvider)this.srvProxy).getRequestContext();
+			@SuppressWarnings("unchecked")
+			Map<String, List<String>> httpHeaders = (Map<String, List<String>>)ctxt.get(MessageContext.HTTP_REQUEST_HEADERS);
+			if(httpHeaders == null) httpHeaders = new HashMap<String, List<String>>();
+			
+			// Add custom HTTP headers.
+			// User-agent.
+			if(this.clientUserAgent != null && this.clientUserAgent.length() > 0) {
+				httpHeaders.put("User-Agent", Collections.singletonList(this.clientUserAgent));
+			}
+			// HTTP response compression.
+			httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+			// TODO: HTTP request compression (requires server support).
+			//httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
+			// Add the headers to the context.
+			ctxt.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
 		}
-		printDebugMessage("setPortUserAgent", "End", 1);
+		printDebugMessage("setPortHttpHeaders", "End", 1);
 	}
 
 	/**
@@ -308,7 +324,7 @@ public class EBeyeClient {
 				service = new EBISearchService_Service();
 			}
 			this.srvProxy = service.getEBISearchServiceHttpPort();
-			this.setPortUserAgent();
+			this.setPortHttpHeaders();
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);
 	}
