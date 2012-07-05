@@ -661,7 +661,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/WSDbfetch_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/WSDbfetchClient.** uk/ac/ebi/webservices/axis1/stubs/wsdbfetch/**">
+			includes="uk/ac/ebi/webservices/axis1/WSDbfetchClient** uk/ac/ebi/webservices/axis1/stubs/wsdbfetch/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.WSDbfetchClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
