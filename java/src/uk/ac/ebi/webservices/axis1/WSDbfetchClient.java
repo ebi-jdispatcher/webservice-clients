@@ -13,7 +13,6 @@ import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.Call;
-import javax.xml.rpc.ServiceException;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
