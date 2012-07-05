@@ -243,7 +243,12 @@ public class WSDbfetchClient {
 		printDebugMessage("srvProxyConnect", "End", 2);
 	}
 	
-	/** Wrapper for WSDBFetchDoclitServerServiceLocator to enable HTTP compression.
+	/** Wrapper for WSDBFetchDoclitServerServiceLocator to enable HTTP 
+	 * compression.
+ 	 * 
+	 * Compression requires Commons HttpClient and a client-config.wsdd which 
+	 * specifies that Commons HttpClient should be used as the HTTP transport.
+	 * See http://wiki.apache.org/ws/FrontPage/Axis/GzipCompression.
 	 */
 	private class WSDBFetchDoclitServerServiceLocatorExtended extends WSDBFetchDoclitServerServiceLocator {
 		private static final long serialVersionUID = 1L;

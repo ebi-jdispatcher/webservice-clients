@@ -10,12 +10,17 @@ package uk.ac.ebi.webservices.axis1;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
+
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import uk.ac.ebi.webservices.axis1.stubs.ebeye.*;
+import uk.ac.ebi.webservices.axis1.stubs.wsdbfetch.WSDBFetchDoclitServerServiceLocator;
 
 /** <p>EB-eye web service Java client using Apache Axis 1.x.</p>
  * 
@@ -284,7 +289,7 @@ public class EBeyeClient {
 	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 2);
 		if(this.srvProxy == null) {
-			EBISearchService_Service service =  new EBISearchService_ServiceLocator();
+			EBISearchService_Service service =  new EBISearchService_ServiceLocatorExtended();
 			if(this.getServiceEndPoint() != null) {
 				try {
 					this.srvProxy = service.getEBISearchServiceHttpPort(new java.net.URL(this.getServiceEndPoint()));
@@ -300,6 +305,26 @@ public class EBeyeClient {
 			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 2);
+	}
+
+	/** Wrapper for EBISearchService_ServiceLocator to enable HTTP 
+	 * compression.
+	 * 
+	 * Compression requires Commons HttpClient and a client-config.wsdd which 
+	 * specifies that Commons HttpClient should be used as the HTTP transport.
+	 * See http://wiki.apache.org/ws/FrontPage/Axis/GzipCompression.
+	 */
+	private class EBISearchService_ServiceLocatorExtended extends EBISearchService_ServiceLocator {
+		private static final long serialVersionUID = 1L;
+
+		public Call createCall() throws ServiceException {
+			Call call = super.createCall();
+			// Enable response compression.
+			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
+			// TEST: Enable request compression (requires service support)
+			//call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
+			return call;
+		}
 	}
 
 	/**
