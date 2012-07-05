@@ -186,7 +186,9 @@ sub rest_request {
 	}
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
+		# Extract error message.
 		$retVal =~ m/<h1>([^<]+)<\/h1>/;
+		# Report error.
 		die 'http status: '
 		  . $response->code . ' '
 		  . $response->message . '  '
