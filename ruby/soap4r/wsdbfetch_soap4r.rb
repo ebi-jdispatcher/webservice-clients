@@ -271,8 +271,18 @@ class EbiWsDbfetch
     printDebugMessage('soapConnect', 'Begin', 11)
     # Create the service proxy
     soap = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
+    # Enable compression support if available (appears to require http-access2).
+    begin
+	require 'http-access2'
+	soap.streamhandler.accept_encoding_gzip = true
+    	printDebugMessage('soapConnect', 'Compression support enabled', 1)
+    rescue LoadError
+    	printDebugMessage('soapConnect', 'Compression support not available', 1)
+    end
+    # Set connection timeouts.
     soap.options["protocol.http.connect_timeout"] = @timeout
     soap.options["protocol.http.receive_timeout"] = @timeout
+    # Enable trace output.
     soap.wiredump_dev = STDOUT if @trace
     # Try to set a user-agent.
     begin
