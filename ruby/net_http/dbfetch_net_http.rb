@@ -116,21 +116,49 @@ class EbiWsDbfetchRest
 
   # Perform an HTTP GET request
   def restRequest(url)
-    # TODO: HTTP compression support (for Ruby 1.8, in 1.9 used as standard)
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 12)
     # Split URL into components
     uri = URI.parse(url)
     # Get the resource
-    userAgent = getUserAgent()
     if uri.query
       path = "#{uri.path}?#{uri.query}"
     else
       path = uri.path
     end
     getHttpConnection(uri)
-    resp, data = @httpConn.get(path, {'User-agent' => userAgent})
+    # Client user-agent.
+    userAgent = getUserAgent()
+    httpHeaders = {'User-agent' => userAgent}
+    # Enable HTTP response compression.
+    if RUBY_VERSION < '1.9' # Ruby 1.9 uses compression by default.
+      begin
+        require 'zlib'
+        require 'stringio'
+        httpHeaders['Accept-Encoding'] = 'gzip, deflate'
+        printDebugMessage('restRequest', 'Compression support enabled', 1)
+      rescue LoadError
+        printDebugMessage('restRequest', 'Compression support not available', 1)
+      end
+    end
+    # Do the request...
+    resp, data = @httpConn.get(path, httpHeaders)
     printDebugMessage('restRequest', 'data: ' + data, 21)
+    # Deal with encoded data.
+    if resp['content-encoding'] != nil
+      printDebugMessage('restRequest', 'encoding: ' + resp['content-encoding'], 11)
+      case resp['content-encoding']
+      when 'gzip'
+        unpack = Zlib::GzipReader.new(StringIO.new(data))
+        data = unpack.read
+      when 'deflate'
+        unpack = Zlib::Inflate.new
+        data = unpack.inflate(data)
+      else
+        raise 'Unsupported Content-Encoding used by server response: ' + 
+          resp['content-encoding']
+      end
+    end
     printDebugMessage('restRequest', 'End', 11)
     return data
   end
