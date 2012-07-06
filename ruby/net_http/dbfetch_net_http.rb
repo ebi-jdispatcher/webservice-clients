@@ -89,14 +89,24 @@ class EbiWsDbfetchRest
     return userAgent
   end
 
+  # Get a HTTP connection.
+  def getHttpConnection(uri)
+    printDebugMessage('getHttpConnection', 'Begin', 11)
+    # TODO: HTTP proxy support.
+    if(@httpConn == nil)
+      # Create a HTTP connection
+      @httpConn = Net::HTTP.new(uri.host, uri.port)
+    end
+    printDebugMessage('getHttpConnection', 'End', 11)
+  end
+
   # Perform an HTTP GET request
   def restRequest(url)
+    # TODO: HTTP compression support (for Ruby 1.8, in 1.9 used as standard)
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 12)
     # Split URL into components
     uri = URI.parse(url)
-    # Create a HTTP connection
-    httpConn = Net::HTTP.new(uri.host, uri.port)
     # Get the resource
     userAgent = getUserAgent()
     if uri.query
@@ -104,7 +114,8 @@ class EbiWsDbfetchRest
     else
       path = uri.path
     end
-    resp, data = httpConn.get(path, {'User-agent' => userAgent})
+    getHttpConnection(uri)
+    resp, data = @httpConn.get(path, {'User-agent' => userAgent})
     printDebugMessage('restRequest', 'data: ' + data, 21)
     printDebugMessage('restRequest', 'End', 11)
     return data
