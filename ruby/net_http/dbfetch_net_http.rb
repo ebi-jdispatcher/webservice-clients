@@ -57,7 +57,8 @@ end
 # Wrapping class for working with the application
 class EbiWsDbfetchRest
   # Accessor methods for attributes
-  attr_reader :timeout, :outputLevel, :debugLevel, :baseUrl
+  attr_reader :timeout, :outputLevel, :debugLevel
+  attr_accessor :baseUrl
 
   # Constructor
   def initialize(outputLevel, debugLevel, timeout)
@@ -92,10 +93,23 @@ class EbiWsDbfetchRest
   # Get a HTTP connection.
   def getHttpConnection(uri)
     printDebugMessage('getHttpConnection', 'Begin', 11)
-    # TODO: HTTP proxy support.
+    # Create a HTTP connection
     if(@httpConn == nil)
-      # Create a HTTP connection
-      @httpConn = Net::HTTP.new(uri.host, uri.port)
+      # Read proxy details from environment.
+      proxyUrlStr = nil
+      if ENV['HTTP_proxy'] != nil
+        proxyUrlStr = ENV['HTTP_proxy']
+      elsif ENV['http_proxy'] != nil
+        proxyUrlStr = ENV['http_proxy']
+      end
+      # Create the connection object.
+      if proxyUrlStr != nil
+        printDebugMessage('getHttpConnection', 'proxyUrlStr: ' + proxyUrlStr, 11)
+        proxyUri = URI.parse(proxyUrlStr)
+        @httpConn = Net::HTTP::Proxy(proxyUri.host, proxyUri.port).start(uri.host, uri.port)
+      else
+        @httpConn = Net::HTTP.new(uri.host, uri.port)
+      end
     end
     printDebugMessage('getHttpConnection', 'End', 11)
   end
