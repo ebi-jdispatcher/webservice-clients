@@ -18,6 +18,8 @@ baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 # Load libraries
 import platform, os, sys, urllib2, xmltramp
 from optparse import OptionParser
+from gzip import GzipFile
+from StringIO import StringIO
 
 # Output level
 outputLevel = 1
@@ -91,14 +93,31 @@ def restRequest(url):
     printDebugMessage('restRequest', 'url: ' + url, 11)
     try:
         user_agent = getUserAgent()
-        http_headers = { 'User-Agent' : user_agent }
+        http_headers = {
+            'User-Agent' : user_agent,
+            'Accept-Encoding' : 'gzip'
+        }
         req = urllib2.Request(url, None, http_headers)
-        reqH = urllib2.urlopen(req)
-        result = reqH.read()
-        reqH.close()
+        resp = urllib2.urlopen(req)
+        encoding = resp.info().getheader('Content-Encoding')
+        result = None
+        if encoding == None or encoding == 'identity':
+            result = resp.read()
+        elif encoding == 'gzip':
+            result = resp.read()
+            printDebugMessage('restRequest', 'result: ' + result, 21)
+            gz = GzipFile(
+                fileobj=StringIO(result),
+                mode="r"
+                )
+            result = gz.read()
+        else:
+            raise Exception('Unsupported Content-Encoding')
+        resp.close()
     except urllib2.HTTPError, ex:
         print ex.read()
         raise
+    printDebugMessage('restRequest', 'result: ' + result, 11)
     printDebugMessage('restRequest', 'End', 11)
     return result
 
