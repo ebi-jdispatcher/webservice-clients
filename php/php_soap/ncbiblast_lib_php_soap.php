@@ -73,7 +73,8 @@ class NcbiBlastClient {
     // Get service proxy
     if($this->srvProxy == null) {
       $options = array('trace' => $this->trace,
-		       'user_agent' => $this->getUserAgent()
+		       'user_agent' => $this->getUserAgent(),
+		       'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
 		       );
       if(isset($this->httpProxy)) {
 	$options['proxy_host'] = $this->httpProxy['proxy_host'];
