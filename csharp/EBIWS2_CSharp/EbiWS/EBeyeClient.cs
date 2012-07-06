@@ -188,8 +188,9 @@ namespace EbiWS {
 				SrvProxy = new EBISearchService();
 				SetProxyEndPoint(); // Set explicit service endpoint, if defined.
 				SetProxyUserAgent(); // Set user-agent for client.
-				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
+				SrvProxy.EnableDecompression = true; // Enable response compression.
 			}
+			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " + SrvProxy, 12);
 			PrintDebugMessage("ServiceProxyConnect", "End", 11);
 		}
 
