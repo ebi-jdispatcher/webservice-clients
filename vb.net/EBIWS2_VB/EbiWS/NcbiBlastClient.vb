@@ -56,6 +56,7 @@ Namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If SrvProxy Is Nothing Then
 				SrvProxy = New EbiWS.NcbiBlastWs.JDispatcherService()
+                SrvProxy.EnableDecompression = True  ' Support HTTP compression.
                 If ServiceEndPoint IsNot Nothing AndAlso ServiceEndPoint.Length > 0 Then
                     SrvProxy.Url = ServiceEndPoint
                 End If

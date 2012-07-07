@@ -149,7 +149,8 @@ Namespace EbiWS
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If SrvProxy Is Nothing Then
 				SrvProxy = New EBISearchService()
-				SetProxyEndPoint() ' Set explicit service endpoint, if defined.
+                SrvProxy.EnableDecompression = True  ' Support HTTP compression.
+                SetProxyEndPoint() ' Set explicit service endpoint, if defined.
 				SetProxyUserAgent() ' Set user-agent for client.
 				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & SrvProxy.ToString, 12)
 			End If

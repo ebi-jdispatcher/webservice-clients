@@ -52,8 +52,9 @@ Namespace EbiWS
 		Protected Overrides Sub ServiceProxyConnect()
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If SrvProxy Is Nothing Then
-				SrvProxy = New JDispatcherService()
-				SetProxyEndPoint() ' Set explicit service endpoint, if defined.
+                SrvProxy = New EbiWS.IPRScanWs.JDispatcherService()
+                SrvProxy.EnableDecompression = True  ' Support HTTP compression.
+                SetProxyEndPoint() ' Set explicit service endpoint, if defined.
 				SetProxyUserAgent() ' Set user-agent for client.
 			End If
 			PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & SrvProxy.ToString(), 12)

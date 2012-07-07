@@ -88,7 +88,8 @@ Namespace EbiWS
 		Protected Sub ServiceProxyConnect()
 			PrintDebugMessage("ServiceProxyConnect", "Begin", 11)
 			If Me.SrvProxy Is Nothing Then
-				Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
+                Me.SrvProxy = New EbiWS.WSDbfetchWs.WSDBFetchDoclitServerService()
+                Me.SrvProxy.EnableDecompression = True  ' Support HTTP compression.
 				PrintDebugMessage("ServiceProxyConnect", "SrvProxy: " & Me.SrvProxy.ToString(), 12)
 				SetProxyEndPoint() ' Set explicit service endpoint, if defined.
 				SetProxyUserAgent() ' Set user-agent for client.
