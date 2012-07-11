@@ -73,6 +73,7 @@ class EbiWsDbfetch
 
   # Constructor
   def initialize(wsdl, outputLevel, debugLevel, trace, timeout)
+    @soap = nil
     @wsdl = wsdl
     @outputLevel = outputLevel.to_i
     @debugLevel = debugLevel.to_i
@@ -90,8 +91,8 @@ class EbiWsDbfetch
   # Get list of database names.
   def soapGetSupportedDBs()
     printDebugMessage('soapGetSupportedDBs', 'Begin', 1)
-    soap = soapConnect
-    res = soap.getSupportedDBs({})
+    soapConnect
+    res = @soap.getSupportedDBs({})
     if(2 <= @debugLevel)
       p res
     end
@@ -112,8 +113,8 @@ class EbiWsDbfetch
   # Get list of database and format names.
   def soapGetSupportedFormats()
     printDebugMessage('soapGetSupportedFormats', 'Begin', 1)
-    soap = soapConnect
-    res = soap.getSupportedFormats({})
+    soapConnect
+    res = @soap.getSupportedFormats({})
     if(2 <= @debugLevel)
       p res
     end
@@ -134,8 +135,8 @@ class EbiWsDbfetch
   # Get list of database and style names.
   def soapGetSupportedStyles()
     printDebugMessage('soapGetSupportedStyles', 'Begin', 1)
-    soap = soapConnect
-    res = soap.getSupportedStyles({})
+    soapConnect
+    res = @soap.getSupportedStyles({})
     if(2 <= @debugLevel)
       p res
     end
@@ -156,8 +157,8 @@ class EbiWsDbfetch
   # Get list of format names for a database.
   def soapGetDbFormats(dbName)
     printDebugMessage('soapGetDbFormats', 'Begin', 1)
-    soap = soapConnect
-    res = soap.getDbFormats(dbName)
+    soapConnect
+    res = @soap.getDbFormats(dbName)
     if(2 <= @debugLevel)
       p res
     end
@@ -178,8 +179,8 @@ class EbiWsDbfetch
   # Get list of style names for a format of a database.
   def soapGetFormatStyles(dbName, formatName)
     printDebugMessage('soapGetFormatStyles', 'Begin', 1)
-    soap = soapConnect
-    res = soap.getFormatStyles({'db' => dbName, 'format' => formatName})
+    soapConnect
+    res = @soap.getFormatStyles({'db' => dbName, 'format' => formatName})
     if(2 <= @debugLevel)
       p res
     end
@@ -200,8 +201,8 @@ class EbiWsDbfetch
   # Fetch an entry.
   def soapFetchData(query, formatName, styleName)
     printDebugMessage('soapFetchData', 'Begin', 1)
-    soap = soapConnect
-    res = soap.fetchData({
+    soapConnect
+    res = @soap.fetchData({
                            'query' => query, 
                            'format' => formatName,
                            'style' => styleName
@@ -224,8 +225,8 @@ class EbiWsDbfetch
   # Fetch a set of entries.
   def soapFetchBatch(dbName, idListStr, formatName, styleName)
     printDebugMessage('soapFetchBatch', 'Begin', 1)
-    soap = soapConnect
-    res = soap.fetchBatch({
+    soapConnect
+    res = @soap.fetchBatch({
                             'db' => dbName,
                             'ids' => idListStr, 
                             'format' => formatName,
@@ -250,18 +251,32 @@ class EbiWsDbfetch
 
   # Set the User-agent for client requests.
   # Note: this assumes details about the internals of SOAP4R.
-  def soapUserAgent(soap)
+  def soapUserAgent()
     printDebugMessage('soapUserAgent', 'Begin', 11)
+    # Construct the User-agent string.
     clientRevision = '$Revision$'
     clientVersion = '0'
     if clientRevision.length > 11
-       clientVersion = clientRevision[11..-3]
+      clientVersion = clientRevision[11..-3]
     end
     userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
-    if soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
-       userAgent += soap.proxy.streamhandler.client.instance_variable_get('@agent')
-       printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
-	soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
+    # Check if we can set it.
+    begin
+      require 'soap/netHttpClient'
+      require 'httpclient'
+    rescue LoadError => ex
+      printDebugMessage('soapUserAgent', 'Unable to load modules', 12)
+    end
+    if @soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
+      userAgent += @soap.proxy.streamhandler.client.instance_variable_get('@agent')
+      printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
+      @soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
+    elsif @soap.proxy.streamhandler.client.kind_of? HTTPClient
+      userAgent += @soap.proxy.streamhandler.client.agent_name
+      printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
+      @soap.proxy.streamhandler.client.agent_name = userAgent
+    else
+      printDebugMessage('soapUserAgent', "Unable to set User-Agent, SOAP client uses #{@soap.proxy.streamhandler.client.class}", 11)
     end
     printDebugMessage('soapUserAgent', 'End', 11)
   end
@@ -269,29 +284,34 @@ class EbiWsDbfetch
   # Create a SOAP proxy object.
   def soapConnect
     printDebugMessage('soapConnect', 'Begin', 11)
-    # Create the service proxy
-    soap = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
-    # Enable compression support if available (appears to require http-access2).
-    begin
-	require 'http-access2'
-	soap.streamhandler.accept_encoding_gzip = true
-    	printDebugMessage('soapConnect', 'Compression support enabled', 1)
-    rescue LoadError
-    	printDebugMessage('soapConnect', 'Compression support not available', 1)
-    end
-    # Set connection timeouts.
-    soap.options["protocol.http.connect_timeout"] = @timeout
-    soap.options["protocol.http.receive_timeout"] = @timeout
-    # Enable trace output.
-    soap.wiredump_dev = STDOUT if @trace
-    # Try to set a user-agent.
-    begin
-	soapUserAgent(soap)
-    rescue
-      printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+    if !@soap
+      # Create the service proxy
+      @soap = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
+      # Enable compression support if available (appears to require http-access2).
+      begin
+        require 'http-access2'
+        @soap.streamhandler.accept_encoding_gzip = true
+        printDebugMessage('soapConnect', 'Compression support enabled', 1)
+      rescue LoadError
+        printDebugMessage('soapConnect', 'Compression support not available', 1)
+      end
+      # Set connection timeouts.
+      @soap.options["protocol.http.connect_timeout"] = @timeout
+      @soap.options["protocol.http.receive_timeout"] = @timeout
+      # Enable trace output.
+      @soap.wiredump_dev = STDOUT if @trace
+      # Try to set a user-agent.
+      begin
+        soapUserAgent()
+      rescue Exception => ex
+        if @debugLevel > 0
+          $stderr.puts ex
+          $stderr.puts ex.backtrace
+        end
+        printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+      end
     end
     printDebugMessage('soapConnect', 'End', 11)
-    return soap
   end
 
 end
@@ -386,5 +406,8 @@ begin
 rescue StandardError => ex
   $stderr.puts 'Exception'
   $stderr.puts ex
+  if @debugLevel > 0
+    $stderr.puts ex.backtrace
+  end
   exit(2)
 end
