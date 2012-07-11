@@ -107,45 +107,45 @@ numArgs = ARGV.length
 
 # Process command-line options
 optParser = GetoptLong.new(
-# Generic options
-['--help', '-h', GetoptLong::NO_ARGUMENT],
-['--params', GetoptLong::NO_ARGUMENT],
-['--paramDetail', GetoptLong::REQUIRED_ARGUMENT],
-['--email', GetoptLong::REQUIRED_ARGUMENT],
-['--title', GetoptLong::REQUIRED_ARGUMENT],
-['--async', GetoptLong::NO_ARGUMENT],
-['--jobid', GetoptLong::REQUIRED_ARGUMENT],
-['--status', GetoptLong::NO_ARGUMENT],
-['--resultTypes', GetoptLong::NO_ARGUMENT],
-['--polljob', GetoptLong::NO_ARGUMENT],
-['--outformat', GetoptLong::REQUIRED_ARGUMENT],
-['--outfile', GetoptLong::REQUIRED_ARGUMENT],
-['--quiet', GetoptLong::NO_ARGUMENT],
-['--verbose', GetoptLong::NO_ARGUMENT],
-['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
-['--timeout', GetoptLong::REQUIRED_ARGUMENT],
-['--trace', GetoptLong::NO_ARGUMENT],
-
-# Tool specific options
-['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
-['--database', '-D', GetoptLong::REQUIRED_ARGUMENT],
-['--matrix', '-m', GetoptLong::REQUIRED_ARGUMENT],
-['--exp', '-E', GetoptLong::REQUIRED_ARGUMENT],
-['--filter', '-f', GetoptLong::NO_ARGUMENT],
-['--align', '-A', GetoptLong::REQUIRED_ARGUMENT],
-['--scores', '-s', GetoptLong::REQUIRED_ARGUMENT],
-['--alignments', '-n', GetoptLong::REQUIRED_ARGUMENT],
-['--dropoff', '-d', GetoptLong::REQUIRED_ARGUMENT],
-['--match_scores', GetoptLong::REQUIRED_ARGUMENT],
-['--match', '-u', GetoptLong::REQUIRED_ARGUMENT],
-['--mismatch', '-v', GetoptLong::REQUIRED_ARGUMENT],
-['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
-['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
-['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
-['--stype', GetoptLong::REQUIRED_ARGUMENT],
-['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
-['--sequence', GetoptLong::REQUIRED_ARGUMENT]
-)
+                           # Generic options
+                           ['--help', '-h', GetoptLong::NO_ARGUMENT],
+                           ['--params', GetoptLong::NO_ARGUMENT],
+                           ['--paramDetail', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--email', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--title', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--async', GetoptLong::NO_ARGUMENT],
+                           ['--jobid', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--status', GetoptLong::NO_ARGUMENT],
+                           ['--resultTypes', GetoptLong::NO_ARGUMENT],
+                           ['--polljob', GetoptLong::NO_ARGUMENT],
+                           ['--outformat', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--outfile', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--quiet', GetoptLong::NO_ARGUMENT],
+                           ['--verbose', GetoptLong::NO_ARGUMENT],
+                           ['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--timeout', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--trace', GetoptLong::NO_ARGUMENT],
+                           
+                           # Tool specific options
+                           ['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--database', '-D', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--matrix', '-m', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--exp', '-E', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--filter', '-f', GetoptLong::NO_ARGUMENT],
+                           ['--align', '-A', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--scores', '-s', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--alignments', '-n', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--dropoff', '-d', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--match_scores', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--match', '-u', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--mismatch', '-v', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
+                           ['--stype', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--sequence', GetoptLong::REQUIRED_ARGUMENT]
+                           )
 
 # Options to exclude from the options passed to launch the app
 excludeOpts = {
@@ -176,6 +176,7 @@ class EbiWsNcbiBlast
 
   # Constructor
   def initialize(outputLevel, debugLevel, trace, timeout)
+    @soap = nil
     @outputLevel = outputLevel.to_i
     @debugLevel = debugLevel.to_i
     @trace = trace
@@ -192,9 +193,9 @@ class EbiWsNcbiBlast
   # Get list of input parameters
   def getParams()
     printDebugMessage('getParams', 'Begin', 1)
-    soap = soapConnect
+    soapConnect
     req = GetParameters.new()
-    res = soap.getParameters(req)
+    res = @soap.getParameters(req)
     if(2 <= @debugLevel)
       p res
     end
@@ -217,10 +218,10 @@ class EbiWsNcbiBlast
   # Get detail about a parameter
   def getParamDetail(paramName)
     printDebugMessage('getParamDetail', 'Begin', 1)
-    soap = soapConnect
+    soapConnect
     req = GetParameterDetails.new()
     req.parameterId = paramName
-    res = soap.getParameterDetails(req)
+    res = @soap.getParameterDetails(req)
     if(2 <= @debugLevel)
       p res
     end
@@ -257,12 +258,12 @@ class EbiWsNcbiBlast
     printDebugMessage('run', 'Begin', 1)
     printDebugMessage('run', 'email: ' + email, 1)
     printDebugMessage('run', 'title: ' + title, 1)
-    soap = soapConnect
+    soapConnect
     req = Run.new()
     req.email = email
     req.title = title
     req.parameters = params
-    res = soap.run(req)
+    res = @soap.run(req)
     printDebugMessage('run', 'End', 1)
     return res.jobId
   end
@@ -270,10 +271,10 @@ class EbiWsNcbiBlast
   # Get job status
   def getStatus(jobId)
     printDebugMessage('getStatus', 'Begin', 1)
-    soap = soapConnect
+    soapConnect
     req = GetStatus.new()
     req.jobId = jobId
-    res = soap.getStatus(req)
+    res = @soap.getStatus(req)
     printDebugMessage('getStatus', 'End', 1)
     return res.status
   end
@@ -302,11 +303,12 @@ class EbiWsNcbiBlast
   def getResultTypes(jobId)
     printDebugMessage('getResultTypes', 'Begin', 1)
     clientPoll(jobId)
-    soap = soapConnect
+    soapConnect
     req = GetResultTypes.new()
     req.jobId = jobId
-    res = soap.getResultTypes(req)
-	# 'type' is a restricted attribute name, so a work-around is required to access this attribute
+    res = @soap.getResultTypes(req)
+    # 'type' is a restricted attribute name, so a work-around is required 
+    # to access this attribute
     resultTypes = res.resultTypes.instance_variable_get(:@type)
     printDebugMessage('getResultTypes', 'End', 1)
     return resultTypes
@@ -331,13 +333,13 @@ class EbiWsNcbiBlast
     printDebugMessage('getResult', 'Begin', 1)
     printDebugMessage('getResult', 'jobId: ' + jobId, 1)
     printDebugMessage('getResult', 'type: ' + type, 1)
-    soap = soapConnect
+    soapConnect
     req = GetResult.new()
     req.jobId = jobId
     req.type = type
     req.parameters = params
-    res = soap.getResult(req)
-	# As a work-around, we need to double decode
+    res = @soap.getResult(req)
+    # As a work-around, we need to double decode
     resultData = Base64.decode64(Base64.decode64(res.output))
     printDebugMessage('getResult', 'End', 1)
     return resultData
@@ -388,18 +390,40 @@ class EbiWsNcbiBlast
 
   # Set the User-agent for client requests.
   # Note: this assumes details about the internals of SOAP4R.
-  def soapUserAgent(soap)
+  def soapUserAgent()
     printDebugMessage('soapUserAgent', 'Begin', 11)
+    # Construct the User-agent string.
     clientRevision = '$Revision$'
     clientVersion = '0'
     if clientRevision.length > 11
-       clientVersion = clientRevision[11..-3]
+      clientVersion = clientRevision[11..-3]
     end
     userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
-    if soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
-       userAgent += soap.proxy.streamhandler.client.instance_variable_get('@agent')
-       printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
-	soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
+    # Check if we can set it.
+    begin
+      require 'soap/netHttpClient' # SOAP4R HTTP transport
+      require 'http-access2' # HTTP transport based on http-access2
+      require 'httpclient' # 'http-access2' is now called 'httpclient'
+    rescue LoadError => ex
+      printDebugMessage('soapUserAgent', 'Unable to load modules', 12)
+      if @debugLevel > 12
+        $stderr.puts ex
+        $stderr.puts ex.backtrace
+      end
+    end
+    if @soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
+      # HTTP transport provided with SOAP4R.
+      userAgent += @soap.proxy.streamhandler.client.instance_variable_get('@agent')
+      printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
+      @soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
+    elsif (@soap.proxy.streamhandler.client.kind_of? HTTPClient) || (@soap.proxy.streamhandler.client.kind_of? HTTPAccess2::Client)
+      # Alternative HTTP transport using 'httpclient'/'http-access2'
+      userAgent += @soap.proxy.streamhandler.client.agent_name
+      printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
+      @soap.proxy.streamhandler.client.agent_name = userAgent
+    else
+      # Unknown transport.
+      printDebugMessage('soapUserAgent', "Unable to set User-Agent, SOAP client uses #{@soap.proxy.streamhandler.client.class}", 11)
     end
     printDebugMessage('soapUserAgent', 'End', 11)
   end
@@ -407,19 +431,24 @@ class EbiWsNcbiBlast
   # Get a SOAP proxy object to access the service.
   def soapConnect
     printDebugMessage('soapConnect', 'Begin', 11)
-    # Create the service proxy
-    soap = JDispatcherService.new()
-    soap.options["protocol.http.connect_timeout"] = @timeout
-    soap.options["protocol.http.receive_timeout"] = @timeout
-    soap.wiredump_dev = STDOUT if @trace
-    # Try to set a user-agent.
-    begin
-	soapUserAgent(soap)
-    rescue
-      printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+    if !@soap
+      # Create the service proxy
+      @soap = JDispatcherService.new()
+      @soap.options["protocol.http.connect_timeout"] = @timeout
+      @soap.options["protocol.http.receive_timeout"] = @timeout
+      @soap.wiredump_dev = STDOUT if @trace
+      # Try to set a user-agent.
+      begin
+	soapUserAgent()
+      rescue Exception => ex
+        if argHash['debugLevel'].to_i > 10
+          $stderr.puts ex
+          $stderr.puts ex.backtrace
+        end
+        printDebugMessage('soapConnect', 'Unable to set User-agent', 11)
+      end
     end
     printDebugMessage('soapConnect', 'End', 11)
-    return soap
   end
     
 end
@@ -543,5 +572,8 @@ begin
 rescue StandardError => ex
   $stderr.puts 'Exception'
   $stderr.puts ex
+  if argHash['debugLevel'].to_i > 0
+    $stderr.puts ex.backtrace
+  end
   exit(2)
 end
