@@ -262,8 +262,9 @@ class EbiWsDbfetch
     userAgent = "EBI-Sample-Client/#{clientVersion} (#{self.class.name}; Ruby #{RUBY_VERSION}; #{RUBY_PLATFORM}) "
     # Check if we can set it.
     begin
-      require 'soap/netHttpClient'
-      require 'httpclient'
+      require 'soap/netHttpClient' # SOAP4R HTTP transport
+      require 'http-access2' # HTTP transport based on http-access2
+      require 'httpclient' # 'http-access2' is now called 'httpclient'
     rescue LoadError => ex
       printDebugMessage('soapUserAgent', 'Unable to load modules', 12)
       if @debugLevel > 12
@@ -272,14 +273,17 @@ class EbiWsDbfetch
       end
     end
     if @soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
+      # HTTP transport provided with SOAP4R.
       userAgent += @soap.proxy.streamhandler.client.instance_variable_get('@agent')
       printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
       @soap.proxy.streamhandler.client.instance_variable_set('@agent', userAgent)
-    elsif @soap.proxy.streamhandler.client.kind_of? HTTPClient
+    elsif (@soap.proxy.streamhandler.client.kind_of? HTTPClient) || (@soap.proxy.streamhandler.client.kind_of? HTTPAccess2::Client)
+      # Alternative HTTP transport using 'httpclient'/'http-access2'
       userAgent += @soap.proxy.streamhandler.client.agent_name
       printDebugMessage('soapUserAgent', 'userAgent: ' + userAgent, 11)
       @soap.proxy.streamhandler.client.agent_name = userAgent
     else
+      # Unknown transport.
       printDebugMessage('soapUserAgent', "Unable to set User-Agent, SOAP client uses #{@soap.proxy.streamhandler.client.class}", 11)
     end
     printDebugMessage('soapUserAgent', 'End', 11)
@@ -291,7 +295,7 @@ class EbiWsDbfetch
     if !@soap
       # Create the service proxy
       @soap = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
-      # Enable compression support if available (appears to require http-access2).
+      # Enable compression support if available (requires http-access2).
       begin
         require 'http-access2'
         @soap.streamhandler.accept_encoding_gzip = true
