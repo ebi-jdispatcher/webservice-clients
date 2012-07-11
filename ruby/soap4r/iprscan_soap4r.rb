@@ -478,9 +478,19 @@ begin
 
   # Submit a job
   elsif(ARGV[0] || argHash['sequence'])
-    # TODO: implement input sequence fetch from file.
-    if(ARGV[0])
-      params.sequence = ARGV[0]
+    # Get input data to pass to service.
+    inputData = ARGV[0] || argHash['sequence']
+    if(inputData)
+      # TODO: read data from STDIN.
+      if File.exist?(inputData)
+        # Read input from file.
+        inFile = File.open(inputData, 'rb') # Read data in binary mode.
+        params.sequence = inFile.read
+        inFile.close
+      else
+        # Use parameter value as input.
+        params.sequence = inputData
+      end
     end
     # List of applications. Convert into list.
     if(argHash['appl'])

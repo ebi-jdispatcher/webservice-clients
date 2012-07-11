@@ -78,6 +78,8 @@ dbfetch_clean:
 iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
 iprscan_stubs_generation: iprscanDriver.rb
+
+iprscanDriver.rb:
 	wsdl2ruby.rb --type client --wsdl 'http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl'
 
 iprscan_params: iprscan_stubs_generation
@@ -114,6 +116,8 @@ iprscan_clean:
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
 
 ncbiblast_stubs_generation: ncbiblastDriver.rb
+
+ncbiblastDriver.rb:
 	wsdl2ruby.rb --type client --wsdl 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 ncbiblast_params: ncbiblast_stubs_generation
@@ -129,7 +133,8 @@ ncbiblast_dbid: ncbiblast_stubs_generation
 	${RUBY} ncbiblast_soap4r.rb --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
 
 ncbiblast_stdin_stdout: test_data ncbiblast_stubs_generation
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${RUBY} ncbiblast_soap4r.rb --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
+	echo 'TODO:' $@
+	#cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${RUBY} ncbiblast_soap4r.rb --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein --quiet --outformat out --outfile - - > ncbiblast-blah.txt
 
 ncbiblast_id_list_file: test_data ncbiblast_stubs_generation
 	echo 'TODO:' $@
