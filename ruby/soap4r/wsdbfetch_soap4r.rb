@@ -266,6 +266,10 @@ class EbiWsDbfetch
       require 'httpclient'
     rescue LoadError => ex
       printDebugMessage('soapUserAgent', 'Unable to load modules', 12)
+      if @debugLevel > 12
+        $stderr.puts ex
+        $stderr.puts ex.backtrace
+      end
     end
     if @soap.proxy.streamhandler.client.kind_of? SOAP::NetHttpClient
       userAgent += @soap.proxy.streamhandler.client.instance_variable_get('@agent')
