@@ -465,7 +465,7 @@ if outputLevel > 1:
 server = client.service
 
 # Set the client user-agent.
-clientRevision = '$Revision: 1691 $'
+clientRevision = '$Revision$'
 clientVersion = '0'
 if len(clientRevision) > 11:
     clientVersion = clientRevision[11:-2] 
