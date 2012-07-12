@@ -4,10 +4,11 @@
 # EB-eye SOAP service, Python client using suds.
 #
 # Tested with:
-#   Python 2.6.5 with suds 0.3.9 (Ubuntu 10.04)
+#   Python 2.6.5 with suds 0.3.9 (Ubuntu 10.04 LTS)
+#   Python 2.7.3 with suds 0.4.1 (Ubuntu 12.04 LTS)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/dbfetch
+# http://www.ebi.ac.uk/Tools/webservices/services/eb-eye
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # WSDL URL for service.
