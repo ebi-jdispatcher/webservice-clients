@@ -87,7 +87,6 @@ GetOptions(
     'alg=s'          => \$tool_params{'alg'},        # Algorithm
     'asequence=s'    => \$params{'asequence'},       # First input protein sequence
     'bsequence=s'    => \$params{'bsequence'},       # Second input DNA sequence
-    
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -825,7 +824,8 @@ sub usage {
 GeneWise
 ======
 
-GeneWise compares a protein sequence to a genomic DNA sequence, allowing for introns and frameshifting errors.
+GeneWise compares a protein sequence to a genomic DNA sequence, allowing for introns 
+and frameshifting errors.
 
 [Required]
 
