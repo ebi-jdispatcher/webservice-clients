@@ -822,8 +822,7 @@ PromoterWise compares two DNA sequences allowing for inversions and translocatio
 
 [Optional]
 
-  -o, --hitoutput     : str  : hit list output format, see --paramDetail
-                               format
+  -o, --hitoutput     : str  : hit list output format, see --paramDetail hitoutput
 
 [General]
 
