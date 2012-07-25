@@ -93,6 +93,7 @@
 		<antcall target="axis1-stubs-emboss_water" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
+		<antcall target="axis1-stubs-genewise" />
 		<antcall target="axis1-stubs-iprscan" />
 		<antcall target="axis1-stubs-kalign" />
 		<antcall target="axis1-stubs-lalign" />
@@ -103,11 +104,13 @@
 		<antcall target="axis1-stubs-ncbiblast" />
 		<antcall target="axis1-stubs-phobius" />
 		<antcall target="axis1-stubs-prank" />
+		<antcall target="axis1-stubs-promoterwise" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
 		<antcall target="axis1-stubs-radar"/>
 		<antcall target="axis1-stubs-saps"/>
 		<antcall target="axis1-stubs-tcoffee" />
+		<antcall target="axis1-stubs-wise2dba" />
 		<antcall target="axis1-stubs-wsdbfetch" />
 		<antcall target="axis1-stubs-wublast" />
 	</target>
@@ -227,6 +230,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-genewise" description="Axis 1.x: generate stubs for GeneWise (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.genewise" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/genewise?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-iprscan" description="Axis 1.x: generate stubs for InterProScan (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.iprscan" />
@@ -287,6 +296,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-promoterwise" description="Axis 1.x: generate stubs for PromoterWise (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.promoterwise" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/promoterwise?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-psiblast" description="Axis 1.x: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psiblast" />
@@ -315,6 +330,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.tcoffee" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/tcoffee?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-wise2dba" description="Axis 1.x: generate stubs for Wise2DBA (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.wise2dba" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wise2dba?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-wsdbfetch" description="Axis 1.x: generate stubs for WSDbfetch (SOAP)">
@@ -521,6 +542,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- TODO GeneWise -->
 		<jar destfile="${jar.dir}/IPRScan_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan/**">
@@ -610,6 +632,7 @@
 					</manifest>
 				</jar>
 		<!-- TODO PRANK -->
+		<!-- TODO PromoterWise -->
 		<jar destfile="${jar.dir}/PSIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/**">
@@ -660,6 +683,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- TODO Wise2DBA -->
 		<jar destfile="${jar.dir}/WSDbfetch_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/WSDbfetchClient** uk/ac/ebi/webservices/axis1/stubs/wsdbfetch/** client-config.wsdd">
@@ -699,6 +723,7 @@
 		<antcall target="axis1-distclean-stubs-emboss_water" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
+		<antcall target="axis1-distclean-stubs-genewise" />
 		<antcall target="axis1-distclean-stubs-iprscan" />
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-lalign" />
@@ -709,11 +734,13 @@
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
 		<antcall target="axis1-distclean-stubs-phobius" />
 		<antcall target="axis1-distclean-stubs-prank" />
+		<antcall target="axis1-distclean-stubs-promoterwise" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
 		<antcall target="axis1-distclean-stubs-radar"/>
 		<antcall target="axis1-distclean-stubs-saps"/>
 		<antcall target="axis1-distclean-stubs-tcoffee" />
+		<antcall target="axis1-distclean-stubs-wise2dba" />
 		<antcall target="axis1-distclean-stubs-wsdbfetch" />
 		<antcall target="axis1-distclean-stubs-wublast" />
 	</target>
@@ -808,6 +835,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fastm" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-genewise" description="Axis 1.x: remove GeneWise (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/genewise" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="genewise" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-iprscan" description="Axis 1.x: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/iprscan" includes="*/**" />
@@ -868,6 +901,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="prank" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-promoterwise" description="Axis 1.x: remove PromoterWise (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/promoterwise" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="promoterwise" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-psiblast" description="Axis 1.x: remove PSI-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/psiblast" includes="*/**" />
@@ -894,6 +933,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/tcoffee" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="tcoffee" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-wise2dba" description="Axis 1.x: remove Wise2DBA (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/wise2dba" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="wise2dba" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-wsdbfetch" description="Axis 1.x: remove WSDbfetch (SOAP) stubs">
