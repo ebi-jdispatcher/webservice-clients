@@ -622,17 +622,26 @@
 			</manifest>
 		</jar>
 		<jar destfile="${jar.dir}/Phobius_Axis1.jar"
-					basedir="${build.dir}"
-					includes="uk/ac/ebi/webservices/axis1/PhobiusClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/phobius/**">
-					<manifest>
-						<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PhobiusClient"/>
-						<attribute name="Built-By" value="${user.name}"/>
-						<attribute name="Built-Date" value="${TODAY}"/>
-						<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
-					</manifest>
-				</jar>
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/PhobiusClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/phobius/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PhobiusClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<!-- TODO PRANK -->
-		<!-- TODO PromoterWise -->
+		<jar destfile="${jar.dir}/PromoterWise_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/PromoterWiseClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/promoterwise/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PromoterWiseClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/PSIBlast_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/**">
