@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-emboss_matcher_lwp.pl
+lalign_lwp.pl
 
 =head1 DESCRIPTION
 
