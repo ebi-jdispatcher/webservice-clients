@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -16,17 +16,30 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
+    <OutputType>Library</OutputType>
+    <AssemblyName>EbiWS</AssemblyName>
+    <RootNamespace>EbiWS</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Library</OutputType>
+    <AssemblyName>EbiWS</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>EbiWS</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
@@ -68,6 +81,7 @@
     <Compile Include="WebReferences\FastaWs\Reference.cs" />
     <Compile Include="FastmClient.cs" />
     <Compile Include="WebReferences\FastmWs\Reference.cs" />
+    <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
     <Compile Include="KalignClient.cs" />
@@ -87,6 +101,7 @@
     <Compile Include="PhobiusClient.cs" />
     <Compile Include="WebReferences\PhobiusWs\Reference.cs" />
     <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="WebReferences\PromoterWiseWs\Reference.cs" />
     <Compile Include="PsiBlastClient.cs" />
     <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />
     <Compile Include="PsiSearchClient.cs" />
@@ -97,6 +112,7 @@
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
+    <Compile Include="WebReferences\Wise2DBAWs\Reference.cs" />
     <Compile Include="WSDbfetchClient.cs" />
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
@@ -123,6 +139,7 @@
     <None Include="WebReferences\EmbossWaterWs\Reference.map" />
     <None Include="WebReferences\FastaWs\Reference.map" />
     <None Include="WebReferences\FastmWs\Reference.map" />
+    <None Include="WebReferences\GeneWiseWs\Reference.map" />
     <None Include="WebReferences\IPRScanWs\Reference.map" />
     <None Include="WebReferences\KalignWs\Reference.map" />
     <None Include="WebReferences\LalignWs\Reference.map" />
@@ -133,11 +150,13 @@
     <None Include="WebReferences\NcbiBlastWs\Reference.map" />
     <None Include="WebReferences\PhobiusWs\Reference.map" />
     <None Include="WebReferences\PrankWs\Reference.map" />
+    <None Include="WebReferences\PromoterWiseWs\Reference.map" />
     <None Include="WebReferences\PsiBlastWs\Reference.map" />
     <None Include="WebReferences\PsiSearchWs\Reference.map" />
     <None Include="WebReferences\RadarWs\Reference.map" />
     <None Include="WebReferences\SapsWs\Reference.map" />
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
+    <None Include="WebReferences\Wise2DBAWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
   </ItemGroup>
