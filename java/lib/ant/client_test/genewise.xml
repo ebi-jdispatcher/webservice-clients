@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-GeneWise">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-genewise" description="Axis 1.x: GeneWise (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/GeneWise_Axis1.jar" />
+		<antcall target="test-genewise-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-genewise-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-genewise-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-genewise-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-genewise-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-genewise" description="JAX-WS RI: Genewise (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Genewise_JAXWS.jar" />
+		<antcall target="test-genewise-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-genewise-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-genewise-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-genewise-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-genewise-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-genewise-help">
+		<echo message="GeneWise (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-genewise-params">
+		<echo message="GeneWise (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-genewise-paramdetail">
+		<echo message="GeneWise (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="alg" />
+		</java>
+	</target>
+	
+	<target name="test-genewise-sequence-file">
+		<echo message="GeneWise (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/EMBL_HQ708921.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-genewise-sequence-dbid">
+		<echo message="GeneWise (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+			<arg value="--bsequence" />
+			<arg value="EMBL:HQ708921" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-genewise" description="GeneWise (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="genewise-**"/>
+		</delete>
+	</target>
+	
+</project>

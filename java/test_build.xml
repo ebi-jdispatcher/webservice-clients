@@ -39,10 +39,10 @@
 	<import file="${ant.import.lib.dir}/client_test/emboss_needle.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_stretcher.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_water.xml" />
-	<!-- import file="{ant.import.lib.dir}/client_test/genewise.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/genewise.xml" />
 	<import file="${ant.import.lib.dir}/client_test/lalign.xml" />
 	<import file="${ant.import.lib.dir}/client_test/promoterwise.xml" />
-	<!-- import file="{ant.import.lib.dir}/client_test/wisedba.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/wisedba.xml" / -->
 	<!-- Sequence Statistics -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" />
