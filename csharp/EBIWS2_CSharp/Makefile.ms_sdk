@@ -58,7 +58,7 @@ ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe: EbiWS\bin\Release\EbiWS.d
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk
 
-DaliliteCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+DaliliteCliClient\bin\Release\DaliliteCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk
 
 DbClustalCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.dll
