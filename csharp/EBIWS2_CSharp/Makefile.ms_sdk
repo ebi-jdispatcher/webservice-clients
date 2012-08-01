@@ -142,6 +142,9 @@ PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe: EbiWS\bin\Release\EbiWS.d
 RadarCliClient\bin\Release\RadarCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk
 
+SapsCliClient\bin\Release\SapsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk
+
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk
 
