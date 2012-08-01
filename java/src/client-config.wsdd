@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <deployment 
-    name="commonsHTTPConfig" 
-    xmlns="http://xml.apache.org/axis/wsdd/" 
-    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-
-  <!-- use CommonsHTTPSender instead of the default HTTPSender -->
-  <transport name="http" pivot="java:org.apache.axis.transport.http.CommonsHTTPSender" />  
-
-  <transport name="local" pivot = "java:org.apache.axis.transport.local.LocalSender" /> 
-  <transport name="java" pivot="java:org.apache.axis.transport.java.JavaSender" /> 
+	name="commonsHTTPConfig" 
+	xmlns="http://xml.apache.org/axis/wsdd/" 
+	xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+	<!-- Use CommonsHTTPSender instead of the default HTTPSender (requires Commons HttpClient) -->
+	<transport name="http" pivot="java:org.apache.axis.transport.http.CommonsHTTPSender" />  
+	<transport name="local" pivot = "java:org.apache.axis.transport.local.LocalSender" /> 
+	<transport name="java" pivot="java:org.apache.axis.transport.java.JavaSender" /> 
 </deployment>
