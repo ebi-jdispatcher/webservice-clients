@@ -41,7 +41,7 @@
 	<import file="${ant.import.lib.dir}/client_test/emboss_water.xml" />
 	<!-- import file="{ant.import.lib.dir}/client_test/genewise.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/lalign.xml" />
-	<!-- import file="{ant.import.lib.dir}/client_test/promoterwise.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/promoterwise.xml" />
 	<!-- import file="{ant.import.lib.dir}/client_test/wisedba.xml" / -->
 	<!-- Sequence Statistics -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
@@ -101,7 +101,7 @@
 		<antcall target="test-clean-emboss_water" />
 		<!-- antcall target="test-clean-genewise" / -->
 		<antcall target="test-clean-lalign" />
-		<!-- antcall target="test-clean-promoterwise" / -->
+		<antcall target="test-clean-promoterwise" />
 		<!-- antcall target="test-clean-wisedba" / -->
 		<!-- Sequence Statistics -->
 		<antcall target="test-clean-emboss_pepinfo" />
@@ -143,12 +143,29 @@
 		<antcall target="axis1-test-mafft" />
 		<antcall target="axis1-test-muscle" />
 		<antcall target="axis1-test-mview" />
+		<!-- antcall target="axis1-test-prank" / -->
 		<antcall target="axis1-test-tcoffee" />
+		<!-- Pairwise Sequence Alignment (PSA) -->
+		<antcall target="axis1-test-emboss_matcher" />
+		<antcall target="axis1-test-emboss_needle" />
+		<antcall target="axis1-test-emboss_stretcher" />
+		<antcall target="axis1-test-emboss_water" />
+		<!-- antcall target="axis1-test-genewise" / -->
+		<antcall target="axis1-test-lalign" />
+		<antcall target="axis1-test-promoterwise" />
+		<!-- antcall target="axis1-test-wise2dba" / -->
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="axis1-test-iprscan" />
+		<!-- antcall target="axis1-test-iprscan5" / -->
 		<antcall target="axis1-test-phobius" />
+		<antcall target="axis1-test-radar" />
 		<!-- Phylogeny -->
 		<antcall target="axis1-test-clustalw2_phylogeny" />
+		<!-- TODO: Sequence Format Conversion (SFC) -->
+		<!-- antcall target="axis1-test-emboss_seqret" / -->
+		<!-- antcall target="axis1-test-readseq" / -->
+		<!-- TODO: Sequence Operations (SO) -->
+		<!-- antcall target="axis1-test-seqcksum" / -->
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="axis1-test-fasta" />
 		<antcall target="axis1-test-fastm" />
@@ -156,8 +173,19 @@
 		<antcall target="axis1-test-psiblast" />
 		<antcall target="axis1-test-psisearch" />
 		<antcall target="axis1-test-wublast" />
+		<!-- Sequence Statistics -->
+		<antcall target="axis1-test-emboss_pepinfo" />
+		<antcall target="axis1-test-emboss_pepstats" />
+		<antcall target="axis1-test-emboss_pepwindow" />
+		<antcall target="axis1-test-saps" />
+		<!-- Sequence Translation (ST) -->
+		<antcall target="axis1-test-emboss_backtranambig" />
+		<antcall target="axis1-test-emboss_backtranseq" />
+		<antcall target="axis1-test-emboss_sixpack" />
+		<antcall target="axis1-test-emboss_transeq" />
 		<!-- Structure Analysis -->
 		<antcall target="axis1-test-dalilite" />
+		<antcall target="axis1-test-maxsprout" />
 	</target>
 	
 	<!-- JAX-WS RI client tests -->
