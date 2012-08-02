@@ -289,13 +289,16 @@ For more information see:
                                                 goto case "--alg";
 
 
-						// Input sequences option
-					case "--asequence": // Input first sequence
-						i++;
-						goto default;
-					 case "--bsequence": // Input second sequence
-						i++;
-						goto default;
+					// Input data/sequence options.
+					case "--asequence": // First sequence.
+						InParams.asequence = LoadData(args[++i]);
+						Action = "submit";
+						break;
+					case "--bsequence": // Second sequence.
+						InParams.bsequence = LoadData(args[++i]);
+						Action = "submit";
+						break;
+					// Unknown and unnamed options
 					default:
 						// Check for unknown option
 						if (args[i].StartsWith("--") || args[i].LastIndexOf('/') == 0)
