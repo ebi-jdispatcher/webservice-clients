@@ -98,14 +98,20 @@ emboss_matcher \
 emboss_needle \
 emboss_stretcher \
 emboss_water \
-lalign
+genewise \
+lalign \
+promoterwise \
+wise2dba
 
 psa_clean: \
 emboss_matcher_clean \
 emboss_needle_clean \
 emboss_stretcher_clean \
 emboss_water_clean \
-lalign_clean
+genewise_clean \
+lalign_clean \
+promoterwise_clean \
+wise2dba_clean
 
 # Sequence Statistics
 seqstats: \
@@ -718,6 +724,24 @@ fastm_stdin_stdout: test_data
 fastm_clean:
 	rm -f fastm-*
 
+# GeneWise
+genewise: genewise_params genewise_param_detail genewise_dbid genewise_file
+
+genewise_params:
+	${PERL} genewise_soaplite.pl --params ${JDispatcher_params_suffix}
+
+genewise_param_detail:
+	${PERL} genewise_soaplite.pl --paramDetail alg
+
+genewise_dbid:
+	${PERL} genewise_soaplite.pl --email ${EMAIL} --asequence 'UNIPROT:ABCC9_HUMAN' --bsequence 'EMBL:HQ708921'
+
+genewise_file: test_data
+	${PERL} genewise_soaplite.pl --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/EMBL_HQ708921.fasta
+
+genewise_clean:
+	rm -f genewise-*
+
 # InterProScan
 iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
@@ -950,6 +974,24 @@ prank_stdin_stdout: test_data
 prank_clean:
 	rm -f prank-*
 
+# PromoterWise
+promoterwise: promoterwise_params promoterwise_param_detail promoterwise_dbid promoterwise_file
+
+promoterwise_params:
+	${PERL} promoterwise_soaplite.pl --params ${JDispatcher_params_suffix}
+
+promoterwise_param_detail:
+	${PERL} promoterwise_soaplite.pl --paramDetail hitoutput
+
+promoterwise_dbid:
+	${PERL} promoterwise_soaplite.pl --email ${EMAIL} --asequence 'EMBL:AB000204' --bsequence 'EMBL:HQ708921'
+
+promoterwise_file: test_data
+	${PERL} promoterwise_soaplite.pl --email ${EMAIL} --asequence ../test_data/EMBL_AB000204.fasta --bsequence ../test_data/EMBL_HQ708921.fasta
+
+promoterwise_clean:
+	rm -f promoterwise-*
+
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout psiblast_id_list_file psiblast_id_list_file_stdin_stdout psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
 
@@ -1089,6 +1131,24 @@ tcoffee_stdin_stdout: test_data
 
 tcoffee_clean:
 	rm -f tcoffee-*
+
+# Wise2DBA
+wise2dba: wise2dba_params wise2dba_param_detail wise2dba_dbid wise2dba_file
+
+wise2dba_params:
+	${PERL} wise2dba_soaplite.pl --params ${JDispatcher_params_suffix}
+
+wise2dba_param_detail:
+	${PERL} wise2dba_soaplite.pl --paramDetail pretty
+
+wise2dba_dbid:
+	${PERL} wise2dba_soaplite.pl --email ${EMAIL} --asequence 'EMBL:AB000204' --bsequence 'EMBL:HQ708921'
+
+wise2dba_file: test_data
+	${PERL} wise2dba_soaplite.pl --email ${EMAIL} --asequence ../test_data/EMBL_AB000204.fasta --bsequence ../test_data/EMBL_HQ708921.fasta
+
+wise2dba_clean:
+	rm -f wise2dba-*
 
 # WU-BLAST
 wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_id_list_file_stdin_stdout wublast_multifasta_file wublast_multifasta_file_stdin_stdout
