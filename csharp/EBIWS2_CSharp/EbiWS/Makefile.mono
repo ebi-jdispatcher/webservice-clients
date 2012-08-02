@@ -55,6 +55,7 @@ EmbossTranseqClient.cs \
 EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
+GeneWiseClient.cs \
 IPRScanClient.cs \
 KalignClient.cs \
 LalignClient.cs \
@@ -64,6 +65,7 @@ MuscleClient.cs \
 MViewClient.cs \
 NcbiBlastClient.cs \
 PhobiusClient.cs \
+PromoterWiseClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
 RadarClient.cs \

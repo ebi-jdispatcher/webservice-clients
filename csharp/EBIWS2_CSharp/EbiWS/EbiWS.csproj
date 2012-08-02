@@ -81,6 +81,7 @@
     <Compile Include="WebReferences\FastaWs\Reference.cs" />
     <Compile Include="FastmClient.cs" />
     <Compile Include="WebReferences\FastmWs\Reference.cs" />
+    <Compile Include="GeneWiseClient.cs" />
     <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="PhobiusClient.cs" />
     <Compile Include="WebReferences\PhobiusWs\Reference.cs" />
     <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="PromoterWiseClient.cs" />
     <Compile Include="WebReferences\PromoterWiseWs\Reference.cs" />
     <Compile Include="PsiBlastClient.cs" />
     <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />

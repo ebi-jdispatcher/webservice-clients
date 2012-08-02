@@ -29,6 +29,7 @@ build-EmbossPepwindowCliClient \
 build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
+build-GeneWiseCliClient \
 build-IPRScanCliClient \
 build-KalignCliClient \
 build-LalignCliClient \
@@ -38,6 +39,7 @@ build-MuscleCliClient \
 build-MViewCliClient \
 build-NcbiBlastCliClient \
 build-PhobiusCliClient \
+build-PromoterWiseCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
 build-RadarCliClient \
@@ -106,6 +108,9 @@ build-FastaCliClient: build-EbiWS
 build-FastmCliClient: build-EbiWS
 	cd FastmCliClient && $(MAKE) -f Makefile.mono
 
+build-GeneWiseCliClient: build-EbiWS
+	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono
+
 build-IPRScanCliClient: build-EbiWS
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono
 
@@ -132,6 +137,9 @@ build-NcbiBlastCliClient: build-EbiWS
 
 build-PhobiusCliClient: build-EbiWS
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono
+
+build-PromoterWiseCliClient: build-EbiWS
+	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono
 
 build-PsiBlastCliClient: build-EbiWS
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono
@@ -176,6 +184,7 @@ clean-EmbossPepwindowCliClient \
 clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
+clean-GeneWiseCliClient \
 clean-IPRScanCliClient \
 clean-KalignCliClient \
 clean-LalignCliClient \
@@ -185,6 +194,7 @@ clean-MuscleCliClient \
 clean-MViewCliClient \
 clean-NcbiBlastCliClient \
 clean-PhobiusCliClient \
+clean-PromoterWiseCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
 clean-RadarCliClient \
@@ -253,6 +263,9 @@ clean-FastaCliClient:
 clean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-GeneWiseCliClient:
+	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -279,7 +292,10 @@ clean-NcbiBlastCliClient:
 
 clean-PhobiusCliClient:
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono clean
-	
+
+clean-PromoterWiseCliClient:
+	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-PsiBlastCliClient:
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -311,19 +327,20 @@ distclean-ClustalW2PhylogenyCliClient \
 distclean-DaliliteCliClient \
 distclean-DbClustalCliClient \
 distclean-EBeyeCliClient \
-distclean-EmbossMatcherCliClient \
-distclean-EmbossNeedleCliClient \
-distclean-EmbossStretcherCliClient \
-distclean-EmbossTranseqCliClient \
-distclean-EmbossSixpackCliClient \
 distclean-EmbossBacktranseqCliClient \
 distclean-EmbossBacktranambigCliClient \
+distclean-EmbossMatcherCliClient \
+distclean-EmbossNeedleCliClient \
+distclean-EmbossSixpackCliClient \
+distclean-EmbossStretcherCliClient \
+distclean-EmbossTranseqCliClient \
 distclean-EmbossPepinfoCliClient \
 distclean-EmbossPepstatsCliClient \
 distclean-EmbossPepwindowCliClient \
 distclean-EmbossWaterCliClient \
 distclean-FastaCliClient \
 distclean-FastmCliClient \
+distclean-GeneWiseCliClient \
 distclean-IPRScanCliClient \
 distclean-KalignCliClient \
 distclean-LalignCliClient \
@@ -333,6 +350,7 @@ distclean-MuscleCliClient \
 distclean-MViewCliClient \
 distclean-NcbiBlastCliClient \
 distclean-PhobiusCliClient \
+distclean-PromoterWiseCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
 distclean-RadarCliClient \
@@ -362,26 +380,26 @@ distclean-DbClustalCliClient:
 distclean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-EmbossBacktranseqCliClient:
+	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-EmbossBacktranambigCliClient:
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-EmbossMatcherCliClient:
 	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossNeedleCliClient:
 	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-EmbossSixpackCliClient:
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-EmbossStretcherCliClient:
 	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossTranseqCliClient:
 	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EmbossSixpackCliClient:
-	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EmbossBacktranseqCliClient:
-	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EmbossBacktranambigCliClient:
-	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossPepinfoCliClient:
 	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono distclean
@@ -400,6 +418,9 @@ distclean-FastaCliClient:
 
 distclean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-GeneWiseCliClient:
+	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono distclean
@@ -427,6 +448,9 @@ distclean-NcbiBlastCliClient:
 
 distclean-PhobiusCliClient:
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PromoterWiseCliClient:
+	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-PsiBlastCliClient:
 	cd PsiBlastCliClient && $(MAKE) -f Makefile.mono distclean

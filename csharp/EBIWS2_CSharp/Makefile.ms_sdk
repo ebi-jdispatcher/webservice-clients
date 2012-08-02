@@ -30,6 +30,7 @@ EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
+GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
 LalignCliClient\bin\Release\LalignCliClient.exe \
@@ -39,6 +40,7 @@ MuscleCliClient\bin\Release\MuscleCliClient.exe \
 MViewCliClient\bin\Release\MViewCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
+PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 RadarCliClient\bin\Release\RadarCliClient.exe \
@@ -107,6 +109,9 @@ FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 FastmCliClient\bin\Release\FastmCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk
 
+GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk
+
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -133,6 +138,9 @@ NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.d
 
 PhobiusCliClient\bin\Release\PhobiusCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk
 
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -176,6 +184,7 @@ clean:
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -185,6 +194,7 @@ clean:
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -214,6 +224,7 @@ distclean:
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
@@ -223,6 +234,7 @@ distclean:
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean

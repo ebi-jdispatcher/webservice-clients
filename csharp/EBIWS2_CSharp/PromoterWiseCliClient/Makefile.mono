@@ -1,0 +1,47 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# promoterwise client using Mono.
+#
+# ======================================================================
+
+# C# compiler
+CSC = gmcs
+# C# compiler flags
+CSFLAGS = -r:System.Web.Services
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)/Debug
+RELEASEBINDIR = $(BINDIR)/Release
+
+# Core assembly project
+EBIWS = ../EbiWS
+
+all: PromoterWiseCliClient
+
+### PromoterWise command-line client ###
+
+PromoterWiseCliClient: $(DEBUGBINDIR)/PromoterWiseCliClient.exe $(RELEASEBINDIR)/PromoterWiseCliClient.exe
+
+$(DEBUGBINDIR)/PromoterWiseCliClient.exe: PromoterWiseCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ PromoterWiseCliClient.cs
+
+$(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
+
+$(RELEASEBINDIR)/PromoterWiseCliClient.exe: PromoterWiseCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ PromoterWiseCliClient.cs
+
+$(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	cp $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll* $(RELEASEBINDIR)/
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/
