@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-Wise2DBA">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-wise2dba" description="Axis 1.x: Wise2DBA (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/Wise2DBA_Axis1.jar" />
+		<antcall target="test-wise2dba-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-wise2dba-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-wise2dba-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-wise2dba-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-wise2dba-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-wise2dba" description="JAX-WS RI: Wise2DBA (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Wise2DBA_JAXWS.jar" />
+		<antcall target="test-wise2dba-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-wise2dba-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-wise2dba-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-wise2dba-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-wise2dba-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-wise2dba-help">
+		<echo message="Wise2DBA (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-wise2dba-params">
+		<echo message="Wise2DBA (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-wise2dba-paramdetail">
+		<echo message="Wise2DBA (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="pretty" />
+		</java>
+	</target>
+	
+	<target name="test-wise2dba-sequence-file">
+		<echo message="Wise2DBA (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="test_data/EMBL_AB000204.fasta" />
+			<arg value="--bsequence" />
+			<arg value="test_data/EMBL_HQ708921.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-wise2dba-sequence-dbid">
+		<echo message="Wise2DBA (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--asequence" />
+			<arg value="EMBL:AB000204" />
+			<arg value="--bsequence" />
+			<arg value="EMBL:HQ708921" />
+		</java>
+	</target>
+		
+	<!-- Clean-up -->
+	<target name="test-clean-wise2dba" description="Wise2DBA (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="wise2dba-**"/>
+		</delete>
+	</target>
+	
+</project>

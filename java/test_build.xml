@@ -42,7 +42,7 @@
 	<import file="${ant.import.lib.dir}/client_test/genewise.xml" />
 	<import file="${ant.import.lib.dir}/client_test/lalign.xml" />
 	<import file="${ant.import.lib.dir}/client_test/promoterwise.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/wisedba.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/wise2dba.xml" />
 	<!-- Sequence Statistics -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" />
@@ -102,7 +102,7 @@
 		<!-- antcall target="test-clean-genewise" / -->
 		<antcall target="test-clean-lalign" />
 		<antcall target="test-clean-promoterwise" />
-		<!-- antcall target="test-clean-wisedba" / -->
+		<antcall target="test-clean-wise2dba" />
 		<!-- Sequence Statistics -->
 		<antcall target="test-clean-emboss_pepinfo" />
 		<antcall target="test-clean-emboss_pepstats" />
@@ -150,10 +150,10 @@
 		<antcall target="axis1-test-emboss_needle" />
 		<antcall target="axis1-test-emboss_stretcher" />
 		<antcall target="axis1-test-emboss_water" />
-		<!-- antcall target="axis1-test-genewise" / -->
+		<antcall target="axis1-test-genewise" />
 		<antcall target="axis1-test-lalign" />
 		<antcall target="axis1-test-promoterwise" />
-		<!-- antcall target="axis1-test-wise2dba" / -->
+		<antcall target="axis1-test-wise2dba" />
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="axis1-test-iprscan" />
 		<!-- antcall target="axis1-test-iprscan5" / -->
