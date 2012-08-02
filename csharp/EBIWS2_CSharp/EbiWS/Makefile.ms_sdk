@@ -253,12 +253,12 @@ $(STUBSRCDIR)\WuBlastWs\Reference.cs:
 clean:
 
 distclean: clean
-	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	del /Q /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
 	rmdir $(DEBUGBINDIR)
 	rmdir $(RELEASEBINDIR)
 	rmdir $(BINDIR)
 
 clean-stubs:
 	cd $(STUBSRCDIR)
-	del /f /s *.cs
-	del /f /s *.map
+	del /Q /f /s *.cs
+	del /Q /f /s *.map

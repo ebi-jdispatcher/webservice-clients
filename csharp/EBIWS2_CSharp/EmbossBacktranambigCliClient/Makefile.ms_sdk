@@ -48,7 +48,7 @@ $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 clean:
 
 distclean: clean
-	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	del /Q /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
 	rmdir $(DEBUGBINDIR)
 	rmdir $(RELEASEBINDIR)
 	rmdir $(BINDIR)
