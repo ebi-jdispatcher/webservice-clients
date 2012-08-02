@@ -17,16 +17,16 @@ ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
 DaliliteCliClient\bin\Release\DaliliteCliClient.exe \
 DbClustalCliClient\bin\Release\DbClustalCliClient.exe \
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
-EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
-EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
-EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
-EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
-EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
 EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe \
 EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe \
+EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
+EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
 EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe \
 EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe \
 EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe \
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
+EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
+EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
@@ -34,6 +34,7 @@ IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
 LalignCliClient\bin\Release\LalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
+MaxsproutCliClient\bin\Release\MaxsproutCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
 MViewCliClient\bin\Release\MViewCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
@@ -67,11 +68,20 @@ DbClustalCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.d
 EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
 
+EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk
+
 EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk
 
 EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk
 
 EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -79,15 +89,6 @@ EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Rel
 EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk
 
-EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk
-
-EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk
-
-EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk
-	
 EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -159,15 +160,19 @@ clean:
 	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -175,12 +180,15 @@ clean:
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd TcoffeeBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -190,15 +198,19 @@ distclean:
 	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
@@ -207,11 +219,14 @@ distclean:
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
