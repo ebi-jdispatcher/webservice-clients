@@ -1,0 +1,47 @@
+# $Id$
+# ======================================================================
+#
+# Makefile to build C# Wise2DBA (SOAP) client using Mono.
+#
+# ======================================================================
+
+# C# compiler
+CSC = gmcs
+# C# compiler flags
+CSFLAGS = -r:System.Web.Services
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)/Debug
+RELEASEBINDIR = $(BINDIR)/Release
+
+# Core assembly project
+EBIWS = ../EbiWS
+
+all: Wise2DBACliClient
+
+### Wise2DBA command-line client ###
+
+Wise2DBACliClient: $(DEBUGBINDIR)/Wise2DBACliClient.exe $(RELEASEBINDIR)/Wise2DBACliClient.exe
+
+$(DEBUGBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs
+
+$(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
+	mkdir -p $(DEBUGBINDIR)
+	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
+
+$(RELEASEBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs
+
+$(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
+	mkdir -p $(RELEASEBINDIR)
+	cp $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll* $(RELEASEBINDIR)/
+
+clean:
+	find . -name '*~' -exec rm {} \;
+
+distclean: clean
+	rm -rf $(DEBUGBINDIR) $(RELEASEBINDIR) bin/
