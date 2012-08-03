@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,17 +14,30 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>EmbossWaterCliClient</AssemblyName>
+    <RootNamespace>EmbossWaterCliClient</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>EmbossWaterCliClient</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>EmbossWaterCliClient</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
