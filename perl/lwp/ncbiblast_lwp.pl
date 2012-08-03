@@ -304,7 +304,10 @@ sub rest_request {
 	print_debug_message( 'rest_request',
 		'response: ' . "\n" . $response->as_string(), 32 );
 	# Unpack possibly compressed response.
-	my $retVal = $response->decoded_content();
+	my $retVal;
+	if ( defined($can_accept) && $can_accept ne '') {
+	    $retVal = $response->decoded_content();
+	}
 	# If unable to decode use orginal content.
 	$retVal = $response->content() unless defined($retVal);
 	# Check for an error.
