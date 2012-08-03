@@ -19,7 +19,7 @@ L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
 
 =item *
-L<LWP> 5.820, L<XML::Simple> 2.18 and Perl 5.10.0 (Ubuntu 9.04)
+L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =back
 
@@ -126,6 +126,9 @@ if ( $params{'quiet'} )  { $outputLevel-- }
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
 &print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
 
+# LWP UserAgent for making HTTP calls (initialised when required).
+my $ua;
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -222,9 +225,9 @@ Get a LWP UserAgent to use to perform REST requests.
 
 sub rest_user_agent() {
 	print_debug_message( 'rest_user_agent', 'Begin', 21 );
-	# Create a user agent
+	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
-	# Set 'User-Agent' HTTP header.
+	# Set 'User-Agent' HTTP header to identifiy the client.
 	'$Revision$' =~ m/(\d+)/;
 	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
@@ -281,7 +284,7 @@ sub rest_request {
 	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
 
 	# Get an LWP UserAgent.
-	my $ua = &rest_user_agent();
+	$ua = &rest_user_agent() unless defined($ua);
 	# Available HTTP compression methods.
 	my $can_accept = HTTP::Message::decodable;
 	# Perform the request
@@ -367,7 +370,7 @@ sub rest_run {
 	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
 
 	# Get an LWP UserAgent.
-	my $ua = &rest_user_agent();
+	$ua = &rest_user_agent() unless defined($ua);
 
 	# Clean up parameters
 	my (%tmp_params) = %{$params};

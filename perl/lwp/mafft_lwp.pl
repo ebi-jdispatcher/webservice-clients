@@ -19,7 +19,7 @@ L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
 
 =item *
-L<LWP> 5.820, L<XML::Simple> 2.18 and Perl 5.10.0 (Ubuntu 9.04)
+L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =back
 
@@ -121,6 +121,9 @@ if ( $params{'quiet'} )  { $outputLevel-- }
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
 &print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
 
+# LWP UserAgent for making HTTP calls (initialised when required).
+my $ua;
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -189,9 +192,64 @@ else {
 
 ### Wrappers for REST resources ###
 
+=head2 rest_user_agent()
+
+Get a LWP UserAgent to use to perform REST requests.
+
+  my $ua = &rest_user_agent();
+
+=cut
+
+sub rest_user_agent() {
+	print_debug_message( 'rest_user_agent', 'Begin', 21 );
+	# Create an LWP UserAgent for making HTTP calls.
+	my $ua = LWP::UserAgent->new();
+	# Set 'User-Agent' HTTP header to identifiy the client.
+	'$Revision$' =~ m/(\d+)/;
+	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	# Configure HTTP proxy support from environment.
+	$ua->env_proxy;
+	print_debug_message( 'rest_user_agent', 'End', 21 );
+	return $ua;
+}
+
+=head2 rest_error()
+
+Check a REST response for an error condition. An error is mapped to a die.
+
+  &rest_error($response, $content_data);
+
+=cut
+
+sub rest_error() {
+	print_debug_message( 'rest_error', 'Begin', 21 );
+	my $response = shift;
+	my $contentdata;
+	if(scalar(@_) > 0) {
+		$contentdata = shift;
+	}
+	if(!defined($contentdata) || $contentdata eq '') {
+		$contentdata = $response->content();
+	}
+	# Check for HTTP error codes
+	if ( $response->is_error ) {
+		my $error_message = '';
+		# HTML response.
+		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
+			$error_message = $1;
+		}
+		#  XML response.
+		elsif($contentdata =~ m/<description>([^<]+)<\/description>/) {
+			$error_message = $1;
+		}
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+	}
+	print_debug_message( 'rest_error', 'End', 21 );
+}
+
 =head2 rest_request()
 
-Perform a REST request.
+Perform a REST request (HTTP GET).
 
   my $response_str = &rest_request($url);
 
@@ -202,26 +260,33 @@ sub rest_request {
 	my $requestUrl = shift;
 	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
 
-	# Create a user agent
-	my $ua = LWP::UserAgent->new();
-	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
-	$ua->env_proxy;
-
+	# Get an LWP UserAgent.
+	$ua = &rest_user_agent() unless defined($ua);
+	# Available HTTP compression methods.
+	my $can_accept = HTTP::Message::decodable;
 	# Perform the request
-	my $response = $ua->get($requestUrl);
+	my $response = $ua->get($requestUrl,
+		'Accept-Encoding' => $can_accept, # HTTP compression.
+	);
 	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
 		11 );
-
-	# Check for HTTP error codes
-	if ( $response->is_error ) {
-		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
-	}
+	print_debug_message( 'rest_request',
+		'response length: ' . length($response->content()), 11 );
+	print_debug_message( 'rest_request',
+		'request:' ."\n" . $response->request()->as_string(), 32 );
+	print_debug_message( 'rest_request',
+		'response: ' . "\n" . $response->as_string(), 32 );
+	# Unpack possibly compressed response.
+	my $retVal = $response->decoded_content();
+	# If unable to decode use orginal content.
+	$retVal = $response->content() unless defined($retVal);
+	# Check for an error.
+	&rest_error($response, $retVal);
+	print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
 	print_debug_message( 'rest_request', 'End', 11 );
 
 	# Return the response data
-	return $response->content();
+	return $retVal;
 }
 
 =head2 rest_get_parameters()
@@ -281,9 +346,8 @@ sub rest_run {
 	}
 	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
 
-	# User agent to perform http requests
-	my $ua = LWP::UserAgent->new();
-	$ua->env_proxy;
+	# Get an LWP UserAgent.
+	$ua = &rest_user_agent() unless defined($ua);
 
 	# Clean up parameters
 	my (%tmp_params) = %{$params};
@@ -304,11 +368,8 @@ sub rest_run {
 	print_debug_message( 'rest_run',
 		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
 
-	# Check for HTTP error codes
-	if ( $response->is_error ) {
-		$response->content() =~ m/<h1>([^<]+)<\/h1>/;
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $1;
-	}
+	# Check for an error.
+	&rest_error($response);
 
 	# The job id is returned
 	my $job_id = $response->content();
