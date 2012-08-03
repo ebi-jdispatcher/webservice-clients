@@ -14,8 +14,7 @@ namespace EbiWS
 		private string usageMsg = @"Radar
 ==========
 
-Prediction of transmembrane topology and signal peptides from the amino 
-acid sequence of a protein
+Identify gapped approximate repeats and complex repeat architectures. 
 
 
 For more information see:
