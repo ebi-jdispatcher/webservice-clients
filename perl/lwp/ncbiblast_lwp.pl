@@ -286,7 +286,11 @@ sub rest_request {
 	# Get an LWP UserAgent.
 	$ua = &rest_user_agent() unless defined($ua);
 	# Available HTTP compression methods.
-	my $can_accept = HTTP::Message::decodable;
+	my $can_accept;
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
 	# Perform the request
 	my $response = $ua->get($requestUrl,
 		'Accept-Encoding' => $can_accept, # HTTP compression.
