@@ -83,6 +83,9 @@ if ( $params{'$quiet'} )  { $outputLevel-- }
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ), 11 );
 
+# LWP UserAgent for making HTTP calls (initialised when required).
+my $ua;
+
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
@@ -142,9 +145,60 @@ else {
 
 ### Wrappers for REST resources ###
 
+=head2 rest_user_agent()
+
+Get a LWP UserAgent to use to perform REST requests.
+
+  my $ua = &rest_user_agent();
+
+=cut
+
+sub rest_user_agent() {
+	print_debug_message( 'rest_user_agent', 'Begin', 21 );
+	# Create an LWP UserAgent for making HTTP calls.
+	my $ua = LWP::UserAgent->new();
+	# Set 'User-Agent' HTTP header to identifiy the client.
+	'$Revision$' =~ m/(\d+)/;
+	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	# Configure HTTP proxy support from environment.
+	$ua->env_proxy;
+	print_debug_message( 'rest_user_agent', 'End', 21 );
+	return $ua;
+}
+
+=head2 rest_error()
+
+Check a REST response for an error condition. An error is mapped to a die.
+
+  &rest_error($response, $content_data);
+
+=cut
+
+sub rest_error() {
+	print_debug_message( 'rest_error', 'Begin', 21 );
+	my $response = shift;
+	my $contentdata;
+	if(scalar(@_) > 0) {
+		$contentdata = shift;
+	}
+	if(!defined($contentdata) || $contentdata eq '') {
+		$contentdata = $response->content();
+	}
+	# Check for HTTP error codes
+	if ( $response->is_error ) {
+		my $error_message = '';
+		# HTML response.
+		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
+			$error_message = $1;
+		}
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+	}
+	print_debug_message( 'rest_error', 'End', 21 );
+}
+
 =head2 rest_request()
 
-Perform a REST request.
+Perform a REST request (HTTP GET).
 
   my $response_str = &rest_request($url);
 
@@ -155,18 +209,16 @@ sub rest_request {
 	my $requestUrl = shift;
 	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
 
-	# Create a user agent
-	my $ua = LWP::UserAgent->new();
-	'$Revision$' =~ m/(\d+)/;
-	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
-	$ua->env_proxy;
-	# Available compression methods.
-	my $can_accept = HTTP::Message::decodable;
-	print_debug_message( 'rest_request', 'can_accept: ' . $can_accept,
-		12 );
-
+	# Get an LWP UserAgent.
+	$ua = &rest_user_agent() unless defined($ua);
+	# Available HTTP compression methods.
+	my $can_accept;
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
 	# Perform the request
-	my $response = $ua->get($requestUrl, 
+	my $response = $ua->get($requestUrl,
 		'Accept-Encoding' => $can_accept, # HTTP compression.
 	);
 	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
@@ -174,29 +226,22 @@ sub rest_request {
 	print_debug_message( 'rest_request',
 		'response length: ' . length($response->content()), 11 );
 	print_debug_message( 'rest_request',
-		'request:' ."\n" . $response->request()->as_string(), 12 );
+		'request:' ."\n" . $response->request()->as_string(), 32 );
 	print_debug_message( 'rest_request',
-		'response: ' . "\n" . $response->as_string(), 12 );
-
+		'response: ' . "\n" . $response->as_string(), 32 );
 	# Unpack possibly compressed response.
-	my $retVal = $response->decoded_content();
+	my $retVal;
+	if ( defined($can_accept) && $can_accept ne '') {
+	    $retVal = $response->decoded_content();
+	}
 	# If unable to decode use orginal content.
-	if ( !defined($retVal) ) {
-		$retVal = $response->content();
-	}
-	# Check for HTTP error codes
-	if ( $response->is_error ) {
-		# Extract error message.
-		$retVal =~ m/<h1>([^<]+)<\/h1>/;
-		# Report error.
-		die 'http status: '
-		  . $response->code . ' '
-		  . $response->message . '  '
-		  . $1;
-	}
+	$retVal = $response->content() unless defined($retVal);
+	# Check for an error.
+	&rest_error($response, $retVal);
+	print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
 	print_debug_message( 'rest_request', 'End', 11 );
 
-	# Return the response data.
+	# Return the response data
 	return $retVal;
 }
 
