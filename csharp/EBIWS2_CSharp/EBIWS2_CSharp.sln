@@ -1,81 +1,83 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2CliClient", "ClustalW2CliClient\ClustalW2CliClient.csproj", "{751556E8-97FA-4828-8489-1653DB90CF56}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossStretcherCliClient", "EmbossStretcherCliClient\EmbossStretcherCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF3BDC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EbiWS", "EbiWS\EbiWS.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadarCliClient", "RadarCliClient\RadarCliClient.csproj", "{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiSearchCliClient", "PsiSearchCliClient\PsiSearchCliClient.csproj", "{E5841FA4-2F08-424A-8560-4325709B6D67}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaCliClient", "FastaCliClient\FastaCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossTranseqCliClient", "EmbossTranseqCliClient\EmbossTranseqCliClient.csproj", "{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "DaliliteCliClient\DaliliteCliClient.csproj", "{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastmCliClient", "FastmCliClient\FastmCliClient.csproj", "{7BBCBB66-7185-446F-B4B0-08CBB721C87E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbClustalCliClient", "DbClustalCliClient\DbClustalCliClient.csproj", "{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LalignCliClient", "LalignCliClient\LalignCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B45}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBeyeCliClient", "EBeyeCliClient\EBeyeCliClient.csproj", "{3346535B-FAF4-4D17-AE64-9B681139FD73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSDbfetchCliClient", "WSDbfetchCliClient\WSDbfetchCliClient.csproj", "{503C3DEB-B994-4B9A-9AD4-76653994206A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossNeedleCliClient", "EmbossNeedleCliClient\EmbossNeedleCliClient.csproj", "{0B59DE4A-9CC2-4C81-A756-79E1A70B17B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WuBlastCliClient", "WuBlastCliClient\WuBlastCliClient.csproj", "{FE29CBE8-005F-46A1-BE67-00086BB8E715}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastmCliClient", "FastmCliClient\FastmCliClient.csproj", "{7BBCBB66-7185-446F-B4B0-08CBB721C87E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EbiWS", "EbiWS\EbiWS.csproj", "{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepwindowCliClient", "EmbossPepwindowCliClient\EmbossPepwindowCliClient.csproj", "{3F03C545-8B21-4F44-A8E0-422FB2DD4802}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPRScanCliClient", "IPRScanCliClient\IPRScanCliClient.csproj", "{EA080EC1-4E33-461C-9117-49525BCCDD84}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SapsCliClient", "SapsCliClient\SapsCliClient.csproj", "{9EC67901-3170-4941-BDAA-F60E09D48C2F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2PhylogenyCliClient", "ClustalW2PhylogenyCliClient\ClustalW2PhylogenyCliClient.csproj", "{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuscleCliClient", "MuscleCliClient\MuscleCliClient.csproj", "{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalignCliClient", "KalignCliClient\KalignCliClient.csproj", "{07FF5EF6-0DD5-47F1-99AD-AD57F759A2D5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossWaterCliClient", "EmbossWaterCliClient\EmbossWaterCliClient.csproj", "{AE7BBA6F-3566-449A-8CED-D6B5B616E415}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSDbfetchCliClient", "WSDbfetchCliClient\WSDbfetchCliClient.csproj", "{503C3DEB-B994-4B9A-9AD4-76653994206A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossSixpackCliClient", "EmbossSixpackCliClient\EmbossSixpackCliClient.csproj", "{4F0D8B7E-8C81-45A4-BF7F-CC4674389504}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepinfoCliClient", "EmbossPepinfoCliClient\EmbossPepinfoCliClient.csproj", "{7D89005A-831D-4388-8630-8C37ED0920AA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossMatcherCliClient", "EmbossMatcherCliClient\EmbossMatcherCliClient.csproj", "{7A918E15-0D61-419B-A02F-37E99B955E7F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WuBlastCliClient", "WuBlastCliClient\WuBlastCliClient.csproj", "{FE29CBE8-005F-46A1-BE67-00086BB8E715}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafftCliClient", "MafftCliClient\MafftCliClient.csproj", "{50438295-6245-4945-8E55-0023B4F277F6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalOCliClient", "ClustalOCliClient\ClustalOCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxsproutCliClient", "MaxsproutCliClient\MaxsproutCliClient.csproj", "{69120A06-8828-4ED4-9C71-8633849F20BE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MViewCliClient", "MViewCliClient\MViewCliClient.csproj", "{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.csproj", "{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcoffeeCliClient", "TcoffeeCliClient\TcoffeeCliClient.csproj", "{7A5BD7CE-7018-416E-897F-9D831DE4FED6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepstatsCliClient", "EmbossPepstatsCliClient\EmbossPepstatsCliClient.csproj", "{0632CFD9-ED94-4EA3-8F70-651C7B0C2753}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiBlastCliClient", "PsiBlastCliClient\PsiBlastCliClient.csproj", "{85F8B007-D263-4D3A-838D-23798E1F32A3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranambigCliClient", "EmbossBacktranambigCliClient\EmbossBacktranambigCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF3BDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPRScanCliClient", "IPRScanCliClient\IPRScanCliClient.csproj", "{EA080EC1-4E33-461C-9117-49525BCCDD84}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranseqCliClient", "EmbossBacktranseqCliClient\EmbossBacktranseqCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF3BDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneWiseCliClient", "GeneWiseCliClient\GeneWiseCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2CliClient", "ClustalW2CliClient\ClustalW2CliClient.csproj", "{751556E8-97FA-4828-8489-1653DB90CF56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhobiusCliClient", "PhobiusCliClient\PhobiusCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepinfoCliClient", "EmbossPepinfoCliClient\EmbossPepinfoCliClient.csproj", "{7D89005A-831D-4388-8630-8C37ED0920AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NcbiBlastCliClient", "NcbiBlastCliClient\NcbiBlastCliClient.csproj", "{696A7A8E-AD5B-4DED-AE5F-57118AABE73A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wise2DBACliClient", "Wise2DBACliClient\Wise2DBACliClient.csproj", "{11893417-F9A5-4D17-BF59-E6CAEB43776B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiBlastCliClient", "PsiBlastCliClient\PsiBlastCliClient.csproj", "{85F8B007-D263-4D3A-838D-23798E1F32A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepstatsCliClient", "EmbossPepstatsCliClient\EmbossPepstatsCliClient.csproj", "{0632CFD9-ED94-4EA3-8F70-651C7B0C2753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MViewCliClient", "MViewCliClient\MViewCliClient.csproj", "{54D3CB7D-524C-4DE2-9DFF-4685F2EF8803}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SapsCliClient", "SapsCliClient\SapsCliClient.csproj", "{9EC67901-3170-4941-BDAA-F60E09D48C2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiSearchCliClient", "PsiSearchCliClient\PsiSearchCliClient.csproj", "{E5841FA4-2F08-424A-8560-4325709B6D67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcoffeeCliClient", "TcoffeeCliClient\TcoffeeCliClient.csproj", "{7A5BD7CE-7018-416E-897F-9D831DE4FED6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalOCliClient", "ClustalOCliClient\ClustalOCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromoterWiseCliClient", "PromoterWiseCliClient\PromoterWiseCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBeyeCliClient", "EBeyeCliClient\EBeyeCliClient.csproj", "{3346535B-FAF4-4D17-AE64-9B681139FD73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuscleCliClient", "MuscleCliClient\MuscleCliClient.csproj", "{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossTranseqCliClient", "EmbossTranseqCliClient\EmbossTranseqCliClient.csproj", "{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadarCliClient", "RadarCliClient\RadarCliClient.csproj", "{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossMatcherCliClient", "EmbossMatcherCliClient\EmbossMatcherCliClient.csproj", "{7A918E15-0D61-419B-A02F-37E99B955E7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossWaterCliClient", "EmbossWaterCliClient\EmbossWaterCliClient.csproj", "{AE7BBA6F-3566-449A-8CED-D6B5B616E415}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafftCliClient", "MafftCliClient\MafftCliClient.csproj", "{50438295-6245-4945-8E55-0023B4F277F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbClustalCliClient", "DbClustalCliClient\DbClustalCliClient.csproj", "{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2PhylogenyCliClient", "ClustalW2PhylogenyCliClient\ClustalW2PhylogenyCliClient.csproj", "{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalignCliClient", "KalignCliClient\KalignCliClient.csproj", "{07FF5EF6-0DD5-47F1-99AD-AD57F759A2D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhobiusCliClient", "PhobiusCliClient\PhobiusCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "DaliliteCliClient\DaliliteCliClient.csproj", "{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxsproutCliClient", "MaxsproutCliClient\MaxsproutCliClient.csproj", "{69120A06-8828-4ED4-9C71-8633849F20BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneWiseCliClient", "GeneWiseCliClient\GeneWiseCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranambigCliClient", "EmbossBacktranambigCliClient\EmbossBacktranambigCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF30DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossStretcherCliClient", "EmbossStretcherCliClient\EmbossStretcherCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328903BF3BDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaCliClient", "FastaCliClient\FastaCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LalignCliClient", "LalignCliClient\LalignCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,17 +101,21 @@ Global
 		{0B59DE4A-9CC2-4C81-A756-79E1A70B17B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B59DE4A-9CC2-4C81-A756-79E1A70B17B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B59DE4A-9CC2-4C81-A756-79E1A70B17B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11893417-F9A5-4D17-BF59-E6CAEB43776B}.Debug|Any CPU.ActiveCfg = Debug
+		{11893417-F9A5-4D17-BF59-E6CAEB43776B}.Debug|Any CPU.Build.0 = Debug
+		{11893417-F9A5-4D17-BF59-E6CAEB43776B}.Release|Any CPU.ActiveCfg = Debug
+		{11893417-F9A5-4D17-BF59-E6CAEB43776B}.Release|Any CPU.Build.0 = Debug
+		{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3346535B-FAF4-4D17-AE64-9B681139FD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -195,26 +201,26 @@ Global
 		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8A14955-F9A0-41B9-8A6B-241FD9B7F67B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCD61FE3-428F-461B-86F9-328903BF3BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCD61FE3-428F-461B-86F9-328903BF3BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCD61FE3-428F-461B-86F9-328903BF3BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCD61FE3-428F-461B-86F9-328903BF3BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCD61FE3-428F-461B-86F9-328923BF30DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCD61FE3-428F-461B-86F9-328923BF30DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCD61FE3-428F-461B-86F9-328923BF30DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCD61FE3-428F-461B-86F9-328923BF30DC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCD61FE3-428F-461B-86F9-328923BF3BDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCBF519B-06E5-40F9-9155-7B534D959B45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCBF519B-06E5-40F9-9155-7B534D959B56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCBF519B-06E5-40F9-9155-7B534D959B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCBF519B-06E5-40F9-9155-7B534D959B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCBF519B-06E5-40F9-9155-7B534D959B56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -235,6 +241,14 @@ Global
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		.Debug|Any CPU.Build.0 = Debug|Any CPU
 		.Release|Any CPU.ActiveCfg = Release|Any CPU

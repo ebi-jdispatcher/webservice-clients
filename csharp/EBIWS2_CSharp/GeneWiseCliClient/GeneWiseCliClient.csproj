@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}</ProjectGuid>
+    <ProjectGuid>{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AssemblyName>GeneWiseCliClient</AssemblyName>
     <RootNamespace>GeneWiseCliClient</RootNamespace>
