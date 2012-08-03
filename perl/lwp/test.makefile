@@ -953,7 +953,7 @@ radar_dbid:
 	${PERL} radar_lwp.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
 
 radar_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} radar_lwp.pl --email ${EMAIL} --sequence - --quiet --outformat out --outfile - >  radar-file.txt
 
 radar_clean:
 	rm -f radar-*
