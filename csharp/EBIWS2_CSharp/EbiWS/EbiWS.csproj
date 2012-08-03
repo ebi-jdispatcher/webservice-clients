@@ -119,6 +119,7 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
+    <Compile Include="Wise2DBAClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
