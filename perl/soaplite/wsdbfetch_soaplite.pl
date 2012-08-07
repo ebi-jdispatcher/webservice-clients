@@ -52,7 +52,7 @@ use warnings;
 # Load libraries
 use English;
 use SOAP::Lite;
-use LWP::Simple;
+use LWP;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
