@@ -572,17 +572,25 @@ sub from_wsdl {
 	my $ua = LWP::UserAgent->new();
 	$ua->agent( $client_agent . $ua->agent() ); # User-agent.
 	$ua->env_proxy; # HTTP proxy.
-	my $can_accept = HTTP::Message::decodable; # Available encodings.
+	my $can_accept; # Available message encodings.
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
 		my $response = $ua->get($WSDL, 
-			'Accept-Encoding' => $can_accept, # HTTP compression.
+			'Accept-Encoding' => $can_accept, # HTTP compression/encoding.
 		);
 		if ( $params{'trace'} ) { # Request/response trace.
 			print( $response->request()->as_string(), "\n" );
 			print( $response->as_string(), "\n" );
 		}
-		$wsdlStr = $response->decoded_content();
+		# Unpack possibly compressed response.
+		if ( defined($can_accept) && $can_accept ne '') {
+	    	$wsdlStr = $response->decoded_content();
+		}
+		# If unable to decode use orginal content.
 		$wsdlStr = $response->content() if (!defined($wsdlStr));
 		$fetchAttemptCount++;
 		if(defined($wsdlStr) && $wsdlStr ne '') {
