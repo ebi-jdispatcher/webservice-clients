@@ -16,13 +16,13 @@ Tested with:
 L<SOAP::Lite> 0.60 and Perl 5.8.3
 
 =item *
-L<SOAP::Lite> 0.69 and Perl 5.8.8
+L<SOAP::Lite> 0.69 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.71 and Perl 5.8.8
+L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+L<SOAP::Lite> 0.714 and Perl 5.14.2 (Ubuntu 12.04 LTS)
 
 =back
 
@@ -52,7 +52,7 @@ use warnings;
 # Load libraries
 use English;
 use SOAP::Lite;
-use LWP::Simple;
+use LWP;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
@@ -163,7 +163,11 @@ $serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
 my $soap = SOAP::Lite->proxy(
 	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
-	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	options => {
+		# HTTP compression (requires Compress::Zlib)
+		compress_threshold => 100000000, # Prevent request compression.
+	},
   )->uri($serviceNamespace)->on_fault(
 
 	# Map SOAP faults to Perl exceptions (i.e. die).
@@ -451,9 +455,30 @@ sub from_wsdl {
 	my (@retVal) = ();
 	my $wsdlStr;
 	my $fetchAttemptCount = 0;
+	# Create a user agent
+	my $ua = LWP::UserAgent->new();
+	$ua->agent( &get_agent_string() . $ua->agent() ); # User-agent.
+	$ua->env_proxy; # HTTP proxy.
+	my $can_accept; # Available message encodings.
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
-		$wsdlStr = get($WSDL);
+		my $response = $ua->get($WSDL, 
+			'Accept-Encoding' => $can_accept, # HTTP compression.
+		);
+		if ( $params{'trace'} ) { # Request/response trace.
+			print( $response->request()->as_string(), "\n" );
+			print( $response->as_string(), "\n" );
+		}
+		# Unpack possibly compressed response.
+		if ( defined($can_accept) && $can_accept ne '') {
+	    	$wsdlStr = $response->decoded_content();
+		}
+		# If unable to decode use orginal content.
+		$wsdlStr = $response->content() if (!defined($wsdlStr));
 		$fetchAttemptCount++;
 		if(defined($wsdlStr) && $wsdlStr ne '') {
 			# Extract service endpoint.

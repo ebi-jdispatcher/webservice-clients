@@ -16,13 +16,13 @@ Tested with:
 L<SOAP::Lite> 0.60 and Perl 5.8.3
 
 =item *
-L<SOAP::Lite> 0.69 and Perl 5.8.8
+L<SOAP::Lite> 0.69 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.71 and Perl 5.8.8
+L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.710.08 and Perl 5.10.0 (Ubuntu 9.04)
+L<SOAP::Lite> 0.714 and Perl 5.14.2 (Ubuntu 12.04 LTS)
 
 =back
 
@@ -52,7 +52,7 @@ use warnings;
 # Load libraries
 use English;
 use SOAP::Lite;
-use LWP::Simple;
+use LWP;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use MIME::Base64;
@@ -113,10 +113,6 @@ if ( $params{'quiet'} )  { $outputLevel-- }
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
 
-# Derive a user-agent string for the client.
-'$Revision$' =~ m/(\d+)/;
-my $client_agent = "EBI-Sample-Client/$1 ($scriptName; $OSNAME) ";
-
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
 	1 );
@@ -159,8 +155,7 @@ my $soap = SOAP::Lite->proxy(
 	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
 	options => {
 		# HTTP compression (requires Compress::Zlib)
-		compress_threshold => 100000000, # Large to prevent request compression.
-		#compress_threshold => 100, # TEST: request compression.
+		compress_threshold => 100000000, # Prevent request compression.
 	},
   )->uri($serviceNamespace)->on_fault(
 
@@ -178,7 +173,7 @@ my $soap = SOAP::Lite->proxy(
 	}
   );
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-$soap->transport->agent($client_agent . $soap->transport->agent());
+$soap->transport->agent(&get_agent_string() . $soap->transport->agent());
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Handle command
@@ -347,6 +342,25 @@ else {
 =head1 FUNCTIONS
 
 =cut
+
+=head2 get_agent_string()
+
+Get the user agent string for the client.
+
+  my $agent_str = &get_agent_string();
+
+=cut
+
+sub get_agent_string {
+	print_debug_message( 'get_agent_string', 'Begin', 11 );
+	my $clientVersion = '0';
+	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
+		$clientVersion = $1;
+	}
+	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
+	print_debug_message( 'get_agent_string', 'End', 11 );
+	return 	$agent_str;
+}
 
 ### Wrappers for SOAP operations ###
 
@@ -884,9 +898,13 @@ sub from_wsdl {
 	my $fetchAttemptCount = 0;
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	$ua->agent( $client_agent . $ua->agent() ); # User-agent.
+	$ua->agent( &get_agent_string() . $ua->agent() ); # User-agent.
 	$ua->env_proxy; # HTTP proxy.
-	my $can_accept = HTTP::Message::decodable; # Available encodings.
+	my $can_accept; # Available message encodings.
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
 		my $response = $ua->get($WSDL, 
@@ -896,7 +914,11 @@ sub from_wsdl {
 			print( $response->request()->as_string(), "\n" );
 			print( $response->as_string(), "\n" );
 		}
-		$wsdlStr = $response->decoded_content();
+		# Unpack possibly compressed response.
+		if ( defined($can_accept) && $can_accept ne '') {
+	    	$wsdlStr = $response->decoded_content();
+		}
+		# If unable to decode use orginal content.
 		$wsdlStr = $response->content() if (!defined($wsdlStr));
 		$fetchAttemptCount++;
 		if(defined($wsdlStr) && $wsdlStr ne '') {
