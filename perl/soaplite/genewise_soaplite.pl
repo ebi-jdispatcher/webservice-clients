@@ -273,7 +273,7 @@ Get a list of tool parameter names.
 
 sub soap_get_parameters {
 	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $ret = $soap->getParameters(undef);
+	my $ret = $soap->getParameters();
 	print_debug_message( 'soap_get_parameters', 'End', 1 );
 	return $ret->valueof('//parameters/id');
 }
