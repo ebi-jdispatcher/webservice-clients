@@ -16,10 +16,13 @@ Tested with:
 L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 
 =item *
-L<LWP> 5.805, L<XML::Simple> 2.14 and Perl 5.8.7
+L<LWP> 5.808, L<XML::Simple> 2.18 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
 L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04 LTS)
+
+=item *
+L<LWP> 6.03, L<XML::Simple> 2.18 and Perl 5.14.2 (Ubuntu 12.04 LTS)
 
 =back
 
