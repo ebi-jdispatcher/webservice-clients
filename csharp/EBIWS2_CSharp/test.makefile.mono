@@ -242,7 +242,7 @@ dalilite_file: test_data
 	${MONO} DaliliteCliClient/bin/Release/DaliliteCliClient.exe --email ${EMAIL} --structure1 ../test_data/pdb11as.ent --structure2 ../test_data/pdb12as.ent
 
 dalilite_pdbid:
-	${MONO} DaliliteCliClient/bin/Release/DaliliteCliClient.exe --email ${EMAIL} --structure1 'PDB:1A06' --structure2 'PDB:1A07' --chainid1=A --chainid2=A --outfile dalilite-pdbidinput
+	${MONO} DaliliteCliClient/bin/Release/DaliliteCliClient.exe --email ${EMAIL} --structure1 'PDB:1A06' --structure2 'PDB:1A07' --chainid1 A --chainid2 A --outfile dalilite-pdbidinput
 
 dalilite_clean:
 	rm -f dalilite-*
