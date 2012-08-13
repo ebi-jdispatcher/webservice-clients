@@ -277,9 +277,20 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		int retValN = 0;
 		int numChains = 0;
 		
-		if(outformat == null) {
+		boolean nchaninsavailable = false;
+		
+		for(int i = 0; i < resultTypes.length; i++)
+		{
+			if(resultTypes[i].getIdentifier().equals("nchains"))
+				nchaninsavailable = true;
+		}
+		
+		if(outformat == null)
+		{
 			// Get number of chains in results.
-			numChains = getNChains(jobid);
+			if(nchaninsavailable)
+				numChains = getNChains(jobid);
+			
 			if ( numChains > 0 ) {
 				// There are .out and .log files for each chain.
 				retVal = new String[resultTypes.length + (numChains - 1) * 2];
