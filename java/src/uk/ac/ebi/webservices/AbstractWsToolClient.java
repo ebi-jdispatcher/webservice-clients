@@ -19,7 +19,7 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.Options;
 
 /** Abstract class defining common methods to all jDispatcher SOAP web 
  * service clients.
@@ -343,28 +343,41 @@ public abstract class AbstractWsToolClient {
 		return bytes;
 	}
 
-	/** Read the contents of an input stream into a string.
+	/** Read the contents of an input stream into a byte array.
 	 * 
 	 * @param inStream the input steam to read
-	 * @return the contents of the stream in a string
+	 * @return the contents of the stream in a byte array
 	 * @throws IOException if all contents not read
 	 */
 	public byte[] readStream(InputStream inStream) throws IOException {
 		printDebugMessage("readStream", "Begin", 1);
-		long length = inStream.available();
-		byte[] bytes = new byte[(int)length];
-		int offset = 0;
-		int numRead = 0;
-		while(offset < bytes.length &&
-				(numRead=inStream.read(bytes,offset,bytes.length-offset)) >= 0 ) {
-			offset += numRead;
+		byte[] ret = null;
+		while(inStream.available()>0)
+		{
+			long length = inStream.available();
+			byte[] bytes = new byte[(int)length];
+			int offset = 0;
+			int numRead = 0;
+			while(offset < bytes.length &&
+					(numRead=inStream.read(bytes,offset,bytes.length-offset)) >= 0 ) {
+				offset += numRead;
+			}
+			if (offset < bytes.length) {
+				throw new IOException("Unable to read to end of stream");
+			}
+			printDebugMessage("readStream", "read " + bytes.length + " bytes", 2);
+			if(ret==null)		
+				ret = bytes;
+			else
+			{
+				byte[] tmp = ret.clone();
+				ret = new byte[ret.length+bytes.length];
+				System.arraycopy(tmp,0,ret,0         ,tmp.length);
+				System.arraycopy(bytes,0,ret,tmp.length,bytes.length);
+			}
 		}
-		if (offset < bytes.length) {
-			throw new IOException("Unable to read to end of stream");
-		}
-		printDebugMessage("readStream", "read " + bytes.length + " bytes", 2);
 		printDebugMessage("readStream", "End", 1);
-		return bytes;
+		return ret;
 	}
 
 	/** <p>The input data can be passed as:</p>
@@ -510,7 +523,7 @@ public abstract class AbstractWsToolClient {
 			}
 			catch(IOException ex) {
 				// Report and continue
-				System.err.println("Warnning: " + ex.getMessage());
+				System.err.println("Warning: " + ex.getMessage());
 			}
 		}
 		printDebugMessage("clientPoll", "End", 1);
