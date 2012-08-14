@@ -86,7 +86,7 @@ GetOptions(
     'diana'          => \$tool_params{'diana'},      # Show EMBL FT format suitable for diana
     'init=s'         => \$tool_params{'init'},       # Model in local/global mode
     'splice=s'       => \$tool_params{'splice'},     # Splice site
-    'null=s'         => \$tool_params{'null'},       # Null (Random) Model
+    'random=s'       => \$tool_params{'random'},     # Random (Null) Model
     'alg=s'          => \$tool_params{'alg'},        # Algorithm
     'asequence=s'    => \$params{'asequence'},       # First input protein sequence
     'bsequence=s'    => \$params{'bsequence'},       # Second input DNA sequence
@@ -916,7 +916,7 @@ and frameshifting errors.
       --diana         :      : show EMBL FT format suitable for diana
       --init          : str  : model in local/global mode, see --paramDetail init
       --splice        : str  : splice site, see --paramDetail splice
-      --null          : str  : Null (Random) Model, see --paramDetail null
+      --random        : str  : Random (Null) Model, see --paramDetail random
       --alg           : str  : algorithm, see --paramDetail alg
 
 [General]
