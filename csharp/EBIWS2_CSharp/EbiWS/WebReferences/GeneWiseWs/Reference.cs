@@ -379,7 +379,7 @@ namespace EbiWS.GeneWiseWs {
         
         private string spliceField;
         
-        private string nullField;
+        private string randomField;
         
         private string algField;
         
@@ -609,12 +609,12 @@ namespace EbiWS.GeneWiseWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public string @null {
+        public string random {
             get {
-                return this.nullField;
+                return this.randomField;
             }
             set {
-                this.nullField = value;
+                this.randomField = value;
             }
         }
         

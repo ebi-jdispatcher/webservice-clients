@@ -339,9 +339,9 @@ namespace EbiWS.Wise2DBAWs {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://soap.jdispatcher.ebi.ac.uk")]
     public partial class InputParameters {
         
-        private System.Nullable<bool> paramsField;
+        private System.Nullable<bool> paraField;
         
-        private bool paramsFieldSpecified;
+        private bool paraFieldSpecified;
         
         private System.Nullable<bool> prettyField;
         
@@ -353,23 +353,23 @@ namespace EbiWS.Wise2DBAWs {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=true)]
-        public System.Nullable<bool> @params {
+        public System.Nullable<bool> para {
             get {
-                return this.paramsField;
+                return this.paraField;
             }
             set {
-                this.paramsField = value;
+                this.paraField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool paramsSpecified {
+        public bool paraSpecified {
             get {
-                return this.paramsFieldSpecified;
+                return this.paraFieldSpecified;
             }
             set {
-                this.paramsFieldSpecified = value;
+                this.paraFieldSpecified = value;
             }
         }
         
