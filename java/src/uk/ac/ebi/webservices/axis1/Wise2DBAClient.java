@@ -332,8 +332,8 @@ public class Wise2DBAClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("loadParams", "Begin", 1);
 		InputParameters params = new InputParameters();
 		// Tool specific options
-		if (line.hasOption("para")) params.setParams(true);
-		if (line.hasOption("nopara")) params.setParams(false);
+		if (line.hasOption("para")) params.setPara(true);
+		if (line.hasOption("nopara")) params.setPara(false);
 		if (line.hasOption("pretty")) params.setPretty(true);
 		if (line.hasOption("nopretty")) params.setPretty(false);
 		printDebugMessage("loadParams", "End", 1);
@@ -353,10 +353,10 @@ public class Wise2DBAClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		// Application specific options
-		options.addOption("para", true, "Enable display of parameters");
-		options.addOption("nopara", true, "Disable display of parameters");
-		options.addOption("pretty", true, "Enable pretty ASCII alignment output");
-		options.addOption("nopretty", true, "Disable pretty ASCII alignment output");
+		options.addOption("para", false, "Enable display of parameters");
+		options.addOption("nopara", false, "Disable display of parameters");
+		options.addOption("pretty", false, "Enable pretty ASCII alignment output");
+		options.addOption("nopretty", false, "Disable pretty ASCII alignment output");
 		options.addOption("asequence", true, "First input DNA sequence");
 		options.addOption("bsequence", true, "Second input DNA sequence");
 

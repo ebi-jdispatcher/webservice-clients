@@ -54,7 +54,7 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --diana        :      : show EMBL FT format suitable for diana\n"		
 		+ "      --init         : str  : model in local/global mode, see --paramDetail init\n"
 		+ "      --splice       : str  : splice site, see --paramDetail splice\n"
-		+ "      --null         : str  : Null (Random) Model, see --paramDetail null\n"
+		+ "      --random       : str  : Random (Null) Model, see --paramDetail random\n"
 		+ "      --alg          : str  : algorithm, see --paramDetail init\n";
 
 	/** Default constructor.
@@ -347,7 +347,7 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("diana")) params.setDiana(new Boolean(true));
 		if (line.hasOption("init")) params.setInit(line.getOptionValue("init"));
 		if (line.hasOption("splice")) params.setSplice(line.getOptionValue("splice"));
-		if (line.hasOption("null")) params.set_null(line.getOptionValue("null"));
+		if (line.hasOption("random")) params.setRandom(line.getOptionValue("random"));
 		if (line.hasOption("alg")) params.setAlg(line.getOptionValue("alg"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
@@ -377,7 +377,7 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("diana", false, "Show EMBL FT format suitable for diana");
 		options.addOption("init", true, "Model in local/global mode");
 		options.addOption("splice", true, "Splice site");
-		options.addOption("null", true, "Null (Random) Model");
+		options.addOption("random", true, "Random (Null) Model");
 		options.addOption("alg", true, "Algorithm");
 		options.addOption("asequence", true, "First input sequence");
 		options.addOption("bsequence", true, "Second input sequence");
