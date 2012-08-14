@@ -720,10 +720,10 @@ sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 	
 	if($params{'para'}) {
-		$tool_params{'params'} = 1;
+		$tool_params{'para'} = 1;
 	}
 	if($params{'nopara'}) {
-		$tool_params{'params'} = 0;
+		$tool_params{'para'} = 0;
 	}
 	if($params{'pretty'}) {
 		$tool_params{'pretty'} = 1;
