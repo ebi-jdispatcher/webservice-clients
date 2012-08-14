@@ -76,6 +76,7 @@ PsiSearchClient.cs \
 RadarClient.cs \
 SapsClient.cs \
 TcoffeeClient.cs \
+Wise2DBAClient.cs \
 WSDbfetchClient.cs \
 WuBlastClient.cs
 

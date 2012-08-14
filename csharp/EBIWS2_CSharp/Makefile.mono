@@ -45,6 +45,7 @@ build-PsiSearchCliClient \
 build-RadarCliClient \
 build-SapsCliClient \
 build-TcoffeeCliClient \
+build-Wise2DBACliClient \
 build-WSDbfetchCliClient \
 build-WuBlastCliClient
 
@@ -156,6 +157,9 @@ build-SapsCliClient: build-EbiWS
 build-TcoffeeCliClient: build-EbiWS
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono
 
+build-Wise2DBACliClient: build-EbiWS
+	cd Wise2DBACliClient && $(MAKE) -f Makefile.mono
+	
 build-WSDbfetchCliClient: build-EbiWS
 	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono
 
@@ -200,6 +204,7 @@ clean-PsiSearchCliClient \
 clean-RadarCliClient \
 clean-SapsCliClient \
 clean-TcoffeeCliClient \
+clean-Wise2DBACliClient \
 clean-WSDbfetchCliClient \
 clean-WuBlastCliClient
 
@@ -311,6 +316,9 @@ clean-SapsCliClient:
 clean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-Wise2DBACliClient:
+	cd Wise2DBACliClient && $(MAKE) -f Makefile.mono clean
+
 clean-WSDbfetchCliClient:
 	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -356,6 +364,7 @@ distclean-PsiSearchCliClient \
 distclean-RadarCliClient \
 distclean-SapsCliClient \
 distclean-TcoffeeCliClient \
+distclean-Wise2DBACliClient \
 distclean-WSDbfetchCliClient \
 distclean-WuBlastCliClient
 
@@ -466,6 +475,9 @@ distclean-SapsCliClient:
 
 distclean-TcoffeeCliClient:
 	cd TcoffeeCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-Wise2DBACliClient:
+	cd Wise2DBACliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-WSDbfetchCliClient:
 	cd WSDbfetchCliClient && $(MAKE) -f Makefile.mono distclean

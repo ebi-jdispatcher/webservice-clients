@@ -41,7 +41,7 @@ For more information see:
       --diana         :      : show EMBL FT format suitable for diana
       --init          : str  : model in local/global mode, see --paramDetail init
       --splice        : str  : splice site, see --paramDetail splice
-      --null          : str  : null (Random) Model, see --paramDetail null
+      --random        : str  : Random (Null) Model, see --paramDetail random
       --alg           : str  : algorithm , see --paramDetail alg
 ";
 
@@ -277,11 +277,11 @@ For more information see:
                                                 break;
                                         case "/splice":
                                                 goto case "--splice";
-//                                        case "--null": // Null (Random) Mode
-//                                                InParams.null = args[++i];
-//                                               break;
-//                                        case "/null":
-//                                                goto case "--null";
+                                        case "--random": // Random (Null) Mode
+                                                InParams.random = args[++i];
+                                               break;
+                                        case "/random":
+                                                goto case "--random";
                                         case "--alg": // Algorithm
                                                 InParams.alg = args[++i];
                                                 break;

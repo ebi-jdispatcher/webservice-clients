@@ -201,14 +201,14 @@ two sequences.
 
 						// Tool specific options
 				case "--para": // Enable display of parameters in output.
-					InParams.params = true;
-					InParams.paramsSpecified = true;
+					InParams.para = true;
+					InParams.paraSpecified = true;
 					break;
 				case "/para":
 					goto case "--para";
 				case "--nopara": // Disable display of parameters in output.
-					InParams.params = false;
-					InParams.paramsSpecified = true;
+					InParams.para = false;
+					InParams.paraSpecified = true;
 					break;
 				case "/nopara":
 					goto case "--nopara";

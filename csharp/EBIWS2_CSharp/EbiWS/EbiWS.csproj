@@ -114,6 +114,7 @@
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
+    <Compile Include="Wise2DBAClient.cs" />
     <Compile Include="WebReferences\Wise2DBAWs\Reference.cs" />
     <Compile Include="WSDbfetchClient.cs" />
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
