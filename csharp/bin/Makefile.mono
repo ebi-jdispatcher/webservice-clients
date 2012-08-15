@@ -31,6 +31,7 @@ EmbossTranseqCliClient.exe \
 EmbossWaterCliClient.exe \
 FastaCliClient.exe \
 FastmCliClient.exe \
+GeneWiseCliClient.exe \
 IPRScanCliClient.exe \
 KalignCliClient.exe \
 LalignCliClient.exe \
@@ -40,11 +41,13 @@ MuscleCliClient.exe \
 MViewCliClient.exe \
 NcbiBlastCliClient.exe \
 PhobiusCliClient.exe \
+PromoterWiseCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
 RadarCliClient.exe \
 SapsCliClient.exe \
 TcoffeeCliClient.exe \
+Wise2DBACliClient.exe \
 WSDbfetchCliClient.exe \
 WuBlastCliClient.exe
 
@@ -128,6 +131,10 @@ FastmCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/FastmCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+GeneWiseCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/GeneWiseCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+	
 IPRScanCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/IPRScanCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
@@ -164,6 +171,10 @@ PhobiusCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PhobiusCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+PromoterWiseCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PromoterWiseCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 PsiBlastCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PsiBlastCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
@@ -182,6 +193,10 @@ SapsCliClient.exe: EbiWS.dll
 
 TcoffeeCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/TcoffeeCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+Wise2DBACliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/Wise2DBACliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 WSDbfetchCliClient.exe: EbiWS.dll
