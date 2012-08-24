@@ -77,7 +77,7 @@ class EbiWsDbfetchRest
   # Get the User-agent for client requests.
   def getUserAgent()
     printDebugMessage('getUserAgent', 'Begin', 11)
-    clientRevision = '$Revision: 1703 $'
+    clientRevision = '$Revision$'
     clientVersion = '0'
     if clientRevision.length > 11
        clientVersion = clientRevision[11..-3]
