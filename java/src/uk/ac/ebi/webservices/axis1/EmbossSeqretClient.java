@@ -30,26 +30,29 @@ public class EmbossSeqretClient extends uk.ac.ebi.webservices.AbstractWsToolClie
 	private String revision = "$Revision$";
 	/** Tool specific usage for help. */
 	private static final String usageMsg = "EMBOSS seqret\n"
-		+ "================\n"
+		+ "=============\n"
 		+ "\n"
 		+ "Manipulate and reformat sequence data.\n"
 		+ "\n"    
 		+ "[Required]\n"
 		+ "\n"
 		+ "      --sequence     : file : input sequence\n"
+		+ "      --stype        : str  : sequence type, see --paramDetail stype\n"
 		+ "\n"
 		+ "[Optional]\n"
 		+ "\n"
-		+ "      --stype        : str  : sequence type, see --paramDetail stype\n"
-		+ "      --inputformat  : str  : format for input data, see --paramDetail inputformat\n"
-		+ "      --outputformat : str  : format for output data, see --paramDetail outputformat\n"
+		+ "      --inputformat  : str  : format for input data, see --paramDetail \n"
+		+ "                              inputformat\n"
+		+ "      --outputformat : str  : format for output data, see --paramDetail \n"
+		+ "                              outputformat\n"
 		+ "      --feature      :      : use feature information\n"
 		+ "      --nofeature    :      : don't use feature information\n"
 		+ "      --firstonly    :      : only first input sequence\n"
 		+ "      --nofirstonly  :      : all input sequences\n"
 		+ "      --reverse      :      : reverse-complement nucleotide sequence\n"
 		+ "      --noreverse    :      : original nucleotide input sequence\n"
-		+ "      --outputcase   : str  : character case for output sequence, see --paramDetail outputcase\n";
+		+ "      --outputcase   : str  : character case for output sequence, see \n"
+		+ "                              --paramDetail outputcase\n";
 
 	
 	/** Default constructor.
@@ -455,7 +458,7 @@ public class EmbossSeqretClient extends uk.ac.ebi.webservices.AbstractWsToolClie
 				// For asynchronous mode
 				if (cli.hasOption("async")) {
 					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar EmbossPepwindow_Axis1.jar --status --jobid " + jobid);
+					System.err.println("To get status: java -jar EmbossSeqret_Axis1.jar --status --jobid " + jobid);
 				} else {
 					// In synchronous mode try to get the results
 					client.printProgressMessage(jobid, 1);
