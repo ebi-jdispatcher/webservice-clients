@@ -108,9 +108,9 @@
 		<antcall target="test-clean-emboss_pepstats" />
 		<antcall target="test-clean-emboss_pepwindow" />
 		<antcall target="test-clean-saps" />
-		<!-- TODO: Sequence Format Conversion (SFC) -->
-		<!-- antcall target="test-clean-emboss_seqret" / -->
-		<!-- antcall target="test-clean-readseq" / -->
+		<!-- Sequence Format Conversion (SFC) -->
+		<antcall target="test-clean-emboss_seqret" />
+		<antcall target="test-clean-readseq" />
 		<!-- TODO: Sequence Operations (SO) -->
 		<!-- antcall target="test-clean-seqcksum" / -->
 		<!-- Sequence Similarity Search (SSS) -->
@@ -161,9 +161,9 @@
 		<antcall target="axis1-test-radar" />
 		<!-- Phylogeny -->
 		<antcall target="axis1-test-clustalw2_phylogeny" />
-		<!-- TODO: Sequence Format Conversion (SFC) -->
-		<!-- antcall target="axis1-test-emboss_seqret" / -->
-		<!-- antcall target="axis1-test-readseq" / -->
+		<!-- Sequence Format Conversion (SFC) -->
+		<antcall target="axis1-test-emboss_seqret" />
+		<antcall target="axis1-test-readseq" />
 		<!-- TODO: Sequence Operations (SO) -->
 		<!-- antcall target="axis1-test-seqcksum" / -->
 		<!-- Sequence Similarity Search (SSS) -->
