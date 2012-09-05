@@ -87,6 +87,7 @@
 		<antcall target="axis1-stubs-emboss_pepinfo"/>
 		<antcall target="axis1-stubs-emboss_pepstats"/>
 		<antcall target="axis1-stubs-emboss_pepwindow"/>
+		<antcall target="axis1-stubs-emboss_seqret" />
 		<antcall target="axis1-stubs-emboss_sixpack" />
 		<antcall target="axis1-stubs-emboss_stretcher" />
 		<antcall target="axis1-stubs-emboss_transeq" />
@@ -108,6 +109,7 @@
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
 		<antcall target="axis1-stubs-radar"/>
+		<antcall target="axis1-stubs-readseq"/>
 		<antcall target="axis1-stubs-saps"/>
 		<antcall target="axis1-stubs-tcoffee" />
 		<antcall target="axis1-stubs-wise2dba" />
@@ -192,6 +194,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.pepwindow" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepwindow?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_seqret" description="Axis 1.x: generate stubs for EMBOSS seqret (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.seqret" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_seqret?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_sixpack" description="Axis 1.x: generate stubs for EMBOSS sixpack (SOAP)">
@@ -318,6 +326,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.radar" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/radar?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-readseq" description="Axis 1.x: generate stubs for Readseq (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.readseq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/readseq?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-saps" description="Axis 1.x: generate stubs for Saps (SOAP)">
@@ -741,12 +755,17 @@
 		<antcall target="axis1-distclean-stubs-dalilite" />
 		<antcall target="axis1-distclean-stubs-dbclustal" />
 		<antcall target="axis1-distclean-stubs-ebeye" />
+		<antcall target="axis1-distclean-stubs-emboss_backtranambig" />
+		<antcall target="axis1-distclean-stubs-emboss_backtranseq" />
 		<antcall target="axis1-distclean-stubs-emboss_matcher" />
 		<antcall target="axis1-distclean-stubs-emboss_needle" />
 		<antcall target="axis1-distclean-stubs-emboss_pepinfo" />
 		<antcall target="axis1-distclean-stubs-emboss_pepstats" />
 		<antcall target="axis1-distclean-stubs-emboss_pepwindow" />
+		<antcall target="axis1-distclean-stubs-emboss_seqret" />
+		<antcall target="axis1-distclean-stubs-emboss_sixpack" />
 		<antcall target="axis1-distclean-stubs-emboss_stretcher" />
+		<antcall target="axis1-distclean-stubs-emboss_transeq" />
 		<antcall target="axis1-distclean-stubs-emboss_water" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
@@ -765,6 +784,7 @@
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
 		<antcall target="axis1-distclean-stubs-radar"/>
+		<antcall target="axis1-distclean-stubs-readseq"/>
 		<antcall target="axis1-distclean-stubs-saps"/>
 		<antcall target="axis1-distclean-stubs-tcoffee" />
 		<antcall target="axis1-distclean-stubs-wise2dba" />
@@ -808,6 +828,18 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-emboss_backtranambig" description="Axis 1.x: remove EMBOSS backtranambig stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/backtranambig" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="backtranambig" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_backtranseq" description="Axis 1.x: remove EMBOSS backtranseq stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/backtranseq" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="backtranseq" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-emboss_matcher" description="Axis 1.x: remove EMBOSS matcher stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/matcher" includes="*/**" />
@@ -838,10 +870,28 @@
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="needle" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-emboss_seqret" description="Axis 1.x: remove EMBOSS seqret stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/seqret" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="seqret" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_sixpack" description="Axis 1.x: remove EMBOSS sixpack stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/sixpack" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="sixpack" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-emboss_stretcher" description="Axis 1.x: remove EMBOSS stretcher stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/stretcher" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="stretcher" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_transeq" description="Axis 1.x: remove EMBOSS transeq stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/transeq" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="transeq" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-emboss_water" description="Axis 1.x: remove EMBOSS water stubs">
@@ -948,12 +998,20 @@
 	</target>
 	<target name="axis1-distclean-stubs-radar" description="Axis 1.x: remove RADAR (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${axis1.stubs.src.dir}/radar"/>
+	        <fileset dir="${axis1.stubs.src.dir}/radar" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="radar" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-readseq" description="Axis 1.x: remove Readseq (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/readseq" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="readseq" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-saps" description="Axis 1.x: remove SAPS (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${axis1.stubs.src.dir}/saps"/>
+	        <fileset dir="${axis1.stubs.src.dir}/saps" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="saps" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-tcoffee" description="Axis 1.x: remove T-COFFEE (SOAP) stubs">
@@ -989,26 +1047,42 @@
 		<antcall target="jaxws-stubs-clustalo" />
 		<antcall target="jaxws-stubs-clustalw2" />
 		<antcall target="jaxws-stubs-clustalw2phylogeny" />
+		<antcall target="jaxws-stubs-dalilite" />
 		<antcall target="jaxws-stubs-dbclustal" />
 		<antcall target="jaxws-stubs-ebeye" />
+		<antcall target="jaxws-stubs-emboss_backtranambig" />
+		<antcall target="jaxws-stubs-emboss_backtranseq" />
 		<antcall target="jaxws-stubs-emboss_matcher" />
 		<antcall target="jaxws-stubs-emboss_needle" />
+		<antcall target="jaxws-stubs-emboss_pepinfo" />
+		<antcall target="jaxws-stubs-emboss_pepstats" />
+		<antcall target="jaxws-stubs-emboss_pepwindow" />
+		<antcall target="jaxws-stubs-emboss_seqret" />
+		<antcall target="jaxws-stubs-emboss_sixpack" />
 		<antcall target="jaxws-stubs-emboss_stretcher" />
+		<antcall target="jaxws-stubs-emboss_transeq" />
 		<antcall target="jaxws-stubs-emboss_water" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-fastm" />
+		<antcall target="jaxws-stubs-genewise" />
 		<antcall target="jaxws-stubs-iprscan" />
 		<antcall target="jaxws-stubs-kalign" />
 		<antcall target="jaxws-stubs-lalign" />
 		<antcall target="jaxws-stubs-mafft" />
+		<antcall target="jaxws-stubs-maxsprout" />
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-mview" />
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-phobius" />
 		<antcall target="jaxws-stubs-prank" />
+		<antcall target="jaxws-stubs-promoterwise" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
+		<antcall target="jaxws-stubs-radar" />
+		<antcall target="jaxws-stubs-readseq" />
+		<antcall target="jaxws-stubs-saps" />
 		<antcall target="jaxws-stubs-tcoffee" />
+		<antcall target="jaxws-stubs-wise2dba" />
 		<antcall target="jaxws-stubs-wsdbfetch" />
 		<antcall target="jaxws-stubs-wublast" />
 	</target>
@@ -1032,6 +1106,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/clustalw2_phylogeny?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-dalilite" description="JAX-WS RI: generate stubs for DaliLite (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.dalilite" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dalilite?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-dbclustal" description="JAX-WS RI: generate stubs for DbClustal (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.dbclustal" />
@@ -1042,6 +1122,18 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ebeye" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_backtranambig" description="JAX-WS RI: generate stubs for EMBOSS backtranambig (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.backtranambig" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranambig?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_backtranseq" description="JAX-WS RI: generate stubs for EMBOSS backtranseq (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.backtranseq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranseq?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-emboss_matcher" description="JAX-WS RI: generate stubs for EMBOSS matcher (SOAP)">
@@ -1056,10 +1148,46 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-emboss_pepinfo" description="JAX-WS RI: generate stubs for EMBOSS pepinfo (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.pepinfo" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepinfo?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_pepstats" description="JAX-WS RI: generate stubs for EMBOSS pepstats (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.pepstats" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_pepwindow" description="JAX-WS RI: generate stubs for EMBOSS pepwindow (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.pepwindow" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_pepwindow?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_seqret" description="JAX-WS RI: generate stubs for EMBOSS seqret (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.seqret" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_seqret?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_sixpack" description="JAX-WS RI: generate stubs for EMBOSS sixpack (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.sixpack" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_sixpack?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-emboss_stretcher" description="JAX-WS RI: generate stubs for EMBOSS stretcher (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.stretcher" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_stretcher?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_transeq" description="JAX-WS RI: generate stubs for EMBOSS transeq (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.transeq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_transeq?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-emboss_water" description="JAX-WS RI: generate stubs for EMBOSS water (SOAP)">
@@ -1078,6 +1206,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.fastm" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-genewise" description="JAX-WS RI: generate stubs for GeneWise (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.genewise" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/genewise?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-iprscan" description="JAX-WS RI: generate stubs for InterProScan (SOAP)">
@@ -1102,6 +1236,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mafft" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-maxsprout" description="JAX-WS RI: generate stubs for MaxSprout (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.maxsprout" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/maxsprout?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-muscle" description="JAX-WS RI: generate stubs for MUSCLE (SOAP)">
@@ -1134,6 +1274,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-promoterwise" description="JAX-WS RI: generate stubs for PromoterWise (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.promoterwise" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/promoterwise?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-psiblast" description="JAX-WS RI: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psiblast" />
@@ -1146,10 +1292,34 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-radar" description="JAX-WS RI: generate stubs for RADAR (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.radar" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/radar?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-readseq" description="JAX-WS RI: generate stubs for Readseq (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.readseq" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/readseq?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-saps" description="JAX-WS RI: generate stubs for SAPS (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.saps" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-tcoffee" description="JAX-WS RI: generate stubs for T-COFFEE (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.tcoffee" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/tcoffee?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-wise2dba" description="JAX-WS RI: generate stubs for Wise2DBA (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.wise2dba" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/wise2dba?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-wsdbfetch" description="JAX-WS RI: generate stubs for WSDbfetch (SOAP)">
@@ -1241,26 +1411,42 @@
 		<antcall target="jaxws-distclean-stubs-clustalo" />
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
 		<antcall target="jaxws-distclean-stubs-clustalw2phylogeny" />
+		<antcall target="jaxws-distclean-stubs-dalilite" />
 		<antcall target="jaxws-distclean-stubs-dbclustal" />
 		<antcall target="jaxws-distclean-stubs-ebeye" />
+		<antcall target="jaxws-distclean-stubs-emboss_backtranambig" />
+		<antcall target="jaxws-distclean-stubs-emboss_backtranseq" />
 		<antcall target="jaxws-distclean-stubs-emboss_matcher" />
 		<antcall target="jaxws-distclean-stubs-emboss_needle" />
+		<antcall target="jaxws-distclean-stubs-emboss_pepinfo" />
+		<antcall target="jaxws-distclean-stubs-emboss_pepstats" />
+		<antcall target="jaxws-distclean-stubs-emboss_pepwindow" />
+		<antcall target="jaxws-distclean-stubs-emboss_seqret" />
+		<antcall target="jaxws-distclean-stubs-emboss_sixpack" />
 		<antcall target="jaxws-distclean-stubs-emboss_stretcher" />
+		<antcall target="jaxws-distclean-stubs-emboss_transeq" />
 		<antcall target="jaxws-distclean-stubs-emboss_water" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-fastm" />
+		<antcall target="jaxws-distclean-stubs-genewise" />
 		<antcall target="jaxws-distclean-stubs-iprscan" />
 		<antcall target="jaxws-distclean-stubs-kalign" />
 		<antcall target="jaxws-distclean-stubs-lalign" />
 		<antcall target="jaxws-distclean-stubs-mafft" />
+		<antcall target="jaxws-distclean-stubs-maxsprout" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-mview" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
 		<antcall target="jaxws-distclean-stubs-phobius" />
 		<antcall target="jaxws-distclean-stubs-prank" />
+		<antcall target="jaxws-distclean-stubs-promoterwise" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
 		<antcall target="jaxws-distclean-stubs-psisearch" />
+		<antcall target="jaxws-distclean-stubs-radar" />
+		<antcall target="jaxws-distclean-stubs-readseq" />
 		<antcall target="jaxws-distclean-stubs-tcoffee" />
+		<antcall target="jaxws-distclean-stubs-wise2dba" />
+		<antcall target="jaxws-distclean-stubs-wsdbfetch" />
 		<antcall target="jaxws-distclean-stubs-wublast" />
 	</target>
 
@@ -1282,6 +1468,12 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="clustalw2phylogeny" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-dalilite" description="JAX-WS RI: remove DaliLite (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/dalilite" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="dalilite" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-dbclustal" description="JAX-WS RI: remove DbClustal (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/dbclustal" includes="*/**" />
@@ -1292,6 +1484,18 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ebeye" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ebeye" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_backtranambig" description="JAX-WS RI: remove EMBOSS backtranambig (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/backtranambig" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="backtranambig" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_backtranseq" description="JAX-WS RI: remove EMBOSS backtranseq (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/backtranseq" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="backtranseq" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-emboss_matcher" description="JAX-WS RI: remove EMBOSS matcher (SOAP) stubs">
@@ -1306,12 +1510,48 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="needle" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-emboss_pepinfo" description="JAX-WS RI: remove EMBOSS pepinfo (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/pepinfo" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="pepinfo" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_pepstats" description="JAX-WS RI: remove EMBOSS pepstats (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/pepstats" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="pepstats" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_pepwindow" description="JAX-WS RI: remove EMBOSS pepwindow (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/pepwindow" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="pepwindow" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_seqret" description="JAX-WS RI: remove EMBOSS seqret (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/seqret" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="seqret" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_sixpack" description="JAX-WS RI: remove EMBOSS sixpack (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/sixpack" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="sixpack" />
+	    </delete>
+	</target>
    	<target name="jaxws-distclean-stubs-emboss_stretcher" description="JAX-WS RI: remove EMBOSS stretcher (SOAP) stubs">
    	    <delete includeemptydirs="true" quiet="true">
    	        <fileset dir="${jaxws.stubs.src.dir}/emboss/stretcher" includes="*/**" />
    	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="stretcher" />
    	    </delete>
    	</target>
+	<target name="jaxws-distclean-stubs-emboss_transeq" description="JAX-WS RI: remove EMBOSS transeq (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/transeq" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="transeq" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-emboss_water" description="JAX-WS RI: remove EMBOSS water (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/water" includes="*/**" />
@@ -1330,6 +1570,12 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fastm" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-genewise" description="JAX-WS RI: remove GeneWise (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/genewise" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="genewise" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-iprscan" description="JAX-WS RI: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/iprscan" includes="*/**" />
@@ -1342,7 +1588,7 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="kalign" />
 	    </delete>
 	</target>
-	<target name="jaxws-distclean-stubs-lalign" description="JAX-WS RI: remove align (SOAP) stubs">
+	<target name="jaxws-distclean-stubs-lalign" description="JAX-WS RI: remove lalign (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/lalign" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="lalign" />
@@ -1352,6 +1598,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/mafft" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mafft" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-maxsprout" description="JAX-WS RI: remove MaxSprout (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/maxsprout" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="maxsprout" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-muscle" description="JAX-WS RI: remove MUSCLE (SOAP) stubs">
@@ -1384,6 +1636,12 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="prank" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-promoterwise" description="JAX-WS RI: remove PromoterWise (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/promoterwise" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="promoterwise" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-psiblast" description="JAX-WS RI: remove PSI-BLAST (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/psiblast" includes="*/**" />
@@ -1396,10 +1654,34 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-radar" description="JAX-WS RI: remove RADAR (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/radar" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="radar" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-readseq" description="JAX-WS RI: remove Readseq (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/readseq" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="readseq" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-saps" description="JAX-WS RI: remove SAPS (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/saps" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="saps" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-tcoffee" description="JAX-WS RI: remove T-COFFEE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/tcoffee" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="tcoffee" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-wise2dba" description="JAX-WS RI: remove Wise2DBA (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/wise2dba" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="wise2dba" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-wsdbfetch" description="JAX-WS RI: remove WSDbfetch (SOAP) stubs">
