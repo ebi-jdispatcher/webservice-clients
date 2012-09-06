@@ -691,8 +691,14 @@ sub multi_submit_job {
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
