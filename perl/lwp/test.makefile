@@ -123,7 +123,7 @@ emboss_pepstats_clean \
 emboss_pepwindow_clean \
 saps_clean
 
-# TODO: Sequence Format Conversion (SFC)
+# Sequence Format Conversion (SFC)
 sfc: \
 emboss_seqret \
 readseq
@@ -219,7 +219,8 @@ clustalw2_clean:
 	rm -f clustalw2-*
 
 # ClustalW 2.x Phylogeny
-clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
+clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail \
+clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
 
 clustalw2phylogeny_params:
 	${PERL} clustalw2phylogeny_lwp.pl --params
@@ -270,7 +271,9 @@ dbclustal_clean:
 	rm -f dbclustal-*
 
 # dbfetch
-dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
+dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats \
+dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles \
+dbfetch_fetchData dbfetch_fetchBatch
 
 dbfetch_getSupportedDBs:
 	${PERL} dbfetch_lwp.pl getSupportedDBs > dbfetch-getSupportedDBs.txt
@@ -313,7 +316,9 @@ dbfetch_clean:
 	rm -f dbfetch-*
 
 # EMBOSS backtranambig
-emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
+emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail \
+emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout \
+emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
 
 emboss_backtranambig_params:
 	${PERL} emboss_backtranambig_lwp.pl --params
@@ -340,7 +345,9 @@ emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
 
 # EMBOSS backtranseq
-emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
+emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail \
+emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout \
+emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
 
 emboss_backtranseq_params:
 	${PERL} emboss_backtranseq_lwp.pl --params
@@ -367,7 +374,8 @@ emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
 
 # EMBOSS matcher
-emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
+emboss_matcher: emboss_matcher_params emboss_matcher_param_detail \
+emboss_matcher_dbid emboss_matcher_file
 
 emboss_matcher_params:
 	${PERL} emboss_matcher_lwp.pl --params
@@ -385,7 +393,8 @@ emboss_matcher_clean:
 	rm -f emboss_matcher-*
 
 # EMBOSS needle
-emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid emboss_needle_file
+emboss_needle: emboss_needle_params emboss_needle_param_detail \
+emboss_needle_dbid emboss_needle_file
 
 emboss_needle_params:
 	${PERL} emboss_needle_lwp.pl --params
@@ -403,7 +412,8 @@ emboss_needle_clean:
 	rm -f emboss_needle-*
 
 # EMBOSS pepinfo
-emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
+emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail \
+emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
 
 emboss_pepinfo_params:
 	${PERL} emboss_pepinfo_lwp.pl --params
@@ -424,7 +434,8 @@ emboss_pepinfo_clean:
 	rm -f emboss_pepinfo-*
 
 # EMBOSS pepstats
-emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
+emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail \
+emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
 
 emboss_pepstats_params:
 	${PERL} emboss_pepstats_lwp.pl --params
@@ -445,7 +456,8 @@ emboss_pepstats_clean:
 	rm -f emboss_pepstats-*
 
 # EMBOSS pepwindow
-emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
+emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail \
+emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
 
 emboss_pepwindow_params:
 	${PERL} emboss_pepwindow_lwp.pl --params
@@ -465,15 +477,46 @@ emboss_pepwindow_stdin_stdout: test_data
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
 
-# TODO: EMBOSS seqret
-emboss_seqret:
-	echo 'TODO:' $@
+# EMBOSS seqret
+emboss_seqret: emboss_seqret_params emboss_seqret_param_detail \
+emboss_seqret_file emboss_seqret_dbid emboss_seqret_stdin_stdout \
+emboss_seqret_id_list_file emboss_seqret_id_list_file_stdin_stdout \
+emboss_seqret_multifasta_file emboss_seqret_multifasta_file_stdin_stdout
+
+emboss_seqret_params:
+	${PERL} emboss_seqret_lwp.pl --params
+
+emboss_seqret_param_detail:
+	${PERL} emboss_seqret_lwp.pl --paramDetail inputformat
+
+emboss_seqret_file: test_data
+	${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+emboss_seqret_dbid:
+	${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein 'UNIPROT:ABCC9_HUMAN'
+
+emboss_seqret_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein --quiet --outformat out --outfile - - > emboss_seqret-blah.txt
+
+emboss_seqret_id_list_file: test_data
+	${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+emboss_seqret_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein --sequence @- --quiet --outformat out --outfile - > emboss_seqret-idfile.txt
+
+emboss_seqret_multifasta_file: test_data
+	${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_seqret_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_seqret_lwp.pl --email ${EMAIL} --stype protein --outformat out --outfile - --multifasta --sequence - > emboss_seqret-file.txt
 
 emboss_seqret_clean:
 	rm -f emboss_seqret-*
 
 # EMBOSS sixpack
-emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout
+emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail \
+emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout \
+emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout
 
 emboss_sixpack_params:
 	${PERL} emboss_sixpack_lwp.pl --params
@@ -500,7 +543,8 @@ emboss_sixpack_clean:
 	rm -f emboss_sixpack-*
 
 # EMBOSS stretcher
-emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
+emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail \
+emboss_stretcher_dbid emboss_stretcher_file
 
 emboss_stretcher_params:
 	${PERL} emboss_stretcher_lwp.pl --params
@@ -518,7 +562,9 @@ emboss_stretcher_clean:
 	rm -f emboss_stretcher-*
 
 # EMBOSS transeq
-emboss_transeq: emboss_transeq_params emboss_transeq_param_detail emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
+emboss_transeq: emboss_transeq_params emboss_transeq_param_detail \
+emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout \
+emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
 
 emboss_transeq_params:
 	${PERL} emboss_transeq_lwp.pl --params
@@ -545,7 +591,8 @@ emboss_transeq_clean:
 	rm -f emboss_transeq-*
 
 # EMBOSS water
-emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
+emboss_water: emboss_water_params emboss_water_param_detail \
+emboss_water_dbid emboss_water_file
 
 emboss_water_params:
 	${PERL} emboss_water_lwp.pl --params
@@ -563,7 +610,10 @@ emboss_water_clean:
 	rm -f emboss_water-*
 
 # FASTA
-fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_id_list_file_stdin_stdout fasta_multifasta_file fasta_multifasta_file_stdin_stdout
+fasta: fasta_params fasta_param_detail \
+fasta_file fasta_dbid fasta_stdin_stdout \
+fasta_id_list_file fasta_id_list_file_stdin_stdout \
+fasta_multifasta_file fasta_multifasta_file_stdin_stdout
 
 fasta_params:
 	${PERL} fasta_lwp.pl --params
@@ -596,7 +646,8 @@ fasta_clean:
 	rm -f fasta-*
 
 # FASTM
-fastm: fastm_params fastm_param_detail fastm_file fastm_stdin_stdout
+fastm: fastm_params fastm_param_detail \
+fastm_file fastm_stdin_stdout
 
 fastm_params:
 	${PERL} fastm_lwp.pl --params
@@ -614,7 +665,8 @@ fastm_clean:
 	rm -f fastm-*
 
 # GeneWise
-genewise: genewise_params genewise_param_detail genewise_dbid genewise_file
+genewise: genewise_params genewise_param_detail \
+genewise_dbid genewise_file
 
 genewise_params:
 	${PERL} genewise_lwp.pl --params
@@ -632,7 +684,10 @@ genewise_clean:
 	rm -f genewise-*
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
+iprscan: iprscan_params iprscan_param_detail \
+iprscan_file iprscan_dbid iprscan_stdin_stdout \
+iprscan_id_list_file iprscan_id_list_file_stdin_stdout \
+iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
 iprscan_params:
 	${PERL} iprscan_lwp.pl --params
@@ -672,7 +727,8 @@ iprscan5_clean:
 	rm -f iprscan5-*
 
 # Kalign
-kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
+kalign: kalign_params kalign_param_detail \
+kalign_file kalign_stdin_stdout
 
 kalign_params:
 	${PERL} kalign_lwp.pl --params
@@ -690,7 +746,8 @@ kalign_clean:
 	rm -f kalign-*
 
 # lalign
-lalign: lalign_params lalign_param_detail lalign_dbid lalign_file
+lalign: lalign_params lalign_param_detail \
+lalign_dbid lalign_file
 
 lalign_params:
 	${PERL} lalign_lwp.pl --params
@@ -708,7 +765,8 @@ lalign_clean:
 	rm -f lalign-*
 
 # MAFFT
-mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
+mafft: mafft_params mafft_param_detail \
+mafft_file mafft_stdin_stdout
 
 mafft_params:
 	${PERL} mafft_lwp.pl --params
@@ -726,7 +784,8 @@ mafft_clean:
 	rm -f mafft-*
 
 # MaxSprout
-maxsprout: maxsprout_params maxsprout_param_detail maxsprout_file maxsprout_pdbid
+maxsprout: maxsprout_params maxsprout_param_detail \
+maxsprout_file maxsprout_pdbid
 
 maxsprout_params:
 	${PERL} maxsprout_lwp.pl --params
@@ -744,7 +803,8 @@ maxsprout_clean:
 	rm -rf maxsprout-*
 
 # MUSCLE
-muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
+muscle: muscle_params muscle_param_detail \
+muscle_file muscle_stdin_stdout
 
 muscle_params:
 	${PERL} muscle_lwp.pl --params
@@ -762,7 +822,8 @@ muscle_clean:
 	rm -f muscle-*
 
 # MView
-mview: mview_params mview_param_detail mview_file mview_stdin_stdout
+mview: mview_params mview_param_detail \
+mview_file mview_stdin_stdout
 
 mview_params:
 	${PERL} mview_lwp.pl --params
@@ -780,7 +841,10 @@ mview_clean:
 	rm -f mview-*
 
 # NCBI BLAST or NCBI BLAST+
-ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
+ncbiblast: ncbiblast_params ncbiblast_param_detail \
+ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout \
+ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout \
+ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
 
 ncbiblast_params:
 	${PERL} ncbiblast_lwp.pl --params
@@ -813,7 +877,10 @@ ncbiblast_clean:
 	rm -f ncbiblast-*
 
 # Phobius
-phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout phobius_id_list_file phobius_id_list_file_stdin_stdout phobius_multifasta_file phobius_multifasta_file_stdin_stdout
+phobius: phobius_params phobius_param_detail \
+phobius_file phobius_dbid phobius_stdin_stdout \
+phobius_id_list_file phobius_id_list_file_stdin_stdout \
+phobius_multifasta_file phobius_multifasta_file_stdin_stdout
 
 phobius_params:
 	${PERL} phobius_lwp.pl --params
@@ -853,7 +920,8 @@ prank_clean:
 	rm -f prank-*
 
 # PromoterWise
-promoterwise: promoterwise_params promoterwise_param_detail promoterwise_dbid promoterwise_file
+promoterwise: promoterwise_params promoterwise_param_detail \
+promoterwise_dbid promoterwise_file
 
 promoterwise_params:
 	${PERL} promoterwise_lwp.pl --params
@@ -871,7 +939,10 @@ promoterwise_clean:
 	rm -f promoterwise-*
 
 # PSI-BLAST
-psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout psiblast_id_list_file psiblast_id_list_file_stdin_stdout psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
+psiblast: psiblast_params psiblast_param_detail \
+psiblast_file psiblast_dbid psiblast_stdin_stdout \
+psiblast_id_list_file psiblast_id_list_file_stdin_stdout \
+psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
 
 psiblast_params:
 	${PERL} psiblast_lwp.pl --params
@@ -904,7 +975,10 @@ psiblast_clean:
 	rm -f psiblast-*
 
 # PSI-Search
-psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout psisearch_id_list_file psisearch_id_list_file_stdin_stdout psisearch_multifasta_file psisearch_multifasta_file_stdin_stdout
+psisearch: psisearch_params psisearch_param_detail \
+psisearch_file psisearch_dbid psisearch_stdin_stdout \
+psisearch_id_list_file psisearch_id_list_file_stdin_stdout \
+psisearch_multifasta_file psisearch_multifasta_file_stdin_stdout
 
 psisearch_params:
 	${PERL} psisearch_lwp.pl --params
@@ -938,7 +1012,8 @@ psisearch_clean:
 
 
 # Radar
-radar: radar_params radar_param_detail radar_file radar_dbid radar_stdin_stdout
+radar: radar_params radar_param_detail \
+radar_file radar_dbid radar_stdin_stdout
 
 radar_params:
 	${PERL} radar_lwp.pl --params
@@ -958,16 +1033,45 @@ radar_stdin_stdout: test_data
 radar_clean:
 	rm -f radar-*
 
+# Readseq
+readseq: readseq_params readseq_param_detail \
+readseq_file readseq_dbid readseq_stdin_stdout \
+readseq_id_list_file readseq_id_list_file_stdin_stdout \
+readseq_multifasta_file readseq_multifasta_file_stdin_stdout
 
-# TODO: Readseq
-readseq:
-	echo 'TODO:' $@
+readseq_params:
+	${PERL} readseq_lwp.pl --params
+
+readseq_param_detail:
+	${PERL} readseq_lwp.pl --paramDetail inputformat
+
+readseq_file: test_data
+	${PERL} readseq_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+readseq_dbid:
+	${PERL} readseq_lwp.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+readseq_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} readseq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > readseq-blah.txt
+
+readseq_id_list_file: test_data
+	${PERL} readseq_lwp.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+readseq_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} readseq_lwp.pl --email ${EMAIL} --sequence @- --quiet --outformat out --outfile - > readseq-idfile.txt
+
+readseq_multifasta_file: test_data
+	${PERL} readseq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+readseq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} readseq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > readseq-file.txt
 
 readseq_clean:
 	rm -f readseq-*
 
 # SAPS
-saps: saps_params saps_param_detail saps_dbid saps_file saps_stdin_stdout
+saps: saps_params saps_param_detail \
+saps_dbid saps_file saps_stdin_stdout
 
 saps_params:
 	${PERL} saps_lwp.pl --params
@@ -995,7 +1099,8 @@ seqcksum_clean:
 	rm -f seqcksum-*
 
 # T-Coffee
-tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
+tcoffee: tcoffee_params tcoffee_param_detail \
+tcoffee_file tcoffee_stdin_stdout
 
 tcoffee_params:
 	${PERL} tcoffee_lwp.pl --params
@@ -1013,7 +1118,8 @@ tcoffee_clean:
 	rm -f tcoffee-*
 
 # Wise2DBA
-wise2dba: wise2dba_params wise2dba_param_detail wise2dba_dbid wise2dba_file
+wise2dba: wise2dba_params wise2dba_param_detail \
+wise2dba_dbid wise2dba_file
 
 wise2dba_params:
 	${PERL} wise2dba_lwp.pl --params
@@ -1031,7 +1137,10 @@ wise2dba_clean:
 	rm -f wise2dba-*
 
 # WU-BLAST
-wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_id_list_file_stdin_stdout wublast_multifasta_file wublast_multifasta_file_stdin_stdout
+wublast: wublast_params wublast_param_detail \
+wublast_file wublast_dbid wublast_stdin_stdout \
+wublast_id_list_file wublast_id_list_file_stdin_stdout \
+wublast_multifasta_file wublast_multifasta_file_stdin_stdout
 
 wublast_params:
 	${PERL} wublast_lwp.pl --params
