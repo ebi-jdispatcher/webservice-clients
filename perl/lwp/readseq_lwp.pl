@@ -1029,10 +1029,14 @@ Manipulate and reformat sequence data.
      --noreverse      :      : do not reverse-complement input nucleotide 
                                sequence.
      --degap          : str  : base/residue symbols to remove from sequence
-     --transymbol     : str  : set of base/residue symbol from:to replacements to perform
-     --feature        : str  : list of features to select, see --paramDetail features
-     --fthandle       : str  : action to perform on selected features, see --paramDetail fthandle
-     --subrange       : str  : region of sequence on which to perform feature processing
+     --transymbol     : str  : set of base/residue symbol from:to replacements 
+                               to perform
+     --feature        : str  : list of features to select, see --paramDetail 
+                               feature
+     --fthandle       : str  : action to perform on selected features, see 
+                               --paramDetail fthandle
+     --subrange       : str  : region of sequence on which to perform feature 
+                               processing
      --multifasta     :      : treat input as a set of fasta formatted 
                                sequences submitting a job for each sequence
 
