@@ -126,7 +126,7 @@ emboss_pepstats_clean \
 emboss_pepwindow_clean \
 saps_clean
 
-# TODO: Sequence Format Conversion (SFC)
+# Sequence Format Conversion (SFC)
 sfc: \
 emboss_seqret \
 readseq
@@ -558,9 +558,42 @@ emboss_pepwindow_stdin_stdout: test_data
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
 
-# TODO: EMBOSS seqret
-emboss_seqret:
-	echo 'TODO:' $@
+# EMBOSS seqret
+emboss_seqret: emboss_seqret_help \
+emboss_seqret_params emboss_seqret_param_detail \
+emboss_seqret_dbid emboss_seqret_file emboss_seqret_stdin_stdout \
+emboss_seqret_id_list_file emboss_seqret_id_list_file_stdin_stdout \
+emboss_seqret_multifasta_file emboss_seqret_multifasta_file_stdin_stdout
+
+emboss_seqret_help:
+	${PERL} emboss_seqret_soaplite.pl --help
+
+emboss_seqret_params:
+	${PERL} emboss_seqret_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_seqret_param_detail:
+	${PERL} emboss_seqret_soaplite.pl --paramDetail inputformat
+
+emboss_seqret_dbid:
+	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --sequence 'EMBL:L12345'
+
+emboss_seqret_file: test_data
+	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_seqret_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --quiet --outformat out --outfile - - > emboss_seqret-blah.txt
+
+emboss_seqret_id_list_file: test_data
+	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --sequence @../test_data/embl_id_list.txt
+
+emboss_seqret_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --quiet --outformat out --outfile - @- > emboss_seqret-blah.txt
+
+emboss_seqret_multifasta_file: test_data
+	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype protein --multifasta --sequence ../test_data/multi_prot.tfa
+
+emboss_seqret_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype protein --quiet --outformat out --outfile - --multifasta - > emboss_seqret-blah.txt
 
 emboss_seqret_clean:
 	rm -f emboss_seqret-*
@@ -1080,8 +1113,41 @@ radar_clean:
 	rm -f radar-*
 
 # TODO: Readseq
-readseq:
-	echo 'TODO:' $@
+readseq: readseq_help \
+readseq_params readseq_param_detail \
+readseq_dbid readseq_file readseq_stdin_stdout \
+readseq_id_list_file readseq_id_list_file_stdin_stdout \
+readseq_multifasta_file readseq_multifasta_file_stdin_stdout
+
+readseq_help:
+	${PERL} readseq_soaplite.pl --help
+
+readseq_params:
+	${PERL} readseq_soaplite.pl --params ${JDispatcher_params_suffix}
+
+readseq_param_detail:
+	${PERL} readseq_soaplite.pl --paramDetail inputformat
+
+readseq_dbid:
+	${PERL} readseq_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
+
+readseq_file: test_data
+	${PERL} readseq_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+readseq_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} readseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > readseq-blah.txt
+
+readseq_id_list_file: test_data
+	${PERL} readseq_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+readseq_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} readseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > readseq-blah.txt
+
+readseq_multifasta_file: test_data
+	${PERL} readseq_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+readseq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} readseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > readseq-blah.txt
 
 readseq_clean:
 	rm -f readseq-*
