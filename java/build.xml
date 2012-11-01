@@ -74,6 +74,7 @@
 
 	<!-- Generate Axis 1.x stubs for all services -->
 	<target name="axis1-stubs" depends="resolve" description="Axis 1.x: generate code stubs for SOAP clients">
+		<antcall target="axis1-stubs-censor" />
 		<antcall target="axis1-stubs-clustalo" />
 		<antcall target="axis1-stubs-clustalw2" />
 		<antcall target="axis1-stubs-clustalw2phylogeny" />
@@ -118,6 +119,12 @@
 	</target>
 
 	<!-- Generate Axis 1.x stubs for each service -->
+	<target name="axis1-stubs-censor" description="Axis 1.x: generate stubs for CENSOR (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.censor" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/censor?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-clustalo" description="Axis 1.x: generate stubs for ClustalO (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.clustalo" />
@@ -376,6 +383,16 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
+		<jar destfile="${jar.dir}/Censor_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/CensorClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/censor/** client-config.wsdd">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.CensorClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalOClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalOClient"/>
@@ -769,6 +786,7 @@
 
 	<!-- Clean-up Axis 1.x generate files -->
 	<target name="axis1-distclean-stubs" description="Axis 1.x: remove generated stubs">
+		<antcall target="axis1-distclean-stubs-censor" />
 		<antcall target="axis1-distclean-stubs-clustalo" />
 		<antcall target="axis1-distclean-stubs-clustalw2" />
 		<antcall target="axis1-distclean-stubs-clustalw2phylogeny" />
@@ -812,6 +830,12 @@
 		<antcall target="axis1-distclean-stubs-wublast" />
 	</target>
 
+	<target name="axis1-distclean-stubs-censor" description="Axis 1.x: remove CENSOR (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/censor" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="censor" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-clustalo" description="Axis 1.x: remove ClustalO (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/clustalo" includes="*/**" />
@@ -1064,6 +1088,7 @@
 
 	<!-- Generate JAX-WS stubs for all services -->
 	<target name="jaxws-stubs" depends="resolve" description="JAX-WS RI: generate code stubs for SOAP clients">
+		<antcall target="jaxws-stubs-censor" />
 		<antcall target="jaxws-stubs-clustalo" />
 		<antcall target="jaxws-stubs-clustalw2" />
 		<antcall target="jaxws-stubs-clustalw2phylogeny" />
@@ -1108,6 +1133,12 @@
 	</target>
 
 	<!-- Generate JAX-WS stubs for each service -->
+	<target name="jaxws-stubs-censor" description="JAX-WS RI: generate stubs for CENSOR (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.censor" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/censor?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-clustalo" description="JAX-WS RI: generate stubs for ClustalO (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.clustalo" />
@@ -1365,6 +1396,7 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
+		<!-- TODO CENSOR -->
 		<!-- TODO ClustalO -->
 		<!-- TODO ClustalW2 -->
 		<!-- TODO ClustalW2 Phylogeny -->
@@ -1428,6 +1460,7 @@
 
 	<!-- Clean-up JAX-WS generated files -->
 	<target name="jaxws-distclean-stubs" description="JAX-WS RI: remove generated stubs">
+		<antcall target="jaxws-distclean-stubs-censor" />
 		<antcall target="jaxws-distclean-stubs-clustalo" />
 		<antcall target="jaxws-distclean-stubs-clustalw2" />
 		<antcall target="jaxws-distclean-stubs-clustalw2phylogeny" />
@@ -1470,6 +1503,12 @@
 		<antcall target="jaxws-distclean-stubs-wublast" />
 	</target>
 
+	<target name="jaxws-distclean-stubs-censor" description="JAX-WS RI: remove CENSOR (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/censor" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="censor" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-clustalo" description="JAX-WS RI: remove ClustalO (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/clustalo" includes="*/**" />
