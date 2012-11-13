@@ -134,9 +134,11 @@ readseq_clean
 
 # TODO: Sequence Operations (SO)
 so: \
+censor \
 seqcksum
 
 so_clean: \
+censor_clean \
 seqcksum_clean
 
 # Sequence Similarity Search (SSS)
@@ -182,8 +184,45 @@ maxsprout_clean
 test_data:
 	-if [ -d ../test_data ]; then svn update ../test_data ; else svn co ${TEST_DATA_SVN} ../test_data ; fi
 
+# CENSOR
+censor: censor_params censor_param_detail \
+censor_file censor_dbid censor_stdin_stdout \
+censor_id_list_file censor_id_list_file_stdin_stdout \
+censor_multifasta_file censor_multifasta_file_stdin_stdout
+
+censor_params:
+	${PERL} censor_lwp.pl --params
+
+censor_param_detail:
+	${PERL} censor_lwp.pl --paramDetail database
+
+censor_file: test_data
+	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota ../test_data/EMBL_AB000204.fasta
+
+censor_dbid:
+	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota 'EMBL:AB000204' 
+
+censor_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --quiet --outformat out --outfile - - > censor-blah.txt
+
+censor_id_list_file: test_data
+	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - @../test_data/uniprot_id_list.txt
+
+censor_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --sequence @- > censor-idfile.txt
+
+censor_multifasta_file: test_data
+	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+censor_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --multifasta --sequence - > censor-file.txt
+
+censor_clean:
+	rm -f censor-*
+
 # Clustal Omega
-clustalo: clustalo_params clustalo_param_detail clustalo_align clustalo_align_stdin_stdout
+clustalo: clustalo_params clustalo_param_detail \
+clustalo_align clustalo_align_stdin_stdout
 
 clustalo_params:
 	${PERL} clustalo_lwp.pl --params
@@ -201,7 +240,8 @@ clustalo_clean:
 	rm -f clustalo-*
 
 # ClustalW 2.x
-clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
+clustalw2: clustalw2_params clustalw2_param_detail \
+clustalw2_align clustalw2_align_stdin_stdout
 
 clustalw2_params:
 	${PERL} clustalw2_lwp.pl --params
@@ -238,7 +278,8 @@ clustalw2phylogeny_clean:
 	rm -f clustalw2_phylogeny-*
 
 # DaliLite
-dalilite: dalilite_params dalilite_param_detail dalilite_file dalilite_pdbid
+dalilite: dalilite_params dalilite_param_detail \
+dalilite_file dalilite_pdbid
 
 dalilite_params:
 	${PERL} dalilite_lwp.pl --params
@@ -256,7 +297,8 @@ dalilite_clean:
 	rm -rf dalilite-*
 
 # DbClustal
-dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
+dbclustal: dbclustal_params dbclustal_param_detail \
+dbclustal_file
 
 dbclustal_params:
 	${PERL} dbclustal_lwp.pl --params
