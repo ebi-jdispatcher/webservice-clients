@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<project name="EBIWS2-Java-Test-CENSOR">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-censor" description="Axis 1.x: CENSOR (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/Censor_Axis1.jar" />
+		<antcall target="test-censor-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-censor-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-censor" description="JAX-WS RI: CENSOR (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/Censor_JAXWS.jar" />
+		<antcall target="test-censor-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-censor-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-censor-help">
+		<echo message="CENSOR (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-censor-params">
+		<echo message="CENSOR (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-censor-paramdetail">
+		<echo message="CENSOR (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="database" />
+		</java>
+	</target>
+	
+	<target name="test-censor-sequence-file">
+		<echo message="CENSOR (SOAP): File query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="test_data/EMBL_AB000204.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-censor-sequence-dbid">
+		<echo message="CENSOR (SOAP): DB:ID query" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="EMBL:AB000204" />
+		</java>
+	</target>
+	
+	<target name="test-censor-sequence-stdin">
+		<echo message="CENSOR (SOAP): Query sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/EMBL_AB000204.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="--outformat" />
+			<arg value="masked" />
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-censor-idlist-file">
+		<echo message="CENSOR (SOAP): ID list query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="--outformat" />
+			<arg value="masked" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-censor-idlist-stdin">
+		<echo message="CENSOR (SOAP): ID list query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="--outformat" />
+			<arg value="masked" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Query ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-censor-multifasta-file">
+		<echo message="CENSOR (SOAP): multifasta query file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="--outformat" />
+			<arg value="masked" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-censor-multifasta-stdin">
+		<echo message="CENSOR (SOAP): multifasta query from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--database" />
+			<arg value="Eukaryota" />
+			<arg value="--outformat" />
+			<arg value="masked" /> <!-- Hit identifiers -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-censor" description="CENSOR (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="censor-**"/>
+		</delete>
+	</target>
+	
+</project>
