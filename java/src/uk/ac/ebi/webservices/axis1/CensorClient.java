@@ -46,9 +46,9 @@ public class CensorClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	private static final String usageMsg = "CENSOR\n"
 			+ "==========\n"
 			+ "\n"
-			+ "CENSOR is a software tool which screens query sequences against a reference collection \n"
-			+ "of repeats and \"censors\" (masks) homologous portions with masking symbols, as well as \n"
-			+ "generating a report classifying all found repeats.\n"
+			+ "CENSOR is a software tool which screens query sequences against a reference \n"
+			+ "collection of repeats and \"censors\" (masks) homologous portions with masking \n"
+			+ "symbols, as well as generating a report classifying all found repeats.\n"
 			+ "\n"
 			+ "For more information see:\n"
 			+ "- http://www.ebi.ac.uk/Tools/so/censor\n"
@@ -71,7 +71,8 @@ public class CensorClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "      --noidentity     :      : identical and similar matches\n"
 			+ "  -s, --showsimple     :      : show simple repeats\n"
 			+ "      --noshowsimple   :      : do not show simple repeats\n"
-			+ "      --multifasta     :      : treat input as a set of fasta formatted sequences\n";
+			+ "      --multifasta     :      : treat input as a set of fasta formatted \n"
+			+ "                                sequences\n";
 
 	/**
 	 * Default constructor.
