@@ -835,13 +835,13 @@ iprscan_id_list_file: test_data
 	${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 iprscan_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --sequence @- > iprscan-idfile.txt
 
 iprscan_multifasta_file: test_data
 	${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
 
 iprscan_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > iprscan-file.txt
 
 iprscan_clean:
 	rm -f iprscan-*
