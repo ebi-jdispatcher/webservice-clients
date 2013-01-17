@@ -800,7 +800,7 @@ Asynchronous job:
 			string status = "PENDING";
 			// Check status and wait if not finished
 			while(status == "RUNNING" || status == "PENDING") {
-				status = GetStatus(JobId);
+				status = GetStatus(jobId);
 				PrintProgressMessage(status, 1);
 				if(status == "RUNNING" || status == "PENDING") {
 					// Wait before polling again.
