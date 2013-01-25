@@ -38,6 +38,22 @@ L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =back
 
+=head1 LICENSE
+
+Copyright 2012-2013 EMBL - European Bioinformatics Institute
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 =head1 VERSION
 
 $Id$
@@ -730,6 +746,7 @@ input.
 =cut
 
 sub list_file_submit_job {
+	print_debug_message( 'list_file_submit_job', 'Begin', 11 );
 	my $filename         = shift;
 	my $jobIdForFilename = 1;
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
@@ -761,6 +778,7 @@ sub list_file_submit_job {
 		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 	}
 	close $LISTFILE;
+	print_debug_message( 'list_file_submit_job', 'End', 11 );
 }
 
 =head2 load_data()
