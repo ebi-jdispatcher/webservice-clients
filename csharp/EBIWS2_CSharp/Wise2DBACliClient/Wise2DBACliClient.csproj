@@ -1,34 +1,39 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{11893417-F9A5-4D17-BF59-E6CAEB43776B}</ProjectGuid>
-    <RootNamespace>
-    </RootNamespace>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{11893417-F9A5-4D17-BF59-E6CAEB43776B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Wise2DBACliClient</AssemblyName>
+    <RootNamespace>Wise2DBACliClient</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
     <OutputType>Exe</OutputType>
     <AssemblyName>Wise2DBACliClient</AssemblyName>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace>Wise2DBACliClient</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>DEBUG</DefineConstants>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
     <OutputType>Exe</OutputType>
     <AssemblyName>Wise2DBACliClient</AssemblyName>
-    <OutputPath>bin\Release\</OutputPath>
     <DebugSymbols>false</DebugSymbols>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace>Wise2DBACliClient</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DefineConstants>
     </DefineConstants>
