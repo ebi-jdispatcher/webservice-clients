@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -120,7 +120,6 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
-    <Compile Include="Wise2DBAClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
