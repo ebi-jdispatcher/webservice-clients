@@ -279,8 +279,8 @@ public class WSDbfetchClient {
 			Call call = super.createCall();
 			// Enable response compression.
 			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
-			// TEST: Enable request compression (requires service support)
-			//call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
+			// Enable request compression (requires service support)
+			call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
 			return call;
 		}
 	}
