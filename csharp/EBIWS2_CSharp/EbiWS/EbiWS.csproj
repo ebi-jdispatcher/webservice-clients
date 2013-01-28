@@ -21,28 +21,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <OutputType>Library</OutputType>
-    <AssemblyName>EbiWS</AssemblyName>
     <RootNamespace>EbiWS</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <OutputType>Library</OutputType>
-    <AssemblyName>EbiWS</AssemblyName>
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>EbiWS</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
+    <Compile Include="CensorClient.cs" />
+    <Compile Include="WebReferences\CensorWs\Reference.cs" />
     <Compile Include="ClustalOClient.cs" />
     <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
     <Compile Include="ClustalW2Client.cs" />
@@ -123,6 +119,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <None Include="WebReferences\CensorWs\Reference.map" />
     <None Include="WebReferences\ClustalOWs\Reference.map" />
     <None Include="WebReferences\ClustalW2Ws\Reference.map" />
     <None Include="WebReferences\ClustalW2PhylogenyWs\Reference.map" />
