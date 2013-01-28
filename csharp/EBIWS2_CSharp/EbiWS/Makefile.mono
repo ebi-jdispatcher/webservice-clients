@@ -52,6 +52,7 @@ EbiWS.dll: $(DEBUGBINDIR)/EbiWS.dll $(RELEASEBINDIR)/EbiWS.dll
 EbiWS.netmodule: $(DEBUGBINDIR)/EbiWS.netmodule $(RELEASEBINDIR)/EbiWS.netmodule
 
 coreSrc = AbstractWsClient.cs \
+CensorClient.cs \
 ClustalOClient.cs \
 ClustalW2Client.cs \
 ClustalW2PhylogenyClient.cs \
@@ -92,6 +93,7 @@ WSDbfetchClient.cs \
 WuBlastClient.cs
 
 stubSrc = \
+$(STUBSRCDIR)/CensorWs/Reference.cs \
 $(STUBSRCDIR)/ClustalOWs/Reference.cs \
 $(STUBSRCDIR)/ClustalW2PhylogenyWs/Reference.cs \
 $(STUBSRCDIR)/ClustalW2Ws/Reference.cs \
@@ -154,6 +156,9 @@ $(RELEASEBINDIR)/EbiWS.netmodule: $(coreSrc) $(stubSrc)
 
 # Collation target to generate stubs, but not compile.
 stubs: $(stubSrc)
+
+$(STUBSRCDIR)/CensorWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).CensorWs -out:$@ "$(WSDLBASE)/censor?wsdl"
 
 $(STUBSRCDIR)/ClustalOWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalOWs -out:$@ "$(WSDLBASE)/clustalo?wsdl"

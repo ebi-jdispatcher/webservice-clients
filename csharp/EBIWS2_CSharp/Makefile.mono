@@ -26,6 +26,7 @@ all: build
 ### Build ###
 build: \
 build-EbiWS \
+build-CensorCliClient \
 build-ClustalOCliClient \
 build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
@@ -67,6 +68,9 @@ build-WuBlastCliClient
 
 build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
+
+build-CensorCliClient: build-EbiWS
+	cd CensorCliClient && $(MAKE) -f Makefile.mono
 
 build-ClustalOCliClient: build-EbiWS
 	cd ClustalOCliClient && $(MAKE) -f Makefile.mono
@@ -186,6 +190,7 @@ build-WuBlastCliClient: build-EbiWS
 
 clean: \
 clean-EbiWS \
+clean-CensorCliClient \
 clean-ClustalOCliClient \
 clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
@@ -226,6 +231,9 @@ clean-WuBlastCliClient
 
 clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
+
+clean-CensorCliClient:
+	cd CencorCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-ClustalOCliClient:
 	cd ClustalOCliClient && $(MAKE) -f Makefile.mono clean
@@ -345,6 +353,7 @@ clean-WuBlastCliClient:
 
 distclean: \
 distclean-EbiWS \
+distclean-CensorCliClient \
 distclean-ClustalOCliClient \
 distclean-ClustalW2CliClient \
 distclean-ClustalW2PhylogenyCliClient \
@@ -386,6 +395,9 @@ distclean-WuBlastCliClient
 
 distclean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono distclean
+
+distclean-CensorCliClient:
+	cd CensorCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-ClustalOCliClient:
 	cd ClustalOCliClient && $(MAKE) -f Makefile.mono distclean
