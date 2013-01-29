@@ -1227,9 +1227,35 @@ saps_stdin_stdout: test_data
 saps_clean:
 	rm -f saps-*
 
-# TODO: seqcksum
-seqcksum:
-	echo 'TODO:' $@
+# seqcksum
+seqcksum: seqcksum_params seqcksum_param_detail seqcksum_file seqcksum_dbid seqcksum_stdin_stdout seqcksum_id_list_file seqcksum_id_list_file_stdin_stdout seqcksum_multifasta_file seqcksum_multifasta_file_stdin_stdout
+
+seqcksum_params:
+	${PERL} seqcksum_soaplite.pl --params ${JDispatcher_params_suffix}
+
+seqcksum_param_detail:
+	${PERL} seqcksum_soaplite.pl --paramDetail cksmethod
+
+seqcksum_file: test_data
+	${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+seqcksum_dbid:
+	${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein 'UNIPROT:ABCC9_HUMAN'
+
+seqcksum_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein --quiet --outformat out --outfile - - > seqcksum-blah.txt
+
+seqcksum_id_list_file: test_data
+	${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+seqcksum_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein --outformat out --outfile - --sequence @- > seqcksum-idfile.txt
+
+seqcksum_multifasta_file: test_data
+	${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+seqcksum_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} seqcksum_soaplite.pl --email ${EMAIL} --stype protein --outformat out --outfile - --multifasta --sequence - > seqcksum-file.txt
 
 seqcksum_clean:
 	rm -f seqcksum-*
