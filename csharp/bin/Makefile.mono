@@ -12,6 +12,7 @@ projectDir =  ../EBIWS2_CSharp
 
 all: \
 EbiWS.dll \
+CensorCliClient.exe \
 ClustalOCliClient.exe \
 ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient.exe \
@@ -54,6 +55,10 @@ WuBlastCliClient.exe
 EbiWS.dll: ${projectDir}/EbiWS/bin/Release/EbiWS.dll
 	cp ${projectDir}/EbiWS/bin/Release/$@ $@
 	chmod -x $@
+
+CensorCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/CensorCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
 
 ClustalOCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/ClustalOCliClient/bin/Release/$@ EbiWS.dll
