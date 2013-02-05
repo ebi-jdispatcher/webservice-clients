@@ -108,6 +108,7 @@
     <Compile Include="WebReferences\RadarWs\Reference.cs" />
     <Compile Include="SapsClient.cs" />
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
+    <Compile Include="WebReferences\SeqCksumWs\Reference.cs" />
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
     <Compile Include="Wise2DBAClient.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
+    <Compile Include="SeqCksumClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -155,6 +157,7 @@
     <None Include="WebReferences\PsiSearchWs\Reference.map" />
     <None Include="WebReferences\RadarWs\Reference.map" />
     <None Include="WebReferences\SapsWs\Reference.map" />
+    <None Include="WebReferences\SeqCksumWs\Reference.map" />
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
     <None Include="WebReferences\Wise2DBAWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
