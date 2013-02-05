@@ -62,6 +62,7 @@ PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 RadarCliClient\bin\Release\RadarCliClient.exe \
 SapsCliClient\bin\Release\SapsCliClient.exe \
+SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe \
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
 Wise2DBACliClient\bin\Release\Wise2DBACliClient.exe \
 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe \
@@ -175,6 +176,9 @@ RadarCliClient\bin\Release\RadarCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 SapsCliClient\bin\Release\SapsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk
 
+SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk
+
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -224,6 +228,7 @@ clean:
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd Wise2DBACliClient && $(MAKE) /f Makefile.ms_sdk clean	
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -266,6 +271,7 @@ distclean:
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd Wise2DBACliClient && $(MAKE) /f Makefile.ms_sdk distclean	
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
