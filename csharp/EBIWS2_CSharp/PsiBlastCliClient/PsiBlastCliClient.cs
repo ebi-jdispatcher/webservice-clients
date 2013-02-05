@@ -133,6 +133,9 @@ http://www.ebi.ac.uk/support/
 					case "getids": // Get IDs from job result
 						wsApp.PrintGetIds();
 						break;
+					case "version": // Version information.
+						wsApp.PrintVersionMessage();
+						break;
 					case "help": // Do help
 						wsApp.PrintUsageMessage();
 						break;
@@ -163,6 +166,17 @@ http://www.ebi.ac.uk/support/
 			PrintDebugMessage("PrintUsageMessage", "End", 1);
 		}
 
+		/// <summary>
+		/// Print the version message.
+		/// </summary>
+		private void PrintVersionMessage()
+		{
+			PrintDebugMessage("PrintVersionMessage", "Begin", 1);
+			PrintClientVersion(this.GetType().Assembly);
+			PrintClientLicense();
+			PrintDebugMessage("PrintVersionMessage", "End", 1);
+		}
+
 		/// <summary>Parse command-line options</summary>
 		/// <param name="args">Command-line options</param>
 		private void ParseCommand(string[] args)
@@ -180,6 +194,11 @@ http://www.ebi.ac.uk/support/
 						break;
 					case "/help":
 						goto case "--help";
+					case "--version": // Version info
+						Action = "version";
+						break;
+					case "/version":
+						goto case "--version";
 					case "--params": // List input parameters
 						Action = "paramList";
 						break;

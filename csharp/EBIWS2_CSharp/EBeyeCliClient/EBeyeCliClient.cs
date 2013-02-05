@@ -160,6 +160,17 @@ Support/Feedback:
 			PrintDebugMessage("PrintUsageMessage", "End", 1);
 		}
 
+		/// <summary>
+		/// Print the version message.
+		/// </summary>
+		private void PrintVersionMessage()
+		{
+			PrintDebugMessage("PrintVersionMessage", "Begin", 1);
+			AbstractWsClient.PrintClientVersion(this.GetType().Assembly);
+			AbstractWsClient.PrintClientLicense();
+			PrintDebugMessage("PrintVersionMessage", "End", 1);
+		}
+
 		/// <summary>Parse command-line options</summary>
 		/// <param name="args">Command-line options</param>
 		private int ParseCommand(string[] args)
@@ -183,6 +194,11 @@ Support/Feedback:
 						goto case "--help";
 					case "/h":
 						goto case "--help";
+					case "--version": // Version info
+						this.PrintVersionMessage();
+						break;
+					case "/version":
+						goto case "--version";
 					case "--verbose": // Output level
 						OutputLevel++;
 						break;
