@@ -31,9 +31,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 [assembly: AssemblyCompany("EMBL - European Bioinformatics Institute")]
-[assembly: AssemblyProduct("EMBL-EBI Web Services sample clients")]
+[assembly: AssemblyProduct("EMBL-EBI Web Services Sample Clients")]
 [assembly: AssemblyCopyright("Copyright © 2009-2013 EMBL - European Bioinformatics Institute")]
-[assembly: AssemblyTrademark("")]
+//[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
