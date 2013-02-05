@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LalignCliClient", "LalignCl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CensorCliClient", "CensorCliClient\CensorCliClient.csproj", "{E514DCF7-27C3-43A7-91BE-B3DF95A18CE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqCksumCliClient", "SeqCksumCliClient\SeqCksumCliClient.csproj", "{F46A1956-66B0-46AF-91D9-2F923BD0260C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -243,6 +245,10 @@ Global
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F46A1956-66B0-46AF-91D9-2F923BD0260C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F46A1956-66B0-46AF-91D9-2F923BD0260C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F46A1956-66B0-46AF-91D9-2F923BD0260C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F46A1956-66B0-46AF-91D9-2F923BD0260C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE29CBE8-005F-46A1-BE67-00086BB8E715}.Release|Any CPU.ActiveCfg = Release|Any CPU
