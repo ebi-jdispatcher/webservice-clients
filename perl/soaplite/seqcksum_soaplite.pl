@@ -849,12 +849,12 @@ sub load_params {
 		}
 	}
 
-	# HSPs in output
+	# Sequence length in output (--length/--nolength)
 	if ( $params{'length'} ) {
-		$tool_params{'length'} = 1;
+		$tool_params{'length'} = 'true';
 	}
 	elsif ( $params{'nolength'} ) {
-		$tool_params{'length'} = 0;
+		$tool_params{'length'} = 'false';
 	}
 	
 	print_debug_message( 'load_params',
