@@ -92,6 +92,7 @@ PsiBlastClient.cs \
 PsiSearchClient.cs \
 RadarClient.cs \
 SapsClient.cs \
+SeqCksumClient.cs \
 TcoffeeClient.cs \
 Wise2DBAClient.cs \
 WSDbfetchClient.cs \
@@ -134,6 +135,7 @@ $(STUBSRCDIR)\PsiBlastWs\Reference.cs \
 $(STUBSRCDIR)\PsiSearchWs\Reference.cs \
 $(STUBSRCDIR)\RadarWs\Reference.cs \
 $(STUBSRCDIR)\SapsWs\Reference.cs \
+$(STUBSRCDIR)\SeqCksumWs\Reference.cs \
 $(STUBSRCDIR)\TcoffeeWs\Reference.cs \
 $(STUBSRCDIR)\Wise2DBAWs\Reference.cs \
 $(STUBSRCDIR)\WSDbfetchWs\Reference.cs \
@@ -259,6 +261,9 @@ $(STUBSRCDIR)\RadarWs\Reference.cs:
 
 $(STUBSRCDIR)\SapsWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs /out:$@ "http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl"
+
+$(STUBSRCDIR)\SeqCksumWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).SeqCksumWs /out:$@ "http://www.ebi.ac.uk/Tools/services/soap/seqcksum?wsdl"
 
 $(STUBSRCDIR)\TcoffeeWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs /out:$@ "$(WSDLBASE)/tcoffee?wsdl"
