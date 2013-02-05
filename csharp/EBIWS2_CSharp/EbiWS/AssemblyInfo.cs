@@ -23,8 +23,8 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("CensorCliClient")]
-[assembly: AssemblyDescription("Sample command-line client for the CENSOR (SOAP) Web Service")]
+[assembly: AssemblyTitle("EbiWS")]
+[assembly: AssemblyDescription("Access to EMBL-EBI Web Services (http://www.ebi.ac.uk/Tools/webservices/).")]
 #if (DEBUG)
 [assembly: AssemblyConfiguration("Debug")]
 #else
