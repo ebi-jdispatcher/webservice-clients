@@ -64,9 +64,9 @@
 	<!-- Sequence Format Conversion (SFC) -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_seqret.xml" />
 	<import file="${ant.import.lib.dir}/client_test/readseq.xml" />
-	<!-- TODO: Sequence Operations (SO) -->
+	<!-- Sequence Operations (SO) -->
 	<import file="${ant.import.lib.dir}/client_test/censor.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/seqcksum.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/seqcksum.xml" />
 	<!-- Sequence Statistics -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" />
@@ -132,7 +132,7 @@
 		<antcall target="test-clean-readseq" />
 		<!-- TODO: Sequence Operations (SO) -->
 		<antcall target="test-clean-censor" />
-		<!-- antcall target="test-clean-seqcksum" / -->
+		<antcall target="test-clean-seqcksum" />
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="test-clean-fasta" />
 		<antcall target="test-clean-fastm" />
@@ -186,7 +186,7 @@
 		<antcall target="axis1-test-readseq" />
 		<!-- TODO: Sequence Operations (SO) -->
 		<antcall target="axis1-test-censor" />
-		<!-- antcall target="axis1-test-seqcksum" / -->
+		<antcall target="axis1-test-seqcksum" />
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="axis1-test-fasta" />
 		<antcall target="axis1-test-fastm" />
