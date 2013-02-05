@@ -28,7 +28,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-[assembly: AssemblyVersionAttribute("1.0.*")]
 namespace EbiWS
 {
 	/// <summary>
@@ -211,6 +210,24 @@ Asynchronous job:
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 ";
+		/// <summary>
+		/// Copyright license for the EMBL-EBI web service sample clients.
+		/// </summary>
+		private const string clientLicenseStr = @"
+Copyright 2009-2013 EMBL - European Bioinformatics Institute
+ 
+Licensed under the Apache License, Version 2.0 (the ""License"")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an ""AS IS"" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+";
 		
 		/// <summary>
 		/// Default constructor.
@@ -234,6 +251,13 @@ Asynchronous job:
 		/// </summary>
 		protected void PrintGenericOptsUsage()  {
 			Console.WriteLine(genericOptsStr);
+		}
+		
+		/// <summary>
+		/// Print the client copyright license message to STDOUT.
+		/// </summary>
+		protected void PrintClientLicense()  {
+			Console.WriteLine(clientLicenseStr);
 		}
 		
 		/// <summary>
