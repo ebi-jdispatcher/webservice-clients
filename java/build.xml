@@ -131,6 +131,7 @@
 		<antcall target="axis1-stubs-radar"/>
 		<antcall target="axis1-stubs-readseq"/>
 		<antcall target="axis1-stubs-saps"/>
+		<antcall target="axis1-stubs-seqcksum"/>
 		<antcall target="axis1-stubs-tcoffee" />
 		<antcall target="axis1-stubs-wise2dba" />
 		<antcall target="axis1-stubs-wsdbfetch" />
@@ -364,6 +365,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.saps" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-seqcksum" description="Axis 1.x: generate stubs for SeqCksum (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.seqcksum" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/seqcksum?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-tcoffee" description="Axis 1.x: generate stubs for T-COFFEE (SOAP)">
@@ -761,6 +768,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/SeqCksum_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/SeqCksumClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/seqcksum/** client-config.wsdd">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.SeqCksumClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Tcoffee_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/TcoffeeClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/tcoffee/**">
@@ -843,6 +860,7 @@
 		<antcall target="axis1-distclean-stubs-radar"/>
 		<antcall target="axis1-distclean-stubs-readseq"/>
 		<antcall target="axis1-distclean-stubs-saps"/>
+		<antcall target="axis1-distclean-stubs-seqcksum"/>
 		<antcall target="axis1-distclean-stubs-tcoffee" />
 		<antcall target="axis1-distclean-stubs-wise2dba" />
 		<antcall target="axis1-distclean-stubs-wsdbfetch" />
@@ -1077,6 +1095,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="saps" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-seqcksum" description="Axis 1.x: remove SeqCksum (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/seqcksum" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="seqcksum" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-tcoffee" description="Axis 1.x: remove T-COFFEE (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/tcoffee" includes="*/**" />
@@ -1145,6 +1169,7 @@
 		<antcall target="jaxws-stubs-radar" />
 		<antcall target="jaxws-stubs-readseq" />
 		<antcall target="jaxws-stubs-saps" />
+		<antcall target="jaxws-stubs-seqcksum" />
 		<antcall target="jaxws-stubs-tcoffee" />
 		<antcall target="jaxws-stubs-wise2dba" />
 		<antcall target="jaxws-stubs-wsdbfetch" />
@@ -1380,6 +1405,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-seqcksum" description="JAX-WS RI: generate stubs for SeqCksum (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.seqcksum" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/seqcksum?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-tcoffee" description="JAX-WS RI: generate stubs for T-COFFEE (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.tcoffee" />
@@ -1463,6 +1494,8 @@
 		<!-- TODO PRANK -->
 		<!-- TODO PSI-BLAST -->
 		<!-- TODO PSI-Search -->
+		<!-- TODO SAPS -->
+		<!-- TODO SeqCksum -->
 		<!-- TODO T-COFFEE -->
 		<jar destfile="${jar.dir}/WSDbfetch_JAXWS.jar"
 			basedir="${build.dir}"
@@ -1516,6 +1549,8 @@
 		<antcall target="jaxws-distclean-stubs-psisearch" />
 		<antcall target="jaxws-distclean-stubs-radar" />
 		<antcall target="jaxws-distclean-stubs-readseq" />
+		<antcall target="jaxws-distclean-stubs-saps" />
+		<antcall target="jaxws-distclean-stubs-seqcksum" />
 		<antcall target="jaxws-distclean-stubs-tcoffee" />
 		<antcall target="jaxws-distclean-stubs-wise2dba" />
 		<antcall target="jaxws-distclean-stubs-wsdbfetch" />
@@ -1748,6 +1783,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/saps" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="saps" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-seqcksum" description="JAX-WS RI: remove SeqCksum (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/seqcksum" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="seqcksum" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-tcoffee" description="JAX-WS RI: remove T-COFFEE (SOAP) stubs">
