@@ -213,8 +213,7 @@ Asynchronous job:
 		/// <summary>
 		/// Copyright license for the EMBL-EBI web service sample clients.
 		/// </summary>
-		private const string clientLicenseStr = @"
-Copyright 2009-2013 EMBL - European Bioinformatics Institute
+		private const string clientLicenseStr = @"Copyright 2009-2013 EMBL - European Bioinformatics Institute
  
 Licensed under the Apache License, Version 2.0 (the ""License"")
 you may not use this file except in compliance with the License.
@@ -258,6 +257,40 @@ limitations under the License.
 		/// </summary>
 		protected void PrintClientLicense()  {
 			Console.WriteLine(clientLicenseStr);
+		}
+		
+		/// <summary>
+		/// Print the client version information to STDOUT.
+		/// </summary>
+		protected void PrintClientVersion(Assembly assembly)  {
+			PrintDebugMessage("PrintClientVersion", "Begin", 21);
+			// Get attributes for display.
+			string product = String.Empty;
+			string productVersion = String.Empty;
+			string title = String.Empty;
+			string version = assembly.GetName().Version.ToString();
+			object[] customAttributes = assembly.GetCustomAttributes(false);
+			foreach (object attribute in customAttributes)
+			{
+				Type attrType = attribute.GetType();
+				if (attrType == typeof(AssemblyProductAttribute))
+				{
+					product = ((AssemblyProductAttribute) attribute).Product;
+				}
+				else if (attrType == typeof(AssemblyInformationalVersionAttribute))
+				{
+					productVersion = ((AssemblyInformationalVersionAttribute) attribute).InformationalVersion;
+				}
+				else if (attrType == typeof(AssemblyTitleAttribute))
+				{
+					title = ((AssemblyTitleAttribute) attribute).Title;
+				}
+			}
+			Console.WriteLine(@"{0} {1}
+
+{2} {3}
+", product, productVersion, title, version);
+			PrintDebugMessage("PrintClientVersion", "End", 21);
 		}
 		
 		/// <summary>
