@@ -63,6 +63,7 @@ PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
 RadarCliClient.exe \
 SapsCliClient.exe \
+SeqCksumCliClient.exe \
 TcoffeeCliClient.exe \
 Wise2DBACliClient.exe \
 WSDbfetchCliClient.exe \
@@ -210,6 +211,10 @@ RadarCliClient.exe: EbiWS.dll
 
 SapsCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/SapsCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+SeqCksumCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/SeqCksumCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 TcoffeeCliClient.exe: EbiWS.dll
