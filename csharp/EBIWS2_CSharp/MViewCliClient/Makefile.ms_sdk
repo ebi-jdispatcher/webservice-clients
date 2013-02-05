@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 MViewCliClient: $(DEBUGBINDIR)\MViewCliClient.exe $(RELEASEBINDIR)\MViewCliClient.exe
 
-$(DEBUGBINDIR)\MViewCliClient.exe: $(DEBUGBINDIR) MViewCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MViewCliClient.cs
+$(DEBUGBINDIR)\MViewCliClient.exe: $(DEBUGBINDIR) MViewCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MViewCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\MViewCliClient.exe: $(RELEASEBINDIR) MViewCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MViewCliClient.cs
+$(RELEASEBINDIR)\MViewCliClient.exe: $(RELEASEBINDIR) MViewCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MViewCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

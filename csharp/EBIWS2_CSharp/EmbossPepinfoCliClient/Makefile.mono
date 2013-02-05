@@ -40,17 +40,17 @@ all: EmbossPepinfoCliClient
 
 EmbossPepinfoCliClient: $(DEBUGBINDIR)/EmbossPepinfoCliClient.exe $(RELEASEBINDIR)/EmbossPepinfoCliClient.exe
 
-$(DEBUGBINDIR)/EmbossPepinfoCliClient.exe: EmbossPepinfoCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+$(DEBUGBINDIR)/EmbossPepinfoCliClient.exe: EmbossPepinfoCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ EmbossPepinfoCliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ EmbossPepinfoCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
 	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
 
-$(RELEASEBINDIR)/EmbossPepinfoCliClient.exe: EmbossPepinfoCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+$(RELEASEBINDIR)/EmbossPepinfoCliClient.exe: EmbossPepinfoCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ EmbossPepinfoCliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ EmbossPepinfoCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

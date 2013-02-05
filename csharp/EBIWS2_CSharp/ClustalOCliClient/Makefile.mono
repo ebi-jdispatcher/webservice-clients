@@ -42,7 +42,7 @@ ClustalOCliClient: $(DEBUGBINDIR)/ClustalOCliClient.exe $(RELEASEBINDIR)/Clustal
 
 $(DEBUGBINDIR)/ClustalOCliClient.exe: ClustalOCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ ClustalOCliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ ClustalOCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
@@ -50,7 +50,7 @@ $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 
 $(RELEASEBINDIR)/ClustalOCliClient.exe: ClustalOCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ ClustalOCliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ ClustalOCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

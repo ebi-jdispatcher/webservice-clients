@@ -40,17 +40,17 @@ all: EmbossNeedleCliClient
 
 EmbossNeedleCliClient: $(DEBUGBINDIR)/EmbossNeedleCliClient.exe $(RELEASEBINDIR)/EmbossNeedleCliClient.exe
 
-$(DEBUGBINDIR)/EmbossNeedleCliClient.exe: EmbossNeedleCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+$(DEBUGBINDIR)/EmbossNeedleCliClient.exe: EmbossNeedleCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ EmbossNeedleCliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ EmbossNeedleCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
 	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
 
-$(RELEASEBINDIR)/EmbossNeedleCliClient.exe: EmbossNeedleCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+$(RELEASEBINDIR)/EmbossNeedleCliClient.exe: EmbossNeedleCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ EmbossNeedleCliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ EmbossNeedleCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

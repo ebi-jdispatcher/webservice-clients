@@ -40,17 +40,17 @@ all: SapsCliClient
 
 SapsCliClient: $(DEBUGBINDIR)/SapsCliClient.exe $(RELEASEBINDIR)/SapsCliClient.exe
 
-$(DEBUGBINDIR)/SapsCliClient.exe: SapsCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+$(DEBUGBINDIR)/SapsCliClient.exe: SapsCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ SapsCliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ SapsCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
 	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
 
-$(RELEASEBINDIR)/SapsCliClient.exe: SapsCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+$(RELEASEBINDIR)/SapsCliClient.exe: SapsCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ SapsCliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ SapsCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

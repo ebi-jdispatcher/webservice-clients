@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 EmbossBacktranambigCliClient: $(DEBUGBINDIR)\EmbossBacktranambigCliClient.exe $(RELEASEBINDIR)\EmbossBacktranambigCliClient.exe
 
-$(DEBUGBINDIR)\EmbossBacktranambigCliClient.exe: $(DEBUGBINDIR) EmbossBacktranambigCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ EmbossBacktranambigCliClient.cs
+$(DEBUGBINDIR)\EmbossBacktranambigCliClient.exe: $(DEBUGBINDIR) EmbossBacktranambigCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ EmbossBacktranambigCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\EmbossBacktranambigCliClient.exe: $(RELEASEBINDIR) EmbossBacktranambigCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ EmbossBacktranambigCliClient.cs
+$(RELEASEBINDIR)\EmbossBacktranambigCliClient.exe: $(RELEASEBINDIR) EmbossBacktranambigCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ EmbossBacktranambigCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

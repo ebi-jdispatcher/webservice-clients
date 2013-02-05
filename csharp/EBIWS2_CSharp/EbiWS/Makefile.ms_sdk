@@ -56,7 +56,8 @@ $(RELEASEBINDIR): $(BINDIR)
 
 EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
 
-coreSrc = AbstractWsClient.cs \
+coreSrc = AssemblyInfo.cs \
+AbstractWsClient.cs \
 CensorClient.cs \
 ClustalOClient.cs \
 ClustalW2Client.cs \

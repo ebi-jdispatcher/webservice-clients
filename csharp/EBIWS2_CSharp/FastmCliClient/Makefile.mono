@@ -40,17 +40,17 @@ all: FastmCliClient
 
 FastmCliClient: $(DEBUGBINDIR)/FastmCliClient.exe $(RELEASEBINDIR)/FastmCliClient.exe
 
-$(DEBUGBINDIR)/FastmCliClient.exe: FastmCliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+$(DEBUGBINDIR)/FastmCliClient.exe: FastmCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ FastmCliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ FastmCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
 	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
 
-$(RELEASEBINDIR)/FastmCliClient.exe: FastmCliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+$(RELEASEBINDIR)/FastmCliClient.exe: FastmCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ FastmCliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ FastmCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

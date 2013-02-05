@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 WuBlastCliClient: $(DEBUGBINDIR)\WuBlastCliClient.exe $(RELEASEBINDIR)\WuBlastCliClient.exe
 
-$(DEBUGBINDIR)\WuBlastCliClient.exe: $(DEBUGBINDIR) WuBlastCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs
+$(DEBUGBINDIR)\WuBlastCliClient.exe: $(DEBUGBINDIR) WuBlastCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\WuBlastCliClient.exe: $(RELEASEBINDIR) WuBlastCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs
+$(RELEASEBINDIR)\WuBlastCliClient.exe: $(RELEASEBINDIR) WuBlastCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WuBlastCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

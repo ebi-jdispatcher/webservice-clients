@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 GeneWiseCliClient: $(DEBUGBINDIR)\GeneWiseCliClient.exe $(RELEASEBINDIR)\GeneWiseCliClient.exe
 
-$(DEBUGBINDIR)\GeneWiseCliClient.exe: $(DEBUGBINDIR) GeneWiseCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ GeneWiseCliClient.cs
+$(DEBUGBINDIR)\GeneWiseCliClient.exe: $(DEBUGBINDIR) GeneWiseCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ GeneWiseCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\GeneWiseCliClient.exe: $(RELEASEBINDIR) GeneWiseCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ GeneWiseCliClient.cs
+$(RELEASEBINDIR)\GeneWiseCliClient.exe: $(RELEASEBINDIR) GeneWiseCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ GeneWiseCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

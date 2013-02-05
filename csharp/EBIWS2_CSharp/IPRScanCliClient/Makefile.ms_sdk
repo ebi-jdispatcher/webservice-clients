@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 IPRScanCliClient: $(DEBUGBINDIR)\IPRScanCliClient.exe $(RELEASEBINDIR)\IPRScanCliClient.exe
 
-$(DEBUGBINDIR)\IPRScanCliClient.exe: $(DEBUGBINDIR) IPRScanCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.cs
+$(DEBUGBINDIR)\IPRScanCliClient.exe: $(DEBUGBINDIR) IPRScanCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\IPRScanCliClient.exe: $(RELEASEBINDIR) IPRScanCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.cs
+$(RELEASEBINDIR)\IPRScanCliClient.exe: $(RELEASEBINDIR) IPRScanCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

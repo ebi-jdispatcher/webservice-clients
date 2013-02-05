@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 PhobiusCliClient: $(DEBUGBINDIR)\PhobiusCliClient.exe $(RELEASEBINDIR)\PhobiusCliClient.exe
 
-$(DEBUGBINDIR)\PhobiusCliClient.exe: $(DEBUGBINDIR) PhobiusCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ PhobiusCliClient.cs
+$(DEBUGBINDIR)\PhobiusCliClient.exe: $(DEBUGBINDIR) PhobiusCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ PhobiusCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\PhobiusCliClient.exe: $(RELEASEBINDIR) PhobiusCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ PhobiusCliClient.cs
+$(RELEASEBINDIR)\PhobiusCliClient.exe: $(RELEASEBINDIR) PhobiusCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ PhobiusCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

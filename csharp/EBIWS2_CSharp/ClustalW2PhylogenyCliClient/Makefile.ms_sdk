@@ -50,13 +50,13 @@ $(RELEASEBINDIR): $(BINDIR)
 ClustalW2PhylogenyCliClient: $(DEBUGBINDIR)\ClustalW2PhylogenyCliClient.exe $(RELEASEBINDIR)\ClustalW2PhylogenyCliClient.exe
 
 $(DEBUGBINDIR)\ClustalW2PhylogenyCliClient.exe: $(DEBUGBINDIR) ClustalW2PhylogenyCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
 $(RELEASEBINDIR)\ClustalW2PhylogenyCliClient.exe: $(RELEASEBINDIR) ClustalW2PhylogenyCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalW2PhylogenyCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 EmbossMatcherCliClient: $(DEBUGBINDIR)\EmbossMatcherCliClient.exe $(RELEASEBINDIR)\EmbossMatcherCliClient.exe
 
-$(DEBUGBINDIR)\EmbossMatcherCliClient.exe: $(DEBUGBINDIR) EmbossMatcherCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ EmbossMatcherCliClient.cs
+$(DEBUGBINDIR)\EmbossMatcherCliClient.exe: $(DEBUGBINDIR) EmbossMatcherCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ EmbossMatcherCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\EmbossMatcherCliClient.exe: $(RELEASEBINDIR) EmbossMatcherCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ EmbossMatcherCliClient.cs
+$(RELEASEBINDIR)\EmbossMatcherCliClient.exe: $(RELEASEBINDIR) EmbossMatcherCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ EmbossMatcherCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 PsiSearchCliClient: $(DEBUGBINDIR)\PsiSearchCliClient.exe $(RELEASEBINDIR)\PsiSearchCliClient.exe
 
-$(DEBUGBINDIR)\PsiSearchCliClient.exe: $(DEBUGBINDIR) PsiSearchCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ PsiSearchCliClient.cs
+$(DEBUGBINDIR)\PsiSearchCliClient.exe: $(DEBUGBINDIR) PsiSearchCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ PsiSearchCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\PsiSearchCliClient.exe: $(RELEASEBINDIR) PsiSearchCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ PsiSearchCliClient.cs
+$(RELEASEBINDIR)\PsiSearchCliClient.exe: $(RELEASEBINDIR) PsiSearchCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ PsiSearchCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

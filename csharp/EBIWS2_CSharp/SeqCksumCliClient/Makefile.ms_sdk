@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 SeqCksumCliClient: $(DEBUGBINDIR)\SeqCksumCliClient.exe $(RELEASEBINDIR)\SeqCksumCliClient.exe
 
-$(DEBUGBINDIR)\SeqCksumCliClient.exe: $(DEBUGBINDIR) SeqCksumCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ SeqCksumCliClient.cs
+$(DEBUGBINDIR)\SeqCksumCliClient.exe: $(DEBUGBINDIR) SeqCksumCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ SeqCksumCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\SeqCksumCliClient.exe: $(RELEASEBINDIR) SeqCksumCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ SeqCksumCliClient.cs
+$(RELEASEBINDIR)\SeqCksumCliClient.exe: $(RELEASEBINDIR) SeqCksumCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ SeqCksumCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

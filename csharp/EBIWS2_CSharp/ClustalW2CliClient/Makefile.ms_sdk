@@ -50,13 +50,13 @@ $(RELEASEBINDIR): $(BINDIR)
 ClustalW2CliClient: $(DEBUGBINDIR)\ClustalW2CliClient.exe $(RELEASEBINDIR)\ClustalW2CliClient.exe
 
 $(DEBUGBINDIR)\ClustalW2CliClient.exe: $(DEBUGBINDIR) ClustalW2CliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalW2CliClient.cs
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ ClustalW2CliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
 $(RELEASEBINDIR)\ClustalW2CliClient.exe: $(RELEASEBINDIR) ClustalW2CliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalW2CliClient.cs
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ ClustalW2CliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

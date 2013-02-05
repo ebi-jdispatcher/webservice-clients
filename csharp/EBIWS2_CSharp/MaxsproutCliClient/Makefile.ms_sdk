@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 MaxsproutCliClient: $(DEBUGBINDIR)\MaxsproutCliClient.exe $(RELEASEBINDIR)\MaxsproutCliClient.exe
 
-$(DEBUGBINDIR)\MaxsproutCliClient.exe: $(DEBUGBINDIR) MaxsproutCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MaxsproutCliClient.cs
+$(DEBUGBINDIR)\MaxsproutCliClient.exe: $(DEBUGBINDIR) MaxsproutCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MaxsproutCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\MaxsproutCliClient.exe: $(RELEASEBINDIR) MaxsproutCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MaxsproutCliClient.cs
+$(RELEASEBINDIR)\MaxsproutCliClient.exe: $(RELEASEBINDIR) MaxsproutCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MaxsproutCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

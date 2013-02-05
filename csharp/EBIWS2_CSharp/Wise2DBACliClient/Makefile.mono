@@ -40,17 +40,17 @@ all: Wise2DBACliClient
 
 Wise2DBACliClient: $(DEBUGBINDIR)/Wise2DBACliClient.exe $(RELEASEBINDIR)/Wise2DBACliClient.exe
 
-$(DEBUGBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs $(DEBUGBINDIR)/EbiWS.dll
+$(DEBUGBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
-	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs
+	$(CSC) $(CSFLAGS) -debug -target:exe -reference:$(DEBUGBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)/EbiWS.dll: $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll
 	mkdir -p $(DEBUGBINDIR)
 	cp $(EBIWS)/$(DEBUGBINDIR)/EbiWS.dll* $(DEBUGBINDIR)/
 
-$(RELEASEBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs $(RELEASEBINDIR)/EbiWS.dll
+$(RELEASEBINDIR)/Wise2DBACliClient.exe: Wise2DBACliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)
-	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs
+	$(CSC) $(CSFLAGS) -target:exe -reference:$(RELEASEBINDIR)/EbiWS.dll -out:$@ Wise2DBACliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)/EbiWS.dll: $(EBIWS)/$(RELEASEBINDIR)/EbiWS.dll
 	mkdir -p $(RELEASEBINDIR)

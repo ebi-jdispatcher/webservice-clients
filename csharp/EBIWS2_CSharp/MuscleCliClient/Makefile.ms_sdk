@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 MuscleCliClient: $(DEBUGBINDIR)\MuscleCliClient.exe $(RELEASEBINDIR)\MuscleCliClient.exe
 
-$(DEBUGBINDIR)\MuscleCliClient.exe: $(DEBUGBINDIR) MuscleCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs
+$(DEBUGBINDIR)\MuscleCliClient.exe: $(DEBUGBINDIR) MuscleCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\MuscleCliClient.exe: $(RELEASEBINDIR) MuscleCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs
+$(RELEASEBINDIR)\MuscleCliClient.exe: $(RELEASEBINDIR) MuscleCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ MuscleCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

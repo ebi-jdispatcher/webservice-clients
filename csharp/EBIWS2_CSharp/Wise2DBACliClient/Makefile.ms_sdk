@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 Wise2DBACliClient: $(DEBUGBINDIR)\Wise2DBACliClient.exe $(RELEASEBINDIR)\Wise2DBACliClient.exe
 
-$(DEBUGBINDIR)\Wise2DBACliClient.exe: $(DEBUGBINDIR) Wise2DBACliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ Wise2DBACliClient.cs
+$(DEBUGBINDIR)\Wise2DBACliClient.exe: $(DEBUGBINDIR) Wise2DBACliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ Wise2DBACliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\Wise2DBACliClient.exe: $(RELEASEBINDIR) Wise2DBACliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ Wise2DBACliClient.cs
+$(RELEASEBINDIR)\Wise2DBACliClient.exe: $(RELEASEBINDIR) Wise2DBACliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ Wise2DBACliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

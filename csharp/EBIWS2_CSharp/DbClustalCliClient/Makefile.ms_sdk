@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 DbClustalCliClient: $(DEBUGBINDIR)\DbClustalCliClient.exe $(RELEASEBINDIR)\DbClustalCliClient.exe
 
-$(DEBUGBINDIR)\DbClustalCliClient.exe: $(DEBUGBINDIR) DbClustalCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ DbClustalCliClient.cs
+$(DEBUGBINDIR)\DbClustalCliClient.exe: $(DEBUGBINDIR) DbClustalCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ DbClustalCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\DbClustalCliClient.exe: $(RELEASEBINDIR) DbClustalCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ DbClustalCliClient.cs
+$(RELEASEBINDIR)\DbClustalCliClient.exe: $(RELEASEBINDIR) DbClustalCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ DbClustalCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)

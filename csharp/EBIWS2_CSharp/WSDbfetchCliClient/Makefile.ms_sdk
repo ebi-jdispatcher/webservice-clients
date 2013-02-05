@@ -49,14 +49,14 @@ $(RELEASEBINDIR): $(BINDIR)
 
 WSDbfetchCliClient: $(DEBUGBINDIR)\WSDbfetchCliClient.exe $(RELEASEBINDIR)\WSDbfetchCliClient.exe
 
-$(DEBUGBINDIR)\WSDbfetchCliClient.exe: $(DEBUGBINDIR) WSDbfetchCliClient.cs $(DEBUGBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.cs
+$(DEBUGBINDIR)\WSDbfetchCliClient.exe: $(DEBUGBINDIR) WSDbfetchCliClient.cs AssemblyInfo.cs $(DEBUGBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.cs AssemblyInfo.cs
 
 $(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
 
-$(RELEASEBINDIR)\WSDbfetchCliClient.exe: $(RELEASEBINDIR) WSDbfetchCliClient.cs $(RELEASEBINDIR)\EbiWS.dll
-	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.cs
+$(RELEASEBINDIR)\WSDbfetchCliClient.exe: $(RELEASEBINDIR) WSDbfetchCliClient.cs AssemblyInfo.cs $(RELEASEBINDIR)\EbiWS.dll
+	$(CSC) $(CSFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.cs AssemblyInfo.cs
 
 $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
 	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
