@@ -374,26 +374,34 @@ For more information see:
 						break;
 					case "/nohsps":
 						goto case "--nohsps";
-					case "--eupper": // Upper E-value threshold
+					case "--expupperlim": // Upper E-value threshold
 						InParams.expupperlim = Convert.ToDouble(args[++i]);
 						InParams.expupperlimSpecified = true;
 						break;
+					case "/expupperlim":
+						goto case "--expupperlim";
+					case "--eupper":
+						goto case "--expupperlim";
 					case "/eupper":
-						goto case "--eupper";
+						goto case "--expupperlim";
 					case "-E":
-						goto case "--eupper";
+						goto case "--expupperlim";
 					case "/E":
-						goto case "--eupper";
-					case "--elower": // Lower E-value threshold
+						goto case "--expupperlim";
+					case "--explowlim": // Lower E-value threshold
 						InParams.explowlim = Convert.ToDouble(args[++i]);
 						InParams.explowlimSpecified = true;
 						break;
+					case "/explowlim":
+						goto case "--explowlim";
+					case "--elower":
+						goto case "--explowlim";
 					case "/elower":
-						goto case "--elower";
+						goto case "--explowlim";
 					case "-F":
-						goto case "--elower";
+						goto case "--explowlim";
 					case "/F":
-						goto case "--elower";
+						goto case "--explowlim";
 					case "--strand": // DNA query strand.
 						InParams.strand = args[++i];
 						break;
