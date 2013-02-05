@@ -186,10 +186,11 @@ namespace EbiWS
       --outfile        : str  : name of the file results should be written to
                                 (default is based on the jobid; ""-"" for STDOUT)
       --outformat      : str  : output format, see --resultTypes
-      --help           :      : prints this help text
       --quiet          :      : decrease output
       --verbose        :      : increase output
       --debugLevel     : int  : set debug output level
+      --help           :      : prints this help text
+      --version        :      : client version information
 
 Synchronous job:
 
@@ -248,22 +249,21 @@ limitations under the License.
 		/// <summary>
 		/// Print the generic options usage message to STDOUT.
 		/// </summary>
-		protected void PrintGenericOptsUsage()  {
+		protected static void PrintGenericOptsUsage()  {
 			Console.WriteLine(genericOptsStr);
 		}
 		
 		/// <summary>
 		/// Print the client copyright license message to STDOUT.
 		/// </summary>
-		protected void PrintClientLicense()  {
+		public static void PrintClientLicense()  {
 			Console.WriteLine(clientLicenseStr);
 		}
 		
 		/// <summary>
 		/// Print the client version information to STDOUT.
 		/// </summary>
-		protected void PrintClientVersion(Assembly assembly)  {
-			PrintDebugMessage("PrintClientVersion", "Begin", 21);
+		public static void PrintClientVersion(Assembly assembly)  {
 			// Get attributes for display.
 			string product = String.Empty;
 			string productVersion = String.Empty;
@@ -290,7 +290,6 @@ limitations under the License.
 
 {2} {3}
 ", product, productVersion, title, version);
-			PrintDebugMessage("PrintClientVersion", "End", 21);
 		}
 		
 		/// <summary>
