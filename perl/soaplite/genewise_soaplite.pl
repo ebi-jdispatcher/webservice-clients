@@ -95,22 +95,30 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-    'para'           => \$tool_params{'para'},       # Show parameters in output alignmment
-    'pretty'         => \$tool_params{'pretty'},     # Show pretty ASCII alignment viewing
-    'genes'          => \$tool_params{'genes'},      # Show gene structure
-    'trans'          => \$tool_params{'trans'},      # Show protein translation, breaking at
-                                                     #   frameshifts
-    'cdna'           => \$tool_params{'cdna'},       # Show cDNA
-    'embl'           => \$tool_params{'embl'},       # EMBL feature table format with CDS key
-    'ace'            => \$tool_params{'ace'},        # Show Ace file gene structure
-    'gff'            => \$tool_params{'gff'},        # Show Gene Feature Format file
-    'diana'          => \$tool_params{'diana'},      # Show EMBL FT format suitable for diana
-    'init=s'         => \$tool_params{'init'},       # Model in local/global mode
-    'splice=s'       => \$tool_params{'splice'},     # Splice site
-    'random=s'       => \$tool_params{'random'},     # Random (Null) Model
-    'alg=s'          => \$tool_params{'alg'},        # Algorithm
-    'asequence=s'    => \$params{'asequence'},       # First input protein sequence
-    'bsequence=s'    => \$params{'bsequence'},       # Second input DNA sequence
+    'para'           => \$params{'para'},         # Show parameters in output alignmment
+    'nopara'         => \$params{'nopara'},       # Don't show parameters in output alignmment
+    'pretty'         => \$params{'pretty'},       # Show pretty ASCII alignment viewing
+    'nopretty'       => \$params{'nopretty'},     # Don't show pretty ASCII alignment viewing
+    'genes'          => \$params{'genes'},        # Show gene structure
+    'nogenes'        => \$params{'nogenes'},      # Don't show gene structure
+    'trans'          => \$params{'trans'},        # Show protein translation, breaking at frameshifts
+    'notrans'        => \$params{'notrans'},      # Don't show protein translation, breaking at frameshifts
+    'cdna'           => \$params{'cdna'},         # Show cDNA
+    'nocdna'         => \$params{'nocdna'},       # Don't show cDNA
+    'embl'           => \$params{'embl'},         # EMBL feature table format with CDS key
+    'noembl'         => \$params{'noembl'},       # Don't output EMBL feature table format with CDS key
+    'ace'            => \$params{'ace'},          # Show Ace file gene structure
+    'noace'          => \$params{'noace'},        # Don't show Ace file gene structure
+    'gff'            => \$params{'gff'},          # Show Gene Feature Format file
+    'nogff'          => \$params{'nogff'},        # Don't show Gene Feature Format file
+    'diana'          => \$params{'diana'},        # Show EMBL FT format suitable for diana
+    'nodiana'        => \$params{'nodiana'},      # Don't show EMBL FT format suitable for diana
+    'init=s'         => \$tool_params{'init'},    # Model in local/global mode
+    'splice=s'       => \$tool_params{'splice'},  # Splice site
+    'random=s'       => \$tool_params{'random'},  # Random (Null) Model
+    'alg=s'          => \$tool_params{'alg'},     # Algorithm
+    'asequence=s'    => \$params{'asequence'},    # First input protein sequence
+    'bsequence=s'    => \$params{'bsequence'},    # Second input DNA sequence
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -745,7 +753,82 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 	print_debug_message( 'load_params',
+		"params:\n" . Dumper( \%params ), 2 );
+	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
+	
+	# Parameters in output alignmment (para)
+	if($params{'para'}) {
+		$tool_params{'para'} = 'true';
+	}
+	elsif($params{'nopara'}) {
+		$tool_params{'para'} = 'false';
+	}
+	
+	# Pretty ASCII alignment viewing (pretty)
+	if($params{'pretty'}) {
+		$tool_params{'pretty'} = 'true';
+	}
+	elsif($params{'nopretty'}) {
+		$tool_params{'pretty'} = 'false';
+	}
+
+	# Gene structure (genes).
+	if($params{'genes'}) {
+		$tool_params{'genes'} = 'true';
+	}
+	elsif($params{'nogenes'}) {
+		$tool_params{'genes'} = 'false';
+	}
+	
+	# Protein translation, breaking at frameshifts (trans)
+	if($params{'trans'}) {
+			$tool_params{'trans'} = 'true';
+	}
+	elsif($params{'notrans'}) {
+		$tool_params{'trans'} = 'false';
+	}
+
+	# Output cDNA (cdna)
+	if($params{'cdna'}) {
+		$tool_params{'cdna'} = 'true';
+	}
+	elsif($params{'nocdna'}) {
+		$tool_params{'cdna'} = 'false';
+	}
+
+	# EMBL feature table format with CDS key (embl)
+	if($params{'embl'}) {
+		$tool_params{'embl'} = 'true';
+	}
+	elsif($params{'noembl'}) {
+		$tool_params{'embl'} = 'false';
+	}
+
+	# Ace file gene structure (ace)
+	if($params{'ace'}) {
+		$tool_params{'ace'} = 'true';
+	}
+	elsif($params{'noace'}) {
+		$tool_params{'ace'} = 'false';
+	}
+
+	# Gene Feature Format file (gff)
+	if($params{'gff'}) {
+		$tool_params{'gff'} = 'true';
+	}
+	elsif($params{'nogff'}) {
+		$tool_params{'gff'} = 'false';
+	}
+
+	# EMBL FT format suitable for diana (diana)
+	if($params{'diana'}) {
+		$tool_params{'diana'} = 'true';
+	}
+	elsif($params{'nodiana'}) {
+		$tool_params{'diana'} = 'false';
+	}
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -955,14 +1038,23 @@ and frameshifting errors.
 [Optional]
 
       --para          :      : show parameters in output alignmment
+      --nopara        :      : do not show parameters in output alignmment
       --pretty        :      : show pretty ASCII alignment viewing
+      --nopretty      :      : do not show pretty ASCII alignment viewing
       --genes         :      : show gene structure
+      --nogenes       :      : do not show gene structure
       --trans         :      : show protein translation, breaking at frameshifts 
+      --notrans       :      : do not show protein translation, breaking at frameshifts 
       --cdna          :      : show cDNA
+      --nocdna        :      : do not show cDNA
       --embl          :      : EMBL feature table format with CDS key
+      --noembl        :      : no EMBL feature table format with CDS key
       --ace           :      : show Ace file gene structure
+      --noace         :      : do not show Ace file gene structure
       --gff           :      : show Gene Feature Format file
+      --nogff         :      : do not show Gene Feature Format file
       --diana         :      : show EMBL FT format suitable for diana
+      --nodiana       :      : do not show EMBL FT format suitable for diana
       --init          : str  : model in local/global mode, see --paramDetail init
       --splice        : str  : splice site, see --paramDetail splice
       --random        : str  : Random (Null) Model, see --paramDetail random
