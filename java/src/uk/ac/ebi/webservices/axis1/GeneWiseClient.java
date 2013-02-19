@@ -60,14 +60,23 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "[Optional]\n"
 		+ "\n"
 		+ "      --para         :      : show parameters in output alignmment\n"
+		+ "      --nopara       :      : do not show parameters in output alignmment\n"
 		+ "      --pretty       :      : show pretty ASCII alignment viewing\n"
+		+ "      --nopretty     :      : do not show pretty ASCII alignment viewing\n"
 		+ "      --genes        :      : show gene structure\n"
+		+ "      --nogenes      :      : do not show gene structure\n"
 		+ "      --trans        :      : show protein translation, breaking at frameshifts\n"
+		+ "      --notrans      :      : do not show protein translation, breaking at frameshifts\n"
 		+ "      --cdna         :      : show cDNA\n"
+		+ "      --nocdna       :      : do not show cDNA\n"
 		+ "      --embl         :      : EMBL feature table format with CDS key\n"
+		+ "      --noembl       :      : no EMBL feature table format with CDS key\n"
 		+ "      --ace          :      : show Ace file gene structure\n"
+		+ "      --noace        :      : do not show Ace file gene structure\n"
 		+ "      --gff          :      : show Gene Feature Format file\n"
+		+ "      --nogff        :      : do not show Gene Feature Format file\n"
 		+ "      --diana        :      : show EMBL FT format suitable for diana\n"		
+		+ "      --nodiana      :      : do not show EMBL FT format suitable for diana\n"		
 		+ "      --init         : str  : model in local/global mode, see --paramDetail init\n"
 		+ "      --splice       : str  : splice site, see --paramDetail splice\n"
 		+ "      --random       : str  : Random (Null) Model, see --paramDetail random\n"
@@ -353,14 +362,23 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		InputParameters params = new InputParameters();
 		// Tool specific options
 		if (line.hasOption("para")) params.setPara(new Boolean(true));
+		else if (line.hasOption("nopara")) params.setPara(new Boolean(false));
 		if (line.hasOption("pretty")) params.setPretty(new Boolean(true));
+		else if (line.hasOption("nopretty")) params.setPretty(new Boolean(false));
 		if (line.hasOption("genes")) params.setGenes(new Boolean(true));
+		else if (line.hasOption("nogenes")) params.setGenes(new Boolean(false));
 		if (line.hasOption("trans")) params.setTrans(new Boolean(true));
+		else if (line.hasOption("notrans")) params.setTrans(new Boolean(false));
 		if (line.hasOption("cdna")) params.setCdna(new Boolean(true));
+		else if (line.hasOption("nocdna")) params.setCdna(new Boolean(false));
 		if (line.hasOption("embl")) params.setEmbl(new Boolean(true));
+		else if (line.hasOption("noembl")) params.setEmbl(new Boolean(false));
 		if (line.hasOption("ace")) params.setAce(new Boolean(true));
+		else if (line.hasOption("noace")) params.setAce(new Boolean(false));
 		if (line.hasOption("gff")) params.setGff(new Boolean(true));
+		else if (line.hasOption("nogff")) params.setGff(new Boolean(false));
 		if (line.hasOption("diana")) params.setDiana(new Boolean(true));
+		else if (line.hasOption("nodiana")) params.setDiana(new Boolean(false));
 		if (line.hasOption("init")) params.setInit(line.getOptionValue("init"));
 		if (line.hasOption("splice")) params.setSplice(line.getOptionValue("splice"));
 		if (line.hasOption("random")) params.setRandom(line.getOptionValue("random"));
@@ -383,14 +401,23 @@ public class GeneWiseClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		addGenericOptions(options);
 		// Application specific options
 		options.addOption("para", false, "Show parameters in output alignmment");
+		options.addOption("nopara", false, "Do not show parameters in output alignmment");
 		options.addOption("pretty", false, "Show pretty ASCII alignment viewing");
+		options.addOption("nopretty", false, "Do not show pretty ASCII alignment viewing");
 		options.addOption("genes", false, "Show gene structure");
+		options.addOption("nogenes", false, "Do not show gene structure");
 		options.addOption("trans", false, "Show protein translation, breaking at frameshifts");
+		options.addOption("notrans", false, "Do not show protein translation, breaking at frameshifts");
 		options.addOption("cdna", false, "Show cDNA");
+		options.addOption("nocdna", false, "Do not show cDNA");
 		options.addOption("embl", false, "EMBL feature table format with CDS key");
+		options.addOption("noembl", false, "No EMBL feature table format with CDS key");
 		options.addOption("ace", false, "Show Ace file gene structure");
+		options.addOption("noace", false, "Do not show Ace file gene structure");
 		options.addOption("gff", false, "Show Gene Feature Format file");
+		options.addOption("nogff", false, "Do not show Gene Feature Format file");
 		options.addOption("diana", false, "Show EMBL FT format suitable for diana");
+		options.addOption("nodiana", false, "Do not show EMBL FT format suitable for diana");
 		options.addOption("init", true, "Model in local/global mode");
 		options.addOption("splice", true, "Splice site");
 		options.addOption("random", true, "Random (Null) Model");
