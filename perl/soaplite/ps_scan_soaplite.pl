@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: ps_scan_soaplite.pl 2444 2013-01-25 10:38:18Z hpm $
+$Id$
 
 =cut
 
@@ -278,7 +278,7 @@ Get the user agent string for the client.
 sub get_agent_string {
 	print_debug_message( 'get_agent_string', 'Begin', 11 );
 	my $clientVersion = '0';
-	if('$Revision: 2444 $' =~ m/(\d+)/) { # SCM revision tag.
+	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
 		$clientVersion = $1;
 	}
 	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
@@ -1028,7 +1028,7 @@ sub usage {
 PROSITE Scan
 ==========
 
-Prediction of transmembrane topology and signal peptides from the amino acid sequence of a protein. 
+Comparing a protein sequence against the signatures in PROSITE.
 
 [Required]
 

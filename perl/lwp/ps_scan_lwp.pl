@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: ps_scan_lwp.pl 2443 2013-01-25 10:33:57Z hpm $
+$Id$
 
 =cut
 
@@ -229,7 +229,7 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	'$Revision: 2443 $' =~ m/(\d+)/;
+	'$Revision$' =~ m/(\d+)/;
 	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -1008,8 +1008,7 @@ sub usage {
 PROSITE Scan
 =======
 
-Prediction of transmembrane topology and signal peptides from the amino acid 
-sequence of a protein. 
+Comparing a protein sequence against the signatures in PROSITE.
 
 [Required]
 
