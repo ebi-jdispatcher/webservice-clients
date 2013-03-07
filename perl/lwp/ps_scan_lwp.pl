@@ -94,8 +94,10 @@ GetOptions(
 	'format=s'           => \$tool_params{'format'},           # output format (e.g. scan|fasta|psa|msa|gff)
 	'database=s'         => \$tool_params{'database'},         # Database to scan (prosite|hamap)
 	'scanControl=s'      => \$tool_params{'scanControl'},      # scan Patterns and/or Profiles
-	'commonMatch'        => \$tool_params{'commonMatch'},      # Common Matches Reporting
-	'overlappingMatch'   => \$tool_params{'overlappingMatch'}, # Overlapping Matches Reporting  
+	'commonMatch'        => \$params{'commonMatch'},           # Enable common Matches Reporting
+	'noCommonMatch'      => \$params{'noCommonMatch'},         # Disable common Matches Reporting
+	'overlappingMatch'   => \$params{'overlappingMatch'},      # Enable overlapping Matches Reporting
+	'noOverlappingMatch' => \$params{'noOverlappingMatch'},    # Disable overlapping Matches Reporting  
 	'profileThreshold=i' => \$tool_params{'profileThreshold'}, # Cut-off level for profiles
 	'sequence=s'         => \$params{'sequence'},              # Query sequence file or DB:ID	
 
@@ -814,6 +816,22 @@ Load job parameters from command-line options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
+	# Enable/disable common Matches Reporting
+	if ( $params{'commonMatch'} ) {
+		$tool_params{'commonMatch'} = 1;
+	}
+	elsif ( $params{'noCommonMatch'} ) {
+		$tool_params{'commonMatch'} = 0;
+	}
+	
+	# Enable/disable overlapping Matches Reporting
+	if ( $params{'overlappingMatch'} ) {
+		$tool_params{'overlappingMatch'} = 1;
+	}
+	elsif ( $params{'noOverlappingMatch'} ) {
+		$tool_params{'overlappingMatch'} = 0;
+	} 
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -1019,8 +1037,10 @@ Comparing a protein sequence against the signatures in PROSITE.
       --format             : str  : output format (e.g. scan|fasta|psa|msa|gff)
       --database           : str  : database to scan (prosite|hamap)
       --scanControl        : str  : scan patterns and/or profiles
-      --commonMatch        :      : common matches reporting
-      --overlappingMatch   :      : overlapping matches reporting
+      --commonMatch        :      : enable common matches reporting
+      --noCommonMatch      :      : disable common matches reporting
+      --overlappingMatch   :      : enable overlapping matches reporting
+      --noOverlappingMatch :      : disable overlapping matches reporting
       --profileThreshold   : int  : cut-off level for profiles
       
 [General]
