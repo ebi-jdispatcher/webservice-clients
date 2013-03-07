@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: fingerprintscan_soaplite.pl 2444 2013-01-25 10:38:18Z hpm $
+$Id$
 
 =cut
 
@@ -78,8 +78,7 @@ use Data::Dumper;
 use constant MAX_RETRIES => 3;
 
 # WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl';
-my $WSDL = 'http://ves-oy-21.ebi.ac.uk:8080/Tools/services/soap/fingerprintscan?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -277,7 +276,7 @@ Get the user agent string for the client.
 sub get_agent_string {
 	print_debug_message( 'get_agent_string', 'Begin', 11 );
 	my $clientVersion = '0';
-	if('$Revision: 2444 $' =~ m/(\d+)/) { # SCM revision tag.
+	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
 		$clientVersion = $1;
 	}
 	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
