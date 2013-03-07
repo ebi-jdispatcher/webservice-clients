@@ -2,27 +2,27 @@
 
 =head1 NAME
 
-fingerprintscan_soaplite.pl
+fingerprintscan_lwp.pl
 
 =head1 DESCRIPTION
 
-FingerPRINTScan (SOAP) web service Perl client using L<SOAP::Lite>.
+FingerPRINTScan (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
 =over
 
 =item *
-L<SOAP::Lite> 0.60 and Perl 5.8.3
+L<LWP> 5.79, L<XML::Simple> 2.12 and Perl 5.8.3
 
 =item *
-L<SOAP::Lite> 0.69 and Perl 5.8.8 (Ubuntu 8.04 LTS)
+L<LWP> 5.808, L<XML::Simple> 2.18 and Perl 5.8.8 (Ubuntu 8.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.710.10 and Perl 5.10.1 (Ubuntu 10.04 LTS)
+L<LWP> 5.834, L<XML::Simple> 2.18 and Perl 5.10.1 (Ubuntu 10.04 LTS)
 
 =item *
-L<SOAP::Lite> 0.714 and Perl 5.14.2 (Ubuntu 12.04 LTS)
+L<LWP> 6.03, L<XML::Simple> 2.18 and Perl 5.14.2 (Ubuntu 12.04 LTS)
 
 =back
 
@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/pfa/fingerprintscan_soap>
+L<http://www.ebi.ac.uk/Tools/webservices/services/pfa/fingerprintscan_rest>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id$
+$Id: fingerprintscan_lwp.pl 2443 2013-01-25 10:33:57Z hpm $
 
 =cut
 
@@ -67,18 +67,14 @@ use warnings;
 
 # Load libraries
 use English;
-use SOAP::Lite;
 use LWP;
+use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
-use MIME::Base64;
 use Data::Dumper;
 
-# Maximum connection retries.
-use constant MAX_RETRIES => 3;
-
-# WSDL URL for service
-my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl';
+# Base URL for service
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/fingerprintscan';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -117,21 +113,20 @@ GetOptions(
 	'quiet'              => \$params{'quiet'},                 # Decrease output level
 	'verbose'            => \$params{'verbose'},               # Increase output level
 	'debugLevel=i'       => \$params{'debugLevel'},            # Debug output level
-	'trace'              => \$params{'trace'},                 # SOAP message debug
-	'endpoint=s'         => \$params{'endpoint'},              # SOAP service endpoint
-	'namespace=s'        => \$params{'namespace'},             # SOAP service namespace
-	'WSDL=s'             => \$WSDL,                            # SOAP service WSDL
+	'baseUrl=s'          => \$baseUrl,                         # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
-# Debug mode: SOAP::Lite version
-&print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
-	1 );
+# Debug mode: LWP version
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1 );
 
 # Debug mode: print the input parameters
 &print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
 &print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
+
+# LWP UserAgent for making HTTP calls (initialised when required).
+my $ua;
 
 # Get the script filename for use in usage messages
 my $scriptName = basename( $0, () );
@@ -142,57 +137,9 @@ if ( $params{'help'} || $numOpts == 0 ) {
 	exit(0);
 }
 
-# If required enable SOAP message trace
-if ( $params{'trace'} ) {
-	print STDERR "Tracing active\n";
-	SOAP::Lite->import( +trace => 'debug' );
-}
+# Debug mode: show the base URL
+&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
 
-# Debug mode: show the WSDL, service endpoint and namespace being used.
-&print_debug_message( 'MAIN', 'WSDL: ' . $WSDL, 1 );
-
-# For a document/literal service which has types with repeating elements
-# namespace and endpoint need to be used instead of the WSDL. By default
-# these are extracted from the WSDL.
-my ( $serviceEndpoint, $serviceNamespace ) = &from_wsdl($WSDL);
-
-# User specified endpoint and namespace
-$serviceEndpoint  = $params{'endpoint'}  if ( $params{'endpoint'} );
-$serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
-
-# Debug mode: show the WSDL, service endpoint and namespace being used.
-&print_debug_message( 'MAIN', 'endpoint: ' . $serviceEndpoint,   11 );
-&print_debug_message( 'MAIN', 'namespace: ' . $serviceNamespace, 11 );
-
-# Create the service interface, setting the fault handler to throw exceptions
-my $soap = SOAP::Lite->proxy(
-	$serviceEndpoint,
-	timeout => 6000,    # HTTP connection timeout
-	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
-	options => {
-		# HTTP compression (requires Compress::Zlib)
-		compress_threshold => 100000000, # Prevent request compression.
-	},
-  )->uri($serviceNamespace)->on_fault(
-
-	# Map SOAP faults to Perl exceptions (i.e. die).
-	sub {
-		my $soap = shift;
-		my $res  = shift;
-		if ( ref($res) eq '' ) {
-			die($res);
-		}
-		else {
-			die( $res->faultstring );
-		}
-		return new SOAP::SOM;
-	}
-  );
-# Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-$soap->transport->agent(&get_agent_string() . $soap->transport->agent());
-&print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
-
-# Check that arguments include required parameters
 if (
 	!(
 		   $params{'polljob'}
@@ -265,171 +212,262 @@ else {
 
 =cut
 
-=head2 get_agent_string()
+### Wrappers for REST resources ###
 
-Get the user agent string for the client.
+=head2 rest_user_agent()
 
-  my $agent_str = &get_agent_string();
+Get a LWP UserAgent to use to perform REST requests.
+
+  my $ua = &rest_user_agent();
 
 =cut
 
-sub get_agent_string {
-	print_debug_message( 'get_agent_string', 'Begin', 11 );
-	my $clientVersion = '0';
-	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
-		$clientVersion = $1;
+sub rest_user_agent() {
+	print_debug_message( 'rest_user_agent', 'Begin', 21 );
+	# Create an LWP UserAgent for making HTTP calls.
+	my $ua = LWP::UserAgent->new();
+	# Set 'User-Agent' HTTP header to identifiy the client.
+	'$Revision: 2443 $' =~ m/(\d+)/;
+	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	# Configure HTTP proxy support from environment.
+	$ua->env_proxy;
+	print_debug_message( 'rest_user_agent', 'End', 21 );
+	return $ua;
+}
+
+=head2 rest_error()
+
+Check a REST response for an error condition. An error is mapped to a die.
+
+  &rest_error($response, $content_data);
+
+=cut
+
+sub rest_error() {
+	print_debug_message( 'rest_error', 'Begin', 21 );
+	my $response = shift;
+	my $contentdata;
+	if(scalar(@_) > 0) {
+		$contentdata = shift;
 	}
-	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
-	print_debug_message( 'get_agent_string', 'End', 11 );
-	return 	$agent_str;
+	if(!defined($contentdata) || $contentdata eq '') {
+		$contentdata = $response->content();
+	}
+	# Check for HTTP error codes
+	if ( $response->is_error ) {
+		my $error_message = '';
+		# HTML response.
+		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
+			$error_message = $1;
+		}
+		#  XML response.
+		elsif($contentdata =~ m/<description>([^<]+)<\/description>/) {
+			$error_message = $1;
+		}
+		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+	}
+	print_debug_message( 'rest_error', 'End', 21 );
 }
 
-### Wrappers for SOAP operations ###
+=head2 rest_request()
 
-=head2 soap_get_parameters()
+Perform a REST request (HTTP GET).
 
-Get a list of tool parameter names.
-
-  my (@param_name_list) = &soap_get_parameters();
+  my $response_str = &rest_request($url);
 
 =cut
 
-sub soap_get_parameters {
-	print_debug_message( 'soap_get_parameters', 'Begin', 1 );
-	my $ret = $soap->getParameters();
-	print_debug_message( 'soap_get_parameters', 'End', 1 );
-	return $ret->valueof('//parameters/id');
+sub rest_request {
+	print_debug_message( 'rest_request', 'Begin', 11 );
+	my $requestUrl = shift;
+	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+
+	# Get an LWP UserAgent.
+	$ua = &rest_user_agent() unless defined($ua);
+	# Available HTTP compression methods.
+	my $can_accept;
+	eval {
+	    $can_accept = HTTP::Message::decodable();
+	};
+	$can_accept = '' unless defined($can_accept);
+	# Perform the request
+	my $response = $ua->get($requestUrl,
+		'Accept-Encoding' => $can_accept, # HTTP compression.
+	);
+	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
+		11 );
+	print_debug_message( 'rest_request',
+		'response length: ' . length($response->content()), 11 );
+	print_debug_message( 'rest_request',
+		'request:' ."\n" . $response->request()->as_string(), 32 );
+	print_debug_message( 'rest_request',
+		'response: ' . "\n" . $response->as_string(), 32 );
+	# Unpack possibly compressed response.
+	my $retVal;
+	if ( defined($can_accept) && $can_accept ne '') {
+	    $retVal = $response->decoded_content();
+	}
+	# If unable to decode use orginal content.
+	$retVal = $response->content() unless defined($retVal);
+	# Check for an error.
+	&rest_error($response, $retVal);
+	print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
+	print_debug_message( 'rest_request', 'End', 11 );
+
+	# Return the response data
+	return $retVal;
 }
 
-=head2 soap_get_parameter_details();
+=head2 rest_get_parameters()
 
-Get detailed information about a tool parameter. Includes a description 
-suitable for use in user help, and details of valid values. 
+Get list of tool parameter names.
 
-  my $paramDetail = &soap_get_parameter_details($paramName);
+  my (@param_list) = &rest_get_parameters();
 
 =cut
 
-sub soap_get_parameter_details {
-	print_debug_message( 'soap_get_parameter_details', 'Begin', 1 );
+sub rest_get_parameters {
+	print_debug_message( 'rest_get_parameters', 'Begin', 1 );
+	my $url                = $baseUrl . '/parameters/';
+	my $param_list_xml_str = rest_request($url);
+	my $param_list_xml     = XMLin($param_list_xml_str);
+	my (@param_list)       = @{ $param_list_xml->{'id'} };
+	print_debug_message( 'rest_get_parameters', 'End', 1 );
+	return (@param_list);
+}
+
+=head2 rest_get_parameter_details()
+
+Get details of a tool parameter.
+
+  my $paramDetail = &rest_get_parameter_details($param_name);
+
+=cut
+
+sub rest_get_parameter_details {
+	print_debug_message( 'rest_get_parameter_details', 'Begin', 1 );
 	my $parameterId = shift;
-	print_debug_message( 'soap_get_parameter_details',
+	print_debug_message( 'rest_get_parameter_details',
 		'parameterId: ' . $parameterId, 1 );
-	my $ret = $soap->getParameterDetails(
-		SOAP::Data->name( 'parameterId' => $parameterId )
-		  ->attr( { 'xmlns' => '' } ) );
-	my $paramDetail = $ret->valueof('//parameterDetails');
-	# Convert parameter values into a list.
-	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
-	# Convert WsProperties for each value into a list.
-	for(my $i = 0; $i < scalar(@paramValueList); $i++) {
-		my (@propertyList) = $ret->valueof('//parameterDetails/values/[' . ($i + 1) . ']/properties/property');
-		$paramValueList[$i]->{'properties'} = \@propertyList;
-	}
-	$paramDetail->{'values'} = \@paramValueList;
-	print_debug_message( 'soap_get_parameter_details', 'End', 1 );
-	return $paramDetail;
+	my $url                  = $baseUrl . '/parameterdetails/' . $parameterId;
+	my $param_detail_xml_str = rest_request($url);
+	my $param_detail_xml     = XMLin($param_detail_xml_str);
+	print_debug_message( 'rest_get_parameter_details', 'End', 1 );
+	return ($param_detail_xml);
 }
 
-=head2 soap_run()
+=head2 rest_run()
 
-Submit a job to the service.
+Submit a job.
 
-  my $job_id = &soap_run($email, $title, \%params);
+  my $job_id = &rest_run($email, $title, \%params );
 
 =cut
 
-sub soap_run {
-	print_debug_message( 'soap_run', 'Begin', 1 );
+sub rest_run {
+	print_debug_message( 'rest_run', 'Begin', 1 );
 	my $email  = shift;
 	my $title  = shift;
 	my $params = shift;
-	print_debug_message( 'soap_run', 'email: ' . $email, 1 );
+	print_debug_message( 'rest_run', 'email: ' . $email, 1 );
 	if ( defined($title) ) {
-		print_debug_message( 'soap_run', 'title: ' . $title, 1 );
+		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
+	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
 
-	my (@paramsList) = ();
-	foreach my $key ( keys(%$params) ) {
-		if ( defined( $params->{$key} ) && $params->{$key} ne '' ) {
-			push @paramsList,
-			  SOAP::Data->name( $key => $params->{$key} )
-			  ->attr( { 'xmlns' => '' } );
+	# Get an LWP UserAgent.
+	$ua = &rest_user_agent() unless defined($ua);
+
+	# Clean up parameters
+	my (%tmp_params) = %{$params};
+	$tmp_params{'email'} = $email;
+	$tmp_params{'title'} = $title;
+	foreach my $param_name ( keys(%tmp_params) ) {
+		if ( !defined( $tmp_params{$param_name} ) ) {
+			delete $tmp_params{$param_name};
 		}
 	}
-	my $ret = $soap->run(
-		SOAP::Data->name( 'email' => $email )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'title' => $title )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'parameters' => \SOAP::Data->value(@paramsList) )
-		  ->attr( { 'xmlns' => '' } )
-	);
-	print_debug_message( 'soap_run', 'End', 1 );
-	return $ret->valueof('//jobId');
+
+	# Submit the job as a POST
+	my $url = $baseUrl . '/run';
+	my $response = $ua->post( $url, \%tmp_params );
+	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
+	print_debug_message( 'rest_run',
+		'request:' ."\n" . $response->request()->as_string(), 11 );
+	print_debug_message( 'rest_run',
+		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
+
+	# Check for an error.
+	&rest_error($response);
+
+	# The job id is returned
+	my $job_id = $response->content();
+	print_debug_message( 'rest_run', 'End', 1 );
+	return $job_id;
 }
 
-=head2 soap_get_status()
+=head2 rest_get_status()
 
-Get the status of a submitted job.
+Check the status of a job.
 
-  my $status = &soap_get_status($job_id);
+  my $status = &rest_get_status($job_id);
 
 =cut
 
-sub soap_get_status {
-	print_debug_message( 'soap_get_status', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'soap_get_status', 'jobid: ' . $jobid, 2 );
-	my $res = $soap->getStatus(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
-	my $status_str = $res->valueof('//status');
-	print_debug_message( 'soap_get_status', 'status_str: ' . $status_str, 2 );
-	print_debug_message( 'soap_get_status', 'End', 1 );
+sub rest_get_status {
+	print_debug_message( 'rest_get_status', 'Begin', 1 );
+	my $job_id = shift;
+	print_debug_message( 'rest_get_status', 'jobid: ' . $job_id, 2 );
+	my $status_str = 'UNKNOWN';
+	my $url        = $baseUrl . '/status/' . $job_id;
+	$status_str = &rest_request($url);
+	print_debug_message( 'rest_get_status', 'status_str: ' . $status_str, 2 );
+	print_debug_message( 'rest_get_status', 'End', 1 );
 	return $status_str;
 }
 
-=head2 soap_get_result_types()
+=head2 rest_get_result_types()
 
-Get list of available result types for a finished job.
+Get list of result types for finished job.
 
-  my (@resultTypes) = soap_get_result_types($job_id);
+  my (@result_types) = &rest_get_result_types($job_id);
 
 =cut
 
-sub soap_get_result_types {
-	print_debug_message( 'soap_get_result_types', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'soap_get_result_types', 'jobid: ' . $jobid, 2 );
-	my $resultTypesXml = $soap->getResultTypes(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ) );
-	my (@resultTypes) = $resultTypesXml->valueof('//resultTypes/type');
-	print_debug_message( 'soap_get_result_types',
+sub rest_get_result_types {
+	print_debug_message( 'rest_get_result_types', 'Begin', 1 );
+	my $job_id = shift;
+	print_debug_message( 'rest_get_result_types', 'jobid: ' . $job_id, 2 );
+	my (@resultTypes);
+	my $url                      = $baseUrl . '/resulttypes/' . $job_id;
+	my $result_type_list_xml_str = &rest_request($url);
+	my $result_type_list_xml     = XMLin($result_type_list_xml_str);
+	(@resultTypes) = @{ $result_type_list_xml->{'type'} };
+	print_debug_message( 'rest_get_result_types',
 		scalar(@resultTypes) . ' result types', 2 );
-	print_debug_message( 'soap_get_result_types', 'End', 1 );
+	print_debug_message( 'rest_get_result_types', 'End', 1 );
 	return (@resultTypes);
 }
 
-=head2 soap_get_result()
+=head2 rest_get_result()
 
 Get result data of a specified type for a finished job.
 
-  my $result = &soap_get_result($job_id, $result_type);
+  my $result = rest_get_result($job_id, $result_type);
 
 =cut
 
-sub soap_get_result {
-	print_debug_message( 'soap_get_result', 'Begin', 1 );
-	my $jobid = shift;
-	my $type  = shift;
-	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'soap_get_result', 'type: ' . $type,   1 );
-	my $res = $soap->getResult(
-		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
-		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } )
-	);
-	my $result = decode_base64( $res->valueof('//output') );
-	print_debug_message( 'soap_get_result', length($result) . ' characters',
+sub rest_get_result {
+	print_debug_message( 'rest_get_result', 'Begin', 1 );
+	my $job_id = shift;
+	my $type   = shift;
+	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id, 1 );
+	print_debug_message( 'rest_get_result', 'type: ' . $type,    1 );
+	my $url    = $baseUrl . '/result/' . $job_id . '/' . $type;
+	my $result = &rest_request($url);
+	print_debug_message( 'rest_get_result', length($result) . ' characters',
 		1 );
-	print_debug_message( 'soap_get_result', 'End', 1 );
+	print_debug_message( 'rest_get_result', 'End', 1 );
 	return $result;
 }
 
@@ -437,9 +475,9 @@ sub soap_get_result {
 
 =head2 print_debug_message()
 
-Print a debug message at the specified debug level.
+Print debug message at specified debug level.
 
-  &print_debug_message($function_name, $message, $level);
+  &print_debug_message($method_name, $message, $level);
 
 =cut
 
@@ -452,82 +490,9 @@ sub print_debug_message {
 	}
 }
 
-=head2 from_wsdl()
-
-Extract the service namespace and endpoint from the service WSDL document 
-for use when creating the service interface.
-
-This function assumes that the WSDL contains a single service using a single
-namespace and endpoint.
-
-The namespace and endpoint are required to create a service interface, using 
-SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used 
-in many document/literal services. Using SOAP::Lite->service() with the WSDL
-gives an interface where the data structures returned by the service are 
-mapped into hash structures and repeated elements are collapsed to a single
-instance.
-
-Note: rpc/encoded services are handled  as expected by SOAP::Lite->service() 
-since repeating data structures are encoded using arrays by the service.  
-
-  my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
-
-=cut
-
-sub from_wsdl {
-	&print_debug_message( 'from_wsdl', 'Begin', 1 );
-	my (@retVal) = ();
-	my $wsdlStr;
-	my $fetchAttemptCount = 0;
-	# Create a user agent
-	my $ua = LWP::UserAgent->new();
-	$ua->agent( &get_agent_string() . $ua->agent() ); # User-agent.
-	$ua->env_proxy; # HTTP proxy.
-	my $can_accept; # Available message encodings.
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
-	$can_accept = '' unless defined($can_accept);
-	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
-		# Fetch WSDL document.
-		my $response = $ua->get($WSDL, 
-			'Accept-Encoding' => $can_accept, # HTTP compression.
-		);
-		if ( $params{'trace'} ) { # Request/response trace.
-			print( $response->request()->as_string(), "\n" );
-			print( $response->as_string(), "\n" );
-		}
-		# Unpack possibly compressed response.
-		if ( defined($can_accept) && $can_accept ne '') {
-	    	$wsdlStr = $response->decoded_content();
-		}
-		# If unable to decode use orginal content.
-		$wsdlStr = $response->content() if (!defined($wsdlStr));
-		$fetchAttemptCount++;
-		if(defined($wsdlStr) && $wsdlStr ne '') {
-			# Extract service endpoint.
-			if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
-				$retVal[0] = $2;
-			}
-			# Extract service namespace.
-			if ( $wsdlStr =~
-				m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
-			{
-				$retVal[1] = $2;
-			}
-		}
-	}
-	# Check endpoint and namespace have been obtained.
-	if(scalar(@retVal) != 2 || $retVal[0] eq '' || $retVal[1] eq '') {
-		die "Error: Unable to determine service endpoint and namespace for requests.";
-	}
-	&print_debug_message( 'from_wsdl', 'End', 1 );
-	return @retVal;
-}
-
 =head2 print_tool_params()
 
-Print the list of tool parameter names.
+Print list of tool parameters.
 
   &print_tool_params();
 
@@ -535,8 +500,8 @@ Print the list of tool parameter names.
 
 sub print_tool_params {
 	print_debug_message( 'print_tool_params', 'Begin', 1 );
-	my (@paramList) = &soap_get_parameters();
-	foreach my $param (@paramList) {
+	my (@param_list) = &rest_get_parameters();
+	foreach my $param ( sort(@param_list) ) {
 		print $param, "\n";
 	}
 	print_debug_message( 'print_tool_params', 'End', 1 );
@@ -544,7 +509,7 @@ sub print_tool_params {
 
 =head2 print_param_details()
 
-Print detail information about a tool parameter.
+Print details of a tool parameter.
 
   &print_param_details($param_name);
 
@@ -554,10 +519,17 @@ sub print_param_details {
 	print_debug_message( 'print_param_details', 'Begin', 1 );
 	my $paramName = shift;
 	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &soap_get_parameter_details($paramName);
+	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value ( @{ $paramDetail->{'values'} } ) {
+	my @paramDetailList;
+	exit(0) unless $paramDetail->{'values'}->{'value'};
+	if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+		@paramDetailList = @{ $paramDetail->{'values'}->{'value'} };
+	} else {
+		push(@paramDetailList, $paramDetail->{'values'}->{'value'});
+	}
+	foreach my $value ( @paramDetailList ) {
 		print $value->{'value'};
 		if ( $value->{'defaultValue'} eq 'true' ) {
 			print "\t", 'default';
@@ -565,18 +537,26 @@ sub print_param_details {
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
 		if(defined($value->{'properties'})) {
-			foreach my $wsProperty (@{$value->{'properties'}}) {
-				print "\t", $wsProperty->{'key'},
-					"\t", $wsProperty->{'value'}, "\n";
+			foreach my $key (sort(keys(%{$value->{'properties'}{'property'}}))) {
+				if(ref($value->{'properties'}{'property'}{$key}) eq 'HASH' && 
+					defined($value->{'properties'}{'property'}{$key}{'value'})) {
+					print "\t", $key, "\t", 
+						$value->{'properties'}{'property'}{$key}{'value'}, "\n";
+				}
+				else {
+					print "\t", $value->{'properties'}{'property'}{'key'}, 
+						"\t", $value->{'properties'}{'property'}{'value'}, "\n";
+					last;					
+				}
 			}
 		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
 }
 
-=head2  print_job_status()
+=head2 print_job_status()
 
-Print the status of a submitted job.
+Print status of a job.
 
   &print_job_status($job_id);
 
@@ -589,37 +569,37 @@ sub print_job_status {
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting status for job ', $jobid, "\n";
 	}
-	my $status = &soap_get_status($jobid);
-	print "$status\n";
-	if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
-		print STDERR "To get available result types:\n",
-		  "  $scriptName --resultTypes --jobid $jobid\n";
+	my $result = &rest_get_status($jobid);
+	print "$result\n";
+	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
+		print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+		  . "\n";
 	}
 	print_debug_message( 'print_job_status', 'End', 1 );
 }
 
 =head2 print_result_types()
 
-Print available result types for a finished job.
+Print available result types for a job.
 
   &print_result_types($job_id);
 
 =cut
 
 sub print_result_types {
-	print_debug_message( 'print_result_types', 'Begin', 1 );
+	print_debug_message( 'result_types', 'Begin', 1 );
 	my $jobid = shift;
-	print_debug_message( 'print_result_types', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
 	if ( $outputLevel > 0 ) {
 		print STDERR 'Getting result types for job ', $jobid, "\n";
 	}
-	my $status = &soap_get_status($jobid);
+	my $status = &rest_get_status($jobid);
 	if ( $status eq 'PENDING' || $status eq 'RUNNING' ) {
 		print STDERR 'Error: Job status is ', $status,
 		  '. To get result types the job must be finished.', "\n";
 	}
 	else {
-		my (@resultTypes) = &soap_get_result_types($jobid);
+		my (@resultTypes) = &rest_get_result_types($jobid);
 		if ( $outputLevel > 0 ) {
 			print STDOUT 'Available result types:', "\n";
 		}
@@ -645,7 +625,7 @@ sub print_result_types {
 			  . $params{'jobid'} . "\n";
 		}
 	}
-	print_debug_message( 'print_result_types', 'End', 1 );
+	print_debug_message( 'result_types', 'End', 1 );
 }
 
 =head2 submit_job()
@@ -666,7 +646,7 @@ sub submit_job {
 	&load_params();
 
 	# Submit the job
-	my $jobid = &soap_run( $params{'email'}, $params{'title'}, \%tool_params );
+	my $jobid = &rest_run( $params{'email'}, $params{'title'}, \%tool_params );
 
 	# Simulate sync/async mode
 	if ( defined( $params{'async'} ) ) {
@@ -701,33 +681,39 @@ sub multi_submit_job {
 	my (@filename_list) = ();
 
 	# Query sequence
-	if ( defined( $ARGV[0] ) ) {    # Bare option(s).
-		foreach my $fileOpt (@ARGV) {
-			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File or STDIN.
-				push( @filename_list, $fileOpt );
-			}
-			else {
-				warn "Warning: input file \"$fileOpt\" not found"; 
-			}
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			push( @filename_list, $params{'sequence'} );
 		}
+		else {
+			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
+		}
 	}
-	if(scalar(@filename_list) < 1) {
-		die 'Error: no files found to process.';
-	}
+
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		print_debug_message( 'multi_submit_job', 'filename: ' . $filename, 2 );
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
-			if ( $seq =~ m/\w+/ ) {
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				&submit_job($seq);
@@ -754,8 +740,14 @@ sub list_file_submit_job {
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( my $LISTFILE, '<', $filename )
-	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
@@ -778,10 +770,9 @@ sub list_file_submit_job {
 
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
-command-line option.
+Load sequence data from file or option specified on the command-line.
 
-  my $data = load_data();
+  &load_data();
 
 =cut
 
@@ -812,10 +803,7 @@ sub load_data {
 
 =head2 load_params()
 
-Load job parameters into input structure.
-
-Since most of the loading is done when processing the command-line options, 
-this function only provides additional processing required from some options.
+Load job parameters from command-line options.
 
   &load_params();
 
@@ -823,18 +811,13 @@ this function only provides additional processing required from some options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
-	
+
 	# Result views to use.
 	if ( defined( $params{'resultviews'} ) ) {
 		my (@viewList) = split /[ ,]/, $params{'resultviews'};
-		for ( my $i = 0 ; $i < scalar(@viewList) ; $i++ ) {
-			$tool_params{'resultviews'}[$i] =
-		  		SOAP::Data->type( 'string' => $viewList[$i] )->name('string');
-		}
+		$tool_params{'resultviews'} = \@viewList;
 	}
-	
-	print_debug_message( 'load_params',
-		"tool_params:\n" . Dumper( \%tool_params ), 2 );
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -842,7 +825,7 @@ sub load_params {
 
 Client-side job polling.
 
-  my $status = &client_poll($job_id);
+  &client_poll($job_id);
 
 =cut
 
@@ -851,13 +834,13 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-	# Check status and wait if not finished. Terminate if MAX_RETRIES attempts get "ERROR".
+# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
-		|| ( $status eq 'ERROR' && $errorCount < MAX_RETRIES ) )
+		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
 	{
-		$status = soap_get_status($jobid);
+		$status = rest_get_status($jobid);
 		print STDERR "$status\n" if ( $outputLevel > 0 );
 		if ( $status eq 'ERROR' ) {
 			$errorCount++;
@@ -880,7 +863,7 @@ sub client_poll {
 
 =head2 get_results()
 
-Get the results for a jobid.
+Get the results for a job identifier.
 
   &get_results($job_id);
 
@@ -892,81 +875,75 @@ sub get_results {
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
 
 	# Verbose
-	print 'Getting results for job ', $jobid, "\n" if ( $outputLevel > 1 );
+	if ( $outputLevel > 1 ) {
+		print 'Getting results for job ', $jobid, "\n";
+	}
 
 	# Check status, and wait if not finished
-	my $status = client_poll($jobid);
+	client_poll($jobid);
 
-	# If job completed get results
-	if ( $status eq 'FINISHED' ) {
+	# Use JobId if output file name is not defined
+	unless ( defined( $params{'outfile'} ) ) {
+		$params{'outfile'} = $jobid;
+	}
 
-		# Use JobId if output file name is not defined
-		$params{'outfile'} = $jobid unless ( defined( $params{'outfile'} ) );
+	# Get list of data types
+	my (@resultTypes) = rest_get_result_types($jobid);
 
-		# Get list of data types
-		my (@resultTypes) = soap_get_result_types($jobid);
-
-		# Get the data and write it to a file
-		if ( defined( $params{'outformat'} ) ) {    # Specified data type
-			my $selResultType;
-			foreach my $resultType (@resultTypes) {
-				if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
-					$selResultType = $resultType;
-				}
+	# Get the data and write it to a file
+	if ( defined( $params{'outformat'} ) ) {    # Specified data type
+		my $selResultType;
+		foreach my $resultType (@resultTypes) {
+			if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
+				$selResultType = $resultType;
 			}
-			if ( defined($selResultType) ) {
-				my $result =
-				  soap_get_result( $jobid, $selResultType->{'identifier'} );
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $selResultType->{'identifier'} . '.'
-						  . $selResultType->{'fileSuffix'},
-						$result
-					);
-				}
+		}
+		if ( defined($selResultType) ) {
+			my $result =
+			  rest_get_result( $jobid, $selResultType->{'identifier'} );
+			if ( $params{'outfile'} eq '-' ) {
+				write_file( $params{'outfile'}, $result );
 			}
 			else {
-				die 'Error: unknown result format "'
-				  . $params{'outformat'} . '"';
+				write_file(
+					$params{'outfile'} . '.'
+					  . $selResultType->{'identifier'} . '.'
+					  . $selResultType->{'fileSuffix'},
+					$result
+				);
 			}
 		}
 		else {
-
-			# Data types available
-			# Write a file for each output type
-			for my $resultType (@resultTypes) {
-				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
-				  if ( $outputLevel > 1 );
-				my $result =
-				  soap_get_result( $jobid, $resultType->{'identifier'} );
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $resultType->{'identifier'} . '.'
-						  . $resultType->{'fileSuffix'},
-						$result
-					);
-				}
-			}
+			die 'Error: unknown result format "' . $params{'outformat'} . '"';
 		}
 	}
-	else {
-		print STDERR "Job failed, unable to get results\n";
+	else {    # Data types available
+		      # Write a file for each output type
+		for my $resultType (@resultTypes) {
+			if ( $outputLevel > 1 ) {
+				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
+			}
+			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
+			if ( $params{'outfile'} eq '-' ) {
+				write_file( $params{'outfile'}, $result );
+			}
+			else {
+				write_file(
+					$params{'outfile'} . '.'
+					  . $resultType->{'identifier'} . '.'
+					  . $resultType->{'fileSuffix'},
+					$result
+				);
+			}
+		}
 	}
 	print_debug_message( 'get_results', 'End', 1 );
 }
 
 =head2 read_file()
 
-Read all data from a file. The special filename '-' can be used to read from 
-standard input.
+Read a file into a scalar. The special filename '-' can be used to read from 
+standard input (STDIN).
 
   my $data = &read_file($filename);
 
@@ -997,7 +974,7 @@ sub read_file {
 =head2 write_file()
 
 Write data to a file. The special filename '-' can be used to write to 
-standard output.
+standard output (STDOUT).
 
   &write_file($filename, $data);
 
@@ -1024,7 +1001,7 @@ sub write_file {
 
 =head2 usage()
 
-Print program usage.
+Print program usage message.
 
   &usage();
 
@@ -1032,9 +1009,8 @@ Print program usage.
 
 sub usage {
 	print STDERR <<EOF
-	
 FingerPRINTScan
-==========
+=======
 
 Identifying the closest matching PRINTS sequence motif fingerprints in a protein sequence. 
 
@@ -1066,9 +1042,8 @@ Identifying the closest matching PRINTS sequence motif fingerprints in a protein
       --params             :      : list input parameters
       --paramDetail        : str  : display details for input parameter
       --quiet              :      : decrease output
-      --verbose            :      : increase output
-      --trace              :      : show SOAP messages being interchanged 
-
+      --verbose            :      : increase output 
+   
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -1090,7 +1065,7 @@ Asynchronous job:
 
 Further information:
 
-  http://www.ebi.ac.uk/Tools/webservices/services/pfa/fingerprintscan_soap
+  http://www.ebi.ac.uk/Tools/webservices/services/pfa/fingerprintscan_rest
   http://www.ebi.ac.uk/Tools/webservices/tutorials/perl
 
 Support/Feedback:
