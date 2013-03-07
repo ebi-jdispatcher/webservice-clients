@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: pratt_lwp.pl 2443 2013-01-25 10:33:57Z hpm $
+$Id$
 
 =cut
 
@@ -99,20 +99,26 @@ GetOptions(
 	'maxNumFlexSpaces=i'      => \$tool_params{'maxNumFlexSpaces'},      # Maximum length of flexible spaces
 	'maxFlexibility=i'        => \$tool_params{'maxFlexibility'},        # Maximum flexibility
 	'maxFlexProduct=i'        => \$tool_params{'maxFlexProduct'},        # Maximum flex. product
-	'patternSymbolFile'       => \$tool_params{'patternSymbolFile'},     # Pattern symbol file	
+	'patternSymbolFile'       => \$params{'patternSymbolFile'},          # Enable pattern symbol file
+	'noPatternSymbolFile'     => \$params{'noPatternSymbolFile'},        # Disable pattern symbol file	
 	'numPatternSymbols=i'     => \$tool_params{'numPatternSymbols'},     # Number of pattern symbols used
 	'patternScoring=s'        => \$tool_params{'patternScoring'},        # Pattern scoring
 	'patternGraph=s'          => \$tool_params{'patternGraph'},          # Pattern graph allows the use of an alignment 
 																		 # or a query sequence to restrict the pattern search
 	'searchGreediness=i'      => \$tool_params{'searchGreediness'},      # Greediness of the search
-	'patternRefinement'       => \$tool_params{'patternRefinement'},     # Pattern refinement	
-	'genAmbigSymbols'         => \$tool_params{'genAmbigSymbols'},       # Generalise ambiguous symbols
-	'patternFormat'           => \$tool_params{'patternFormat'},         # PROSITE pattern format
+	'patternRefinement'       => \$params{'patternRefinement'},          # Enable pattern refinement
+	'noPatternRefinement'     => \$params{'noPatternRefinement'},        # Disable pattern refinement
+	'genAmbigSymbols'         => \$params{'genAmbigSymbols'},            # Enable generalise ambiguous symbols
+	'noGenAmbigSymbols'       => \$params{'noGenAmbigSymbols'},          # Disable generalise ambiguous symbols
+	'patternFormat'           => \$params{'patternFormat'},              # Enable PROSITE pattern format
+	'noPatternFormat'         => \$params{'noPatternFormat'},            # Disable PROSITE pattern format
 	'maxNumPatterns=i'        => \$tool_params{'maxNumPatterns'},        # Maximum number of patterns
 	'maxNumAlignments=i'      => \$tool_params{'maxNumAlignments'},      # Maximum number of alignments between 1 and 100
-	'printPatterns'           => \$tool_params{'printPatterns'},         # Print Patterns in sequences
+	'printPatterns'           => \$params{'printPatterns'},              # Enable print Patterns in sequences
+	'noPrintPatterns'         => \$params{'noPrintPatterns'},            # Disable print Patterns in sequences
 	'printingRatio=i'         => \$tool_params{'printingRatio'},         # Printing ratio
-	'printVertically'         => \$tool_params{'printVertically'},       # Print vertically
+	'printVertically'         => \$params{'printVertically'},            # Enable print vertically
+	'noPrintVertically'       => \$params{'noPrintVertically'},          # Disable print vertically
 	'sequence=s'              => \$params{'sequence'},                   # Query sequence file or DB:ID
 
 	# Generic options
@@ -245,7 +251,7 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	'$Revision: 2443 $' =~ m/(\d+)/;
+	'$Revision$' =~ m/(\d+)/;
 	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -830,6 +836,54 @@ Load job parameters from command-line options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
+	# Enable/disable pattern symbol file
+	if ( $params{'patternSymbolFile'} ) {
+		$tool_params{'patternSymbolFile'} = 1;
+	}
+	elsif ( $params{'noPatternSymbolFile'} ) {
+		$tool_params{'patternSymbolFile'} = 0;
+	}
+
+	# Enable/disable pattern refinement
+	if ( $params{'patternRefinement'} ) {
+		$tool_params{'patternRefinement'} = 1;
+	}
+	elsif ( $params{'noPatternRefinement'} ) {
+		$tool_params{'patternRefinement'} = 0;
+	}
+	
+	# Enable/disable generalise ambiguous symbols
+	if ( $params{'genAmbigSymbols'} ) {
+		$tool_params{'genAmbigSymbols'} = 1;
+	}
+	elsif ( $params{'noGenAmbigSymbols'} ) {
+		$tool_params{'genAmbigSymbols'} = 0;
+	}
+	
+	# Enable/disable print Patterns in sequences
+	if ( $params{'patternFormat'} ) {
+		$tool_params{'patternFormat'} = 1;
+	}
+	elsif ( $params{'noPatternFormat'} ) {
+		$tool_params{'patternFormat'} = 0;
+	}
+	
+	# Enable/disable print Patterns in sequences
+	if ( $params{'printPatterns'} ) {
+		$tool_params{'printPatterns'} = 1;
+	}
+	elsif ( $params{'noPrintPatterns'} ) {
+		$tool_params{'printPatterns'} = 0;
+	}
+	
+	# Enable/disable print vertically
+	if ( $params{'printVertically'} ) {
+		$tool_params{'printVertically'} = 1;
+	}
+	elsif ( $params{'noPrintVertically'} ) {
+		$tool_params{'printVertically'} = 0;
+	}
+
 	print_debug_message( 'load_params', 'End', 1 );
 }
 
@@ -1040,20 +1094,26 @@ Searching for patterns conserved in sets of unaligned protein sequences.
       --maxNumFlexSpaces       : int  :  Maximum length of flexible spaces
       --maxFlexibility         : int  :  Maximum flexibility
       --maxFlexProduct         : int  :  Maximum flex. product
-      --patternSymbolFile      :      :  Pattern symbol file	
+      --patternSymbolFile      :      :  Enable pattern symbol file
+      --noPatternSymbolFile    :      :  Disable pattern symbol file
       --numPatternSymbols      : int  :  Number of pattern symbols used
       --patternScoring         : str  :  Pattern scoring
       --patternGraph           : str  :  Pattern graph allows the use of an alignment 
                                           or a query sequence to restrict the pattern search
       --searchGreediness       : int  :  Greediness of the search
-      --patternRefinement      :      :  Pattern refinement	
-      --genAmbigSymbols        :      :  Generalise ambiguous symbols
-      --patternFormat          :      :  PROSITE pattern format
+      --patternRefinement      :      :  Enable pattern refinement
+      --noPatternRefinement    :      :  Disable pattern refinement		
+      --genAmbigSymbols        :      :  Enable generalise ambiguous symbols
+      --noGenAmbigSymbols      :      :  Disable generalise ambiguous symbols
+      --patternFormat          :      :  Enable PROSITE pattern format
+      --noPatternFormat        :      :  Disable PROSITE pattern format
       --maxNumPatterns         : int  :  Maximum number of patterns
       --maxNumAlignments       : int  :  Maximum number of alignments between 1 and 100
-      --printPatterns          :      :  Print Patterns in sequences
+      --printPatterns          :      :  Enable print patterns in sequences
+      --noPrintPatterns        :      :  Disable print patterns in sequences
       --printingRatio          : int  :  Printing ratio
-      --printVertically        :      :  Print vertically
+      --printVertically        :      :  Enable print vertically
+      --noPrintVertically      :      :  Disable print vertically
 
 [General]
 

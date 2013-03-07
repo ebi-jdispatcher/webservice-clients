@@ -78,8 +78,7 @@ use Data::Dumper;
 use constant MAX_RETRIES => 3;
 
 # WSDL URL for service
-#my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/pratt?wsdl';
-my $WSDL = 'http://ves-pg-22.ebi.ac.uk:8080/Tools/services/soap/pratt?wsdl';
+my $WSDL = 'http://www.ebi.ac.uk/Tools/services/soap/pratt?wsdl';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -869,7 +868,7 @@ sub load_params {
 	if ( $params{'genAmbigSymbols'} ) {
 		$tool_params{'genAmbigSymbols'} = 1;
 	}
-	elsif ( $params{'noPatternSymbolFile'} ) {
+	elsif ( $params{'noGenAmbigSymbols'} ) {
 		$tool_params{'genAmbigSymbols'} = 0;
 	}
 	
