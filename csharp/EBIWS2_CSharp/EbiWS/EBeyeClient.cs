@@ -374,6 +374,10 @@ namespace EbiWS {
 		/// </returns>
 		public string[] GetResultsIds(string domain, string query, int start, int size) {
 			PrintDebugMessage("GetResultsIds", "Begin", 1);
+			PrintDebugMessage("GetResultsIds", "domain: " + domain, 2);
+			PrintDebugMessage("GetResultsIds", "query: " + query, 2);
+			PrintDebugMessage("GetResultsIds", "start: " + start, 2);
+			PrintDebugMessage("GetResultsIds", "size: " + size, 2);
 			ServiceProxyConnect();
 			string[] result = SrvProxy.getResultsIds(domain, query, start, size);
 			PrintDebugMessage("GetResultsIds", "End", 1);
@@ -448,8 +452,20 @@ namespace EbiWS {
 		/// </returns>
 		public string[] GetAllResultsIds(string domain, string query) {
 			PrintDebugMessage("GetAllResultsIds", "Begin", 1);
+			PrintDebugMessage("GetAllResultsIds", "domain: " + domain, 2);
+			PrintDebugMessage("GetAllResultsIds", "query: " + query, 2);
+			int chunkSize = 100;
 			ServiceProxyConnect();
-			string[] result = SrvProxy.getAllResultsIds(domain, query);
+			//string[] result = SrvProxy.getAllResultsIds(domain, query);
+			int numberOfResults = GetNumberOfResults(domain, query);
+			PrintDebugMessage("GetAllResultsIds", "numberOfResults: " + numberOfResults, 2);
+			string[] result = new string[numberOfResults];
+			for(int i = 0; i < numberOfResults; i += chunkSize) {
+				string[] chunkResult = GetResultsIds(domain, query, i, chunkSize);
+				for(int j = 0; j < chunkResult.Length; j++) {
+					result[i + j] = chunkResult[j];
+				}
+			}
 			PrintDebugMessage("GetAllResultsIds", "End", 1);
 			return result;
 		}
