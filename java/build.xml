@@ -128,6 +128,7 @@
 		<antcall target="axis1-stubs-promoterwise" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
+		<antcall target="axis1-stubs-ps_scan" />
 		<antcall target="axis1-stubs-radar"/>
 		<antcall target="axis1-stubs-readseq"/>
 		<antcall target="axis1-stubs-saps"/>
@@ -347,6 +348,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psisearch" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-ps_scan" description="Axis 1.x: generate stubs for PROSITE Scan (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ps_scan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-radar" description="Axis 1.x: generate stubs for Radar (SOAP)">
@@ -738,6 +745,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/PsScan_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/PsScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ps_scan/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PsScanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Radar_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/RadarClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/radar/**">
@@ -857,6 +874,7 @@
 		<antcall target="axis1-distclean-stubs-promoterwise" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
+		<antcall target="axis1-distclean-stubs-ps_scan" />
 		<antcall target="axis1-distclean-stubs-radar"/>
 		<antcall target="axis1-distclean-stubs-readseq"/>
 		<antcall target="axis1-distclean-stubs-saps"/>
@@ -1077,6 +1095,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-ps_scan" description="Axis 1.x: remove PROSTITE Scan (SOAP) stubs">
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${axis1.stubs.src.dir}/ps_scan" includes="*/**" />
+		    <fileset dir="${axis1.stubs.src.dir}/" includes="ps_scan" />
+		</delete>
+	</target>
 	<target name="axis1-distclean-stubs-radar" description="Axis 1.x: remove RADAR (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/radar" includes="*/**" />
@@ -1166,6 +1190,7 @@
 		<antcall target="jaxws-stubs-promoterwise" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
+		<antcall target="jaxws-stubs-ps_scan" />
 		<antcall target="jaxws-stubs-radar" />
 		<antcall target="jaxws-stubs-readseq" />
 		<antcall target="jaxws-stubs-saps" />
@@ -1387,6 +1412,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-ps_scan" description="JAX-WS RI: generate stubs for PROSITE Scan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ps_scan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-radar" description="JAX-WS RI: generate stubs for RADAR (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.radar" />
@@ -1547,6 +1578,7 @@
 		<antcall target="jaxws-distclean-stubs-promoterwise" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
 		<antcall target="jaxws-distclean-stubs-psisearch" />
+		<antcall target="jaxws-distclean-stubs-ps_scan" />
 		<antcall target="jaxws-distclean-stubs-radar" />
 		<antcall target="jaxws-distclean-stubs-readseq" />
 		<antcall target="jaxws-distclean-stubs-saps" />
@@ -1767,6 +1799,12 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="psisearch" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-ps_scan" description="JAX-WS RI: remove PROSITE Scan (SOAP) stubs">
+		    <delete includeemptydirs="true" quiet="true">
+		        <fileset dir="${jaxws.stubs.src.dir}/ps_scan" includes="*/**" />
+		        <fileset dir="${jaxws.stubs.src.dir}/" includes="ps_scan" />
+		    </delete>
+		</target>
 	<target name="jaxws-distclean-stubs-radar" description="JAX-WS RI: remove RADAR (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/radar" includes="*/**" />
