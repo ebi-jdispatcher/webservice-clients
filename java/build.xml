@@ -114,6 +114,7 @@
 		<antcall target="axis1-stubs-emboss_water" />
 		<antcall target="axis1-stubs-fasta" />
 		<antcall target="axis1-stubs-fastm" />
+		<antcall target="axis1-stubs-fingerprintscan" />
 		<antcall target="axis1-stubs-genewise" />
 		<antcall target="axis1-stubs-iprscan" />
 		<antcall target="axis1-stubs-kalign" />
@@ -267,6 +268,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-fingerprintscan" description="Axis 1.x: generate stubs for FingerPRINTScan (SOAP)">
+			<antcall target="genAxis1Stubs">
+				<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fingerprintscan" />
+				<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl" />
+			</antcall>
+		</target>
 	<target name="axis1-stubs-genewise" description="Axis 1.x: generate stubs for GeneWise (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.genewise" />
@@ -623,6 +630,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/FingerPRINTScan_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/FingerPRINTScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fingerprintscan/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FingerPRINTScanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/GeneWise_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/GeneWiseClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/genewise/**">
@@ -877,6 +894,7 @@
 		<antcall target="axis1-distclean-stubs-emboss_water" />
 		<antcall target="axis1-distclean-stubs-fasta" />
 		<antcall target="axis1-distclean-stubs-fastm" />
+		<antcall target="axis1-distclean-stubs-fingerprintscan" />
 		<antcall target="axis1-distclean-stubs-genewise" />
 		<antcall target="axis1-distclean-stubs-iprscan" />
 		<antcall target="axis1-distclean-stubs-kalign" />
@@ -1027,6 +1045,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="fastm" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-fingerprintscan" description="Axis 1.x: remove FingerPRINTScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/fingerprintscan" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="fingerprintscan" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-genewise" description="Axis 1.x: remove GeneWise (SOAP) stubs">
@@ -1200,6 +1224,7 @@
 		<antcall target="jaxws-stubs-emboss_water" />
 		<antcall target="jaxws-stubs-fasta" />
 		<antcall target="jaxws-stubs-fastm" />
+		<antcall target="jaxws-stubs-fingerprintscan" />
 		<antcall target="jaxws-stubs-genewise" />
 		<antcall target="jaxws-stubs-iprscan" />
 		<antcall target="jaxws-stubs-kalign" />
@@ -1351,6 +1376,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.fastm" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fastm?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-fingerprintscan" description="JAX-WS RI: generate stubs for FingerPRINTScan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.fingerprintscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-genewise" description="JAX-WS RI: generate stubs for GeneWise (SOAP)">
@@ -1527,6 +1558,7 @@
 		<!-- TODO EMBOSS water -->
 		<!-- TODO FASTA -->
 		<!-- TODO FASTM -->
+		<!-- TODO FingerPRINTScan -->
 		<jar destfile="${jar.dir}/IPRScan_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/iprscan/**">
@@ -1597,6 +1629,7 @@
 		<antcall target="jaxws-distclean-stubs-emboss_water" />
 		<antcall target="jaxws-distclean-stubs-fasta" />
 		<antcall target="jaxws-distclean-stubs-fastm" />
+		<antcall target="jaxws-distclean-stubs-fingerprintscan" />
 		<antcall target="jaxws-distclean-stubs-genewise" />
 		<antcall target="jaxws-distclean-stubs-iprscan" />
 		<antcall target="jaxws-distclean-stubs-kalign" />
@@ -1747,6 +1780,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/fastm" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fastm" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-fingerprintscan" description="JAX-WS RI: remove FingerPRINTScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/fingerprintscan" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="fingerprintscan" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-genewise" description="JAX-WS RI: remove GeneWise (SOAP) stubs">
