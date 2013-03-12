@@ -125,6 +125,7 @@
 		<antcall target="axis1-stubs-ncbiblast" />
 		<antcall target="axis1-stubs-phobius" />
 		<antcall target="axis1-stubs-prank" />
+		<antcall target="axis1-stubs-pratt" />
 		<antcall target="axis1-stubs-promoterwise" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
@@ -330,6 +331,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.prank" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-pratt" description="Axis 1.x: generate stubs for Pratt (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.pratt" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/pratt?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-promoterwise" description="Axis 1.x: generate stubs for PromoterWise (SOAP)">
@@ -715,6 +722,16 @@
 			</manifest>
 		</jar>
 		<!-- TODO PRANK -->
+		<jar destfile="${jar.dir}/Pratt_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/PrattClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/pratt/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PrattClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/PromoterWise_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PromoterWiseClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/promoterwise/**">
@@ -871,6 +888,7 @@
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
 		<antcall target="axis1-distclean-stubs-phobius" />
 		<antcall target="axis1-distclean-stubs-prank" />
+		<antcall target="axis1-distclean-stubs-pratt" />
 		<antcall target="axis1-distclean-stubs-promoterwise" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
@@ -1077,6 +1095,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="prank" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-pratt" description="Axis 1.x: remove Pratt (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/pratt" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="pratt" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-promoterwise" description="Axis 1.x: remove PromoterWise (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/promoterwise" includes="*/**" />
@@ -1187,6 +1211,7 @@
 		<antcall target="jaxws-stubs-ncbiblast" />
 		<antcall target="jaxws-stubs-phobius" />
 		<antcall target="jaxws-stubs-prank" />
+		<antcall target="jaxws-stubs-pratt" />
 		<antcall target="jaxws-stubs-promoterwise" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
@@ -1394,6 +1419,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/prank?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-pratt" description="JAX-WS RI: generate stubs for Pratt (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.pratt" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/pratt?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-promoterwise" description="JAX-WS RI: generate stubs for PromoterWise (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.promoterwise" />
@@ -1523,8 +1554,10 @@
 		</jar>
 		<!-- TODO Phobius -->
 		<!-- TODO PRANK -->
+		<!-- TODO Pratt -->
 		<!-- TODO PSI-BLAST -->
 		<!-- TODO PSI-Search -->
+		<!-- TODO PROSITE Scan -->
 		<!-- TODO SAPS -->
 		<!-- TODO SeqCksum -->
 		<!-- TODO T-COFFEE -->
@@ -1575,6 +1608,7 @@
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
 		<antcall target="jaxws-distclean-stubs-phobius" />
 		<antcall target="jaxws-distclean-stubs-prank" />
+		<antcall target="jaxws-distclean-stubs-pratt" />
 		<antcall target="jaxws-distclean-stubs-promoterwise" />
 		<antcall target="jaxws-distclean-stubs-psiblast" />
 		<antcall target="jaxws-distclean-stubs-psisearch" />
@@ -1779,6 +1813,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/prank" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="prank" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-pratt" description="JAX-WS RI: remove Pratt (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/pratt" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="pratt" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-promoterwise" description="JAX-WS RI: remove PromoterWise (SOAP) stubs">
