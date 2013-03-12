@@ -350,7 +350,7 @@ public class FingerPRINTScanClient extends uk.ac.ebi.webservices.AbstractWsToolC
 		if (line.hasOption("evalue")) params.setEvalue(new Double(line.getOptionValue("evalue")));
 		if (line.hasOption("distdev")) params.setDistdev(new Integer(line.getOptionValue("distdev")));
 		if (line.hasOption("resultviews")) {
-			String[] resultViewList = line.getOptionValue("resultviews").split(" ,+");
+			String[] resultViewList = line.getOptionValue("resultviews").split(",|\\+");
 			params.setResultviews(resultViewList);
 		} 
 		printDebugMessage("loadParams", "End", 1);
