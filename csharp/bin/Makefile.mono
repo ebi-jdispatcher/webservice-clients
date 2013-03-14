@@ -61,6 +61,7 @@ PhobiusCliClient.exe \
 PromoterWiseCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
+PsScanCliClient.exe \
 RadarCliClient.exe \
 SapsCliClient.exe \
 SeqCksumCliClient.exe \
@@ -203,6 +204,10 @@ PsiBlastCliClient.exe: EbiWS.dll
 
 PsiSearchCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PsiSearchCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+PsScanCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PsScanCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 RadarCliClient.exe: EbiWS.dll
