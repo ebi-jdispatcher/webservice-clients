@@ -91,6 +91,7 @@ PhobiusClient.cs \
 PromoterWiseClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
+PsScanClient.cs \
 RadarClient.cs \
 SapsClient.cs \
 SeqCksumClient.cs \
@@ -134,6 +135,7 @@ $(STUBSRCDIR)\PrankWs\Reference.cs \
 $(STUBSRCDIR)\PromoterWiseWs\Reference.cs \
 $(STUBSRCDIR)\PsiBlastWs\Reference.cs \
 $(STUBSRCDIR)\PsiSearchWs\Reference.cs \
+$(STUBSRCDIR)\PsScanWs\Reference.cs \
 $(STUBSRCDIR)\RadarWs\Reference.cs \
 $(STUBSRCDIR)\SapsWs\Reference.cs \
 $(STUBSRCDIR)\SeqCksumWs\Reference.cs \
@@ -256,6 +258,9 @@ $(STUBSRCDIR)\PsiBlastWs\Reference.cs:
 
 $(STUBSRCDIR)\PsiSearchWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).PsiSearchWs /out:$@ "$(WSDLBASE)/psisearch?wsdl"
+
+$(STUBSRCDIR)\PsScanWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsScanWs /out:$@ "$(WSDLBASE)/ps_scan?wsdl"
 
 $(STUBSRCDIR)\RadarWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).RadarWs /out:$@ "$(WSDLBASE)/radar?wsdl"

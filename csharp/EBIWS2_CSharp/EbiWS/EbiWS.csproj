@@ -104,6 +104,8 @@
     <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />
     <Compile Include="PsiSearchClient.cs" />
     <Compile Include="WebReferences\PsiSearchWs\Reference.cs" />
+    <Compile Include="PsScanClient.cs" />
+    <Compile Include="WebReferences\PsScanWs\Reference.cs" />
     <Compile Include="RadarClient.cs" />
     <Compile Include="WebReferences\RadarWs\Reference.cs" />
     <Compile Include="SapsClient.cs" />
@@ -156,6 +158,7 @@
     <None Include="WebReferences\PromoterWiseWs\Reference.map" />
     <None Include="WebReferences\PsiBlastWs\Reference.map" />
     <None Include="WebReferences\PsiSearchWs\Reference.map" />
+    <None Include="WebReferences\PsScanWs\Reference.map" />
     <None Include="WebReferences\RadarWs\Reference.map" />
     <None Include="WebReferences\SapsWs\Reference.map" />
     <None Include="WebReferences\SeqCksumWs\Reference.map" />

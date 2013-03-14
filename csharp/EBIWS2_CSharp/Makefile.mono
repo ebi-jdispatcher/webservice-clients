@@ -59,6 +59,7 @@ build-PhobiusCliClient \
 build-PromoterWiseCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
+build-PsScanCliClient \
 build-RadarCliClient \
 build-SapsCliClient \
 build-SeqCksumCliClient \
@@ -169,6 +170,9 @@ build-PsiBlastCliClient: build-EbiWS
 build-PsiSearchCliClient: build-EbiWS
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono
 
+build-PsScanCliClient: build-EbiWS
+	cd PsScanCliClient && $(MAKE) -f Makefile.mono
+
 build-RadarCliClient: build-EbiWS
 	cd RadarCliClient && $(MAKE) -f Makefile.mono
 
@@ -226,6 +230,7 @@ clean-PhobiusCliClient \
 clean-PromoterWiseCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
+clean-PsScanCliClient \
 clean-RadarCliClient \
 clean-SapsCliClient \
 clean-SeqCksumCliClient \
@@ -336,6 +341,9 @@ clean-PsiBlastCliClient:
 clean-PsiSearchCliClient:
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-PsScanCliClient:
+	cd PsScanCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-RadarCliClient:
 	cd RadarCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -394,6 +402,7 @@ distclean-PhobiusCliClient \
 distclean-PromoterWiseCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
+distclean-PsScanCliClient \
 distclean-RadarCliClient \
 distclean-SapsCliClient \
 distclean-SeqCksumCliClient \
@@ -503,6 +512,9 @@ distclean-PsiBlastCliClient:
 
 distclean-PsiSearchCliClient:
 	cd PsiSearchCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PsScanCliClient:
+	cd PsScanCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-RadarCliClient:
 	cd RadarCliClient && $(MAKE) -f Makefile.mono distclean

@@ -60,6 +60,7 @@ PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
 PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
+PsScanCliClient\bin\Release\PsScanCliClient.exe \
 RadarCliClient\bin\Release\RadarCliClient.exe \
 SapsCliClient\bin\Release\SapsCliClient.exe \
 SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe \
@@ -170,6 +171,9 @@ PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk
 
+PsScanCliClient\bin\Release\PsScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk
+
 RadarCliClient\bin\Release\RadarCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -226,6 +230,7 @@ clean:
 	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -269,6 +274,7 @@ distclean:
 	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk distclean
