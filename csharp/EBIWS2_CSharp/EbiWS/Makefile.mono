@@ -83,6 +83,7 @@ MuscleClient.cs \
 MViewClient.cs \
 NcbiBlastClient.cs \
 PhobiusClient.cs \
+PrattClient.cs \
 PromoterWiseClient.cs \
 PsiBlastClient.cs \
 PsiSearchClient.cs \
@@ -127,6 +128,7 @@ $(STUBSRCDIR)/MViewWs/Reference.cs \
 $(STUBSRCDIR)/NcbiBlastWs/Reference.cs \
 $(STUBSRCDIR)/PhobiusWs/Reference.cs \
 $(STUBSRCDIR)/PrankWs/Reference.cs \
+$(STUBSRCDIR)/PrattWs/Reference.cs \
 $(STUBSRCDIR)/PromoterWiseWs/Reference.cs \
 $(STUBSRCDIR)/PsiBlastWs/Reference.cs \
 $(STUBSRCDIR)/PsiSearchWs/Reference.cs \
@@ -254,6 +256,9 @@ $(STUBSRCDIR)/PhobiusWs/Reference.cs:
 
 $(STUBSRCDIR)/PrankWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).PrankWs -out:$@ "$(WSDLBASE)/prank?wsdl"
+
+$(STUBSRCDIR)/PrattWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PrattWs -out:$@ "$(WSDLBASE)/pratt?wsdl"
 
 $(STUBSRCDIR)/PromoterWiseWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).PromoterWiseWs -out:$@ "$(WSDLBASE)/promoterwise?wsdl"

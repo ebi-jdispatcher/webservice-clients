@@ -98,6 +98,8 @@
     <Compile Include="PhobiusClient.cs" />
     <Compile Include="WebReferences\PhobiusWs\Reference.cs" />
     <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="PrattClient.cs" />
+    <Compile Include="WebReferences\PrattWs\Reference.cs" />
     <Compile Include="PromoterWiseClient.cs" />
     <Compile Include="WebReferences\PromoterWiseWs\Reference.cs" />
     <Compile Include="PsiBlastClient.cs" />
@@ -155,6 +157,7 @@
     <None Include="WebReferences\NcbiBlastWs\Reference.map" />
     <None Include="WebReferences\PhobiusWs\Reference.map" />
     <None Include="WebReferences\PrankWs\Reference.map" />
+    <None Include="WebReferences\PrattWs\Reference.map" />
     <None Include="WebReferences\PromoterWiseWs\Reference.map" />
     <None Include="WebReferences\PsiBlastWs\Reference.map" />
     <None Include="WebReferences\PsiSearchWs\Reference.map" />

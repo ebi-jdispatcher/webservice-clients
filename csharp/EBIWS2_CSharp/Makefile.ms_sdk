@@ -57,6 +57,7 @@ MuscleCliClient\bin\Release\MuscleCliClient.exe \
 MViewCliClient\bin\Release\MViewCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
+PrattCliClient\bin\Release\PrattCliClient.exe \
 PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe \
 PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
@@ -162,6 +163,9 @@ NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.d
 PhobiusCliClient\bin\Release\PhobiusCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk
 
+PrattCliClient\bin\Release\PrattCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk
+
 PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -227,6 +231,7 @@ clean:
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -271,6 +276,7 @@ distclean:
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean

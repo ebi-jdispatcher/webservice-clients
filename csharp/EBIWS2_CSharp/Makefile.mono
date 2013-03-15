@@ -56,6 +56,7 @@ build-MuscleCliClient \
 build-MViewCliClient \
 build-NcbiBlastCliClient \
 build-PhobiusCliClient \
+build-PrattCliClient \
 build-PromoterWiseCliClient \
 build-PsiBlastCliClient \
 build-PsiSearchCliClient \
@@ -161,6 +162,9 @@ build-NcbiBlastCliClient: build-EbiWS
 build-PhobiusCliClient: build-EbiWS
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono
 
+build-PrattCliClient: build-EbiWS
+	cd PrattCliClient && $(MAKE) -f Makefile.mono
+
 build-PromoterWiseCliClient: build-EbiWS
 	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono
 
@@ -227,6 +231,7 @@ clean-MuscleCliClient \
 clean-MViewCliClient \
 clean-NcbiBlastCliClient \
 clean-PhobiusCliClient \
+clean-PrattCliClient \
 clean-PromoterWiseCliClient \
 clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
@@ -332,6 +337,9 @@ clean-NcbiBlastCliClient:
 clean-PhobiusCliClient:
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-PrattCliClient:
+	cd PrattCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-PromoterWiseCliClient:
 	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -399,6 +407,7 @@ distclean-MuscleCliClient \
 distclean-MViewCliClient \
 distclean-NcbiBlastCliClient \
 distclean-PhobiusCliClient \
+distclean-PrattCliClient \
 distclean-PromoterWiseCliClient \
 distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
@@ -503,6 +512,9 @@ distclean-NcbiBlastCliClient:
 
 distclean-PhobiusCliClient:
 	cd PhobiusCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-PrattCliClient:
+	cd PrattCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-PromoterWiseCliClient:
 	cd PromoterWiseCliClient && $(MAKE) -f Makefile.mono distclean
