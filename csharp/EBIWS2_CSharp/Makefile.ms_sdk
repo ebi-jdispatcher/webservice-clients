@@ -47,6 +47,7 @@ EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
 EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
 FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
+FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe \
 GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
@@ -133,6 +134,9 @@ FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 FastmCliClient\bin\Release\FastmCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk
 
+FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk
+	
 GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -221,6 +225,7 @@ clean:
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -266,6 +271,7 @@ distclean:
 	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean

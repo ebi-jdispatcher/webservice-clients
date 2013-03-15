@@ -73,6 +73,7 @@ EmbossTranseqClient.cs \
 EmbossWaterClient.cs \
 FastaClient.cs \
 FastmClient.cs \
+FingerPRINTScanClient.cs \
 GeneWiseClient.cs \
 IPRScanClient.cs \
 KalignClient.cs \
@@ -117,6 +118,7 @@ $(STUBSRCDIR)/EmbossTranseqWs/Reference.cs \
 $(STUBSRCDIR)/EmbossWaterWs/Reference.cs \
 $(STUBSRCDIR)/FastaWs/Reference.cs \
 $(STUBSRCDIR)/FastmWs/Reference.cs \
+$(STUBSRCDIR)/FingerPRINTScanWs/Reference.cs \
 $(STUBSRCDIR)/GeneWiseWs/Reference.cs \
 $(STUBSRCDIR)/IPRScanWs/Reference.cs \
 $(STUBSRCDIR)/KalignWs/Reference.cs \
@@ -223,6 +225,9 @@ $(STUBSRCDIR)/FastaWs/Reference.cs:
 
 $(STUBSRCDIR)/FastmWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).FastmWs -out:$@ "$(WSDLBASE)/fastm?wsdl"
+
+$(STUBSRCDIR)/FingerPRINTScanWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).FingerPRINTScanWs -out:$@ "$(WSDLBASE)/fingerprintscan?wsdl"
 
 $(STUBSRCDIR)/GeneWiseWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).GeneWiseWs -out:$@ "$(WSDLBASE)/genewise?wsdl"

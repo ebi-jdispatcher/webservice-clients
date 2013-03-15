@@ -77,6 +77,8 @@
     <Compile Include="WebReferences\FastaWs\Reference.cs" />
     <Compile Include="FastmClient.cs" />
     <Compile Include="WebReferences\FastmWs\Reference.cs" />
+    <Compile Include="FingerPRINTScanClient.cs" />
+    <Compile Include="WebReferences\FingerPRINTScanWs\Reference.cs" />
     <Compile Include="GeneWiseClient.cs" />
     <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
@@ -146,6 +148,7 @@
     <None Include="WebReferences\EmbossWaterWs\Reference.map" />
     <None Include="WebReferences\FastaWs\Reference.map" />
     <None Include="WebReferences\FastmWs\Reference.map" />
+    <None Include="WebReferences\FingerPRINTScanWs\Reference.map" />
     <None Include="WebReferences\GeneWiseWs\Reference.map" />
     <None Include="WebReferences\IPRScanWs\Reference.map" />
     <None Include="WebReferences\KalignWs\Reference.map" />

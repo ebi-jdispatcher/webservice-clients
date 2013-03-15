@@ -46,6 +46,7 @@ build-EmbossPepwindowCliClient \
 build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
+build-FingerPRINTScanCliClient \
 build-GeneWiseCliClient \
 build-IPRScanCliClient \
 build-KalignCliClient \
@@ -131,6 +132,9 @@ build-FastaCliClient: build-EbiWS
 
 build-FastmCliClient: build-EbiWS
 	cd FastmCliClient && $(MAKE) -f Makefile.mono
+
+build-FingerPRINTScanCliClient: build-EbiWS
+	cd FingerPRINTScanCliClient && $(MAKE) -f Makefile.mono
 
 build-GeneWiseCliClient: build-EbiWS
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono
@@ -221,6 +225,7 @@ clean-EmbossPepwindowCliClient \
 clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
+clean-FingerPRINTScanCliClient \
 clean-GeneWiseCliClient \
 clean-IPRScanCliClient \
 clean-KalignCliClient \
@@ -306,6 +311,9 @@ clean-FastaCliClient:
 
 clean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-FingerPRINTScanCliClient:
+	cd FingerPRINTScanCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-GeneWiseCliClient:
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono clean
@@ -397,6 +405,7 @@ distclean-EmbossPepwindowCliClient \
 distclean-EmbossWaterCliClient \
 distclean-FastaCliClient \
 distclean-FastmCliClient \
+distclean-FingerPRINTScanCliClient \
 distclean-GeneWiseCliClient \
 distclean-IPRScanCliClient \
 distclean-KalignCliClient \
@@ -483,6 +492,9 @@ distclean-FastaCliClient:
 distclean-FastmCliClient:
 	cd FastmCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-FingerPRINTScanCliClient:
+	cd FingerPRINTScanCliClient && $(MAKE) -f Makefile.mono distclean
+	
 distclean-GeneWiseCliClient:
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono distclean
 
