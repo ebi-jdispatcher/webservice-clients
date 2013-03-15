@@ -48,6 +48,7 @@ EmbossTranseqCliClient.exe \
 EmbossWaterCliClient.exe \
 FastaCliClient.exe \
 FastmCliClient.exe \
+FingerPRINTScanCliClient.exe \
 GeneWiseCliClient.exe \
 IPRScanCliClient.exe \
 KalignCliClient.exe \
@@ -155,6 +156,10 @@ FastmCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/FastmCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+FingerPRINTScanCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/FingerPRINTScanCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+	
 GeneWiseCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/GeneWiseCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
