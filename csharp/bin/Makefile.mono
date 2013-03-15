@@ -58,6 +58,7 @@ MuscleCliClient.exe \
 MViewCliClient.exe \
 NcbiBlastCliClient.exe \
 PhobiusCliClient.exe \
+PrattCliClient.exe \
 PromoterWiseCliClient.exe \
 PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
@@ -194,6 +195,10 @@ PhobiusCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PhobiusCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+PrattCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/PrattCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+	
 PromoterWiseCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/PromoterWiseCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
