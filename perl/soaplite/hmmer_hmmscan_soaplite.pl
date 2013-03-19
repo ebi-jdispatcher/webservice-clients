@@ -95,10 +95,12 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options
-	#'database|D=s'  => \$params{'database'},       # Database(s) to search
-	'evalue|E=f'    => \$tool_params{'evalue'},    # E-value threshold
-	'sequence=s'    => \$params{'sequence'},       # Query sequence
-	'multifasta'    => \$params{'multifasta'},     # Multiple fasta input
+	'database|D=s'   => \$tool_params{'database'},     # Database to search.
+	'cutoffOption=s' => \$tool_params{'cutoffOption'}, # Threshold method.
+	'cut_ga'         => \$params{'cut_ga'},            # GA thresholds.
+	'evalue|E=f'     => \$tool_params{'evalue'},       # E-value threshold
+	'sequence=s'     => \$params{'sequence'},          # Query sequence
+	'multifasta'     => \$params{'multifasta'},        # Multiple fasta input
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -835,12 +837,15 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 
-	# Database(s) to search
-	#my (@dbList) = split /[ ,]/, $params{'database'};
-	#for ( my $i = 0 ; $i < scalar(@dbList) ; $i++ ) {
-	#	$tool_params{'database'}[$i] =
-	#	  SOAP::Data->type( 'string' => $dbList[$i] )->name('string');
-	#}
+	# E-value threshold.
+	if(defined($tool_params{'evalue'}) && length($tool_params{'evalue'}) > 0 
+		&& !defined($tool_params{'cutoffOption'})) {
+		$tool_params{'cutoffOption'} = 'e-value';
+	}
+	# Gathering thresholds.
+	elsif(defined($params{'cut_ga'})) {
+		$tool_params{'cutoffOption'} = 'ga-score';
+	}
 
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
@@ -1046,16 +1051,22 @@ Search a database of HMM protein signatures with a sequence using HMMER.
     
 [Required]
 
-  -D, --database     : str  : database(s) to search, space separated. See
-                              --paramDetail database
+  -D, --database     : str  : HMM database to search. See --paramDetail 
+                              database.
   seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
+                              identifier list file).
 
 [Optional]
 
-  -e, --evalue       : real : 0 < E <= 1000. Statistical significance threshold 
-                              for reporting database sequence matches.
-      --multifasta   :      : treat input as a set of fasta formatted sequences
+      --cutoffOption : str  : cut-off threshold methods to use. See 
+                              --paramDetail cutoffOption.
+  -E, --evalue       : real : 0 < E <= 1000. Statistical significance 
+                              threshold for reporting database sequence 
+                              matches. Implies --cutoffOption e-value.
+	  --cut_ga       :      : use gathering (GA) cut-off thresholds. 
+	                          Equivalent to --cutoffOption ga-score.
+      --multifasta   :      : treat input as a set of fasta formatted 
+                              sequences.
 
 [General]
 
