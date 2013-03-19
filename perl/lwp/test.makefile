@@ -87,12 +87,14 @@ tcoffee_clean
 
 # Protein Function Analysis (PFA)
 pfa: \
+hmmer_hmmscan \
 iprscan \
 iprscan5 \
 phobius \
 radar
 
 pfa_clean: \
+hmmer_hmmscan_clean \
 iprscan_clean \
 iprscan5_clean \
 phobius_clean \
@@ -740,6 +742,42 @@ genewise_file: test_data
 
 genewise_clean:
 	rm -f genewise-*
+
+# TODO: HMMER hmmscan
+hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail \
+hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout \
+hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout \
+hmmer_hmmscan_multifasta_file hmmer_hmmscan_multifasta_file_stdin_stdout
+
+hmmer_hmmscan_params:
+	${PERL} hmmer_hmmscan_lwp.pl --params
+
+hmmer_hmmscan_param_detail:
+	${PERL} hmmer_hmmscan_lwp.pl --paramDetail evalue
+
+hmmer_hmmscan_file: test_data
+	${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+hmmer_hmmscan_dbid:
+	${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 'UNIPROT:ABCC9_HUMAN'
+
+hmmer_hmmscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 --quiet --outformat out --outfile - - > hmmer_hmmscan-blah.txt
+
+hmmer_hmmscan_id_list_file: test_data
+	${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+hmmer_hmmscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --sequence @- > hmmer_hmmscan-idfile.txt
+
+hmmer_hmmscan_multifasta_file: test_data
+	${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+hmmer_hmmscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} hmmer_hmmscan_lwp.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --multifasta --sequence - > hmmer_hmmscan-file.txt
+
+hmmer_hmmscan_clean:
+	rm -f hmmer_hmmscan-*
 
 # InterProScan
 iprscan: iprscan_params iprscan_param_detail \
