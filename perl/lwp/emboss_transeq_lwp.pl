@@ -525,36 +525,55 @@ sub print_param_details {
 	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	my @paramDetailList;
-	exit(0) unless $paramDetail->{'values'}->{'value'};
-	if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
-		@paramDetailList = @{ $paramDetail->{'values'}->{'value'} };
-	} else {
-		push(@paramDetailList, $paramDetail->{'values'}->{'value'});
-	}
-	foreach my $value ( @paramDetailList ) {
-		print $value->{'value'};
-		if ( $value->{'defaultValue'} eq 'true' ) {
-			print "\t", 'default';
-		}
-		print "\n";
-		print "\t", $value->{'label'}, "\n";
-		if(defined($value->{'properties'})) {
-			foreach my $key (sort(keys(%{$value->{'properties'}{'property'}}))) {
-				if(ref($value->{'properties'}{'property'}{$key}) eq 'HASH' && 
-					defined($value->{'properties'}{'property'}{$key}{'value'})) {
-					print "\t", $key, "\t", 
-						$value->{'properties'}{'property'}{$key}{'value'}, "\n";
-				}
-				else {
-					print "\t", $value->{'properties'}{'property'}{'key'}, 
-						"\t", $value->{'properties'}{'property'}{'value'}, "\n";
-					last;					
-				}
+	if(defined($paramDetail->{'values'}->{'value'})) {
+		if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+			foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
+				&print_param_value($value);
 			}
+		}
+		else {
+				&print_param_value($paramDetail->{'values'}->{'value'});
 		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
+}
+
+=head2 print_param_value()
+
+Print details of a tool parameter value.
+
+  &print_param_details($param_value);
+
+Used by print_param_details() to handle both singluar and array values.
+
+=cut
+
+sub print_param_value {
+	my $value = shift;
+	print $value->{'value'};
+	if ( $value->{'defaultValue'} eq 'true' ) {
+		print "\t", 'default';
+	}
+	print "\n";
+	print "\t", $value->{'label'}, "\n";
+	if ( defined( $value->{'properties'} ) ) {
+		foreach
+		  my $key ( sort( keys( %{ $value->{'properties'}{'property'} } ) ) )
+		{
+			if ( ref( $value->{'properties'}{'property'}{$key} ) eq 'HASH'
+				&& defined( $value->{'properties'}{'property'}{$key}{'value'} )
+			  )
+			{
+				print "\t", $key, "\t",
+				  $value->{'properties'}{'property'}{$key}{'value'}, "\n";
+			}
+			else {
+				print "\t", $value->{'properties'}{'property'}{'key'},
+				  "\t", $value->{'properties'}{'property'}{'value'}, "\n";
+				last;
+			}
+		}
+	}
 }
 
 =head2 print_job_status()
