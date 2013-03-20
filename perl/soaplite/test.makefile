@@ -841,25 +841,25 @@ hmmer_hmmscan_param_detail:
 	${PERL} hmmer_hmmscan_soaplite.pl --paramDetail evalue
 
 hmmer_hmmscan_file: test_data
-	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 hmmer_hmmscan_dbid:
-	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 'UNIPROT:ABCC9_HUMAN'
+	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 'UNIPROT:ABCC9_HUMAN'
 
 hmmer_hmmscan_stdin_stdout: test_data
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 --quiet --outformat out --outfile - - > hmmer_hmmscan-blah.txt
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 --quiet --outformat out --outfile - - > hmmer_hmmscan-blah.txt
 
 hmmer_hmmscan_id_list_file: test_data
-	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - @../test_data/uniprot_id_list.txt
+	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 hmmer_hmmscan_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --sequence @- > hmmer_hmmscan-idfile.txt
+	cat ../test_data/uniprot_id_list.txt | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 --outformat out --outfile - --sequence @- > hmmer_hmmscan-idfile.txt
 
 hmmer_hmmscan_multifasta_file: test_data
-	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+	${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
 
 hmmer_hmmscan_multifasta_file_stdin_stdout: test_data
-	cat ../test_data/multi_prot.tfa | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -E 1.0 --outformat out --outfile - --multifasta --sequence - > hmmer_hmmscan-file.txt
+	cat ../test_data/multi_prot.tfa | ${PERL} hmmer_hmmscan_soaplite.pl --email ${EMAIL} -D treefam -E 1.0 --outformat out --outfile - --multifasta --sequence - > hmmer_hmmscan-file.txt
 
 hmmer_hmmscan_clean:
 	rm -f hmmer_hmmscan-*
