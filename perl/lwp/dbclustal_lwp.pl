@@ -72,7 +72,6 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/dbclustal';
@@ -716,7 +715,7 @@ sub load_params {
 	if ( $params{'blastreport'} ) {                   # Via --sequence
 		if ( -f $params{'blastreport'} ) {    # File
 			# Explcitly URL encode BLAST report.
-			$tool_params{'blastreport'} = uri_escape(&read_file( $params{'blastreport'} ));
+			$tool_params{'blastreport'} = &read_file( $params{'blastreport'} );
 		}
 		else {
 			die 'Error: no BLAST report specified'

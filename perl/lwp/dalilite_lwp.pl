@@ -72,7 +72,6 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/dalilite';
@@ -725,7 +724,7 @@ sub load_data {
 	# First structure
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq[0] = uri_escape(&read_file( $ARGV[0] ));
+			$retSeq[0] = &read_file( $ARGV[0] );
 		}
 		else {                                     # DB:ID or raw structure
 			$retSeq[0] = $ARGV[0];
@@ -733,7 +732,7 @@ sub load_data {
 	}
 	if ( $params{'structure1'} ) {                 # Via --structure1
 		if ( -f $params{'structure1'} || $params{'structure1'} eq '-' ) { # File
-			$retSeq[0] = uri_escape(&read_file( $params{'structure1'} ));
+			$retSeq[0] = &read_file( $params{'structure1'} );
 		}
 		else {    # DB:ID or structure
 			$retSeq[0] = $params{'structure1'};
@@ -743,7 +742,7 @@ sub load_data {
 	# Second structure
 	if ( defined( $ARGV[1] ) ) {    # Bare option
 		if ( -f $ARGV[1] || $ARGV[1] eq '-' ) {    # File
-			$retSeq[1] = uri_escape(&read_file( $ARGV[1] ));
+			$retSeq[1] = &read_file( $ARGV[1] );
 		}
 		else {                                     # DB:ID or raw structure
 			$retSeq[1] = $ARGV[1];
@@ -751,7 +750,7 @@ sub load_data {
 	}
 	if ( $params{'structure2'} ) {                 # Via --structure2
 		if ( -f $params{'structure2'} || $params{'structure2'} eq '-' ) { # File
-			$retSeq[1] = uri_escape(&read_file( $params{'structure2'} ));
+			$retSeq[1] = &read_file( $params{'structure2'} );
 		}
 		else {    # DB:ID or structure
 			$retSeq[1] = $params{'structure2'};

@@ -72,7 +72,6 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/maxsprout';
@@ -720,7 +719,7 @@ sub load_data {
 	# Coordinates
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq[0] = uri_escape(&read_file( $ARGV[0] ));
+			$retSeq[0] = &read_file( $ARGV[0] );
 		}
 		else {                                     # DB:ID or raw structure
 			$retSeq[0] = $ARGV[0];
@@ -728,7 +727,7 @@ sub load_data {
 	}
 	if ( $params{'coordinates'} ) {                 # Via --coordinates
 		if ( -f $params{'coordinates'} || $params{'coordinates'} eq '-' ) { # File
-			$retSeq[0] = uri_escape(&read_file( $params{'coordinates'} ));
+			$retSeq[0] = &read_file( $params{'coordinates'} );
 		}
 		else {    # DB:ID or structure
 			$retSeq[0] = $params{'coordinates'};

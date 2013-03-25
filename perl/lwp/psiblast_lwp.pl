@@ -414,10 +414,10 @@ sub rest_run {
 	}
 
 	my $url = $baseUrl . '/run';
-	my $response = $ua->post( $url, \%tmp_params );
-	# TODO: Submit the job as a multi-part POST
-	#my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
-	#my $response = $ua->request( $request );
+	# Submit the job as a multi-part POST
+	my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
+	my $response = $ua->request( $request );
+
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
 		'request:' ."\n" . $response->request()->as_string(), 11 );
@@ -856,9 +856,8 @@ sub load_params {
 	if(defined($params{'selectedHits'})) {
 		if(-f $params{'selectedHits'}) {
 			# Pass file contents as the parameter value (form-data).
-			$tool_params{'selectedHits'} = uri_escape(&read_file( $params{'selectedHits'} ));
-			# TODO: for multi-part POST reference file for file upload.
-			#$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
+			# for multi-part POST reference file for file upload.
+			$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
 		}
 		else {
 			$tool_params{'selectedHits'} = $params{'selectedHits'};
@@ -869,9 +868,9 @@ sub load_params {
 	if(defined($params{'cpfile'})) {
 		if(-f $params{'cpfile'}) {
 			# Pass file contents as the parameter value (form-data).
-			$tool_params{'cpfile'} = uri_escape(&read_file( $params{'cpfile'} ));
-			# TODO: for multi-part POST reference file for file upload.
-			#$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
+			# for multi-part POST reference file for file upload.
+			$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
+print "cpfile set\n";
 		}
 		else {
 			$tool_params{'cpfile'} = $params{'cpfile'};

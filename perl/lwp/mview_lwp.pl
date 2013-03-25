@@ -72,7 +72,6 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/mview';
@@ -716,7 +715,6 @@ sub load_data {
 			$retSeq = $params{'sequence'};
 		}
 	}
-	$retSeq = uri_escape($retSeq);
 	print_debug_message( 'load_data', 'End', 1 );
 	return $retSeq;
 }
