@@ -74,7 +74,7 @@ use File::Basename;
 use Data::Dumper;
 
 # Base URL for service
-my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/hmmer_hmmscan';
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/hmmer_hmmscan';
 
 # Set interval for checking status
 my $checkInterval = 3;
