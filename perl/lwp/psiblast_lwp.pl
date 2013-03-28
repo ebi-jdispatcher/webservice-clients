@@ -73,7 +73,6 @@ use XML::Simple;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
-use URI::Escape; # URL encoding for data files.
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psiblast';
@@ -414,10 +413,9 @@ sub rest_run {
 	}
 
 	my $url = $baseUrl . '/run';
-	# Submit the job as a multi-part POST
+	# Submit the job as a multipart/form-data POST to handle file uploads.
 	my $request = POST($url, 'Content-type' => 'multipart/form-data', 'Content' => \%tmp_params);
 	my $response = $ua->request( $request );
-
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
 		'request:' ."\n" . $response->request()->as_string(), 11 );
@@ -549,29 +547,55 @@ sub print_param_details {
 	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
-		print $value->{'value'};
-		if ( $value->{'defaultValue'} eq 'true' ) {
-			print "\t", 'default';
-		}
-		print "\n";
-		print "\t", $value->{'label'}, "\n";
-		if(defined($value->{'properties'})) {
-			foreach my $key (sort(keys(%{$value->{'properties'}{'property'}}))) {
-				if(ref($value->{'properties'}{'property'}{$key}) eq 'HASH' && 
-					defined($value->{'properties'}{'property'}{$key}{'value'})) {
-					print "\t", $key, "\t", 
-						$value->{'properties'}{'property'}{$key}{'value'}, "\n";
-				}
-				else {
-					print "\t", $value->{'properties'}{'property'}{'key'}, 
-						"\t", $value->{'properties'}{'property'}{'value'}, "\n";
-					last;					
-				}
+	if(defined($paramDetail->{'values'}->{'value'})) {
+		if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+			foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
+				&print_param_value($value);
 			}
+		}
+		else {
+				&print_param_value($paramDetail->{'values'}->{'value'});
 		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
+}
+
+=head2 print_param_value()
+
+Print details of a tool parameter value.
+
+  &print_param_details($param_value);
+
+Used by print_param_details() to handle both singluar and array values.
+
+=cut
+
+sub print_param_value {
+	my $value = shift;
+	print $value->{'value'};
+	if ( $value->{'defaultValue'} eq 'true' ) {
+		print "\t", 'default';
+	}
+	print "\n";
+	print "\t", $value->{'label'}, "\n";
+	if ( defined( $value->{'properties'} ) ) {
+		foreach
+		  my $key ( sort( keys( %{ $value->{'properties'}{'property'} } ) ) )
+		{
+			if ( ref( $value->{'properties'}{'property'}{$key} ) eq 'HASH'
+				&& defined( $value->{'properties'}{'property'}{$key}{'value'} )
+			  )
+			{
+				print "\t", $key, "\t",
+				  $value->{'properties'}{'property'}{$key}{'value'}, "\n";
+			}
+			else {
+				print "\t", $value->{'properties'}{'property'}{'key'},
+				  "\t", $value->{'properties'}{'property'}{'value'}, "\n";
+				last;
+			}
+		}
+	}
 }
 
 =head2 print_job_status()
@@ -855,8 +879,7 @@ sub load_params {
 	# Selected hit identifier list for building PSSM.
 	if(defined($params{'selectedHits'})) {
 		if(-f $params{'selectedHits'}) {
-			# Pass file contents as the parameter value (form-data).
-			# for multi-part POST reference file for file upload.
+			# For multipart/form-data POST reference the file for file upload.
 			$tool_params{'selectedHits'} = [ $params{'selectedHits'} => 'selectedHits.txt' => 'text/plain'];
 		}
 		else {
@@ -867,10 +890,8 @@ sub load_params {
 	# PSI-BLAST checkpoint from previous iteration.
 	if(defined($params{'cpfile'})) {
 		if(-f $params{'cpfile'}) {
-			# Pass file contents as the parameter value (form-data).
-			# for multi-part POST reference file for file upload.
+			# For multipart/form-data POST reference the file for file upload.
 			$tool_params{'cpfile'} = [ $params{'cpfile'} => 'checkpoint.asn' => 'application/octet-stream'];
-print "cpfile set\n";
 		}
 		else {
 			$tool_params{'cpfile'} = $params{'cpfile'};
