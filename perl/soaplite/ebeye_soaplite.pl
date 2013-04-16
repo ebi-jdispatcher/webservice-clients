@@ -1657,7 +1657,7 @@ EB-eye
   Executes a query and returns the number of results found per domain.
 
 --listFieldsInformation <domain>
-  Returns the list of fields that can be retrievedand/or searched for a 
+  Returns the list of fields that can be retrieved and/or searched for a 
   particular domain. 
 
 --getFacets <domain> <query>
