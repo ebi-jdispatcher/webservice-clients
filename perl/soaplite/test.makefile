@@ -377,7 +377,7 @@ dbfetch_clean:
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
 ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
 ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation
+ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation ebeye_getFacets
 
 ebeye_listDomains:
 	${PERL} ebeye_soaplite.pl --listDomains
@@ -440,6 +440,9 @@ ebeye_getDetailledNumberOfResults_tree:
 
 ebeye_listFieldsInformation:
 	${PERL} ebeye_soaplite.pl --listFieldsInformation uniprot
+
+ebeye_getFacets:
+	${PERL} ebeye_soaplite.pl --getFacets uniprot axr3
 
 ebeye_clean:
 
