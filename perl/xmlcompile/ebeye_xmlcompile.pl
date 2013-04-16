@@ -155,9 +155,7 @@ foreach my $soapOp ( $soapSrv->operations ) {
 
 		# Allow nil elements to be skipped (needed for submission)
 		$soapOps{ $soapOp->name } = $soapSrv->compileClient( $soapOp->name,
-			interpret_nillable_as_optional => 1,
-			prefixes => { 'http://www.ebi.ac.uk/EBISearchService' => 'ns1',
-				'http://webservice.ebinocle.ebi.ac.uk' => 'ns2'} );
+			interpret_nillable_as_optional => 1);
 	}
 
 	# XML::Compile::SOAP 0.7x
@@ -818,7 +816,7 @@ sub soap_get_facets {
 	my $response = &soap_request('getFacets', {'domain' => $domain, 'query' => $query});
 	print_debug_message( 'soap_get_facets', "response:\n" . Dumper($response), 1 );
 	print_debug_message( 'soap_get_facets', 'End', 1 );
-	return @{$response->{'parameters'}->{'arrayOfFacets'}};
+	return @{$response->{'parameters'}->{'arrayOfFacets'}->{'Facet'}};
 }
 
 ### Service actions and utility functions ###
