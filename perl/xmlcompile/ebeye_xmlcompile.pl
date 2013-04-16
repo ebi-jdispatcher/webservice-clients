@@ -105,6 +105,7 @@ GetOptions(
 	'getDomainsHierarchy'         => \$params{'getDomainsHierarchy'},
 	'getDetailledNumberOfResults' => \$params{'getDetailledNumberOfResults'},
 	'listFieldsInformation'       => \$params{'listFieldsInformation'},
+	'getFacets'                   => \$params{'getFacets'},
 
 	# Generic
 	'help|h'       => \$params{'help'},          # Help/usage message
@@ -150,16 +151,18 @@ foreach my $soapOp ( $soapSrv->operations ) {
 
 	# XML::Compile::SOAP 2.x
 	if ( $XML::Compile::SOAP::VERSION > 1.99 ) {
-		&print_debug_message( 'MAIN', 'Operation: ' . $soapOp->name, 12 );
+		&print_debug_message( 'MAIN', 'Operation (2.x): ' . $soapOp->name, 12 );
 
 		# Allow nil elements to be skipped (needed for submission)
 		$soapOps{ $soapOp->name } = $soapSrv->compileClient( $soapOp->name,
-			interpret_nillable_as_optional => 1 );
+			interpret_nillable_as_optional => 1,
+			prefixes => { 'http://www.ebi.ac.uk/EBISearchService' => 'ns1',
+				'http://webservice.ebinocle.ebi.ac.uk' => 'ns2'} );
 	}
 
 	# XML::Compile::SOAP 0.7x
 	else {
-		&print_debug_message( 'MAIN', 'Operation: ' . $soapOp->{operation},
+		&print_debug_message( 'MAIN', 'Operation (0.x): ' . $soapOp->{operation},
 			12 );
 		$soapOps{ $soapOp->{operation} } =
 		  $soapSrv->compileClient( $soapOp->{operation},
@@ -322,6 +325,14 @@ elsif ( $params{'listFieldsInformation'} ) {
 	}
 	else {
 		die "Error: insufficent arguments for listFieldsInformation";
+	}
+}
+elsif ( $params{'getFacets'} ) {
+	if ( $numOpts > 1 ) {
+		&print_get_facets( $ARGV[0], $ARGV[1] );
+	}
+	else {
+		die "Error: insufficent arguments for getFacets";
 	}
 }
 
@@ -792,6 +803,24 @@ sub soap_list_fields_information {
 	return @{$response->{'parameters'}->{'arrayOfFieldInformation'}->{'FieldInfo'}};
 }
 
+=head2 soap_get_facets()
+
+Get details of the available facets for a query.
+
+  my (@facetList) = soap_get_facets($domain, $query);
+
+=cut
+
+sub soap_get_facets {
+	print_debug_message( 'soap_get_facets', 'Begin', 1 );
+	my $domain = shift;
+	my $query = shift;
+	my $response = &soap_request('getFacets', {'domain' => $domain, 'query' => $query});
+	print_debug_message( 'soap_get_facets', "response:\n" . Dumper($response), 1 );
+	print_debug_message( 'soap_get_facets', 'End', 1 );
+	return @{$response->{'parameters'}->{'arrayOfFacets'}};
+}
+
 ### Service actions and utility functions ###
 
 =head2 print_debug_message()
@@ -1245,6 +1274,46 @@ sub print_list_fields_information {
 	print_debug_message( 'print_list_fields_information', 'End', 1 );
 }
 
+=head2 print_get_facets()
+
+Output the details of available facets for a query.
+
+  &print_get_facets($domain, $query);
+
+=cut
+
+sub print_get_facets {
+	print_debug_message( 'print_get_facets', 'Begin', 1 );
+	my $domain = shift;
+	my $query = shift;
+	print_debug_message( 'print_get_facets', 'domain: ' . $domain, 1 );
+	print_debug_message( 'print_get_facets', 'query: ' . $query, 1 );
+	my (@facet_list) = soap_get_facets($domain, $query);
+	print_debug_message( 'print_get_facets', "facet_list:\n" . Dumper(\@facet_list), 11 );
+	foreach my $facet (@facet_list) {
+		print $facet->{'label'}, ":\n";
+		if(ref($facet->{'facetValues'}->{'FacetValue'}) eq 'ARRAY') {
+			foreach my $facet_value (@{$facet->{'facetValues'}->{'FacetValue'}}) {
+				&_print_facet_value($facet_value);
+			}
+		}
+		else {
+			&_print_facet_value($facet->{'facetValues'}->{'FacetValue'});
+		}
+	}
+	print_debug_message( 'print_get_facets', 'End', 1 );
+}
+
+# _print_facet_value()
+#
+# Output a facet value.
+#
+sub _print_facet_value {
+	my $facet_value = shift;
+	#print Dumper($facet_value);
+	print "\t", $facet_value->{'hitCount'}, "\t", $facet_value->{'label'}, "\n";
+}
+
 =head2 usage()
 
 Print program usage.
@@ -1337,8 +1406,11 @@ EB-eye
   Executes a query and returns the number of results found per domain.
 
 --listFieldsInformation <domain>
-  Returns the list of fields that can be retrievedand/or searched for a 
+  Returns the list of fields that can be retrieved and/or searched for a 
   particular domain. 
+
+--getFacets <domain> <query>
+  Execute a query and return details of the available facets for the result.
 
 Further information:
 
