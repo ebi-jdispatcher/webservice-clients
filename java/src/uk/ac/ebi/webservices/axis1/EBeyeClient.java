@@ -158,6 +158,9 @@ public class EBeyeClient {
 		+ "  Returns the list of fields that can be retrievedand/or searched for a\n"
 		+ "  particular domain.\n" 
 		+ "\n" 
+		+ "--getFacets <domain> <query>\n"
+		+ "  Execute a query and return details of the available facets for the result.\n"
+		+ "\n" 
 		+ "Further information:\n" 
 		+ "\n"
 		+ "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye\n"
@@ -1269,6 +1272,47 @@ public class EBeyeClient {
 		}
 		printDebugMessage("printListFieldsInformation", "End", 1);
 	}
+	
+	/** Get search facets for a query.
+	 * 
+	 * @param domain Search domain.
+	 * @param query Query string.
+	 * @return Data structure detailing the available facets.
+	 * @throws java.rmi.RemoteException
+	 * @throws javax.xml.rpc.ServiceException
+	 */
+	public Facet[] getFacets(String domain, String query)
+		throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+		printDebugMessage("getFacets", "Begin", 1);
+		Facet[] retVal = null;
+		srvProxyConnect(); // Ensure we have a service proxy
+		retVal = this.srvProxy.getFacets(domain, query);
+		printDebugMessage("getFacets", "End", 1);
+		return retVal;
+	}
+	
+	/** Print details of the available facets for a query.
+	 * 
+	 * @param domain Search domain.
+	 * @param query Query string.
+	 * @throws java.rmi.RemoteException
+	 * @throws javax.xml.rpc.ServiceException
+	 */
+	public void printGetFacets(String domain, String query) 
+		throws java.rmi.RemoteException, javax.xml.rpc.ServiceException {
+		printDebugMessage("printGetFacets", "Begin", 1);
+		Facet[] facetList = getFacets(domain, query);
+		for (int i = 0; i < facetList.length; i++) {
+			Facet facet = facetList[i];
+			System.out.println(facet.getLabel() + ":");
+			for (int j = 0; j < facet.getFacetValues().length; j++) {
+				FacetValue facetVal = facet.getFacetValues()[j];
+				System.out.print("\t" + facetVal.getHitCount());
+				System.out.println("\t" + facetVal.getLabel());
+			}
+		}
+		printDebugMessage("printGetFacets", "End", 1);
+	}
 
 	/**
 	 * Built the option descriptions for processing the command-line arguments.
@@ -1355,6 +1399,10 @@ public class EBeyeClient {
 		// --listFieldsInformation <domain>
 		options.addOption("listFieldsInformation", true,
 		"List search and display fields");
+		// --getFacets <domain> <query>
+		options.addOption("getFacets", true,
+		"Facet information for a query.");
+		options.getOption("getFacets").setArgs(2);
 	}
 
 	/**
@@ -1490,7 +1538,13 @@ public class EBeyeClient {
 			// --listFieldsInformation <domain>
 			else if (cli.hasOption("listFieldsInformation")) {
 				ebeye.printListFieldsInformation(cli.getOptionValue("listFieldsInformation"));
-			} else {
+			} 
+			// --getFacets <domain> <query>
+			else if (cli.hasOption("getFacets")) {
+				String[] vals = cli.getOptionValues("getFacets");
+				ebeye.printGetFacets(vals[0], vals[1]);
+			} 
+			else {
 				System.err.println("Error: unknown action, see --help");
 				exitVal = 1;
 			}
