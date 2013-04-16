@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPRScanCliClient", "IPRScan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranseqCliClient", "EmbossBacktranseqCliClient\EmbossBacktranseqCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF3BDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CensorCliClient", "CensorCliClient\CensorCliClient.csproj", "{E514DCF7-27C3-43A7-91BE-B3DF95A18CE0}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2CliClient", "ClustalW2CliClient\ClustalW2CliClient.csproj", "{751556E8-97FA-4828-8489-1653DB90CF56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossPepinfoCliClient", "EmbossPepinfoCliClient\EmbossPepinfoCliClient.csproj", "{7D89005A-831D-4388-8630-8C37ED0920AA}"
@@ -39,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiSearchCliClient", "PsiSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcoffeeCliClient", "TcoffeeCliClient\TcoffeeCliClient.csproj", "{7A5BD7CE-7018-416E-897F-9D831DE4FED6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqCksumCliClient", "SeqCksumCliClient\SeqCksumCliClient.csproj", "{F46A1956-66B0-46AF-91D9-2F923BD0260C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalOCliClient", "ClustalOCliClient\ClustalOCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromoterWiseCliClient", "PromoterWiseCliClient\PromoterWiseCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B45}"
@@ -47,7 +51,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBeyeCliClient", "EBeyeCliC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MuscleCliClient", "MuscleCliClient\MuscleCliClient.csproj", "{D6A6F3BD-526D-4C53-95F8-7FCAF75CC7B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossStretcherCliClient", "EmbossStretcherCliClient\EmbossStretcherCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328903BF3BDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranambigCliClient", "EmbossBacktranambigCliClient\EmbossBacktranambigCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF30DC}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossTranseqCliClient", "EmbossTranseqCliClient\EmbossTranseqCliClient.csproj", "{9E71136C-77D3-4D43-BF05-02A4E7AE50D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LalignCliClient", "LalignCliClient\LalignCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadarCliClient", "RadarCliClient\RadarCliClient.csproj", "{A2A6C108-3F40-41C3-ABCB-BAE1875B9B70}"
 EndProject
@@ -63,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalW2PhylogenyCliClient
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KalignCliClient", "KalignCliClient\KalignCliClient.csproj", "{07FF5EF6-0DD5-47F1-99AD-AD57F759A2D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaCliClient", "FastaCliClient\FastaCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhobiusCliClient", "PhobiusCliClient\PhobiusCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916F07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "DaliliteCliClient\DaliliteCliClient.csproj", "{4500BE8D-E8EB-44ED-84C1-E734496D1ABA}"
@@ -71,17 +83,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxsproutCliClient", "Maxsp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneWiseCliClient", "GeneWiseCliClient\GeneWiseCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranambigCliClient", "EmbossBacktranambigCliClient\EmbossBacktranambigCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF30DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FingerPRINTScanCliClient", "FingerPRINTScanCliClient\FingerPRINTScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossStretcherCliClient", "EmbossStretcherCliClient\EmbossStretcherCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328903BF3BDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrattCliClient", "PrattCliClient\PrattCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastaCliClient", "FastaCliClient\FastaCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D916FF7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LalignCliClient", "LalignCliClient\LalignCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B56}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CensorCliClient", "CensorCliClient\CensorCliClient.csproj", "{E514DCF7-27C3-43A7-91BE-B3DF95A18CE0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqCksumCliClient", "SeqCksumCliClient\SeqCksumCliClient.csproj", "{F46A1956-66B0-46AF-91D9-2F923BD0260C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsScanCliClient", "PsScanCliClient\PsScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -238,8 +244,20 @@ Global
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -261,6 +279,8 @@ Global
 		.Debug|Any CPU.Build.0 = Debug|Any CPU
 		.Release|Any CPU.ActiveCfg = Release|Any CPU
 		.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.csproj
