@@ -110,6 +110,7 @@ GetOptions(
 	'getDomainsHierarchy'         => \$params{'getDomainsHierarchy'},
 	'getDetailledNumberOfResults' => \$params{'getDetailledNumberOfResults'},
 	'listFieldsInformation'       => \$params{'listFieldsInformation'},
+	'getFacets'                   => \$params{'getFacets'},
 
 	# Generic
 	'help|h'       => \$params{'help'},          # Help/usage message
@@ -347,6 +348,14 @@ elsif ( $params{'listFieldsInformation'} ) {
 	}
 	else {
 		die "Error: insufficent arguments for listFieldsInformation";
+	}
+}
+elsif ( $params{'getFacets'} ) {
+	if ( $numOpts > 1 ) {
+		&print_get_facets( $ARGV[0], $ARGV[1] );
+	}
+	else {
+		die "Error: insufficent arguments for getFacets";
 	}
 }
 
@@ -864,6 +873,24 @@ sub soap_list_fields_information {
 	my $res = $soap->listFieldsInformation( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ) );
 	print_debug_message( 'soap_list_fields_information', 'End', 1 );
 	return $res->valueof('//arrayOfFieldInformation/FieldInfo');
+}
+
+=head2 soap_get_facets()
+
+Get details of the available facets for a query.
+
+  my (@facetList) = soap_get_facets($domain, $query);
+
+=cut
+
+sub soap_get_facets {
+	print_debug_message( 'soap_get_facets', 'Begin', 1 );
+	my $domain = shift;
+	my $query = shift;
+	my $res = $soap->getFacets( SOAP::Data->name( 'domain' => $domain )->attr( { 'xmlns' => $serviceNamespace } ), 
+		SOAP::Data->name( 'query' => $query )->attr( { 'xmlns' => $serviceNamespace } ) );
+	print_debug_message( 'soap_get_facets', 'End', 1 );
+	return $res->valueof('//arrayOfFacets/Facet');
 }
 
 ### Service actions and utility functions ###
@@ -1473,6 +1500,44 @@ sub print_list_fields_information {
 	print_debug_message( 'print_list_fields_information', 'End', 1 );
 }
 
+=head2 print_get_facets()
+
+Output the details of available facets for a query.
+
+  &print_get_facets($domain, $query);
+
+=cut
+
+sub print_get_facets {
+	print_debug_message( 'print_get_facets', 'Begin', 1 );
+	my $domain = shift;
+	my $query = shift;
+	my (@facet_list) = soap_get_facets($domain, $query);
+	print_debug_message( 'print_get_facets', "facet_list:\n" . Dumper(\@facet_list), 11 );
+	foreach my $facet (@facet_list) {
+		print $facet->{'label'}, ":\n";
+		if(ref($facet->{'facetValues'}->{'FacetValue'}) eq 'ARRAY') {
+			foreach my $facet_value (@{$facet->{'facetValues'}->{'FacetValue'}}) {
+				&_print_facet_value($facet_value);
+			}
+		}
+		else {
+			&_print_facet_value($facet->{'facetValues'}->{'FacetValue'});
+		}
+	}
+	print_debug_message( 'print_get_facets', 'End', 1 );
+}
+
+# _print_facet_value()
+#
+# Output a facet value.
+#
+sub _print_facet_value {
+	my $facet_value = shift;
+	#print Dumper($facet_value);
+	print "\t", $facet_value->{'hitCount'}, "\t", $facet_value->{'label'}, "\n";
+}
+
 =head2 soap_to_arrayOfString()
 
 Converts an array of plain strings in the suitable XML representation for 
@@ -1594,6 +1659,9 @@ EB-eye
 --listFieldsInformation <domain>
   Returns the list of fields that can be retrievedand/or searched for a 
   particular domain. 
+
+--getFacets <domain> <query>
+  Execute a query and return details of the available facets for the result.
 
 Further information:
 
