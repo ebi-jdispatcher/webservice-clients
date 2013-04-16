@@ -155,7 +155,7 @@ public class EBeyeClient {
 		+ "  Executes a query and returns the number of results found per domain.\n"
 		+ "\n"
 		+ "--listFieldsInformation <domain>\n"
-		+ "  Returns the list of fields that can be retrievedand/or searched for a\n"
+		+ "  Returns the list of fields that can be retrieved and/or searched for a\n"
 		+ "  particular domain.\n" 
 		+ "\n" 
 		+ "--getFacets <domain> <query>\n"
