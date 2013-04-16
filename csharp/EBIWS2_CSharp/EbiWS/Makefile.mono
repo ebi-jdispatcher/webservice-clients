@@ -107,11 +107,15 @@ $(STUBSRCDIR)/DbClustalWs/Reference.cs \
 $(STUBSRCDIR)/EBeyeWs/Reference.cs \
 $(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs \
 $(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs \
+$(STUBSRCDIR)/EmbossCpgplotWs/Reference.cs \
+$(STUBSRCDIR)/EmbossIsochoreWs/Reference.cs \
 $(STUBSRCDIR)/EmbossMatcherWs/Reference.cs \
 $(STUBSRCDIR)/EmbossNeedleWs/Reference.cs \
+$(STUBSRCDIR)/EmbossNewcpgreportWs/Reference.cs \
 $(STUBSRCDIR)/EmbossPepinfoWs/Reference.cs \
 $(STUBSRCDIR)/EmbossPepstatsWs/Reference.cs \
 $(STUBSRCDIR)/EmbossPepwindowWs/Reference.cs \
+$(STUBSRCDIR)/EmbossSeqretWs/Reference.cs \
 $(STUBSRCDIR)/EmbossSixpackWs/Reference.cs \
 $(STUBSRCDIR)/EmbossStretcherWs/Reference.cs \
 $(STUBSRCDIR)/EmbossTranseqWs/Reference.cs \
@@ -136,6 +140,7 @@ $(STUBSRCDIR)/PsiBlastWs/Reference.cs \
 $(STUBSRCDIR)/PsiSearchWs/Reference.cs \
 $(STUBSRCDIR)/PsScanWs/Reference.cs \
 $(STUBSRCDIR)/RadarWs/Reference.cs \
+$(STUBSRCDIR)/ReadseqWs/Reference.cs \
 $(STUBSRCDIR)/SapsWs/Reference.cs \
 $(STUBSRCDIR)/SeqCksumWs/Reference.cs \
 $(STUBSRCDIR)/TcoffeeWs/Reference.cs \
@@ -193,20 +198,32 @@ $(STUBSRCDIR)/EmbossBacktranambigWs/Reference.cs:
 $(STUBSRCDIR)/EmbossBacktranseqWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranseqWs -out:$@ "$(WSDLBASE)/emboss_backtranseq?wsdl"
 
+$(STUBSRCDIR)/EmbossCpgplotWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossCpgplotWs -out:$@ "$(WSDLBASE)/emboss_cpgplot?wsdl"
+
+$(STUBSRCDIR)/EmbossIsochoreWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossIsochoreWs -out:$@ "$(WSDLBASE)/emboss_isochore?wsdl"
+
 $(STUBSRCDIR)/EmbossMatcherWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossMatcherWs -out:$@ "$(WSDLBASE)/emboss_matcher?wsdl"
 
 $(STUBSRCDIR)/EmbossNeedleWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNeedleWs -out:$@ "$(WSDLBASE)/emboss_needle?wsdl"
 
+$(STUBSRCDIR)/EmbossNewcpgreportWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs -out:$@ "$(WSDLBASE)/emboss_cpgreport?wsdl"
+
 $(STUBSRCDIR)/EmbossPepinfoWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs -out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"
 
 $(STUBSRCDIR)/EmbossPepstatsWs/Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs -out:$@ "http://www.ebi.ac.uk/Tools/services/soap/emboss_pepstats?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs -out:$@ "$(WSDLBASE)/emboss_pepstats?wsdl"
 
 $(STUBSRCDIR)/EmbossPepwindowWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepwindowWs -out:$@ "$(WSDLBASE)/emboss_pepwindow?wsdl"
+
+$(STUBSRCDIR)/EmbossSeqretWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossSeqretWs -out:$@ "$(WSDLBASE)/emboss_seqret?wsdl"
 
 $(STUBSRCDIR)/EmbossSixpackWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossSixpackWs -out:$@ "$(WSDLBASE)/emboss_sixpack?wsdl"
@@ -280,11 +297,14 @@ $(STUBSRCDIR)/PsScanWs/Reference.cs:
 $(STUBSRCDIR)/RadarWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).RadarWs -out:$@ "$(WSDLBASE)/radar?wsdl"
 
+$(STUBSRCDIR)/ReadseqWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ReadseqWs -out:$@ "$(WSDLBASE)/readseq?wsdl"
+
 $(STUBSRCDIR)/SapsWs/Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs -out:$@ "http://www.ebi.ac.uk/Tools/services/soap/saps?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs -out:$@ "$(WSDLBASE)/saps?wsdl"
 
 $(STUBSRCDIR)/SeqCksumWs/Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).SeqCksumWs -out:$@ "http://www.ebi.ac.uk/Tools/services/soap/seqcksum?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).SeqCksumWs -out:$@ "$(WSDLBASE)/seqcksum?wsdl"
 
 $(STUBSRCDIR)/TcoffeeWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs -out:$@ "$(WSDLBASE)/tcoffee?wsdl"

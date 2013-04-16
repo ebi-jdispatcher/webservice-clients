@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -23,6 +23,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AssemblyName>EbiWS</AssemblyName>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -34,9 +36,14 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AssemblyName>EbiWS</AssemblyName>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CensorClient.cs" />
     <Compile Include="WebReferences\CensorWs\Reference.cs" />
     <Compile Include="ClustalOClient.cs" />
@@ -55,6 +62,7 @@
     <Compile Include="WebReferences\EmbossBacktranambigWs\Reference.cs" />
     <Compile Include="EmbossBacktranseqClient.cs" />
     <Compile Include="WebReferences\EmbossBacktranseqWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossCpgplotWs\Reference.cs" />
     <Compile Include="EmbossMatcherClient.cs" />
     <Compile Include="WebReferences\EmbossMatcherWs\Reference.cs" />
     <Compile Include="EmbossNeedleClient.cs" />
@@ -114,6 +122,7 @@
     <Compile Include="WebReferences\RadarWs\Reference.cs" />
     <Compile Include="SapsClient.cs" />
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
+    <Compile Include="SeqCksumClient.cs" />
     <Compile Include="WebReferences\SeqCksumWs\Reference.cs" />
     <Compile Include="TcoffeeClient.cs" />
     <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
@@ -123,8 +132,10 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
-    <Compile Include="SeqCksumClient.cs" />
-    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="WebReferences\EmbossNewcpgreportWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
+    <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossIsochoreWs\Reference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -137,6 +148,7 @@
     <None Include="WebReferences\EBeyeWs\Reference.map" />
     <None Include="WebReferences\EmbossBacktranambigWs\Reference.map" />
     <None Include="WebReferences\EmbossBacktranseqWs\Reference.map" />
+    <None Include="WebReferences\EmbossCpgplotWs\Reference.map" />
     <None Include="WebReferences\EmbossMatcherWs\Reference.map" />
     <None Include="WebReferences\EmbossNeedleWs\Reference.map" />
     <None Include="WebReferences\EmbossPepinfoWs\Reference.map" />
@@ -172,6 +184,10 @@
     <None Include="WebReferences\Wise2DBAWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
+    <None Include="WebReferences\EmbossNewcpgreportWs\Reference.map" />
+    <None Include="WebReferences\EmbossSeqretWs\Reference.map" />
+    <None Include="WebReferences\ReadseqWs\Reference.map" />
+    <None Include="WebReferences\EmbossIsochoreWs\Reference.map" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
