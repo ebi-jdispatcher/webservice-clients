@@ -70,6 +70,7 @@ usage = """
   %prog --getDomainsHierarchy
   %prog --getDetailledNumberOfResults <domain> <query> <flat>
   %prog --listFieldsInformation <domain>
+  %prog --getFacets <domain> <query>
 """
 description = """Query EBI Search using the EB-eye web services.
 """
@@ -99,6 +100,7 @@ parser.add_option('--getReferencedEntriesFlatSet', action="store", nargs=4, help
 parser.add_option('--getDomainsHierarchy', action="store_true", help="Returns the hierarchy of the domains available.")
 parser.add_option('--getDetailledNumberOfResults', action="store", nargs=3, help="Executes a query and returns the number of results found per domain.")
 parser.add_option('--listFieldsInformation', action="store", help="List of fields that can be retrieved and/or searched for a particular domain.")
+parser.add_option('--getFacets', action="store", nargs=2, help="Details of available facets for a query.")
 # Generic options.
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
@@ -468,6 +470,23 @@ def printListFieldsInformation(domain):
             fieldInfo.retrievable, fieldInfo.searchable)
     printDebugMessage('printListFieldsInformation', 'End', 1)
 
+# List facets for a query.
+def soapGetFacets(domain, query):
+    printDebugMessage('soapGetFacets', 'Begin', 1)
+    result = server.getFacets(domain, query)
+    printDebugMessage('soapGetFacets', 'End', 1)
+    return result['Facet']
+
+def printGetFacets(domain, query):
+    printDebugMessage('printGetFacets', 'Begin', 1)
+    facetList = soapGetFacets(domain, query)
+    for facet in facetList:
+        print "%s:" % (facet.label)
+        for facetVal in facet.facetValues.FacetValue:
+            print "\t%s\t%s" % (
+                facetVal.hitCount, facetVal.label)
+    printDebugMessage('printGetFacets', 'End', 1)
+
 ### End Functions ###
 
 # If required enable SOAP message trace
@@ -565,6 +584,9 @@ elif options.getDetailledNumberOfResults:
 # List field information.
 elif options.listFieldsInformation:
     printListFieldsInformation(options.listFieldsInformation)
+# List facets for a query.
+elif options.getFacets:
+    printGetFacets(options.getFacets[0], options.getFacets[1])
 else:
     print 'Error: unrecognised argument combination'
     parser.print_help()
