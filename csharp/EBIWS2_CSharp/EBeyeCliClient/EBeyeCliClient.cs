@@ -112,6 +112,9 @@ namespace EbiWS
   Returns the list of fields that can be retrievedand/or searched for a 
   particular domain. 
 
+--getFacets <domain> <query>
+  Execute a query and return details of the available facets for the result.
+
 Further information:
 
   http://www.ebi.ac.uk/Tools/webservices/services/eb-eye
@@ -440,6 +443,17 @@ Support/Feedback:
 						break;
 					case "--listfieldsinformation":
 						goto case "--listFieldsInformation";
+					case "--getFacets": // Facets for a query.
+						if(args.Length > i + 2) {
+							PrintGetFacets(args[++i], args[++i]);
+						}
+						else {
+							Console.Error.WriteLine("Error: insufficent arguments for " + args[i]);
+							retVal = 1;
+						}
+						break;
+					case "--getfacets":
+						goto case "--getFacets";
 
 					default: // Don't know what to do, so print error message
 						Console.Error.WriteLine("Error: unknown option: " + args[i] + "\n");

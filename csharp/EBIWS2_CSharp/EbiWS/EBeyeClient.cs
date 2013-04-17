@@ -1423,6 +1423,52 @@ namespace EbiWS {
 		}
 		
 		/// <summary>
+		/// Get available facets and their values for a query.
+		/// </summary>
+		/// <param name="domain">
+		/// The search domain.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="query">
+		/// The query string.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A list of Facets.
+		/// A <see cref="EbiWS.EBeyeWs.Facet"/>
+		/// </returns>
+		public EbiWS.EBeyeWs.Facet[] GetFacets(string domain, string query) {
+			PrintDebugMessage("GetFacets", "Begin", 1);
+			ServiceProxyConnect();
+			EbiWS.EBeyeWs.Facet[] result = SrvProxy.getFacets(domain, query);
+			PrintDebugMessage("GetFacets", "End", 1);
+			return result;
+		}
+		
+		/// <summary>
+		/// Print details about the available facets for a query.
+		/// </summary>
+		/// <param name="domain">
+		/// The search domain.
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="query">
+		/// The query string.
+		/// A <see cref="System.String"/>
+		/// </param>
+		public void PrintGetFacets(string domain, string query) {
+			PrintDebugMessage("PrintGetFacets", "Begin", 1);
+			EbiWS.EBeyeWs.Facet[] result = GetFacets(domain, query);
+			foreach(EbiWS.EBeyeWs.Facet facet in result) {
+				Console.WriteLine(facet.label);
+				foreach(EbiWS.EBeyeWs.FacetValue facetVal in facet.facetValues) {
+					Console.WriteLine("\t" + facetVal.hitCount + "\t" + facetVal.label);
+				}
+			}
+			PrintDebugMessage("PrintGetFacets", "End", 1);
+		}
+		
+		/// <summary>
 		/// Split a string based on a set of seperator characters.
 		/// </summary>
 		/// <param name="inStr">
