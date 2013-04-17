@@ -82,6 +82,9 @@
 		<antcall target="test-ebeye-listFieldsInformation">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
+		<antcall target="test-ebeye-getFacets">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->
@@ -145,6 +148,9 @@
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
 		<antcall target="test-ebeye-listFieldsInformation">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-ebeye-getFacets">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
 	</target>
@@ -358,6 +364,16 @@
 			<jvmarg value="${jvm.extra.jars}" />
 			<arg value="--listFieldsInformation" />
 			<arg value="uniprot" />
+		</java>
+	</target>
+
+	<target name="test-ebeye-getFacets">
+		<echo message="EB-eye (SOAP): getFacets" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getFacets" />
+			<arg value="uniprot" />
+			<arg value="axr3" />
 		</java>
 	</target>
 
