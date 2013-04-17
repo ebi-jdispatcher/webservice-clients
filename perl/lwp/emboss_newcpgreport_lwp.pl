@@ -73,8 +73,8 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
 
-# Base URL for service (uses EMBOSS newcpgreport not EMBOSS cpgreport).
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_cpgreport';
+# Base URL for service.
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_newcpgreport';
 
 # Set interval for checking status
 my $checkInterval = 3;
