@@ -93,6 +93,7 @@ GetOptions(
 	# Tool specific options
 	'codontable=s'  => \$tool_params{'codontable'}, # Codon usage table name
 	'sequence=s'    => \$params{'sequence'},        # Query sequence
+	'multifasta'  => \$params{'multifasta'},  # Multiple fasta input (job/sequence)
 
 	# Generic options
 	'email=s'       => \$params{'email'},            # User e-mail address
@@ -716,8 +717,14 @@ sub multi_submit_job {
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;

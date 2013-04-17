@@ -92,6 +92,7 @@ GetOptions(
 
 	# Tool specific options
 	'sequence=s'    => \$params{'sequence'},      # Query sequence
+	'multifasta'  => \$params{'multifasta'},  # Multiple fasta input (job/sequence)
 
 	# Generic options
 	'email=s'       => \$params{'email'},            # User e-mail address
@@ -703,17 +704,29 @@ sub multi_submit_job {
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			push( @filename_list, $ARGV[0] );
 		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
+		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			push( @filename_list, $params{'sequence'} );
 		}
+		else {
+			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
+		}
 	}
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
