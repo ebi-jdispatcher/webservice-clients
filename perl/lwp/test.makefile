@@ -130,12 +130,18 @@ wise2dba_clean
 
 # Sequence Statistics
 seqstats: \
+emboss_cpgplot \
+emboss_isochore \
+emboss_newcpgreport \
 emboss_pepinfo \
 emboss_pepstats \
 emboss_pepwindow \
 saps
 
 seqstats_clean: \
+emboss_cpgplot_clean \
+emboss_isochore_clean \
+emboss_newcpgreport_clean \
 emboss_pepinfo_clean \
 emboss_pepstats_clean \
 emboss_pepwindow_clean \
@@ -378,7 +384,8 @@ dbfetch_clean:
 # EMBOSS backtranambig
 emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail \
 emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout \
-emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
+emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout \
+emboss_backtranambig_multifasta_file emboss_backtranambig_multifasta_file_stdin_stdout
 
 emboss_backtranambig_params:
 	${PERL} emboss_backtranambig_lwp.pl --params
@@ -401,13 +408,20 @@ emboss_backtranambig_stdin_stdout: test_data
 emboss_backtranambig_id_list_file_stdin_stdout: test_data
 	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_backtranambig-list.txt
 
+emboss_backtranambig_multifasta_file: test_data
+	${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_backtranambig_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_backtranambig_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_backtranambig-file.txt
+
 emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
 
 # EMBOSS backtranseq
 emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail \
 emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout \
-emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
+emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout \
+emboss_backtranseq_multifasta_file emboss_backtranseq_multifasta_file_stdin_stdout
 
 emboss_backtranseq_params:
 	${PERL} emboss_backtranseq_lwp.pl --params
@@ -430,8 +444,86 @@ emboss_backtranseq_stdin_stdout: test_data
 emboss_backtranseq_id_list_file_stdin_stdout: test_data
 	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_backtranambig-list.txt
 
+emboss_backtranseq_multifasta_file: test_data
+	${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_backtranseq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_backtranseq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_backtranseq-file.txt
+
 emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
+
+# EMBOSS cpgplot
+emboss_cpgplot: emboss_cpgplot_params emboss_cpgplot_param_detail \
+emboss_cpgplot_dbid emboss_cpgplot_file emboss_cpgplot_stdin_stdout \
+emboss_cpgplot_id_list_file emboss_cpgplot_id_list_file_stdin_stdout \
+emboss_cpgplot_multifasta_file emboss_cpgplot_multifasta_file_stdin_stdout
+
+emboss_cpgplot_params:
+	${PERL} emboss_cpgplot_lwp.pl --params
+
+emboss_cpgplot_param_detail:
+	${PERL} emboss_cpgplot_lwp.pl --paramDetail window
+
+emboss_cpgplot_dbid:
+	${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --sequence 'EMBL:AB000204'
+
+emboss_cpgplot_file: test_data
+	${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_cpgplot_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_cpgplot-blah.txt
+
+emboss_cpgplot_id_list_file: test_data
+	${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_cpgplot_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_cpgplot-list.txt
+
+emboss_cpgplot_multifasta_file: test_data
+	${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_cpgplot_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_cpgplot_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_cpgplot-file.txt
+
+emboss_cpgplot_clean:
+	rm -f emboss_cpgplot-*
+
+# EMBOSS isochore
+emboss_isochore: emboss_isochore_params emboss_isochore_param_detail \
+emboss_isochore_dbid emboss_isochore_file emboss_isochore_stdin_stdout \
+emboss_isochore_id_list_file emboss_isochore_id_list_file_stdin_stdout \
+emboss_isochore_multifasta_file emboss_isochore_multifasta_file_stdin_stdout
+
+emboss_isochore_params:
+	${PERL} emboss_isochore_lwp.pl --params
+
+emboss_isochore_param_detail:
+	${PERL} emboss_isochore_lwp.pl --paramDetail window
+
+emboss_isochore_dbid:
+	${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --sequence 'EMBL:AB000204'
+
+emboss_isochore_file: test_data
+	${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_isochore_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_isochore-blah.txt
+
+emboss_isochore_id_list_file: test_data
+	${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_isochore_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_isochore-list.txt
+
+emboss_isochore_multifasta_file: test_data
+	${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_isochore_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_isochore_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_isochore-file.txt
+
+emboss_isochore_clean:
+	rm -f emboss_isochore-*
 
 # EMBOSS matcher
 emboss_matcher: emboss_matcher_params emboss_matcher_param_detail \
@@ -471,9 +563,47 @@ emboss_needle_file: test_data
 emboss_needle_clean:
 	rm -f emboss_needle-*
 
+# EMBOSS newcpgreport
+emboss_newcpgreport: emboss_newcpgreport_params emboss_newcpgreport_param_detail \
+emboss_newcpgreport_dbid emboss_newcpgreport_file emboss_newcpgreport_stdin_stdout \
+emboss_newcpgreport_id_list_file emboss_newcpgreport_id_list_file_stdin_stdout \
+emboss_newcpgreport_multifasta_file emboss_newcpgreport_multifasta_file_stdin_stdout
+
+emboss_newcpgreport_params:
+	${PERL} emboss_newcpgreport_lwp.pl --params
+
+emboss_newcpgreport_param_detail:
+	${PERL} emboss_newcpgreport_lwp.pl --paramDetail window
+
+emboss_newcpgreport_dbid:
+	${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --sequence 'EMBL:AB000204'
+
+emboss_newcpgreport_file: test_data
+	${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_newcpgreport_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_newcpgreport-blah.txt
+
+emboss_newcpgreport_id_list_file: test_data
+	${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_newcpgreport_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_newcpgreport-list.txt
+
+emboss_newcpgreport_multifasta_file: test_data
+	${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_newcpgreport_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_newcpgreport_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_newcpgreport-file.txt
+
+emboss_newcpgreport_clean:
+	rm -f emboss_newcpgreport-* emboss_cpgreport-*
+
 # EMBOSS pepinfo
 emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail \
-emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
+emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout \
+emboss_pepinfo_id_list_file emboss_pepinfo_id_list_file_stdin_stdout \
+emboss_pepinfo_multifasta_file emboss_pepinfo_multifasta_file_stdin_stdout
 
 emboss_pepinfo_params:
 	${PERL} emboss_pepinfo_lwp.pl --params
@@ -488,14 +618,28 @@ emboss_pepinfo_file: test_data
 	${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --hwindow 20
 
 emboss_pepinfo_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepinfo-blah.txt
+
+emboss_pepinfo_id_list_file: test_data
+	${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepinfo_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_pepinfo-list.txt
+
+emboss_pepinfo_multifasta_file: test_data
+	${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepinfo_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepinfo_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_pepinfo-file.txt
 
 emboss_pepinfo_clean:
 	rm -f emboss_pepinfo-*
 
 # EMBOSS pepstats
 emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail \
-emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
+emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout \
+emboss_pepstats_id_list_file emboss_pepstats_id_list_file_stdin_stdout \
+emboss_pepstats_multifasta_file emboss_pepstats_multifasta_file_stdin_stdout
 
 emboss_pepstats_params:
 	${PERL} emboss_pepstats_lwp.pl --params
@@ -510,14 +654,28 @@ emboss_pepstats_file: test_data
 	${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --termini false
 
 emboss_pepstats_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepstats-blah.txt
+
+emboss_pepstats_id_list_file: test_data
+	${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepstats_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_pepstats-list.txt
+
+emboss_pepstats_multifasta_file: test_data
+	${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepstats_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepstats_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_pepstats-file.txt
 
 emboss_pepstats_clean:
 	rm -f emboss_pepstats-*
 
 # EMBOSS pepwindow
 emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail \
-emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
+emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout \
+emboss_pepwindow_id_list_file emboss_pepwindow_id_list_file_stdin_stdout \
+emboss_pepwindow_multifasta_file emboss_pepwindow_multifasta_file_stdin_stdout
 
 emboss_pepwindow_params:
 	${PERL} emboss_pepwindow_lwp.pl --params
@@ -532,7 +690,19 @@ emboss_pepwindow_file: test_data
 	${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --windowsize 20
 
 emboss_pepwindow_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepwindow-blah.txt
+
+emboss_pepwindow_id_list_file: test_data
+	${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepwindow_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_pepwindow-list.txt
+
+emboss_pepwindow_multifasta_file: test_data
+	${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepwindow_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepwindow_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_pepwindow-file.txt
 
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
@@ -576,7 +746,8 @@ emboss_seqret_clean:
 # EMBOSS sixpack
 emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail \
 emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout \
-emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout
+emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout \
+emboss_sixpack_multifasta_file emboss_sixpack_multifasta_file_stdin_stdout
 
 emboss_sixpack_params:
 	${PERL} emboss_sixpack_lwp.pl --params
@@ -598,6 +769,12 @@ emboss_sixpack_stdin_stdout: test_data
 
 emboss_sixpack_id_list_file_stdin_stdout: test_data
 	cat ../test_data/embl_id_list.txt | ${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_sixpack-list.txt
+
+emboss_sixpack_multifasta_file: test_data
+	${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_sixpack_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_sixpack_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_sixpack-file.txt
 
 emboss_sixpack_clean:
 	rm -f emboss_sixpack-*
@@ -624,7 +801,8 @@ emboss_stretcher_clean:
 # EMBOSS transeq
 emboss_transeq: emboss_transeq_params emboss_transeq_param_detail \
 emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout \
-emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
+emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout \
+emboss_transeq_multifasta_file emboss_transeq_multifasta_file_stdin_stdout
 
 emboss_transeq_params:
 	${PERL} emboss_transeq_lwp.pl --params
@@ -646,6 +824,12 @@ emboss_transeq_stdin_stdout: test_data
 
 emboss_transeq_id_list_file_stdin_stdout: test_data
 	cat ../test_data/embl_id_list.txt | ${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > emboss_transeq-list.txt
+
+emboss_transeq_multifasta_file: test_data
+	${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_transeq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_transeq_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > emboss_transeq-file.txt
 
 emboss_transeq_clean:
 	rm -f emboss_transeq-*
@@ -743,7 +927,7 @@ genewise_file: test_data
 genewise_clean:
 	rm -f genewise-*
 
-# TODO: HMMER hmmscan
+# HMMER hmmscan
 hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail \
 hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout \
 hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout \
@@ -1109,7 +1293,9 @@ psisearch_clean:
 
 # Radar
 radar: radar_params radar_param_detail \
-radar_file radar_dbid radar_stdin_stdout
+radar_file radar_dbid radar_stdin_stdout \
+radar_id_list_file radar_id_list_file_stdin_stdout \
+radar_multifasta_file radar_multifasta_file_stdin_stdout
 
 radar_params:
 	${PERL} radar_lwp.pl --params
@@ -1125,6 +1311,18 @@ radar_dbid:
 
 radar_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} radar_lwp.pl --email ${EMAIL} --sequence - --quiet --outformat out --outfile - >  radar-file.txt
+
+radar_id_list_file: test_data
+	${PERL} radar_lwp.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+radar_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} radar_lwp.pl --email ${EMAIL} --sequence @- --quiet --outformat out --outfile - > radar-idfile.txt
+
+radar_multifasta_file: test_data
+	${PERL} radar_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+radar_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} radar_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > radar-file.txt
 
 radar_clean:
 	rm -f radar-*
@@ -1167,7 +1365,9 @@ readseq_clean:
 
 # SAPS
 saps: saps_params saps_param_detail \
-saps_dbid saps_file saps_stdin_stdout
+saps_dbid saps_file saps_stdin_stdout \
+saps_id_list_file saps_id_list_file_stdin_stdout \
+saps_multifasta_file saps_multifasta_file_stdin_stdout
 
 saps_params:
 	${PERL} saps_lwp.pl --params
@@ -1182,7 +1382,19 @@ saps_file: test_data
 	${PERL} saps_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --outputtype documented
 
 saps_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} saps_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > saps-blah.txt
+
+saps_id_list_file: test_data
+	${PERL} saps_lwp.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+saps_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} saps_lwp.pl --email ${EMAIL} --sequence @- --quiet --outformat out --outfile - > saps-idfile.txt
+
+saps_multifasta_file: test_data
+	${PERL} saps_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+saps_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} saps_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > saps-file.txt
 
 saps_clean:
 	rm -f saps-*
