@@ -96,7 +96,7 @@ dbfetch_clean:
 ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
 ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
 ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation
+ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation ebeye_getFacets
 
 ebeye_listDomains:
 	${PYTHON} ebeye_suds.py --listDomains
@@ -159,6 +159,9 @@ ebeye_getDetailledNumberOfResults_tree:
 
 ebeye_listFieldsInformation:
 	${PYTHON} ebeye_suds.py --listFieldsInformation uniprot
+
+ebeye_getFacets:
+	${PYTHON} ebeye_suds.py --getFacets uniprot axr3
 
 ebeye_clean:
 
