@@ -1411,6 +1411,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-emboss_newcpgreport" description="JAX-WS RI: generate stubs for EMBOSS newcpgreport (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.newcpgreport" />
+			<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-emboss_pepinfo" description="JAX-WS RI: generate stubs for EMBOSS pepinfo (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.pepinfo" />
