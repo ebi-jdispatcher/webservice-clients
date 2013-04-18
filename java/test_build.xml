@@ -113,9 +113,12 @@
 		<!-- antcall target="test-clean-prank" / -->
 		<antcall target="test-clean-tcoffee" />
 		<!-- Protein Function Analysis (PFA) -->
+		<!-- antcall target="test-clean-fingerprintscan" / -->
 		<antcall target="test-clean-iprscan" />
 		<!-- antcall target="test-clean-iprscan5" / -->
 		<antcall target="test-clean-phobius" />
+		<!-- antcall target="test-clean-pratt" / -->
+		<!-- antcall target="test-clean-ps_scan" / -->
 		<antcall target="test-clean-radar" />
 		<!-- Phylogeny -->
 		<antcall target="test-clean-clustalw2_phylogeny" />
@@ -129,6 +132,9 @@
 		<antcall target="test-clean-promoterwise" />
 		<antcall target="test-clean-wise2dba" />
 		<!-- Sequence Statistics -->
+		<antcall target="test-clean-emboss_cpgplot" />
+		<antcall target="test-clean-emboss_isochore" />
+		<antcall target="test-clean-emboss_newcpgreport" />
 		<antcall target="test-clean-emboss_pepinfo" />
 		<antcall target="test-clean-emboss_pepstats" />
 		<antcall target="test-clean-emboss_pepwindow" />
