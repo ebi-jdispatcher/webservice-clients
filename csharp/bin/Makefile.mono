@@ -21,8 +21,8 @@
 #
 # ======================================================================
 
-#MERGE = $$HOME/bin/monomerge.exe
-MERGE = mono /ebi/extserv/bin/monomerge/mono-merge.exe
+MERGE = $$HOME/bin/monomerge.exe
+#MERGE = mono /ebi/extserv/bin/monomerge/mono-merge.exe
 
 projectDir =  ../EBIWS2_CSharp
 
@@ -37,8 +37,11 @@ DbClustalCliClient.exe \
 EBeyeCliClient.exe \
 EmbossBacktranambigCliClient.exe \
 EmbossBacktranseqCliClient.exe \
+EmbossCpgplotCliClient.exe \
+EmbossIsochoreCliClient.exe \
 EmbossMatcherCliClient.exe \
 EmbossNeedleCliClient.exe \
+EmbossNewcpgreportCliClient.exe \
 EmbossPepinfoCliClient.exe \
 EmbossPepstatsCliClient.exe \
 EmbossPepwindowCliClient.exe \
@@ -112,12 +115,24 @@ EmbossBacktranseqCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossBacktranseqCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+EmbossCpgplotCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossCpgplotCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossIsochoreCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossIsochoreCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 EmbossMatcherCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossMatcherCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EmbossNeedleCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossNeedleCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+EmbossNewcpgreportCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossNewcpgreportCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 EmbossPepinfoCliClient.exe: EbiWS.dll
