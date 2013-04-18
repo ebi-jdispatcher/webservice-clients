@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -28,8 +28,6 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SapsCliClient</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>SapsCliClient</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -41,10 +39,6 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>SapsCliClient</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>SapsCliClient</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DefineConstants>
-    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

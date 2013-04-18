@@ -43,8 +43,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcoffeeCliClient", "Tcoffee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqCksumCliClient", "SeqCksumCliClient\SeqCksumCliClient.csproj", "{F46A1956-66B0-46AF-91D9-2F923BD0260C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalOCliClient", "ClustalOCliClient\ClustalOCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PromoterWiseCliClient", "PromoterWiseCliClient\PromoterWiseCliClient.csproj", "{CCBF519B-06E5-40F9-9155-7B534D959B45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBeyeCliClient", "EBeyeCliClient\EBeyeCliClient.csproj", "{3346535B-FAF4-4D17-AE64-9B681139FD73}"
@@ -83,11 +81,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaxsproutCliClient", "Maxsp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneWiseCliClient", "GeneWiseCliClient\GeneWiseCliClient.csproj", "{25DA1E39-FC2F-483F-9E61-FDCA1D9160F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FingerPRINTScanCliClient", "FingerPRINTScanCliClient\FingerPRINTScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClustalOCliClient", "ClustalOCliClient\ClustalOCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrattCliClient", "PrattCliClient\PrattCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FingerPRINTScanCliClient", "FingerPRINTScanCliClient\FingerPRINTScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsScanCliClient", "PsScanCliClient\PsScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrattCliClient", "PrattCliClient\PrattCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsScanCliClient", "PsScanCliClient\PsScanCliClient.csproj", "{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -244,21 +244,21 @@ Global
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5841FA4-2F08-424A-8560-4325709B6D67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9264F00-E0AF-49C7-9EBD-2CBBBAC543C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA080EC1-4E33-461C-9117-49525BCCDD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -279,8 +279,6 @@ Global
 		.Debug|Any CPU.Build.0 = Debug|Any CPU
 		.Release|Any CPU.ActiveCfg = Release|Any CPU
 		.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = NcbiBlastCliClient\NcbiBlastCliClient.csproj

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -23,8 +23,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>EbiWS</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -36,10 +34,6 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>EbiWS</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DefineConstants>
-    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
@@ -136,6 +130,9 @@
     <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
     <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
     <Compile Include="WebReferences\EmbossIsochoreWs\Reference.cs" />
+    <Compile Include="EmbossCpgplotClient.cs" />
+    <Compile Include="EmbossIsochoreClient.cs" />
+    <Compile Include="EmbossNewcpgreportClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -188,6 +185,12 @@
     <None Include="WebReferences\EmbossSeqretWs\Reference.map" />
     <None Include="WebReferences\ReadseqWs\Reference.map" />
     <None Include="WebReferences\EmbossIsochoreWs\Reference.map" />
+    <None Include="obj\EbiWS.csproj.FilesWrittenAbsolute.txt">
+      <Visible>False</Visible>
+    </None>
+    <None Include="obj\Debug\EbiWS.dll.mdb">
+      <Visible>False</Visible>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -20,25 +20,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <OutputType>Exe</OutputType>
-    <AssemblyName>SeqCksumCliClient</AssemblyName>
     <RootNamespace>SeqCksumCliClient</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <OutputType>Exe</OutputType>
-    <AssemblyName>SeqCksumCliClient</AssemblyName>
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>SeqCksumCliClient</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DefineConstants>
-    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
