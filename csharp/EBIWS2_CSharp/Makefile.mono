@@ -33,16 +33,19 @@ build-ClustalW2PhylogenyCliClient \
 build-DaliliteCliClient \
 build-DbClustalCliClient \
 build-EBeyeCliClient \
+build-EmbossBacktranambigCliClient \
+build-EmbossBacktranseqCliClient \
+build-EmbossCpgplotCliClient \
+build-EmbossIsochoreCliClient \
 build-EmbossMatcherCliClient \
 build-EmbossNeedleCliClient \
-build-EmbossStretcherCliClient \
-build-EmbossTranseqCliClient \
-build-EmbossSixpackCliClient \
-build-EmbossBacktranseqCliClient \
-build-EmbossBacktranambigCliClient \
+build-EmbossNewcpgreportCliClient \
 build-EmbossPepinfoCliClient \
 build-EmbossPepstatsCliClient \
 build-EmbossPepwindowCliClient \
+build-EmbossSixpackCliClient \
+build-EmbossStretcherCliClient \
+build-EmbossTranseqCliClient \
 build-EmbossWaterCliClient \
 build-FastaCliClient \
 build-FastmCliClient \
@@ -94,26 +97,26 @@ build-DbClustalCliClient: build-EbiWS
 build-EBeyeCliClient: build-EbiWS
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
 
+build-EmbossBacktranambigCliClient: build-EbiWS
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossBacktranseqCliClient: build-EbiWS
+	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossCpgplotCliClient: build-EbiWS
+	cd EmbossCpgplotCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossIsochoreCliClient: build-EbiWS
+	cd EmbossIsochoreCliClient && $(MAKE) -f Makefile.mono
+
 build-EmbossMatcherCliClient: build-EbiWS
 	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono
 
 build-EmbossNeedleCliClient: build-EbiWS
 	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono
 
-build-EmbossStretcherCliClient: build-EbiWS
-	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono
-
-build-EmbossTranseqCliClient: build-EbiWS
-	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono
-
-build-EmbossSixpackCliClient: build-EbiWS
-	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono
-
-build-EmbossBacktranseqCliClient: build-EbiWS
-	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono
-
-build-EmbossBacktranambigCliClient: build-EbiWS
-	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono
+build-EmbossNewcpgreportCliClient: build-EbiWS
+	cd EmbossNewcpgreportCliClient && $(MAKE) -f Makefile.mono
 
 build-EmbossPepinfoCliClient: build-EbiWS
 	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono
@@ -123,6 +126,15 @@ build-EmbossPepstatsCliClient: build-EbiWS
 
 build-EmbossPepwindowCliClient: build-EbiWS
 	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossStretcherCliClient: build-EbiWS
+	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossSixpackCliClient: build-EbiWS
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono
+
+build-EmbossTranseqCliClient: build-EbiWS
+	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono
 
 build-EmbossWaterCliClient: build-EbiWS
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono
@@ -212,16 +224,19 @@ clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
 clean-DbClustalCliClient \
 clean-EBeyeCliClient \
+clean-EmbossBacktranambigCliClient \
+clean-EmbossBacktranseqCliClient \
+clean-EmbossCpgplotCliClient \
+clean-EmbossIsochoreCliClient \
 clean-EmbossMatcherCliClient \
 clean-EmbossNeedleCliClient \
-clean-EmbossStretcherCliClient \
-clean-EmbossTranseqCliClient \
-clean-EmbossSixpackCliClient \
-clean-EmbossBacktranseqCliClient \
-clean-EmbossBacktranambigCliClient \
+clean-EmbossNewcpgreportCliClient \
 clean-EmbossPepinfoCliClient \
 clean-EmbossPepstatsCliClient \
 clean-EmbossPepwindowCliClient \
+clean-EmbossSixpackCliClient \
+clean-EmbossStretcherCliClient \
+clean-EmbossTranseqCliClient \
 clean-EmbossWaterCliClient \
 clean-FastaCliClient \
 clean-FastmCliClient \
@@ -273,26 +288,26 @@ clean-DbClustalCliClient:
 clean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-EmbossBacktranambigCliClient:
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossBacktranseqCliClient:
+	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossCpgplotCliClient:
+	cd EmbossCpgplotCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossIsochoreCliClient:
+	cd EmbossIsochoreCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-EmbossMatcherCliClient:
 	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossNeedleCliClient:
 	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono clean
 
-clean-EmbossStretcherCliClient:
-	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono clean
-
-clean-EmbossTranseqCliClient:
-	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono clean
-
-clean-EmbossSixpackCliClient:
-	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono clean
-
-clean-EmbossBacktranseqCliClient:
-	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono clean
-
-clean-EmbossBacktranambigCliClient:
-	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono clean
+clean-EmbossNewcpgreportCliClient:
+	cd EmbossNewcpgreportCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossPepinfoCliClient:
 	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono clean
@@ -302,6 +317,15 @@ clean-EmbossPepstatsCliClient:
 
 clean-EmbossPepwindowCliClient:
 	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossSixpackCliClient:
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossStretcherCliClient:
+	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-EmbossTranseqCliClient:
+	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossWaterCliClient:
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono clean
@@ -392,16 +416,19 @@ distclean-ClustalW2PhylogenyCliClient \
 distclean-DaliliteCliClient \
 distclean-DbClustalCliClient \
 distclean-EBeyeCliClient \
-distclean-EmbossBacktranseqCliClient \
 distclean-EmbossBacktranambigCliClient \
+distclean-EmbossBacktranseqCliClient \
+distclean-EmbossCpgplotCliClient \
+distclean-EmbossIsochoreCliClient \
 distclean-EmbossMatcherCliClient \
 distclean-EmbossNeedleCliClient \
-distclean-EmbossSixpackCliClient \
-distclean-EmbossStretcherCliClient \
-distclean-EmbossTranseqCliClient \
+distclean-EmbossNewcpgreportCliClient \
 distclean-EmbossPepinfoCliClient \
 distclean-EmbossPepstatsCliClient \
 distclean-EmbossPepwindowCliClient \
+distclean-EmbossSixpackCliClient \
+distclean-EmbossStretcherCliClient \
+distclean-EmbossTranseqCliClient \
 distclean-EmbossWaterCliClient \
 distclean-FastaCliClient \
 distclean-FastmCliClient \
@@ -453,11 +480,17 @@ distclean-DbClustalCliClient:
 distclean-EBeyeCliClient:
 	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-EmbossBacktranambigCliClient:
+	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-EmbossBacktranseqCliClient:
 	cd EmbossBacktranseqCliClient && $(MAKE) -f Makefile.mono distclean
 
-distclean-EmbossBacktranambigCliClient:
-	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono distclean
+distclean-EmbossCpgplotCliClient:
+	cd EmbossCpgplotCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-EmbossIsochoreCliClient:
+	cd EmbossIsochoreCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossMatcherCliClient:
 	cd EmbossMatcherCliClient && $(MAKE) -f Makefile.mono distclean
@@ -465,14 +498,8 @@ distclean-EmbossMatcherCliClient:
 distclean-EmbossNeedleCliClient:
 	cd EmbossNeedleCliClient && $(MAKE) -f Makefile.mono distclean
 
-distclean-EmbossSixpackCliClient:
-	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EmbossStretcherCliClient:
-	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EmbossTranseqCliClient:
-	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono distclean
+distclean-EmbossNewcpgreportCliClient:
+	cd EmbossNewcpgreportCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossPepinfoCliClient:
 	cd EmbossPepinfoCliClient && $(MAKE) -f Makefile.mono distclean
@@ -482,6 +509,15 @@ distclean-EmbossPepstatsCliClient:
 
 distclean-EmbossPepwindowCliClient:
 	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-EmbossSixpackCliClient:
+	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-EmbossStretcherCliClient:
+	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-EmbossTranseqCliClient:
+	cd EmbossTranseqCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossWaterCliClient:
 	cd EmbossWaterCliClient && $(MAKE) -f Makefile.mono distclean
