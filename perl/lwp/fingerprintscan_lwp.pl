@@ -96,6 +96,7 @@ GetOptions(
 	'distdev=i'          => \$tool_params{'distdev'},          # Distance deviation
 	'resultviews=s'      => \$params{'resultviews'},           # Output result views
 	'sequence=s'         => \$params{'sequence'},              # Query sequence file or DB:ID
+	'multifasta'     => \$params{'multifasta'},     # Multiple fasta input
 	
 	# Generic options
 	'email=s'            => \$params{'email'},                 # User e-mail address

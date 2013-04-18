@@ -87,17 +87,23 @@ tcoffee_clean
 
 # Protein Function Analysis (PFA)
 pfa: \
+fingerprintscan \
 hmmer_hmmscan \
 iprscan \
 iprscan5 \
 phobius \
+pratt \
+ps_scan \
 radar
 
 pfa_clean: \
+fingerprintscan_clean \
 hmmer_hmmscan_clean \
 iprscan_clean \
 iprscan5_clean \
 phobius_clean \
+pratt_clean \
+ps_scan_clean \
 radar_clean
 
 # Phylogeny
@@ -908,6 +914,42 @@ fastm_stdin_stdout: test_data
 fastm_clean:
 	rm -f fastm-*
 
+# FingerPRINTScan
+fingerprintscan: fingerprintscan_params fingerprintscan_param_detail \
+fingerprintscan_dbid fingerprintscan_file fingerprintscan_stdin_stdout \
+fingerprintscan_id_list_file fingerprintscan_id_list_file_stdin_stdout \
+fingerprintscan_multifasta_file fingerprintscan_multifasta_file_stdin_stdout
+
+fingerprintscan_params:
+	${PERL} fingerprintscan_lwp.pl --params ${JDispatcher_params_suffix}
+
+fingerprintscan_param_detail:
+	${PERL} fingerprintscan_lwp.pl --paramDetail matrix
+
+fingerprintscan_dbid:
+	${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --sequence 'UNIPROT:ABCC9_HUMAN'
+
+fingerprintscan_file: test_data
+	${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+fingerprintscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > fingerprintscan-blah.txt
+
+fingerprintscan_id_list_file: test_data
+	${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+fingerprintscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --outformat out --outfile - @- > fingerprintscan-idlist.txt
+
+fingerprintscan_multifasta_file: test_data
+	${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+fingerprintscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} fingerprintscan_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > fingerprintscan-file.txt
+
+fingerprintscan_clean:
+	rm -f fingerprintscan-*
+
 # GeneWise
 genewise: genewise_params genewise_param_detail \
 genewise_dbid genewise_file
@@ -1199,6 +1241,25 @@ prank:
 prank_clean:
 	rm -f prank-*
 
+# Pratt
+pratt: pratt_params pratt_param_detail \
+pratt_file pratt_stdin_stdout
+
+pratt_params:
+	${PERL} pratt_lwp.pl --params ${JDispatcher_params_suffix}
+
+pratt_param_detail:
+	${PERL} pratt_lwp.pl --paramDetail patternScoring
+
+pratt_file: test_data
+	${PERL} pratt_lwp.pl --email ${EMAIL} --sequence ../test_data/multi_prot.tfa
+
+pratt_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} pratt_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > pratt-blah.txt
+
+pratt_clean:
+	rm -f pratt-*
+
 # PromoterWise
 promoterwise: promoterwise_params promoterwise_param_detail \
 promoterwise_dbid promoterwise_file
@@ -1217,6 +1278,42 @@ promoterwise_file: test_data
 
 promoterwise_clean:
 	rm -f promoterwise-*
+
+# PROSITE Scan (ps_scan)
+ps_scan: ps_scan_params ps_scan_param_detail \
+ps_scan_dbid ps_scan_file ps_scan_stdin_stdout \
+ps_scan_id_list_file ps_scan_id_list_file_stdin_stdout \
+ps_scan_multifasta_file ps_scan_multifasta_file_stdin_stdout
+
+ps_scan_params:
+	${PERL} ps_scan_lwp.pl --params ${JDispatcher_params_suffix}
+
+ps_scan_param_detail:
+	${PERL} ps_scan_lwp.pl --paramDetail format
+
+ps_scan_dbid:
+	${PERL} ps_scan_lwp.pl --email ${EMAIL} --sequence 'UNIPROT:ABCC9_HUMAN'
+
+ps_scan_file: test_data
+	${PERL} ps_scan_lwp.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+ps_scan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} ps_scan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > ps_scan-blah.txt
+
+ps_scan_id_list_file: test_data
+	${PERL} ps_scan_lwp.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+ps_scan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} ps_scan_lwp.pl --email ${EMAIL} --outformat out --outfile - @- > ps_scan-idlist.txt
+
+ps_scan_multifasta_file: test_data
+	${PERL} ps_scan_lwp.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+ps_scan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} ps_scan_lwp.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > ps_scan-file.txt
+
+ps_scan_clean:
+	rm -f ps_scan-*
 
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail \

@@ -100,6 +100,7 @@ GetOptions(
 	'noOverlappingMatch' => \$params{'noOverlappingMatch'},    # Disable overlapping Matches Reporting  
 	'profileThreshold=i' => \$tool_params{'profileThreshold'}, # Cut-off level for profiles
 	'sequence=s'         => \$params{'sequence'},              # Query sequence file or DB:ID	
+	'multifasta'     => \$params{'multifasta'},     # Multiple fasta input
 
 	# Generic options
 	'email=s'            => \$params{'email'},                 # User e-mail address
