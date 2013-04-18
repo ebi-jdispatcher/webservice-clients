@@ -123,7 +123,7 @@ GetOptions(
 	'printingRatio=i'         => \$tool_params{'printingRatio'},         # Printing ratio
 	'printVertically'         => \$params{'printVertically'},            # Enable print vertically
 	'noPrintVertically'       => \$params{'noPrintVertically'},          # Disable print vertically
-	'sequence=s'              => \$params{'sequence'},                   # Query sequence file or DB:ID
+	'sequence=s'              => \$params{'sequence'},                   # Input sequence set.
 	
 	# Generic options
 	'email=s'                 => \$params{'email'},                      # User e-mail address
@@ -725,33 +725,39 @@ sub multi_submit_job {
 	my (@filename_list) = ();
 
 	# Query sequence
-	if ( defined( $ARGV[0] ) ) {    # Bare option(s).
-		foreach my $fileOpt (@ARGV) {
-			if ( -f $fileOpt || $fileOpt eq '-' ) {    # File or STDIN.
-				push( @filename_list, $fileOpt );
-			}
-			else {
-				warn "Warning: input file \"$fileOpt\" not found"; 
-			}
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			push( @filename_list, $params{'sequence'} );
 		}
+		else {
+			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
+		}
 	}
-	if(scalar(@filename_list) < 1) {
-		die 'Error: no files found to process.';
-	}
+
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		print_debug_message( 'multi_submit_job', 'filename: ' . $filename, 2 );
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
-			if ( $seq =~ m/\w+/ ) {
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				&submit_job($seq);
@@ -778,8 +784,14 @@ sub list_file_submit_job {
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( my $LISTFILE, '<', $filename )
-	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
@@ -1096,64 +1108,66 @@ Print program usage.
 sub usage {
 	print STDERR <<EOF
 Pratt
-==========
+=====
 
 Searching for patterns conserved in sets of unaligned protein sequences.
 
 [Required]
 
-  seqFile                      : file : query sequence ("-" for STDIN, \@filename for
-                                        identifier list file)
+  seqFile                    : file : input sequence ("-" for STDIN)
 
 [Optional]
-      --minPerc                : int  :  Minimum percentage of input sequence to match.
-      --patternPosition        : str  :  Pattern position in sequence
-      --maxPatternLength       : int  :  Maximum pattern length
-      --maxNumPatternSymbols   : int  :  Maximum number Of pattern symbols
-      --maxNumWildcard         : int  :  Maximum length of a widecard (x)	
-      --maxNumFlexSpaces       : int  :  Maximum length of flexible spaces
-      --maxFlexibility         : int  :  Maximum flexibility
-      --maxFlexProduct         : int  :  Maximum flex. product
-      --patternSymbolFile      :      :  Enable pattern symbol file
-      --noPatternSymbolFile    :      :  Disable pattern symbol file
-      --numPatternSymbols      : int  :  Number of pattern symbols used
-      --patternScoring         : str  :  Pattern scoring
-      --patternGraph           : str  :  Pattern graph allows the use of an alignment 
-                                          or a query sequence to restrict the pattern search
-      --searchGreediness       : int  :  Greediness of the search
-      --patternRefinement      :      :  Enable pattern refinement
-      --noPatternRefinement    :      :  Disable pattern refinement		
-      --genAmbigSymbols        :      :  Enable generalise ambiguous symbols
-      --noGenAmbigSymbols      :      :  Disable generalise ambiguous symbols
-      --patternFormat          :      :  Enable PROSITE pattern format
-      --noPatternFormat        :      :  Disable PROSITE pattern format
-      --maxNumPatterns         : int  :  Maximum number of patterns
-      --maxNumAlignments       : int  :  Maximum number of alignments between 1 and 100
-      --printPatterns          :      :  Enable print patterns in sequences
-      --noPrintPatterns        :      :  Disable print patterns in sequences
-      --printingRatio          : int  :  Printing ratio
-      --printVertically        :      :  Enable print vertically
-      --noPrintVertically      :      :  Disable print vertically
+      --minPerc              : int  :  Minimum percentage of input sequence to 
+                                       match.
+      --patternPosition      : str  :  Pattern position in sequence
+      --maxPatternLength     : int  :  Maximum pattern length
+      --maxNumPatternSymbols : int  :  Maximum number Of pattern symbols
+      --maxNumWildcard       : int  :  Maximum length of a widecard (x)	
+      --maxNumFlexSpaces     : int  :  Maximum length of flexible spaces
+      --maxFlexibility       : int  :  Maximum flexibility
+      --maxFlexProduct       : int  :  Maximum flex. product
+      --patternSymbolFile    :      :  Enable pattern symbol file
+      --noPatternSymbolFile  :      :  Disable pattern symbol file
+      --numPatternSymbols    : int  :  Number of pattern symbols used
+      --patternScoring       : str  :  Pattern scoring
+      --patternGraph         : str  :  Pattern graph allows the use of an 
+                                       alignment or a query sequence to 
+                                       restrict the pattern search
+      --searchGreediness     : int  :  Greediness of the search
+      --patternRefinement    :      :  Enable pattern refinement
+      --noPatternRefinement  :      :  Disable pattern refinement		
+      --genAmbigSymbols      :      :  Enable generalise ambiguous symbols
+      --noGenAmbigSymbols    :      :  Disable generalise ambiguous symbols
+      --patternFormat        :      :  Enable PROSITE pattern format
+      --noPatternFormat      :      :  Disable PROSITE pattern format
+      --maxNumPatterns       : int  :  Maximum number of patterns
+      --maxNumAlignments     : int  :  Maximum number of alignments between 1 
+                                       and 100
+      --printPatterns        :      :  Enable print patterns in sequences
+      --noPrintPatterns      :      :  Disable print patterns in sequences
+      --printingRatio        : int  :  Printing ratio
+      --printVertically      :      :  Enable print vertically
+      --noPrintVertically    :      :  Disable print vertically
 	
 [General]
 
-  -h, --help                   :      : prints this help text
-      --async                  :      : forces to make an asynchronous query
-      --email                  : str  : e-mail address
-      --title                  : str  : title for job
-      --status                 :      : get job status
-      --resultTypes            :      : get available result types for job
-      --polljob                :      : poll for the status of a job
-      --jobid                  : str  : jobid that was returned when an asynchronous job 
-                                        was submitted.
-      --outfile                : str  : file name for results (default is jobid;
-                                        "-" for STDOUT)
-      --outformat              : str  : result format to retrieve
-      --params                 :      : list input parameters
-      --paramDetail            : str  : display details for input parameter
-      --quiet                  :      : decrease output
-      --verbose                :      : increase output
-      --trace                  :      : show SOAP messages being interchanged 
+  -h, --help                 :      : prints this help text
+      --async                :      : forces to make an asynchronous query
+      --email                : str  : e-mail address
+      --title                : str  : title for job
+      --status               :      : get job status
+      --resultTypes          :      : get available result types for job
+      --polljob              :      : poll for the status of a job
+      --jobid                : str  : jobid that was returned when an 
+                                      asynchronous job was submitted.
+      --outfile              : str  : file name for results (default is jobid;
+                                      "-" for STDOUT)
+      --outformat            : str  : result format to retrieve
+      --params               :      : list input parameters
+      --paramDetail          : str  : display details for input parameter
+      --quiet                :      : decrease output
+      --verbose              :      : increase output
+      --trace                :      : show SOAP messages being interchanged 
 
 Synchronous job:
 

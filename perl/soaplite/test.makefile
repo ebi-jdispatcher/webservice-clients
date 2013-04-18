@@ -92,15 +92,23 @@ tcoffee_clean
 
 # Protein Function Analysis (PFA)
 pfa: \
+fingerprintscan \
 hmmer_hmmscan \
 iprscan \
+iprscan5 \
 phobius \
+pratt \
+ps_scan \
 radar
 
 pfa_clean: \
+fingerprintscan_clean \
 hmmer_hmmscan_clean \
 iprscan_clean \
+iprscan5_clean \
 phobius_clean \
+pratt_clean \
+ps_scan_clean \
 radar_clean
 
 # Phylogeny
@@ -133,12 +141,18 @@ wise2dba_clean
 
 # Sequence Statistics
 seqstats: \
+emboss_cpgplot \
+emboss_isochore \
+emboss_newcpgreport \
 emboss_pepinfo \
 emboss_pepstats \
 emboss_pepwindow \
 saps
 
 seqstats_clean: \
+emboss_cpgplot_clean \
+emboss_isochore_clean \
+emboss_newcpgreport_clean \
 emboss_pepinfo_clean \
 emboss_pepstats_clean \
 emboss_pepwindow_clean \
@@ -153,7 +167,7 @@ sfc_clean: \
 emboss_seqret_clean \
 readseq_clean
 
-# TODO: Sequence Operations (SO)
+# Sequence Operations (SO)
 so: \
 censor \
 seqcksum
@@ -529,6 +543,78 @@ emboss_backtranseq_multifasta_file_stdin_stdout: test_data
 emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
 
+# EMBOSS cpgplot
+emboss_cpgplot: emboss_cpgplot_params emboss_cpgplot_param_detail \
+emboss_cpgplot_dbid emboss_cpgplot_file emboss_cpgplot_stdin_stdout \
+emboss_cpgplot_id_list_file emboss_cpgplot_id_list_file_stdin_stdout \
+emboss_cpgplot_multifasta_file emboss_cpgplot_multifasta_file_stdin_stdout
+
+emboss_cpgplot_params:
+	${PERL} emboss_cpgplot_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_cpgplot_param_detail:
+	${PERL} emboss_cpgplot_soaplite.pl --paramDetail codontable
+
+emboss_cpgplot_dbid:
+	${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
+
+emboss_cpgplot_file: test_data
+	${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_cpgplot_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_cpgplot-blah.txt
+
+emboss_cpgplot_id_list_file: test_data
+	${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_cpgplot_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_cpgplot-idlist.txt
+
+emboss_cpgplot_multifasta_file: test_data
+	${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_nuc.tfa
+
+emboss_cpgplot_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > emboss_cpgplot-file.txt
+
+emboss_cpgplot_clean:
+	rm -f emboss_cpgplot-*
+
+# EMBOSS isochore
+emboss_isochore: emboss_isochore_params emboss_isochore_param_detail \
+emboss_isochore_dbid emboss_isochore_file emboss_isochore_stdin_stdout \
+emboss_isochore_id_list_file emboss_isochore_id_list_file_stdin_stdout \
+emboss_isochore_multifasta_file emboss_isochore_multifasta_file_stdin_stdout
+
+emboss_isochore_params:
+	${PERL} emboss_isochore_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_isochore_param_detail:
+	${PERL} emboss_isochore_soaplite.pl --paramDetail codontable
+
+emboss_isochore_dbid:
+	${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
+
+emboss_isochore_file: test_data
+	${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_isochore_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_isochore-blah.txt
+
+emboss_isochore_id_list_file: test_data
+	${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_isochore_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_isochore-idlist.txt
+
+emboss_isochore_multifasta_file: test_data
+	${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_nuc.tfa
+
+emboss_isochore_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > emboss_isochore-file.txt
+
+emboss_isochore_clean:
+	rm -f emboss_isochore-*
+
 # EMBOSS matcher
 emboss_matcher: emboss_matcher_params emboss_matcher_param_detail \
 emboss_matcher_dbid emboss_matcher_file
@@ -566,6 +652,42 @@ emboss_needle_file: test_data
 
 emboss_needle_clean:
 	rm -f emboss_needle-*
+
+# EMBOSS newcpgreport
+emboss_newcpgreport: emboss_newcpgreport_params emboss_newcpgreport_param_detail \
+emboss_newcpgreport_dbid emboss_newcpgreport_file emboss_newcpgreport_stdin_stdout \
+emboss_newcpgreport_id_list_file emboss_newcpgreport_id_list_file_stdin_stdout \
+emboss_newcpgreport_multifasta_file emboss_newcpgreport_multifasta_file_stdin_stdout
+
+emboss_newcpgreport_params:
+	${PERL} emboss_newcpgreport_soaplite.pl --params ${JDispatcher_params_suffix}
+
+emboss_newcpgreport_param_detail:
+	${PERL} emboss_newcpgreport_soaplite.pl --paramDetail codontable
+
+emboss_newcpgreport_dbid:
+	${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
+
+emboss_newcpgreport_file: test_data
+	${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_newcpgreport_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_newcpgreport-blah.txt
+
+emboss_newcpgreport_id_list_file: test_data
+	${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
+
+emboss_newcpgreport_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_newcpgreport-idlist.txt
+
+emboss_newcpgreport_multifasta_file: test_data
+	${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_nuc.tfa
+
+emboss_newcpgreport_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > emboss_newcpgreport-file.txt
+
+emboss_newcpgreport_clean:
+	rm -f emboss_newcpgreport-*
 
 # EMBOSS pepinfo
 emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail \
@@ -880,6 +1002,42 @@ fastm_stdin_stdout: test_data
 fastm_clean:
 	rm -f fastm-*
 
+# FingerPRINTScan
+fingerprintscan: fingerprintscan_params fingerprintscan_param_detail \
+fingerprintscan_dbid fingerprintscan_file fingerprintscan_stdin_stdout \
+fingerprintscan_id_list_file fingerprintscan_id_list_file_stdin_stdout \
+fingerprintscan_multifasta_file fingerprintscan_multifasta_file_stdin_stdout
+
+fingerprintscan_params:
+	${PERL} fingerprintscan_soaplite.pl --params ${JDispatcher_params_suffix}
+
+fingerprintscan_param_detail:
+	${PERL} fingerprintscan_soaplite.pl --paramDetail matrix
+
+fingerprintscan_dbid:
+	${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --sequence 'UNIPROT:ABCC9_HUMAN'
+
+fingerprintscan_file: test_data
+	${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+fingerprintscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > fingerprintscan-blah.txt
+
+fingerprintscan_id_list_file: test_data
+	${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+fingerprintscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - @- > fingerprintscan-idlist.txt
+
+fingerprintscan_multifasta_file: test_data
+	${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+fingerprintscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} fingerprintscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > fingerprintscan-file.txt
+
+fingerprintscan_clean:
+	rm -f fingerprintscan-*
+
 # GeneWise
 genewise: genewise_params genewise_param_detail \
 genewise_dbid genewise_file
@@ -899,7 +1057,7 @@ genewise_file: test_data
 genewise_clean:
 	rm -f genewise-*
 
-# TODO: HMMER hmmscan
+# HMMER hmmscan
 hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail \
 hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout \
 hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout \
@@ -1183,7 +1341,24 @@ prank_stdin_stdout: test_data
 prank_clean:
 	rm -f prank-*
 
-# TODO: Pratt
+# Pratt
+pratt: pratt_params pratt_param_detail \
+pratt_file pratt_stdin_stdout
+
+pratt_params:
+	${PERL} pratt_soaplite.pl --params ${JDispatcher_params_suffix}
+
+pratt_param_detail:
+	${PERL} pratt_soaplite.pl --paramDetail patternScoring
+
+pratt_file: test_data
+	${PERL} pratt_soaplite.pl --email ${EMAIL} --sequence ../test_data/multi_prot.tfa
+
+pratt_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} pratt_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > pratt-blah.txt
+
+pratt_clean:
+	rm -f pratt-*
 
 # PromoterWise
 promoterwise: promoterwise_params promoterwise_param_detail \
@@ -1203,6 +1378,42 @@ promoterwise_file: test_data
 
 promoterwise_clean:
 	rm -f promoterwise-*
+
+# PROSITE Scan (ps_scan)
+ps_scan: ps_scan_params ps_scan_param_detail \
+ps_scan_dbid ps_scan_file ps_scan_stdin_stdout \
+ps_scan_id_list_file ps_scan_id_list_file_stdin_stdout \
+ps_scan_multifasta_file ps_scan_multifasta_file_stdin_stdout
+
+ps_scan_params:
+	${PERL} ps_scan_soaplite.pl --params ${JDispatcher_params_suffix}
+
+ps_scan_param_detail:
+	${PERL} ps_scan_soaplite.pl --paramDetail format
+
+ps_scan_dbid:
+	${PERL} ps_scan_soaplite.pl --email ${EMAIL} --sequence 'UNIPROT:ABCC9_HUMAN'
+
+ps_scan_file: test_data
+	${PERL} ps_scan_soaplite.pl --email ${EMAIL} --sequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+ps_scan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} ps_scan_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > ps_scan-blah.txt
+
+ps_scan_id_list_file: test_data
+	${PERL} ps_scan_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+ps_scan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} ps_scan_soaplite.pl --email ${EMAIL} --outformat out --outfile - @- > ps_scan-idlist.txt
+
+ps_scan_multifasta_file: test_data
+	${PERL} ps_scan_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+ps_scan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} ps_scan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > ps_scan-file.txt
+
+ps_scan_clean:
+	rm -f ps_scan-*
 
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail \
