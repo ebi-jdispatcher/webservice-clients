@@ -553,7 +553,7 @@ emboss_cpgplot_params:
 	${PERL} emboss_cpgplot_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_cpgplot_param_detail:
-	${PERL} emboss_cpgplot_soaplite.pl --paramDetail codontable
+	${PERL} emboss_cpgplot_soaplite.pl --paramDetail window
 
 emboss_cpgplot_dbid:
 	${PERL} emboss_cpgplot_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
@@ -589,7 +589,7 @@ emboss_isochore_params:
 	${PERL} emboss_isochore_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_isochore_param_detail:
-	${PERL} emboss_isochore_soaplite.pl --paramDetail codontable
+	${PERL} emboss_isochore_soaplite.pl --paramDetail window
 
 emboss_isochore_dbid:
 	${PERL} emboss_isochore_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
@@ -663,7 +663,7 @@ emboss_newcpgreport_params:
 	${PERL} emboss_newcpgreport_soaplite.pl --params ${JDispatcher_params_suffix}
 
 emboss_newcpgreport_param_detail:
-	${PERL} emboss_newcpgreport_soaplite.pl --paramDetail codontable
+	${PERL} emboss_newcpgreport_soaplite.pl --paramDetail window
 
 emboss_newcpgreport_dbid:
 	${PERL} emboss_newcpgreport_soaplite.pl --email ${EMAIL} --sequence 'EMBL:L12345'
