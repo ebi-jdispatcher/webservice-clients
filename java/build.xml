@@ -102,8 +102,11 @@
 		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-emboss_backtranambig" />
 		<antcall target="axis1-stubs-emboss_backtranseq" />
+		<antcall target="axis1-stubs-emboss_cpgplot" />
+		<antcall target="axis1-stubs-emboss_isochore" />
 		<antcall target="axis1-stubs-emboss_matcher" />
 		<antcall target="axis1-stubs-emboss_needle" />
+		<antcall target="axis1-stubs-emboss_newcpgreport" />
 		<antcall target="axis1-stubs-emboss_pepinfo"/>
 		<antcall target="axis1-stubs-emboss_pepstats"/>
 		<antcall target="axis1-stubs-emboss_pepwindow"/>
@@ -128,9 +131,9 @@
 		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-pratt" />
 		<antcall target="axis1-stubs-promoterwise" />
+		<antcall target="axis1-stubs-ps_scan" />
 		<antcall target="axis1-stubs-psiblast" />
 		<antcall target="axis1-stubs-psisearch" />
-		<antcall target="axis1-stubs-ps_scan" />
 		<antcall target="axis1-stubs-radar"/>
 		<antcall target="axis1-stubs-readseq"/>
 		<antcall target="axis1-stubs-saps"/>
@@ -196,6 +199,18 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranambig?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-emboss_cpgplot" description="Axis 1.x: generate stubs for EMBOSS cpgplot (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.cpgplot" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_cpgplot?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_isochore" description="Axis 1.x: generate stubs for EMBOSS isochore (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.isochore" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_isochore?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-emboss_matcher" description="Axis 1.x: generate stubs for EMBOSS matcher (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.matcher" />
@@ -206,6 +221,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.needle" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_needle?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-emboss_newcpgreport" description="Axis 1.x: generate stubs for EMBOSS newcpgreport (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.newcpgreport" />
+			<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_pepinfo" description="Axis 1.x: generate stubs for EMBOSS pepinfo (SOAP)">
@@ -286,6 +307,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-iprscan5" description="Axis 1.x: generate stubs for InterProScan5 (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.iprscan5" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan5?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-kalign" description="Axis 1.x: generate stubs for Kalign (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.kalign" />
@@ -352,6 +379,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/promoterwise?wsdl" />
 		</antcall>
 	</target>
+	<target name="axis1-stubs-ps_scan" description="Axis 1.x: generate stubs for PROSITE Scan (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ps_scan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-psiblast" description="Axis 1.x: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psiblast" />
@@ -362,12 +395,6 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.psisearch" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
-		</antcall>
-	</target>
-	<target name="axis1-stubs-ps_scan" description="Axis 1.x: generate stubs for PROSITE Scan (SOAP)">
-		<antcall target="genAxis1Stubs">
-			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ps_scan" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-radar" description="Axis 1.x: generate stubs for Radar (SOAP)">
@@ -490,6 +517,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/EmbossBacktranambig_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranambigClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranambig/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranambigClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/EmbossBacktranseq_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranseq/**">
@@ -500,11 +537,21 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/EmbossBacktranambig_Axis1.jar"
+		<jar destfile="${jar.dir}/EmbossCpgplot_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranambigClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranambig/**">
+			includes="uk/ac/ebi/webservices/axis1/EmbossCpgplotClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/cpgplot/**">
 			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranambigClient"/>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossCpgplotClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossIsochore_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossIsochoreClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/isochore/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossIsochoreClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -525,6 +572,16 @@
 			includes="uk/ac/ebi/webservices/axis1/EmbossNeedleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/needle/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossNeedleClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EmbossNewcpgreport_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/EmbossNewcpgreportClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/newcpgreport/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossNewcpgreportClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -882,8 +939,11 @@
 		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-emboss_backtranambig" />
 		<antcall target="axis1-distclean-stubs-emboss_backtranseq" />
+		<antcall target="axis1-distclean-stubs-emboss_cpgplot" />
+		<antcall target="axis1-distclean-stubs-emboss_isochore" />
 		<antcall target="axis1-distclean-stubs-emboss_matcher" />
 		<antcall target="axis1-distclean-stubs-emboss_needle" />
+		<antcall target="axis1-distclean-stubs-emboss_newcpgreport" />
 		<antcall target="axis1-distclean-stubs-emboss_pepinfo" />
 		<antcall target="axis1-distclean-stubs-emboss_pepstats" />
 		<antcall target="axis1-distclean-stubs-emboss_pepwindow" />
@@ -908,9 +968,9 @@
 		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-pratt" />
 		<antcall target="axis1-distclean-stubs-promoterwise" />
+		<antcall target="axis1-distclean-stubs-ps_scan" />
 		<antcall target="axis1-distclean-stubs-psiblast" />
 		<antcall target="axis1-distclean-stubs-psisearch" />
-		<antcall target="axis1-distclean-stubs-ps_scan" />
 		<antcall target="axis1-distclean-stubs-radar"/>
 		<antcall target="axis1-distclean-stubs-readseq"/>
 		<antcall target="axis1-distclean-stubs-saps"/>
@@ -975,6 +1035,18 @@
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="backtranseq" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-emboss_cpgplot" description="Axis 1.x: remove EMBOSS cpgplot stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/cpgplot" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="cpgplot" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_isochore" description="Axis 1.x: remove EMBOSS isochore stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/isochore" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="isochore" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-emboss_matcher" description="Axis 1.x: remove EMBOSS matcher stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/matcher" includes="*/**" />
@@ -985,6 +1057,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/needle" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="needle" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-emboss_newcpgreport" description="Axis 1.x: remove EMBOSS newcpgreport stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/newcpgreport" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/emboss/" includes="newcpgreport" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-emboss_pepinfo" description="Axis 1.x: remove EMBOSS pepinfo stubs">
@@ -1212,8 +1290,11 @@
 		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-emboss_backtranambig" />
 		<antcall target="jaxws-stubs-emboss_backtranseq" />
+		<antcall target="jaxws-stubs-emboss_cpgplot" />
+		<antcall target="jaxws-stubs-emboss_isochore" />
 		<antcall target="jaxws-stubs-emboss_matcher" />
 		<antcall target="jaxws-stubs-emboss_needle" />
+		<antcall target="jaxws-stubs-emboss_newcpgreport" />
 		<antcall target="jaxws-stubs-emboss_pepinfo" />
 		<antcall target="jaxws-stubs-emboss_pepstats" />
 		<antcall target="jaxws-stubs-emboss_pepwindow" />
@@ -1238,9 +1319,9 @@
 		<antcall target="jaxws-stubs-prank" />
 		<antcall target="jaxws-stubs-pratt" />
 		<antcall target="jaxws-stubs-promoterwise" />
+		<antcall target="jaxws-stubs-ps_scan" />
 		<antcall target="jaxws-stubs-psiblast" />
 		<antcall target="jaxws-stubs-psisearch" />
-		<antcall target="jaxws-stubs-ps_scan" />
 		<antcall target="jaxws-stubs-radar" />
 		<antcall target="jaxws-stubs-readseq" />
 		<antcall target="jaxws-stubs-saps" />
@@ -1304,6 +1385,18 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.backtranseq" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_backtranseq?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_cpgplot" description="JAX-WS RI: generate stubs for EMBOSS cpgplot (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.cpgplot" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_cpgplot?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-emboss_isochore" description="JAX-WS RI: generate stubs for EMBOSS isochore (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.isochore" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_isochore?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-emboss_matcher" description="JAX-WS RI: generate stubs for EMBOSS matcher (SOAP)">
@@ -1462,6 +1555,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/promoterwise?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-ps_scan" description="JAX-WS RI: generate stubs for PROSITE Scan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ps_scan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-psiblast" description="JAX-WS RI: generate stubs for PSI-BLAST (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psiblast" />
@@ -1472,12 +1571,6 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.psisearch" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/psisearch?wsdl" />
-		</antcall>
-	</target>
-	<target name="jaxws-stubs-ps_scan" description="JAX-WS RI: generate stubs for PROSITE Scan (SOAP)">
-		<antcall target="genJaxwsStubs">
-			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ps_scan" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ps_scan?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-radar" description="JAX-WS RI: generate stubs for RADAR (SOAP)">
@@ -1617,8 +1710,11 @@
 		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-emboss_backtranambig" />
 		<antcall target="jaxws-distclean-stubs-emboss_backtranseq" />
+		<antcall target="jaxws-distclean-stubs-emboss_cpgplot" />
+		<antcall target="jaxws-distclean-stubs-emboss_isochore" />
 		<antcall target="jaxws-distclean-stubs-emboss_matcher" />
 		<antcall target="jaxws-distclean-stubs-emboss_needle" />
+		<antcall target="jaxws-distclean-stubs-emboss_newcpgreport" />
 		<antcall target="jaxws-distclean-stubs-emboss_pepinfo" />
 		<antcall target="jaxws-distclean-stubs-emboss_pepstats" />
 		<antcall target="jaxws-distclean-stubs-emboss_pepwindow" />
@@ -1710,6 +1806,18 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="backtranseq" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-emboss_cpgplot" description="JAX-WS RI: remove EMBOSS cpgplot (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/cpgplot" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="cpgplot" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_isochore" description="JAX-WS RI: remove EMBOSS isochore (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/isochore" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="isochore" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-emboss_matcher" description="JAX-WS RI: remove EMBOSS matcher (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/matcher" includes="*/**" />
@@ -1720,6 +1828,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/needle" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="needle" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-emboss_newcpgreport" description="JAX-WS RI: remove EMBOSS newcpgreport (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/newcpgreport" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/emboss/" includes="newcpgreport" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-emboss_pepinfo" description="JAX-WS RI: remove EMBOSS pepinfo (SOAP) stubs">

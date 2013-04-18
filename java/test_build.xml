@@ -46,9 +46,12 @@
 	<!-- import file="${ant.import.lib.dir}/client_test/prank.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/tcoffee.xml" />
 	<!-- Protein Function Analysis (PFA) -->
+	<!-- import file="${ant.import.lib.dir}/client_test/fingerprintscan.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
 	<!-- import file="${ant.import.lib.dir}/client_test/iprscan5.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
+	<!-- import file="${ant.import.lib.dir}/client_test/pratt.xml" / -->
+	<!-- import file="${ant.import.lib.dir}/client_test/ps_scan.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/radar.xml" />
 	<!-- Phylogeny -->
 	<import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" />
@@ -68,6 +71,9 @@
 	<import file="${ant.import.lib.dir}/client_test/censor.xml" />
 	<import file="${ant.import.lib.dir}/client_test/seqcksum.xml" />
 	<!-- Sequence Statistics -->
+	<import file="${ant.import.lib.dir}/client_test/emboss_cpgplot.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_isochore.xml" />
+	<import file="${ant.import.lib.dir}/client_test/emboss_newcpgreport.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepinfo.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepstats.xml" />
 	<import file="${ant.import.lib.dir}/client_test/emboss_pepwindow.xml" />
