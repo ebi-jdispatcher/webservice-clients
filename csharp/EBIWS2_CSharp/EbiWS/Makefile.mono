@@ -62,8 +62,11 @@ DbClustalClient.cs \
 EBeyeClient.cs \
 EmbossBacktranambigClient.cs \
 EmbossBacktranseqClient.cs \
+EmbossCpgplotClient.cs \
+EmbossIsochoreClient.cs \
 EmbossMatcherClient.cs \
 EmbossNeedleClient.cs \
+EmbossNewcpgreportClient.cs \
 EmbossPepinfoClient.cs \
 EmbossPepstatsClient.cs \
 EmbossPepwindowClient.cs \
