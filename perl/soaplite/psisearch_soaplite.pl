@@ -727,21 +727,35 @@ sub multi_submit_job {
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			push( @filename_list, $ARGV[0] );
 		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
+		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
 		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
 			push( @filename_list, $params{'sequence'} );
 		}
+		else {
+			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
+		}
 	}
 
 	$/ = '>';
 	foreach my $filename (@filename_list) {
-		open( my $INFILE, '<', $filename )
-		  or die "Error: unable to open file $filename ($!)";
+		my $INFILE;
+		if($filename eq '-') { # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		} else { # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
-			if ( $seq =~ m/\w+/ ) {
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				&submit_job($seq);
@@ -768,8 +782,14 @@ sub list_file_submit_job {
 	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 
 	# Iterate over identifiers, submitting each job
-	open( my $LISTFILE, '<', $filename )
-	  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	my $LISTFILE;
+	if($filename eq '-') { # STDIN.
+		open( $LISTFILE, '<-' )
+		  or die 'Error: unable to STDIN (' . $! . ')';
+	} else { # File.
+		open( $LISTFILE, '<', $filename )
+		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+	}
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);

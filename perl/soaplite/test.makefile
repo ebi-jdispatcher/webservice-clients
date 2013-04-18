@@ -242,7 +242,8 @@ censor_clean:
 	rm -f censor-*
 
 # Clustal Omega
-clustalo: clustalo_params clustalo_param_detail clustalo_align clustalo_align_stdin_stdout
+clustalo: clustalo_params clustalo_param_detail \
+clustalo_align clustalo_align_stdin_stdout
 
 clustalo_params:
 	${PERL} clustalo_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -260,7 +261,8 @@ clustalo_clean:
 	rm -f clustalo-*
 
 # ClustalW 2.x
-clustalw2: clustalw2_params clustalw2_param_detail clustalw2_align clustalw2_align_stdin_stdout
+clustalw2: clustalw2_params clustalw2_param_detail \
+clustalw2_align clustalw2_align_stdin_stdout
 
 clustalw2_params:
 	${PERL} clustalw2_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -278,7 +280,8 @@ clustalw2_clean:
 	rm -f clustalw2-*
 
 # ClustalW 2.x Phylogeny
-clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
+clustalw2phylogeny: clustalw2phylogeny_params clustalw2phylogeny_param_detail \
+clustalw2phylogeny_file clustalw2phylogeny_stdin_stdout
 
 clustalw2phylogeny_params:
 	${PERL} clustalw2phylogeny_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -297,7 +300,8 @@ clustalw2phylogeny_clean:
 
 
 # DaliLite
-dalilite: dalilite_params dalilite_param_detail dalilite_file dalilite_pdbid
+dalilite: dalilite_params dalilite_param_detail \
+dalilite_file dalilite_pdbid
 
 dalilite_params:
 	${PERL} dalilite_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -316,7 +320,8 @@ dalilite_clean:
 
 
 # DbClustal
-dbclustal: dbclustal_params dbclustal_param_detail dbclustal_file
+dbclustal: dbclustal_params dbclustal_param_detail \
+dbclustal_file
 
 dbclustal_params:
 	${PERL} dbclustal_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -331,7 +336,9 @@ dbclustal_clean:
 	rm -f dbclustal-*
 
 # WSDbfetch Document/literal SOAP
-dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles dbfetch_getDbFormats dbfetch_getFormatStyles dbfetch_fetchData dbfetch_fetchBatch
+dbfetch: dbfetch_getSupportedDBs dbfetch_getSupportedFormats dbfetch_getSupportedStyles \
+dbfetch_getDbFormats dbfetch_getFormatStyles \
+dbfetch_fetchData dbfetch_fetchBatch
 
 dbfetch_getSupportedDBs:
 	${PERL} wsdbfetch_soaplite.pl getSupportedDBs > dbfetch-getSupportedDBs.txt
@@ -374,10 +381,14 @@ dbfetch_clean:
 	rm -f dbfetch-*
 
 # EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
-ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation ebeye_getFacets
+ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds \
+ebeye_listFields ebeye_getResults ebeye_getEntry ebeye_getEntries \
+ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls \
+ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
+ebeye_listAdditionalReferenceFields \
+ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
+ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults \
+ebeye_listFieldsInformation ebeye_getFacets
 
 ebeye_listDomains:
 	${PERL} ebeye_soaplite.pl --listDomains
@@ -471,13 +482,13 @@ emboss_backtranambig_id_list_file: test_data
 	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
 
 emboss_backtranambig_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranambig-blah.txt
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranambig-idfile.txt
 
 emboss_backtranambig_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
 
 emboss_backtranambig_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_backtranambig_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > emboss_backtranambig-file.txt
 
 emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
@@ -507,19 +518,20 @@ emboss_backtranseq_id_list_file: test_data
 	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
 
 emboss_backtranseq_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranseq-blah.txt
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_backtranseq-idlist.txt
 
 emboss_backtranseq_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
 
 emboss_backtranseq_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_backtranseq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > emboss_backtranseq-file.txt
 
 emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
 
 # EMBOSS matcher
-emboss_matcher: emboss_matcher_params emboss_matcher_param_detail emboss_matcher_dbid emboss_matcher_file
+emboss_matcher: emboss_matcher_params emboss_matcher_param_detail \
+emboss_matcher_dbid emboss_matcher_file
 
 emboss_matcher_params:
 	${PERL} emboss_matcher_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -537,7 +549,8 @@ emboss_matcher_clean:
 	rm -f emboss_matcher-*
 
 # EMBOSS needle
-emboss_needle: emboss_needle_params emboss_needle_param_detail emboss_needle_dbid emboss_needle_file
+emboss_needle: emboss_needle_params emboss_needle_param_detail \
+emboss_needle_dbid emboss_needle_file
 
 emboss_needle_params:
 	${PERL} emboss_needle_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -555,7 +568,10 @@ emboss_needle_clean:
 	rm -f emboss_needle-*
 
 # EMBOSS pepinfo
-emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
+emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail \
+emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout \
+emboss_pepinfo_id_list_file emboss_pepinfo_id_list_file_stdin_stdout \
+emboss_pepinfo_multifasta_file emboss_pepinfo_multifasta_file_stdin_stdout
 
 emboss_pepinfo_params:
 	${PERL} emboss_pepinfo_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -572,11 +588,26 @@ emboss_pepinfo_file: test_data
 emboss_pepinfo_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepinfo-blah.txt
 
+emboss_pepinfo_id_list_file: test_data
+	${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepinfo_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_pepinfo-idlist.txt
+
+emboss_pepinfo_multifasta_file: test_data
+	${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+emboss_pepinfo_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepinfo_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepinfo-file.txt
+
 emboss_pepinfo_clean:
 	rm -f emboss_pepinfo-*
 
 # EMBOSS pepstats
-emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
+emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail \
+emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout \
+emboss_pepstats_id_list_file emboss_pepstats_id_list_file_stdin_stdout \
+emboss_pepstats_multifasta_file emboss_pepstats_multifasta_file_stdin_stdout
 
 emboss_pepstats_params:
 	${PERL} emboss_pepstats_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -593,11 +624,26 @@ emboss_pepstats_file: test_data
 emboss_pepstats_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepstats-blah.txt
 
+emboss_pepstats_id_list_file: test_data
+	${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepstats_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_pepstats-idlist.txt
+
+emboss_pepstats_multifasta_file: test_data
+	${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+emboss_pepstats_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepstats_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepstats-file.txt
+
 emboss_pepstats_clean:
 	rm -f emboss_pepstats-*
 
 # EMBOSS pepwindow
-emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
+emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail \
+emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout \
+emboss_pepstats_id_list_file emboss_pepstats_id_list_file_stdin_stdout \
+emboss_pepstats_multifasta_file emboss_pepstats_multifasta_file_stdin_stdout
 
 emboss_pepwindow_params:
 	${PERL} emboss_pepwindow_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -613,6 +659,18 @@ emboss_pepwindow_file: test_data
 
 emboss_pepwindow_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepwindow-blah.txt
+
+emboss_pepwindow_id_list_file: test_data
+	${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+emboss_pepwindow_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_pepwindow-idlist.txt
+
+emboss_pepwindow_multifasta_file: test_data
+	${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+emboss_pepwindow_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_pepwindow_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepwindow-file.txt
 
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
@@ -646,13 +704,13 @@ emboss_seqret_id_list_file: test_data
 	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --sequence @../test_data/embl_id_list.txt
 
 emboss_seqret_id_list_file_stdin_stdout: test_data
-	cat ../test_data/embl_id_list.txt | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --quiet --outformat out --outfile - @- > emboss_seqret-blah.txt
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype dna --quiet --outformat out --outfile - @- > emboss_seqret-idlist.txt
 
 emboss_seqret_multifasta_file: test_data
 	${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype protein --multifasta --sequence ../test_data/multi_prot.tfa
 
 emboss_seqret_multifasta_file_stdin_stdout: test_data
-	cat ../test_data/multi_prot.tfa | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype protein --quiet --outformat out --outfile - --multifasta - > emboss_seqret-blah.txt
+	cat ../test_data/multi_prot.tfa | ${PERL} emboss_seqret_soaplite.pl --email ${EMAIL} --stype protein --quiet --outformat out --outfile - --multifasta - > emboss_seqret-file.txt
 
 emboss_seqret_clean:
 	rm -f emboss_seqret-*
@@ -682,19 +740,20 @@ emboss_sixpack_id_list_file: test_data
 	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --sequence @../test_data/embl_id_list.txt
 
 emboss_sixpack_id_list_file_stdin_stdout: test_data
-	cat ../test_data/embl_id_list.txt | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_sixpack-blah.txt
+	cat ../test_data/embl_id_list.txt | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_sixpack-idlist.txt
 
 emboss_sixpack_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_nuc.tfa
 
 emboss_sixpack_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_sixpack_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_sixpack-file.txt
 
 emboss_sixpack_clean:
 	rm -f emboss_sixpack-*
 
 # EMBOSS stretcher
-emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail emboss_stretcher_dbid emboss_stretcher_file
+emboss_stretcher: emboss_stretcher_params emboss_stretcher_param_detail \
+emboss_stretcher_dbid emboss_stretcher_file
 
 emboss_stretcher_params:
 	${PERL} emboss_stretcher_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -739,16 +798,17 @@ emboss_transeq_id_list_file_stdin_stdout: test_data
 	cat ../test_data/embl_id_list.txt | ${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > emboss_transeq-blah.txt
 
 emboss_transeq_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_nuc.tfa
 
 emboss_transeq_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_nuc.tfa | ${PERL} emboss_transeq_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_transeq-file.txt
 
 emboss_transeq_clean:
 	rm -f emboss_transeq-*
 
 # EMBOSS water
-emboss_water: emboss_water_params emboss_water_param_detail emboss_water_dbid emboss_water_file
+emboss_water: emboss_water_params emboss_water_param_detail \
+emboss_water_dbid emboss_water_file
 
 emboss_water_params:
 	${PERL} emboss_water_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -766,7 +826,10 @@ emboss_water_clean:
 	rm -f emboss_water-*
 
 # FASTA
-fasta: fasta_params fasta_param_detail fasta_file fasta_dbid fasta_stdin_stdout fasta_id_list_file fasta_id_list_file_stdin_stdout fasta_multifasta_file fasta_multifasta_file_stdin_stdout
+fasta: fasta_params fasta_param_detail \
+fasta_file fasta_dbid fasta_stdin_stdout \
+fasta_id_list_file fasta_id_list_file_stdin_stdout \
+fasta_multifasta_file fasta_multifasta_file_stdin_stdout
 
 fasta_params:
 	${PERL} fasta_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -799,7 +862,8 @@ fasta_clean:
 	rm -f fasta-*
 
 # FASTM
-fastm: fastm_params fastm_param_detail fastm_file fastm_stdin_stdout
+fastm: fastm_params fastm_param_detail \
+fastm_file fastm_stdin_stdout
 
 fastm_params:
 	${PERL} fastm_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -817,7 +881,8 @@ fastm_clean:
 	rm -f fastm-*
 
 # GeneWise
-genewise: genewise_params genewise_param_detail genewise_dbid genewise_file
+genewise: genewise_params genewise_param_detail \
+genewise_dbid genewise_file
 
 genewise_params:
 	${PERL} genewise_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -835,7 +900,10 @@ genewise_clean:
 	rm -f genewise-*
 
 # TODO: HMMER hmmscan
-hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout hmmer_hmmscan_multifasta_file hmmer_hmmscan_multifasta_file_stdin_stdout
+hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail \
+hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout \
+hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout \
+hmmer_hmmscan_multifasta_file hmmer_hmmscan_multifasta_file_stdin_stdout
 
 hmmer_hmmscan_params:
 	${PERL} hmmer_hmmscan_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -868,7 +936,10 @@ hmmer_hmmscan_clean:
 	rm -f hmmer_hmmscan-*
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
+iprscan: iprscan_params iprscan_param_detail \
+iprscan_file iprscan_dbid iprscan_stdin_stdout \
+iprscan_id_list_file iprscan_id_list_file_stdin_stdout \
+iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
 iprscan_params:
 	${PERL} iprscan_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -908,7 +979,8 @@ iprscan5_clean:
 	rm -f iprscan5-*
 
 # Kalign
-kalign: kalign_params kalign_param_detail kalign_file kalign_stdin_stdout
+kalign: kalign_params kalign_param_detail \
+kalign_file kalign_stdin_stdout
 
 kalign_params:
 	${PERL} kalign_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -926,7 +998,8 @@ kalign_clean:
 	rm -f kalign-*
 
 # lalign
-lalign: lalign_params lalign_param_detail lalign_dbid lalign_file
+lalign: lalign_params lalign_param_detail \
+lalign_dbid lalign_file
 
 lalign_params:
 	${PERL} lalign_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -944,7 +1017,8 @@ lalign_clean:
 	rm -f lalign-*
 
 # MAFFT
-mafft: mafft_params mafft_param_detail mafft_file mafft_stdin_stdout
+mafft: mafft_params mafft_param_detail \
+mafft_file mafft_stdin_stdout
 
 mafft_params:
 	${PERL} mafft_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -962,7 +1036,8 @@ mafft_clean:
 	rm -f mafft-*
 
 # MaxSprout
-maxsprout: maxsprout_params maxsprout_param_detail maxsprout_file maxsprout_pdbid
+maxsprout: maxsprout_params maxsprout_param_detail \
+maxsprout_file maxsprout_pdbid
 
 maxsprout_params:
 	${PERL} maxsprout_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -980,7 +1055,8 @@ maxsprout_clean:
 	rm -rf maxsprout-*
 
 # MUSCLE
-muscle: muscle_params muscle_param_detail muscle_file muscle_stdin_stdout
+muscle: muscle_params muscle_param_detail \
+muscle_file muscle_stdin_stdout
 
 muscle_params:
 	${PERL} muscle_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -998,7 +1074,8 @@ muscle_clean:
 	rm -f muscle-*
 
 # MView
-mview: mview_params mview_param_detail mview_file mview_stdin_stdout
+mview: mview_params mview_param_detail \
+mview_file mview_stdin_stdout
 
 mview_params:
 	${PERL} mview_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1016,7 +1093,10 @@ mview_clean:
 	rm -f mview-*
 
 # NCBI BLAST or NCBI BLAST+
-ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
+ncbiblast: ncbiblast_params ncbiblast_param_detail \
+ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout \
+ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout \
+ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
 
 ncbiblast_params:
 	${PERL} ncbiblast_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1049,7 +1129,10 @@ ncbiblast_clean:
 	rm -f ncbiblast-*
 
 # Phobius
-phobius: phobius_params phobius_param_detail phobius_file phobius_dbid phobius_stdin_stdout phobius_id_list_file phobius_id_list_file_stdin_stdout phobius_multifasta_file phobius_multifasta_file_stdin_stdout
+phobius: phobius_params phobius_param_detail \
+phobius_file phobius_dbid phobius_stdin_stdout \
+phobius_id_list_file phobius_id_list_file_stdin_stdout \
+phobius_multifasta_file phobius_multifasta_file_stdin_stdout
 
 phobius_params:
 	${PERL} phobius_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1067,22 +1150,23 @@ phobius_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} phobius_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > phobius-blah.txt
 
 phobius_id_list_file: test_data
-	echo 'TODO:' $@
+	${PERL} phobius_soaplite.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 phobius_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${PERL} phobius_soaplite.pl --email ${EMAIL} --outformat out --outfile - --sequence @- > phobius-idfile.txt
 
 phobius_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} phobius_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
 
 phobius_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} phobius_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > phobius-file.txt
 
 phobius_clean:
 	rm -f phobius-*
 
 # PRANK
-prank: prank_params prank_param_detail prank_file prank_stdin_stdout
+prank: prank_params prank_param_detail \
+prank_file prank_stdin_stdout
 
 prank_params:
 	${PERL} prank_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1099,8 +1183,11 @@ prank_stdin_stdout: test_data
 prank_clean:
 	rm -f prank-*
 
+# TODO: Pratt
+
 # PromoterWise
-promoterwise: promoterwise_params promoterwise_param_detail promoterwise_dbid promoterwise_file
+promoterwise: promoterwise_params promoterwise_param_detail \
+promoterwise_dbid promoterwise_file
 
 promoterwise_params:
 	${PERL} promoterwise_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1118,7 +1205,10 @@ promoterwise_clean:
 	rm -f promoterwise-*
 
 # PSI-BLAST
-psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid psiblast_stdin_stdout psiblast_id_list_file psiblast_id_list_file_stdin_stdout psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
+psiblast: psiblast_params psiblast_param_detail \
+psiblast_file psiblast_dbid psiblast_stdin_stdout \
+psiblast_id_list_file psiblast_id_list_file_stdin_stdout \
+psiblast_multifasta_file psiblast_multifasta_file_stdin_stdout
 
 psiblast_params:
 	${PERL} psiblast_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1136,22 +1226,25 @@ psiblast_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psiblast-blah.txt
 
 psiblast_id_list_file: test_data
-	echo 'TODO:' $@
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 psiblast_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --sequence @- > psiblast-idfile.txt
 
 psiblast_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 psiblast_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} psiblast_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta --sequence - > psiblast-file.txt
 
 psiblast_clean:
 	rm -f psiblast-*
 
 # PSI-Search
-psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid psisearch_stdin_stdout psisearch_id_list_file psisearch_id_list_file_stdin_stdout psisearch_multifasta_file psisearch_multifasta_file_stdin_stdout
+psisearch: psisearch_params psisearch_param_detail \
+psisearch_file psisearch_dbid psisearch_stdin_stdout \
+psisearch_id_list_file psisearch_id_list_file_stdin_stdout \
+psisearch_multifasta_file psisearch_multifasta_file_stdin_stdout
 
 psisearch_params:
 	${PERL} psisearch_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1169,28 +1262,31 @@ psisearch_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --align 10 --quiet --outformat out --outfile - - > psisearch-blah.txt
 
 psisearch_id_list_file: test_data
-	echo 'TODO:' $@
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 psisearch_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --sequence @- > psisearch-idfile.txt
 
 psisearch_multifasta_file: test_data
-	echo 'TODO:' $@
+	${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta  ../test_data/multi_prot.tfa
 
 psisearch_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${PERL} psisearch_soaplite.pl --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta --sequence - > psisearch-file.txt
 
 psisearch_clean:
 	rm -f psisearch-*
 
 # Radar
-radar: radar_params radar_param_detail radar_file radar_dbid radar_stdin_stdout
+radar: radar_params radar_param_detail \
+radar_file radar_dbid radar_stdin_stdout \
+radar_id_list_file radar_id_list_file_stdin_stdout \
+radar_multifasta_file radar_multifasta_file_stdin_stdout
 
 radar_params:
 	${PERL} radar_soaplite.pl --params ${JDispatcher_params_suffix}
 
 radar_param_detail:
-	echo 'TODO:' $@
+	${PERL} psisearch_soaplite.pl --paramDetail sequence
 
 radar_file: test_data
 	${PERL} radar_soaplite.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
@@ -1201,10 +1297,22 @@ radar_dbid:
 radar_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} radar_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > radar-blah.txt
 
+radar_id_list_file: test_data
+	${PERL} radar_soaplite.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+radar_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} radar_soaplite.pl --email ${EMAIL} --outformat out --outfile - --sequence @- > radar-idfile.txt
+
+radar_multifasta_file: test_data
+	${PERL} radar_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+radar_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} radar_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > radar-file.txt
+
 radar_clean:
 	rm -f radar-*
 
-# TODO: Readseq
+# Readseq
 readseq: readseq_help \
 readseq_params readseq_param_detail \
 readseq_dbid readseq_file readseq_stdin_stdout \
@@ -1245,7 +1353,10 @@ readseq_clean:
 	rm -f readseq-*
 
 # SAPS
-saps: saps_params saps_param_detail saps_dbid saps_file saps_stdin_stdout
+saps: saps_params saps_param_detail \
+saps_dbid saps_file saps_stdin_stdout \
+saps_id_list_file saps_id_list_file_stdin_stdout \
+saps_multifasta_file saps_multifasta_file_stdin_stdout
 
 saps_params:
 	${PERL} saps_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1262,11 +1373,26 @@ saps_file: test_data
 saps_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} saps_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > saps-blah.txt
 
+saps_id_list_file: test_data
+	${PERL} saps_soaplite.pl --email ${EMAIL} --sequence @../test_data/uniprot_id_list.txt
+
+saps_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} saps_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - @- > readseq-blah.txt
+
+saps_multifasta_file: test_data
+	${PERL} saps_soaplite.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+saps_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} saps_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta - > readseq-blah.txt
+
 saps_clean:
 	rm -f saps-*
 
 # seqcksum
-seqcksum: seqcksum_params seqcksum_param_detail seqcksum_file seqcksum_dbid seqcksum_stdin_stdout seqcksum_id_list_file seqcksum_id_list_file_stdin_stdout seqcksum_multifasta_file seqcksum_multifasta_file_stdin_stdout
+seqcksum: seqcksum_params seqcksum_param_detail \
+seqcksum_file seqcksum_dbid seqcksum_stdin_stdout \
+seqcksum_id_list_file seqcksum_id_list_file_stdin_stdout \
+seqcksum_multifasta_file seqcksum_multifasta_file_stdin_stdout
 
 seqcksum_params:
 	${PERL} seqcksum_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1299,7 +1425,8 @@ seqcksum_clean:
 	rm -f seqcksum-*
 
 # T-Coffee
-tcoffee: tcoffee_params tcoffee_param_detail tcoffee_file tcoffee_stdin_stdout
+tcoffee: tcoffee_params tcoffee_param_detail \
+tcoffee_file tcoffee_stdin_stdout
 
 tcoffee_params:
 	${PERL} tcoffee_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1317,7 +1444,8 @@ tcoffee_clean:
 	rm -f tcoffee-*
 
 # Wise2DBA
-wise2dba: wise2dba_params wise2dba_param_detail wise2dba_dbid wise2dba_file
+wise2dba: wise2dba_params wise2dba_param_detail \
+wise2dba_dbid wise2dba_file
 
 wise2dba_params:
 	${PERL} wise2dba_soaplite.pl --params ${JDispatcher_params_suffix}
@@ -1335,7 +1463,10 @@ wise2dba_clean:
 	rm -f wise2dba-*
 
 # WU-BLAST
-wublast: wublast_params wublast_param_detail wublast_file wublast_dbid wublast_stdin_stdout wublast_id_list_file wublast_id_list_file_stdin_stdout wublast_multifasta_file wublast_multifasta_file_stdin_stdout
+wublast: wublast_params wublast_param_detail \
+wublast_file wublast_dbid wublast_stdin_stdout \
+wublast_id_list_file wublast_id_list_file_stdin_stdout \
+wublast_multifasta_file wublast_multifasta_file_stdin_stdout
 
 wublast_params:
 	${PERL} wublast_soaplite.pl --params ${JDispatcher_params_suffix}
