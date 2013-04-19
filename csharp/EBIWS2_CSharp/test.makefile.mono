@@ -966,7 +966,7 @@ fastm_stdin_stdout: test_data
 fastm_clean:
 	rm -f fastm-*
 
-# TODO: FingerPRINTScan
+# FingerPRINTScan
 fingerprintscan: fingerprintscan_params fingerprintscan_param_detail \
 fingerprintscan_file fingerprintscan_dbid fingerprintscan_stdin_stdout \
 fingerprintscan_id_list_file fingerprintscan_id_list_file_stdin_stdout \
@@ -1002,7 +1002,7 @@ fingerprintscan_multifasta_file_stdin_stdout: test_data
 fingerprintscan_clean:
 	rm -f fingerprintscan-*
 
-# TODO: GeneWise
+# GeneWise
 genewise: genewise_params genewise_param_detail \
 genewise_dbid genewise_file
 
@@ -1278,22 +1278,21 @@ pratt_stdin_stdout: test_data
 pratt_clean:
 	rm -f pratt-*
 
-# TODO: PromoterWise
-# promoterwise
+# PromoterWise
 promoterwise: promoterwise_params promoterwise_param_detail \
 promoterwise_dbid promoterwise_file
 
 promoterwise_params:
-	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --params
+	${MONO} PromoterWiseCliClient/bin/Release/PromoterWiseCliClient.exe --params
 
 promoterwise_param_detail:
-	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --paramDetail matrix
+	${MONO} PromoterWiseCliClient/bin/Release/PromoterWiseCliClient.exe --paramDetail hitoutput
 
 promoterwise_dbid:
-	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --email ${EMAIL} --asequence 'UNIPROT:WAP_RAT' --bsequence 'UNIPROT:WAP_MOUSE'
+	${MONO} PromoterWiseCliClient/bin/Release/PromoterWiseCliClient.exe --email ${EMAIL} --asequence 'EMBL:L12344' --bsequence 'EMBL:L12345'
 
 promoterwise_file: test_data
-	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${MONO} PromoterWiseCliClient/bin/Release/PromoterWiseCliClient.exe --email ${EMAIL} --asequence ../test_data/EMBL_AB000204.fasta --bsequence ../test_data/EMBL_AB000204.fasta
 
 promoterwise_clean:
 	rm -f promoterwise-*
