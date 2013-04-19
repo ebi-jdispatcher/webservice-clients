@@ -77,7 +77,7 @@ Comparing a protein sequence against the signatures in PROSITE.
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -234,6 +234,11 @@ Comparing a protein sequence against the signatures in PROSITE.
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+					case "--multifasta": // Multiple sequence input (fasta format)
+						this.multifasta = true;
+						break;
+					case "/multifasta":
+						goto case "--multifasta";
 
 						// Tool specific options		
 					case "--format": // Output format
@@ -295,7 +300,7 @@ Comparing a protein sequence against the signatures in PROSITE.
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}

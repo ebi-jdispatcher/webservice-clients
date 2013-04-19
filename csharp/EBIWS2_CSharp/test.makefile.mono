@@ -90,6 +90,7 @@ tcoffee_clean
 pfa: \
 fingerprintscan \
 iprscan \
+iprscan5 \
 phobius \
 pratt \
 ps_scan \
@@ -98,6 +99,7 @@ radar
 pfa_clean: \
 fingerprintscan_clean \
 iprscan_clean \
+iprscan5_clean \
 phobius_clean \
 pratt_clean \
 ps_scan_clean \
@@ -116,14 +118,20 @@ emboss_matcher \
 emboss_needle \
 emboss_stretcher \
 emboss_water \
-lalign
+genewise \
+lalign \
+promoterwise \
+wise2dba
 
 psa_clean: \
 emboss_matcher_clean \
 emboss_needle_clean \
 emboss_stretcher_clean \
 emboss_water_clean \
-lalign_clean
+genewise_clean \
+lalign_clean \
+promoterwise_clean \
+wise2dba_clean
 
 # Sequence Statistics
 seqstats: \
@@ -144,7 +152,7 @@ emboss_pepstats_clean \
 emboss_pepwindow_clean \
 saps_clean
 
-# TODO: Sequence Format Conversion (SFC)
+# Sequence Format Conversion (SFC)
 sfc: \
 emboss_seqret \
 readseq
@@ -462,8 +470,8 @@ ebeye_clean:
 # EMBOSS backtranambig
 emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail \
 emboss_backtranambig_dbid emboss_backtranambig_file emboss_backtranambig_stdin_stdout \
-emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout
-#TODO: multifasta
+emboss_backtranambig_id_list_file emboss_backtranambig_id_list_file_stdin_stdout \
+emboss_backtranambig_multifasta_file emboss_backtranambig_multifasta_file_stdin_stdout
 
 emboss_backtranambig_params:
 	${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --params
@@ -481,12 +489,16 @@ emboss_backtranambig_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranambig-blah.txt
 
 emboss_backtranambig_id_list_file: test_data
-	echo 'TODO:' $@
-	#${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+	${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 emboss_backtranambig_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
-	#cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+	cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+emboss_backtranambig_multifasta_file: test_data
+	${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_backtranambig_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} EmbossBacktranambigCliClient/bin/Release/EmbossBacktranambigCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_backtranambig-file.txt
 
 emboss_backtranambig_clean:
 	rm -f emboss_backtranambig-*
@@ -494,8 +506,8 @@ emboss_backtranambig_clean:
 # EMBOSS backtranseq
 emboss_backtranseq: emboss_backtranseq_params emboss_backtranseq_param_detail \
 emboss_backtranseq_dbid emboss_backtranseq_file emboss_backtranseq_stdin_stdout \
-emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout
-# TODO: multifasta
+emboss_backtranseq_id_list_file emboss_backtranseq_id_list_file_stdin_stdout \
+emboss_backtranseq_multifasta_file emboss_backtranseq_multifasta_file_stdin_stdout
 
 emboss_backtranseq_params:
 	${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --params
@@ -513,12 +525,16 @@ emboss_backtranseq_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_backtranseq-blah.txt
 
 emboss_backtranseq_id_list_file: test_data
-	echo 'TODO:' $@
-	#${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+	${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
 emboss_backtranseq_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
-	#cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+	cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > emboss_cbacktranseq-idlist.txt
+
+emboss_backtranseq_multifasta_file: test_data
+	${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_backtranseq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} EmbossBacktranseqCliClient/bin/Release/EmbossBacktranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_backtranseq-file.txt
 
 emboss_backtranseq_clean:
 	rm -f emboss_backtranseq-*
@@ -671,9 +687,9 @@ emboss_newcpgreport_clean:
 
 # EMBOSS pepinfo
 emboss_pepinfo: emboss_pepinfo_params emboss_pepinfo_param_detail \
-emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+emboss_pepinfo_dbid emboss_pepinfo_file emboss_pepinfo_stdin_stdout \
+emboss_pepinfo_id_list_file emboss_pepinfo_id_list_file_stdin_stdout \
+emboss_pepinfo_multifasta_file emboss_pepinfo_multifasta_file_stdin_stdout
 
 emboss_pepinfo_params:
 	${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --params
@@ -690,14 +706,26 @@ emboss_pepinfo_file: test_data
 emboss_pepinfo_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepinfo-blah.txt
 
+emboss_pepinfo_id_list_file: test_data
+	${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+emboss_pepinfo_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > emboss_pepinfo-idlist.txt
+
+emboss_pepinfo_multifasta_file: test_data
+	${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepinfo_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} EmbossPepinfoCliClient/bin/Release/EmbossPepinfoCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepinfo-file.txt
+
 emboss_pepinfo_clean:
 	rm -f emboss_pepinfo-*
 
 # EMBOSS pepstats
 emboss_pepstats: emboss_pepstats_params emboss_pepstats_param_detail \
-emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+emboss_pepstats_dbid emboss_pepstats_file emboss_pepstats_stdin_stdout \
+emboss_pepstats_id_list_file emboss_pepstats_id_list_file_stdin_stdout \
+emboss_pepstats_multifasta_file emboss_pepstats_multifasta_file_stdin_stdout
 
 emboss_pepstats_params:
 	${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --params
@@ -714,14 +742,26 @@ emboss_pepstats_file: test_data
 emboss_pepstats_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepstats-blah.txt
 
+emboss_pepstats_id_list_file: test_data
+	${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+emboss_pepstats_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > emboss_pepstats-idlist.txt
+
+emboss_pepstats_multifasta_file: test_data
+	${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepstats_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} EmbossPepstatsCliClient/bin/Release/EmbossPepstatsCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepstats-file.txt
+
 emboss_pepstats_clean:
 	rm -f emboss_pepstats-*
 
 # EMBOSS pepwindow
 emboss_pepwindow: emboss_pepwindow_params emboss_pepwindow_param_detail \
-emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+emboss_pepwindow_dbid emboss_pepwindow_file emboss_pepwindow_stdin_stdout \
+emboss_pepwindow_id_list_file emboss_pepwindow_id_list_file_stdin_stdout \
+emboss_pepwindow_multifasta_file emboss_pepwindow_multifasta_file_stdin_stdout
 
 emboss_pepwindow_params:
 	${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --params
@@ -738,6 +778,18 @@ emboss_pepwindow_file: test_data
 emboss_pepwindow_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_pepwindow-blah.txt
 
+emboss_pepwindow_id_list_file: test_data
+	${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+emboss_pepwindow_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > emboss_pepwindow-idlist.txt
+
+emboss_pepwindow_multifasta_file: test_data
+	${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+emboss_pepwindow_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} EmbossPepwindowCliClient/bin/Release/EmbossPepwindowCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_pepwindow-file.txt
+
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
 
@@ -750,9 +802,9 @@ emboss_seqret_clean:
 
 # EMBOSS sixpack
 emboss_sixpack: emboss_sixpack_params emboss_sixpack_param_detail \
-emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+emboss_sixpack_dbid emboss_sixpack_file emboss_sixpack_stdin_stdout \
+emboss_sixpack_id_list_file emboss_sixpack_id_list_file_stdin_stdout \
+emboss_sixpack_multifasta_file emboss_sixpack_multifasta_file_stdin_stdout
 
 emboss_sixpack_params:
 	${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --params
@@ -770,12 +822,16 @@ emboss_sixpack_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_sixpack-blah.txt
 
 emboss_sixpack_id_list_file: test_data
-	echo 'TODO:' $@
-	#${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
+	${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
 
 emboss_sixpack_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
-	#cat ../test_data/embl_id_list.txt | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+	cat ../test_data/embl_id_list.txt | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+emboss_sixpack_multifasta_file: test_data
+	${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_sixpack_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${MONO} EmbossSixpackCliClient/bin/Release/EmbossSixpackCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_sixpack-file.txt
 
 emboss_sixpack_clean:
 	rm -f emboss_sixpack-*
@@ -802,8 +858,8 @@ emboss_stretcher_clean:
 # EMBOSS transeq
 emboss_transeq: emboss_transeq_params emboss_transeq_param_detail \
 emboss_transeq_dbid emboss_transeq_file emboss_transeq_stdin_stdout \
-emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout
-# TODO: multifasta
+emboss_transeq_id_list_file emboss_transeq_id_list_file_stdin_stdout \
+emboss_transeq_multifasta_file emboss_transeq_multifasta_file_stdin_stdout
 
 emboss_transeq_params:
 	${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --params
@@ -821,12 +877,16 @@ emboss_transeq_stdin_stdout: test_data
 	cat ../test_data/EMBL_AB000204.fasta | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > emboss_transeq-blah.txt
 
 emboss_transeq_id_list_file: test_data
-	echo 'TODO:' $@
-	#${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
+	${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/embl_id_list.txt
 
 emboss_transeq_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
-	#cat ../test_data/embl_id_list.txt | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+	cat ../test_data/embl_id_list.txt | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+emboss_transeq_multifasta_file: test_data
+	${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_transeq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${MONO} EmbossTranseqCliClient/bin/Release/EmbossTranseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > emboss_transeq-file.txt
 
 emboss_transeq_clean:
 	rm -f emboss_transeq-*
@@ -889,6 +949,7 @@ fasta_clean:
 # FASTM
 fastm: fastm_params fastm_param_detail \
 fastm_file fastm_stdin_stdout
+# TODO: multifasta?
 
 fastm_params:
 	${MONO} FastmCliClient/bin/Release/FastmCliClient.exe --params
@@ -904,6 +965,61 @@ fastm_stdin_stdout: test_data
 
 fastm_clean:
 	rm -f fastm-*
+
+# TODO: FingerPRINTScan
+fingerprintscan: fingerprintscan_params fingerprintscan_param_detail \
+fingerprintscan_file fingerprintscan_dbid fingerprintscan_stdin_stdout \
+fingerprintscan_id_list_file fingerprintscan_id_list_file_stdin_stdout \
+fingerprintscan_multifasta_file fingerprintscan_multifasta_file_stdin_stdout
+
+fingerprintscan_params:
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --params
+
+fingerprintscan_param_detail:
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --paramDetail sequence
+
+fingerprintscan_file: test_data
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+fingerprintscan_dbid:
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+fingerprintscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > fingerprintscan-blah.txt
+
+fingerprintscan_id_list_file: test_data
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+fingerprintscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > fingerprintscan-idlist.txt
+
+fingerprintscan_multifasta_file: test_data
+	${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+fingerprintscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} FingerPRINTScanCliClient/bin/Release/FingerPRINTScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > fingerprintscan-file.txt
+
+fingerprintscan_clean:
+	rm -f fingerprintscan-*
+
+# TODO: GeneWise
+genewise: genewise_params genewise_param_detail \
+genewise_dbid genewise_file
+
+genewise_params:
+	${MONO} GeneWiseCliClient/bin/Release/GeneWiseCliClient.exe --params
+
+genewise_param_detail:
+	${MONO} GeneWiseCliClient/bin/Release/GeneWiseCliClient.exe --paramDetail init
+
+genewise_dbid:
+	${MONO} GeneWiseCliClient/bin/Release/GeneWiseCliClient.exe --email ${EMAIL} --asequence 'UNIPROT:WAP_RAT' --bsequence 'EMBL:L12345'
+
+genewise_file: test_data
+	${MONO} GeneWiseCliClient/bin/Release/GeneWiseCliClient.exe --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/EMBL_AB000204.fasta
+
+genewise_clean:
+	rm -f genewise-*
 
 # InterProScan
 iprscan: iprscan_params iprscan_param_detail \
@@ -1009,6 +1125,7 @@ mafft_clean:
 maxsprout: maxsprout_params maxsprout_param_detail \
 maxsprout_file maxsprout_pdbid
 # TODO: stdin/stdout
+# TODO: id list
 
 maxsprout_params:
 	${MONO} MaxsproutCliClient/bin/Release/MaxsproutCliClient.exe --params
@@ -1142,9 +1259,80 @@ prank:
 prank_clean:
 	rm -f prank-*
 
-# TODO: Pratt
+# Pratt
+pratt: pratt_params pratt_param_detail \
+pratt_file pratt_stdin_stdout
 
-# TODO: PROSITE Scan (ps_scan)
+pratt_params:
+	${MONO} PrattCliClient/bin/Release/PrattCliClient.exe --params
+
+pratt_param_detail:
+	${MONO} PrattCliClient/bin/Release/PrattCliClient.exe --paramDetail sequence
+
+pratt_file: test_data
+	${MONO} PrattCliClient/bin/Release/PrattCliClient.exe --email ${EMAIL} ../test_data/multi_prot.tfa
+
+pratt_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} PrattCliClient/bin/Release/PrattCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > pratt-blah.txt
+
+pratt_clean:
+	rm -f pratt-*
+
+# TODO: PromoterWise
+# promoterwise
+promoterwise: promoterwise_params promoterwise_param_detail \
+promoterwise_dbid promoterwise_file
+
+promoterwise_params:
+	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --params
+
+promoterwise_param_detail:
+	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --paramDetail matrix
+
+promoterwise_dbid:
+	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --email ${EMAIL} --asequence 'UNIPROT:WAP_RAT' --bsequence 'UNIPROT:WAP_MOUSE'
+
+promoterwise_file: test_data
+	${MONO} PromoterwiseCliClient/bin/Release/PromoterwiseCliClient.exe --email ${EMAIL} --asequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta --bsequence ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+promoterwise_clean:
+	rm -f promoterwise-*
+
+# PROSITE Scan (ps_scan)
+ps_scan: ps_scan_params ps_scan_param_detail \
+ps_scan_file ps_scan_dbid ps_scan_stdin_stdout \
+ps_scan_id_list_file ps_scan_id_list_file_stdin_stdout \
+ps_scan_multifasta_file ps_scan_multifasta_file_stdin_stdout
+
+ps_scan_params:
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --params
+
+ps_scan_param_detail:
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --paramDetail sequence
+
+ps_scan_file: test_data
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+ps_scan_dbid:
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+ps_scan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > ps_scan-blah.txt
+
+ps_scan_id_list_file: test_data
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+ps_scan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > ps_scan-idlist.txt
+
+ps_scan_multifasta_file: test_data
+	${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+ps_scan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} PsScanCliClient/bin/Release/PsScanCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > ps_scan-file.txt
+
+ps_scan_clean:
+	rm -f ps_scan-*
 
 # PSI-BLAST
 psiblast: psiblast_params psiblast_param_detail \
@@ -1168,16 +1356,16 @@ psiblast_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} PsiBlastCliClient/bin/Release/PsiBlastCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psiblast-blah.txt
 
 psiblast_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} PsiBlastCliClient/bin/Release/PsiBlastCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 psiblast_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} PsiBlastCliClient/bin/Release/PsiBlastCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @-
 
 psiblast_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} PsiBlastCliClient/bin/Release/PsiBlastCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 psiblast_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} PsiBlastCliClient/bin/Release/PsiBlastCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta -
 
 psiblast_clean:
 	rm -f psiblast-*
@@ -1204,25 +1392,25 @@ psisearch_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} PsiSearchCliClient/bin/Release/PsiSearchCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --quiet --outformat out --outfile - - > psisearch-blah.txt
 
 psisearch_id_list_file: test_data
-	echo 'TODO:' $@
+	${MONO} PsiSearchCliClient/bin/Release/PsiSearchCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @../test_data/uniprot_id_list.txt
 
 psisearch_id_list_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/uniprot_id_list.txt | ${MONO} PsiSearchCliClient/bin/Release/PsiSearchCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - @-
 
 psisearch_multifasta_file: test_data
-	echo 'TODO:' $@
+	${MONO} PsiSearchCliClient/bin/Release/PsiSearchCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta ../test_data/multi_prot.tfa
 
 psisearch_multifasta_file_stdin_stdout: test_data
-	echo 'TODO:' $@
+	cat ../test_data/multi_prot.tfa | ${MONO} PsiSearchCliClient/bin/Release/PsiSearchCliClient.exe --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --outformat ids --outfile - --multifasta -
 
 psisearch_clean:
 	rm -f psisearch-*
 
 # Radar
 radar: radar_params radar_param_detail \
-radar_file radar_dbid radar_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+radar_file radar_dbid radar_stdin_stdout \
+radar_id_list_file radar_id_list_file_stdin_stdout \
+radar_multifasta_file radar_multifasta_file_stdin_stdout
 
 radar_params:
 	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --params
@@ -1239,6 +1427,18 @@ radar_dbid:
 radar_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > radar-blah.txt
 
+radar_id_list_file: test_data
+	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+radar_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+radar_multifasta_file: test_data
+	${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+radar_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} RadarCliClient/bin/Release/RadarCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
+
 radar_clean:
 	rm -f radar-*
 
@@ -1251,9 +1451,9 @@ readseq_clean:
 
 # SAPS
 saps: saps_params saps_param_detail \
-saps_dbid saps_file saps_stdin_stdout
-# TODO: id list
-# TODO: multifasta
+saps_dbid saps_file saps_stdin_stdout \
+saps_id_list_file saps_id_list_file_stdin_stdout \
+saps_multifasta_file saps_multifasta_file_stdin_stdout
 
 saps_params:
 	${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --params
@@ -1269,6 +1469,18 @@ saps_file: test_data
 
 saps_stdin_stdout: test_data
 	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > saps-blah.txt
+
+saps_id_list_file: test_data
+	${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+saps_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --email ${EMAIL} --outformat out --outfile - @- > saps-idlist.txt
+
+saps_multifasta_file: test_data
+	${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+saps_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} SapsCliClient/bin/Release/SapsCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta - > saps-file.txt
 
 saps_clean:
 	rm -f saps-*
@@ -1327,6 +1539,31 @@ tcoffee_stdin_stdout: test_data
 
 tcoffee_clean:
 	rm -f tcoffee-*
+
+# Wise2DBA
+wise2dba: wise2dba_params wise2dba_param_detail \
+wise2dba_dbid wise2dba_file
+
+wise2dba_params:
+	${MONO} Wise2DBACliClient/bin/Release/Wise2DBACliClient.exe --params
+
+wise2dba_param_detail:
+	${MONO} Wise2DBACliClient/bin/Release/Wise2DBACliClient.exe --paramDetail asequence
+
+wise2dba_dbid:
+	${MONO} Wise2DBACliClient/bin/Release/Wise2DBACliClient.exe --email ${EMAIL} --asequence 'EMBL:L12344' --bsequence 'EMBL:L12345'
+
+wise2dba_file: test_data
+	${MONO} Wise2DBACliClient/bin/Release/Wise2DBACliClient.exe --email ${EMAIL} --asequence ../test_data/EMBL_AB000204.fasta --bsequence ../test_data/EMBL_AB000204.fasta
+
+wise2dba_clean:
+	rm -f wise2dba-*
+
+
+# WSDbfetch (see dbfetch)
+wsdbfetch: dbfetch
+
+wsdbfetch_clean: dbfetch_clean
 
 # WU-BLAST
 wublast: wublast_params wublast_param_detail \

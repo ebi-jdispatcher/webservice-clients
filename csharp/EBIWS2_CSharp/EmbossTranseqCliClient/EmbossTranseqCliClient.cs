@@ -75,7 +75,7 @@ Translate nucleic acid sequences.
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -232,6 +232,11 @@ Translate nucleic acid sequences.
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+					case "--multifasta": // Multiple sequence input (fasta format)
+						this.multifasta = true;
+						break;
+					case "/multifasta":
+						goto case "--multifasta";
 
 						// Tool specific options
 				case "--frame": // Frames to be translated
@@ -287,7 +292,7 @@ Translate nucleic acid sequences.
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}

@@ -251,7 +251,7 @@ For more information see:
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
-					case "--multifasta":
+					case "--multifasta": // Multiple sequence input (fasta format)
 						this.multifasta = true;
 						break;
 					case "/multifasta":

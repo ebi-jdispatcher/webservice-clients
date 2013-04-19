@@ -82,7 +82,7 @@ Global pairwise sequence alignment using EMBOSS sixpack.
 						wsApp.PrintParamDetail(wsApp.ParamName);
 						break;
 					case "submit": // Submit a job
-						wsApp.SubmitJob();
+						wsApp.SubmitJobs();
 						break;
 					case "status": // Get job status
 						wsApp.PrintStatus();
@@ -239,6 +239,11 @@ Global pairwise sequence alignment using EMBOSS sixpack.
 						break;
 					case "/endpoint":
 						goto case "--endpoint";
+					case "--multifasta": // Multiple sequence input (fasta format)
+						this.multifasta = true;
+						break;
+					case "/multifasta":
+						goto case "--multifasta";
   
 						// Tool specific options
 				case "--codontable": // Codon table
@@ -301,7 +306,7 @@ Global pairwise sequence alignment using EMBOSS sixpack.
 							return;
 						}
 						// Must be data argument
-						InParams.sequence = LoadData(args[i]);
+						InParams.sequence = args[i];
 						Action = "submit";
 						break;
 				}

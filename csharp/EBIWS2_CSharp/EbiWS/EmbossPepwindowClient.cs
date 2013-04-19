@@ -47,6 +47,8 @@ namespace EbiWS
 			set { inParams = value; }
 		}
 		private InputParameters inParams = null;
+		/// <summary>Multiple fasta formatted sequences as input.</summary>
+		protected Boolean multifasta = false;
 		// Client object revision.
 		private string revision = "$Revision: 2065 $";
 		
@@ -145,6 +147,38 @@ namespace EbiWS
 				}
 			}
 			PrintDebugMessage("PrintParamDetail", "End", 1);
+		}
+
+		/// <summary>Submit job(s) to the service.</summary>
+		protected void SubmitJobs() {
+			PrintDebugMessage("SubmitJobs", "Begin", 1);
+			// Three modes...
+			// 1. Multiple fasta sequence input.
+			if(this.multifasta) {
+				SetSequenceFile(InParams.sequence);
+				string inSeq = null;
+				while((inSeq = NextSequence()) != null) {
+					InParams.sequence = inSeq;
+					SubmitJob();
+				}
+				CloseSequenceFile();
+			}
+			// 2. Entry identifier list input.
+			else if(InParams.sequence.StartsWith("@")) {
+				SetIdentifierFile(InParams.sequence.Substring(1));
+				string inId = null;
+				while((inId = NextIdentifier()) != null) {
+					InParams.sequence = inId;
+					SubmitJob();
+				}
+				CloseIdentifierFile();
+			}
+			// 3. Simple sequence input.
+			else {
+				InParams.sequence = LoadData(InParams.sequence);
+				SubmitJob();
+			}
+			PrintDebugMessage("SubmitJobs", "End", 1);
 		}
 
 		// Implementation of abstract method (AbsractWsClient.SubmitJob()).
