@@ -21,8 +21,8 @@
 #
 # ======================================================================
 
-MERGE = $$HOME/bin/monomerge.exe
-#MERGE = mono /ebi/extserv/bin/monomerge/mono-merge.exe
+#MERGE = $$HOME/bin/monomerge.exe
+MERGE = mono /ebi/extserv/bin/monomerge/mono-merge.exe
 
 projectDir =  ../EBIWS2_CSharp
 
@@ -45,6 +45,7 @@ EmbossNewcpgreportCliClient.exe \
 EmbossPepinfoCliClient.exe \
 EmbossPepstatsCliClient.exe \
 EmbossPepwindowCliClient.exe \
+EmbossSeqretCliClient.exe \
 EmbossSixpackCliClient.exe \
 EmbossStretcherCliClient.exe \
 EmbossTranseqCliClient.exe \
@@ -53,10 +54,13 @@ FastaCliClient.exe \
 FastmCliClient.exe \
 FingerPRINTScanCliClient.exe \
 GeneWiseCliClient.exe \
+HmmerHmmscanCliClient.exe \
+IPRScan5CliClient.exe \
 IPRScanCliClient.exe \
 KalignCliClient.exe \
 LalignCliClient.exe \
 MafftCliClient.exe \
+MapMiCliClient.exe \
 MaxsproutCliClient.exe \
 MuscleCliClient.exe \
 MViewCliClient.exe \
@@ -68,6 +72,7 @@ PsiBlastCliClient.exe \
 PsiSearchCliClient.exe \
 PsScanCliClient.exe \
 RadarCliClient.exe \
+ReadseqCliClient.exe \
 SapsCliClient.exe \
 SeqCksumCliClient.exe \
 TcoffeeCliClient.exe \
@@ -147,6 +152,10 @@ EmbossPepwindowCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossPepwindowCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
+EmbossSeqretCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/EmbossSeqretCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 EmbossSixpackCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/EmbossSixpackCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
@@ -179,6 +188,14 @@ GeneWiseCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/GeneWiseCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 	
+HmmerHmmscanCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/HmmerHmmscanCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+IPRScan5CliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/IPRScan5CliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
 IPRScanCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/IPRScanCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
@@ -193,6 +210,10 @@ LalignCliClient.exe: EbiWS.dll
 
 MafftCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/MafftCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+MapMiCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/MapMiCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 MaxsproutCliClient.exe: EbiWS.dll
@@ -237,6 +258,10 @@ PsScanCliClient.exe: EbiWS.dll
 
 RadarCliClient.exe: EbiWS.dll
 	${MERGE} -out $@ ${projectDir}/RadarCliClient/bin/Release/$@ EbiWS.dll
+	chmod +x $@
+
+ReadseqCliClient.exe: EbiWS.dll
+	${MERGE} -out $@ ${projectDir}/ReadseqCliClient/bin/Release/$@ EbiWS.dll
 	chmod +x $@
 
 SapsCliClient.exe: EbiWS.dll
