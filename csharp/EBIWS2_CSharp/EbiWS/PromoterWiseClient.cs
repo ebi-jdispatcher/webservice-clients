@@ -1,4 +1,4 @@
-/* $Id: PromoterWiseClient.cs 2006 2011-09-01 13:51:24Z hpm $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2012-2013 EMBL - European Bioinformatics Institute
@@ -48,7 +48,7 @@ namespace EbiWS
 		}
 		private InputParameters inParams = null;
 		// Client object revision.
-		private string revision = "$Revision: 2006 $";
+		private string revision = "$Revision$";
 		
 		// Default constructor. Required for abstract class constructor.
 		public PromoterWiseClient()

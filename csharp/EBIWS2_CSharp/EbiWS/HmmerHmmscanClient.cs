@@ -50,7 +50,7 @@ namespace EbiWS
 		/// <summary>Multiple fasta formatted sequences as input.</summary>
 		protected Boolean multifasta = false;
 		// Client object revision.
-		private string revision = "$Revision: 2606 $";
+		private string revision = "$Revision$";
 		
 		// Default constructor. Required for abstract class constructor.
 		public HmmerHmmscanClient()

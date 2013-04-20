@@ -72,6 +72,7 @@
     <Compile Include="WebReferences\EmbossPepstatsWs\Reference.cs" />
     <Compile Include="EmbossPepwindowClient.cs" />
     <Compile Include="WebReferences\EmbossPepwindowWs\Reference.cs" />
+    <Compile Include="EmbossSeqretClient.cs" />
     <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
     <Compile Include="EmbossSixpackClient.cs" />
     <Compile Include="WebReferences\EmbossSixpackWs\Reference.cs" />
@@ -89,7 +90,9 @@
     <Compile Include="WebReferences\FingerPRINTScanWs\Reference.cs" />
     <Compile Include="GeneWiseClient.cs" />
     <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
+    <Compile Include="HmmerHmmscanClient.cs" />
     <Compile Include="WebReferences\HmmerHmmscanWs\Reference.cs" />
+    <Compile Include="IPRScan5Client.cs" />
     <Compile Include="WebReferences\IPRScan5Ws\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="WebReferences\LalignWs\Reference.cs" />
     <Compile Include="MafftClient.cs" />
     <Compile Include="WebReferences\MafftWs\Reference.cs" />
+    <Compile Include="MapMiClient.cs" />
     <Compile Include="WebReferences\MapMiWs\Reference.cs" />
     <Compile Include="MaxsproutClient.cs" />
     <Compile Include="WebReferences\MaxsproutWs\Reference.cs" />
@@ -123,6 +127,7 @@
     <Compile Include="WebReferences\PsScanWs\Reference.cs" />
     <Compile Include="RadarClient.cs" />
     <Compile Include="WebReferences\RadarWs\Reference.cs" />
+    <Compile Include="ReadseqClient.cs" />
     <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
     <Compile Include="SapsClient.cs" />
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
@@ -136,11 +141,6 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
-    <Compile Include="EmbossSeqretClient.cs" />
-    <Compile Include="IPRScan5Client.cs" />
-    <Compile Include="MapMiClient.cs" />
-    <Compile Include="ReadseqClient.cs" />
-    <Compile Include="HmmerHmmscanClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

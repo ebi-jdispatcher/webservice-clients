@@ -1,4 +1,4 @@
-/* $Id: RadarCliClient.cs 1899 2011-06-29 13:13:46Z wli $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2012-2013 EMBL - European Bioinformatics Institute

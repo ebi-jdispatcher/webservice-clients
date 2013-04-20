@@ -1,4 +1,4 @@
-/* $Id: ClustalW2CliClient.cs 1597 2010-09-25 08:08:23Z hpm $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2011-2013 EMBL - European Bioinformatics Institute

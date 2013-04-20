@@ -1,4 +1,4 @@
-/* $Id: SapsClient.cs 2006 2011-09-01 13:51:24Z hpm $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2012-2013 EMBL - European Bioinformatics Institute

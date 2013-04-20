@@ -1,4 +1,4 @@
-/* $Id: AssemblyInfo.cs 2509 2013-02-05 14:36:14Z hpm $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2009-2013 EMBL - European Bioinformatics Institute

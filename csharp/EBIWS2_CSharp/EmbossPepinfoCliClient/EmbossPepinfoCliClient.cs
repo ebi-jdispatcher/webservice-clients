@@ -1,4 +1,4 @@
-/* $Id: EmbossPepinfoCliClient.cs 2064 2011-12-09 11:35:01Z wli $
+/* $Id$
  * ======================================================================
  * 
  * Copyright 2012-2013 EMBL - European Bioinformatics Institute
