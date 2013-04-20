@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -23,6 +23,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AssemblyName>EbiWS</AssemblyName>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -34,6 +36,10 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AssemblyName>EbiWS</AssemblyName>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
@@ -89,6 +95,8 @@
     <Compile Include="WebReferences\FingerPRINTScanWs\Reference.cs" />
     <Compile Include="GeneWiseClient.cs" />
     <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
+    <Compile Include="WebReferences\HmmerHmmscanWs\Reference.cs" />
+    <Compile Include="WebReferences\IPRScan5Ws\Reference.cs" />
     <Compile Include="IPRScanClient.cs" />
     <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
     <Compile Include="KalignClient.cs" />
@@ -97,6 +105,7 @@
     <Compile Include="WebReferences\LalignWs\Reference.cs" />
     <Compile Include="MafftClient.cs" />
     <Compile Include="WebReferences\MafftWs\Reference.cs" />
+    <Compile Include="WebReferences\MapMiWs\Reference.cs" />
     <Compile Include="MaxsproutClient.cs" />
     <Compile Include="WebReferences\MaxsproutWs\Reference.cs" />
     <Compile Include="MuscleClient.cs" />
@@ -162,10 +171,13 @@
     <None Include="WebReferences\FastmWs\Reference.map" />
     <None Include="WebReferences\FingerPRINTScanWs\Reference.map" />
     <None Include="WebReferences\GeneWiseWs\Reference.map" />
+    <None Include="WebReferences\HmmerHmmscanWs\Reference.map" />
+    <None Include="WebReferences\IPRScan5Ws\Reference.map" />
     <None Include="WebReferences\IPRScanWs\Reference.map" />
     <None Include="WebReferences\KalignWs\Reference.map" />
     <None Include="WebReferences\LalignWs\Reference.map" />
     <None Include="WebReferences\MafftWs\Reference.map" />
+    <None Include="WebReferences\MapMiWs\Reference.map" />
     <None Include="WebReferences\MaxsproutWs\Reference.map" />
     <None Include="WebReferences\MuscleWs\Reference.map" />
     <None Include="WebReferences\MViewWs\Reference.map" />
