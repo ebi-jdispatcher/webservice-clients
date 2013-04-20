@@ -131,6 +131,7 @@ $(STUBSRCDIR)\EmbossWaterWs\Reference.cs \
 $(STUBSRCDIR)\FastaWs\Reference.cs \
 $(STUBSRCDIR)\FastmWs\Reference.cs \
 $(STUBSRCDIR)\FingerPRINTScanWs\Reference.cs \
+$(STUBSRCDIR)\GeneWiseWs\Reference.cs \
 $(STUBSRCDIR)\HmmerHmmscanWs\Reference.cs \
 $(STUBSRCDIR)\IPRScan5Ws\Reference.cs \
 $(STUBSRCDIR)\IPRScanWs\Reference.cs \
