@@ -100,11 +100,11 @@ GetOptions(
 	'outputcase=s'   => \$tool_params{'outputcase'}, # Case of output sequence.
 	'reverse'        => \$params{'reverse'}, # Reverse-complement nucleotide sequence.
 	'noreverse'      => \$params{'noreverse'}, # Don't reverse-complement sequence.
-	'degap'          => \$tool_params{'degap'}, # Symbols to remove from sequence.
-	'transymbol'     => \$tool_params{'transymbol'}, # tr symbol pairs.
-	'feature'        => \$params{'feature'}, # List of features to select.
-	'fthandle'       => \$params{'fthandle'}, # Action to perform on features.
-	'subrange'      => \$params{'subrange'}, # Region in which to perform feature processing.
+	'degap=s'        => \$tool_params{'degap'}, # Symbols to remove from sequence.
+	'transymbol=s'   => \$tool_params{'transymbol'}, # tr symbol pairs.
+	'feature=s'      => \$params{'feature'}, # List of features to select.
+	'fthandle=s'     => \$tool_params{'fthandle'}, # Action to perform on features.
+	'subrange=s'     => \$tool_params{'subrange'}, # Region in which to perform feature processing.
 	'sequence=s'     => \$params{'sequence'},        # Input sequence data.
 	'multifasta'     => \$params{'multifasta'}, # Multiple fasta sequence input.
 	
