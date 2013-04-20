@@ -127,10 +127,13 @@ $(STUBSRCDIR)/FastaWs/Reference.cs \
 $(STUBSRCDIR)/FastmWs/Reference.cs \
 $(STUBSRCDIR)/FingerPRINTScanWs/Reference.cs \
 $(STUBSRCDIR)/GeneWiseWs/Reference.cs \
+$(STUBSRCDIR)/HmmerHmmscanWs/Reference.cs \
+$(STUBSRCDIR)/IPRScan5Ws/Reference.cs \
 $(STUBSRCDIR)/IPRScanWs/Reference.cs \
 $(STUBSRCDIR)/KalignWs/Reference.cs \
 $(STUBSRCDIR)/LalignWs/Reference.cs \
 $(STUBSRCDIR)/MafftWs/Reference.cs \
+$(STUBSRCDIR)/MapMiWs/Reference.cs \
 $(STUBSRCDIR)/MaxsproutWs/Reference.cs \
 $(STUBSRCDIR)/MuscleWs/Reference.cs \
 $(STUBSRCDIR)/MViewWs/Reference.cs \
@@ -252,6 +255,12 @@ $(STUBSRCDIR)/FingerPRINTScanWs/Reference.cs:
 $(STUBSRCDIR)/GeneWiseWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).GeneWiseWs -out:$@ "$(WSDLBASE)/genewise?wsdl"
 
+$(STUBSRCDIR)/HmmerHmmscanWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).HmmerHmmscanWs -out:$@ "$(WSDLBASE)/hmmer_hmmscan?wsdl"
+
+$(STUBSRCDIR)/IPRScan5Ws/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScan5Ws -out:$@ "$(WSDLBASE)/iprscan5?wsdl"
+
 $(STUBSRCDIR)/IPRScanWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScanWs -out:$@ "$(WSDLBASE)/iprscan?wsdl"
 
@@ -263,6 +272,9 @@ $(STUBSRCDIR)/LalignWs/Reference.cs:
 
 $(STUBSRCDIR)/MafftWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).MafftWs -out:$@ "$(WSDLBASE)/mafft?wsdl"
+
+$(STUBSRCDIR)/MapMiWs/Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MapMiWs -out:$@ "$(WSDLBASE)/mapmi?wsdl"
 
 $(STUBSRCDIR)/MaxsproutWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).MaxsproutWs -out:$@ "$(WSDLBASE)/maxsprout?wsdl"
