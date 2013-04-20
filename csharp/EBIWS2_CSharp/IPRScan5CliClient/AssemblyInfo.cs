@@ -23,8 +23,8 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("PsScanCliClient")]
-[assembly: AssemblyDescription("Sample command-line client for the ps_scan (SOAP) Web Service")]
+[assembly: AssemblyTitle("IPRScan5CliClient")]
+[assembly: AssemblyDescription("Sample command-line client for the InterProScan 5 (SOAP) Web Service")]
 #if (DEBUG)
 [assembly: AssemblyConfiguration("Debug")]
 #else
@@ -45,5 +45,5 @@ using System.Runtime.CompilerServices;
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.
 
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
+//[assembly: AssemblyDelaySign(false)]
+//[assembly: AssemblyKeyFile("")]

@@ -42,6 +42,7 @@ msa \
 pfa \
 phylogeny \
 psa \
+rna \
 sfc \
 so \
 sss \
@@ -56,6 +57,7 @@ msa_clean \
 pfa_clean \
 phylogeny_clean \
 psa_clean \
+rna_clean \
 sfc_clean \
 so_clean \
 sss_clean \
@@ -89,6 +91,7 @@ tcoffee_clean
 # Protein Function Analysis (PFA)
 pfa: \
 fingerprintscan \
+hmmer_hmmscan \
 iprscan \
 iprscan5 \
 phobius \
@@ -98,6 +101,7 @@ radar
 
 pfa_clean: \
 fingerprintscan_clean \
+hmmer_hmmscan_clean \
 iprscan_clean \
 iprscan5_clean \
 phobius_clean \
@@ -132,6 +136,13 @@ genewise_clean \
 lalign_clean \
 promoterwise_clean \
 wise2dba_clean
+
+# RNA tools
+rna: \
+mapmi
+
+rna_clean: \
+mapmi_clean
 
 # Sequence Statistics
 seqstats: \
@@ -793,9 +804,38 @@ emboss_pepwindow_multifasta_file_stdin_stdout: test_data
 emboss_pepwindow_clean:
 	rm -f emboss_pepwindow-*
 
-# TODO: EMBOSS seqret
-emboss_seqret:
-	echo 'TODO:' $@
+# EMBOSS seqret
+emboss_seqret: emboss_seqret_params emboss_seqret_param_detail \
+emboss_seqret_dbid emboss_seqret_file emboss_seqret_stdin_stdout \
+emboss_seqret_id_list_file emboss_seqret_id_list_file_stdin_stdout \
+emboss_seqret_multifasta_file emboss_seqret_multifasta_file_stdin_stdout
+
+emboss_seqret_params:
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --params
+
+emboss_seqret_param_detail:
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --paramDetail stype
+
+emboss_seqret_dbid:
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --sequence 'EMBL:L12345'
+
+emboss_seqret_file: test_data
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --sequence ../test_data/EMBL_AB000204.fasta
+
+emboss_seqret_stdin_stdout: test_data
+	cat ../test_data/EMBL_AB000204.fasta | ${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --quiet --outformat out --outfile - - > emboss_seqret-blah.txt
+
+emboss_seqret_id_list_file: test_data
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --outformat out --outfile - @../test_data/embl_id_list.txt
+
+emboss_seqret_id_list_file_stdin_stdout: test_data
+	cat ../test_data/embl_id_list.txt | ${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --outformat out --outfile - @-
+
+emboss_seqret_multifasta_file: test_data
+	${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --outformat out --outfile - --multifasta ../test_data/multi_nuc.tfa
+
+emboss_seqret_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_nuc.tfa | ${MONO} EmbossSeqretCliClient/bin/Release/EmbossSeqretCliClient.exe --email ${EMAIL} --stype dna --outformat out --outfile - --multifasta - > emboss_seqret-file.txt
 
 emboss_seqret_clean:
 	rm -f emboss_seqret-*
@@ -1021,6 +1061,42 @@ genewise_file: test_data
 genewise_clean:
 	rm -f genewise-*
 
+# HMMER hmmscan
+hmmer_hmmscan: hmmer_hmmscan_params hmmer_hmmscan_param_detail \
+hmmer_hmmscan_file hmmer_hmmscan_dbid hmmer_hmmscan_stdin_stdout \
+hmmer_hmmscan_id_list_file hmmer_hmmscan_id_list_file_stdin_stdout \
+hmmer_hmmscan_multifasta_file hmmer_hmmscan_multifasta_file_stdin_stdout
+
+hmmer_hmmscan_params:
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --params
+
+hmmer_hmmscan_param_detail:
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --paramDetail database
+
+hmmer_hmmscan_file: test_data
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+hmmer_hmmscan_dbid:
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a 'UNIPROT:ABCC9_HUMAN'
+
+hmmer_hmmscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a --quiet --outformat out --outfile - - > hmmer_hmmscan-blah.txt
+
+hmmer_hmmscan_id_list_file: test_data
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+hmmer_hmmscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a --outformat out --outfile - @-
+
+hmmer_hmmscan_multifasta_file: test_data
+	${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+hmmer_hmmscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} HmmerHmmscanCliClient/bin/Release/HmmerHmmscanCliClient.exe --email ${EMAIL} --database pfam-a --outformat out --outfile - --multifasta -
+
+hmmer_hmmscan_clean:
+	rm -f hmmer_hmmscan-*
+
 # InterProScan
 iprscan: iprscan_params iprscan_param_detail \
 iprscan_file iprscan_dbid iprscan_stdin_stdout \
@@ -1058,8 +1134,37 @@ iprscan_clean:
 	rm -f iprscan-*
 
 # TODO: InterProScan 5
-iprscan5:
-	echo 'TODO:' $@
+iprscan5: iprscan5_params iprscan5_param_detail \
+iprscan5_file iprscan5_dbid iprscan5_stdin_stdout \
+iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout \
+iprscan5_multifasta_file iprscan5_multifasta_file_stdin_stdout
+
+iprscan5_params:
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --params
+
+iprscan5_param_detail:
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --paramDetail appl
+
+iprscan5_file: test_data
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+iprscan5_dbid:
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+iprscan5_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan5-blah.txt
+
+iprscan5_id_list_file: test_data
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+iprscan5_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+iprscan5_multifasta_file: test_data
+	${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+iprscan5_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} IPRScan5CliClient/bin/Release/IPRScan5CliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
 
 iprscan5_clean:
 	rm -f iprscan5-*
@@ -1120,6 +1225,13 @@ mafft_stdin_stdout: test_data
 
 mafft_clean:
 	rm -f mafft-*
+
+# TODO: MapMi
+mapmi:
+	echo 'TODO:' $@
+
+mapmi_clean:
+	rm -f mapmi-*
 
 # MaxSprout
 maxsprout: maxsprout_params maxsprout_param_detail \
@@ -1442,8 +1554,37 @@ radar_clean:
 	rm -f radar-*
 
 # TODO: Readseq
-readseq:
-	echo 'TODO:' $@
+readseq: readseq_params readseq_param_detail \
+readseq_file readseq_dbid readseq_stdin_stdout \
+readseq_id_list_file readseq_id_list_file_stdin_stdout \
+readseq_multifasta_file readseq_multifasta_file_stdin_stdout
+
+readseq_params:
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --params
+
+readseq_param_detail:
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --paramDetail sequence
+
+readseq_file: test_data
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+readseq_dbid:
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+readseq_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} --quiet --outformat out --outfile - - > readseq-blah.txt
+
+readseq_id_list_file: test_data
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+readseq_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} --outformat out --outfile - @-
+
+readseq_multifasta_file: test_data
+	${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta ../test_data/multi_prot.tfa
+
+readseq_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${MONO} ReadseqCliClient/bin/Release/ReadseqCliClient.exe --email ${EMAIL} --outformat out --outfile - --multifasta -
 
 readseq_clean:
 	rm -f readseq-*

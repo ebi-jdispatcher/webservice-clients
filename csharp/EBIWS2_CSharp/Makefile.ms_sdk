@@ -41,6 +41,7 @@ EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
 EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe \
 EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe \
 EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe \
+EmbossSeqretCliClient\bin\Release\EmbossSeqretCliClient.exe \
 EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
 EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
 EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
@@ -49,10 +50,13 @@ FastaCliClient\bin\Release\FastaCliClient.exe \
 FastmCliClient\bin\Release\FastmCliClient.exe \
 FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe \
 GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe \
+HmmerHmmscanCliClient\bin\Release\HmmerHmmscanCliClient.exe \
+IPRScan5CliClient\bin\Release\IPRScan5CliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 KalignCliClient\bin\Release\KalignCliClient.exe \
 LalignCliClient\bin\Release\LalignCliClient.exe \
 MafftCliClient\bin\Release\MafftCliClient.exe \
+MapMiCliClient\bin\Release\MapMiCliClient.exe \
 MaxsproutCliClient\bin\Release\MaxsproutCliClient.exe \
 MuscleCliClient\bin\Release\MuscleCliClient.exe \
 MViewCliClient\bin\Release\MViewCliClient.exe \
@@ -64,6 +68,7 @@ PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
 PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
 PsScanCliClient\bin\Release\PsScanCliClient.exe \
 RadarCliClient\bin\Release\RadarCliClient.exe \
+ReadseqCliClient\bin\Release\ReadseqCliClient.exe \
 SapsCliClient\bin\Release\SapsCliClient.exe \
 SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe \
 TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
@@ -110,6 +115,9 @@ EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe: EbiWS\bin\Release\E
 EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk
 
+EmbossSeqretCliClient\bin\Release\EmbossSeqretCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk
+
 EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -140,6 +148,12 @@ FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe: EbiWS\bin\Rel
 GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk
 
+HmmerHmmscanCliClient\bin\Release\HmmerHmmscanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk
+
+IPRScan5CliClient\bin\Release\IPRScan5CliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk
+
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk
 
@@ -151,6 +165,9 @@ LalignCliClient\bin\Release\LalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 MafftCliClient\bin\Release\MafftCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MapMiCliClient\bin\Release\MapMiCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk
 
 MaxsproutCliClient\bin\Release\MaxsproutCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -184,6 +201,9 @@ PsScanCliClient\bin\Release\PsScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 RadarCliClient\bin\Release\RadarCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk
+
+ReadseqCliClient\bin\Release\ReadseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk
 
 SapsCliClient\bin\Release\SapsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -219,6 +239,7 @@ clean:
 	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -227,10 +248,13 @@ clean:
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -242,6 +266,7 @@ clean:
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -265,6 +290,7 @@ distclean:
 	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
@@ -273,10 +299,13 @@ distclean:
 	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
@@ -288,6 +317,7 @@ distclean:
 	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean

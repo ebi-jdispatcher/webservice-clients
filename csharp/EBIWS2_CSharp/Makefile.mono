@@ -43,6 +43,7 @@ build-EmbossNewcpgreportCliClient \
 build-EmbossPepinfoCliClient \
 build-EmbossPepstatsCliClient \
 build-EmbossPepwindowCliClient \
+build-EmbossSeqretCliClient \
 build-EmbossSixpackCliClient \
 build-EmbossStretcherCliClient \
 build-EmbossTranseqCliClient \
@@ -51,10 +52,13 @@ build-FastaCliClient \
 build-FastmCliClient \
 build-FingerPRINTScanCliClient \
 build-GeneWiseCliClient \
+build-HmmerHmmscanCliClient \
+build-IPRScan5CliClient \
 build-IPRScanCliClient \
 build-KalignCliClient \
 build-LalignCliClient \
 build-MafftCliClient \
+build-MapMiCliClient \
 build-MaxsproutCliClient \
 build-MuscleCliClient \
 build-MViewCliClient \
@@ -66,6 +70,7 @@ build-PsiBlastCliClient \
 build-PsiSearchCliClient \
 build-PsScanCliClient \
 build-RadarCliClient \
+build-ReadseqCliClient \
 build-SapsCliClient \
 build-SeqCksumCliClient \
 build-TcoffeeCliClient \
@@ -130,6 +135,9 @@ build-EmbossPepwindowCliClient: build-EbiWS
 build-EmbossStretcherCliClient: build-EbiWS
 	cd EmbossStretcherCliClient && $(MAKE) -f Makefile.mono
 
+build-EmbossSeqretCliClient: build-EbiWS
+	cd EmbossSeqretCliClient && $(MAKE) -f Makefile.mono
+
 build-EmbossSixpackCliClient: build-EbiWS
 	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono
 
@@ -151,6 +159,12 @@ build-FingerPRINTScanCliClient: build-EbiWS
 build-GeneWiseCliClient: build-EbiWS
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono
 
+build-HmmerHmmscanCliClient: build-EbiWS
+	cd HmmerHmmscanCliClient && $(MAKE) -f Makefile.mono
+
+build-IPRScan5CliClient: build-EbiWS
+	cd IPRScan5CliClient && $(MAKE) -f Makefile.mono
+
 build-IPRScanCliClient: build-EbiWS
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono
 
@@ -162,6 +176,9 @@ build-LalignCliClient: build-EbiWS
 
 build-MafftCliClient: build-EbiWS
 	cd MafftCliClient && $(MAKE) -f Makefile.mono
+
+build-MapMiCliClient: build-EbiWS
+	cd MapMiCliClient && $(MAKE) -f Makefile.mono
 
 build-MaxsproutCliClient: build-EbiWS
 	cd MaxsproutCliClient && $(MAKE) -f Makefile.mono
@@ -195,6 +212,9 @@ build-PsScanCliClient: build-EbiWS
 
 build-RadarCliClient: build-EbiWS
 	cd RadarCliClient && $(MAKE) -f Makefile.mono
+
+build-ReadseqCliClient: build-EbiWS
+	cd ReadseqCliClient && $(MAKE) -f Makefile.mono
 
 build-SapsCliClient: build-EbiWS
 	cd SapsCliClient && $(MAKE) -f Makefile.mono
@@ -234,6 +254,7 @@ clean-EmbossNewcpgreportCliClient \
 clean-EmbossPepinfoCliClient \
 clean-EmbossPepstatsCliClient \
 clean-EmbossPepwindowCliClient \
+clean-EmbossSeqretCliClient \
 clean-EmbossSixpackCliClient \
 clean-EmbossStretcherCliClient \
 clean-EmbossTranseqCliClient \
@@ -242,10 +263,13 @@ clean-FastaCliClient \
 clean-FastmCliClient \
 clean-FingerPRINTScanCliClient \
 clean-GeneWiseCliClient \
+clean-HmmerHmmscanCliClient \
+clean-IPRScan5CliClient \
 clean-IPRScanCliClient \
 clean-KalignCliClient \
 clean-LalignCliClient \
 clean-MafftCliClient \
+clean-MapMiCliClient \
 clean-MaxsproutCliClient \
 clean-MuscleCliClient \
 clean-MViewCliClient \
@@ -257,6 +281,7 @@ clean-PsiBlastCliClient \
 clean-PsiSearchCliClient \
 clean-PsScanCliClient \
 clean-RadarCliClient \
+clean-ReadseqCliClient \
 clean-SapsCliClient \
 clean-SeqCksumCliClient \
 clean-TcoffeeCliClient \
@@ -268,7 +293,7 @@ clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
 
 clean-CensorCliClient:
-	cd CencorCliClient && $(MAKE) -f Makefile.mono clean
+	cd CensorCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-ClustalOCliClient:
 	cd ClustalOCliClient && $(MAKE) -f Makefile.mono clean
@@ -318,6 +343,9 @@ clean-EmbossPepstatsCliClient:
 clean-EmbossPepwindowCliClient:
 	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-EmbossSeqretCliClient:
+	cd EmbossSeqretCliClient && $(MAKE) -f Makefile.mono clean
+
 clean-EmbossSixpackCliClient:
 	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -342,6 +370,12 @@ clean-FingerPRINTScanCliClient:
 clean-GeneWiseCliClient:
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono clean
 
+clean-HmmerHmmscanCliClient:
+	cd HmmerHmmscanCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-IPRScan5CliClient:
+	cd IPRScan5CliClient && $(MAKE) -f Makefile.mono clean
+
 clean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono clean
 
@@ -353,6 +387,9 @@ clean-LalignCliClient:
 
 clean-MafftCliClient:
 	cd MafftCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-MapMiCliClient:
+	cd MapMiCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-MaxsproutCliClient:
 	cd MafftCliClient && $(MAKE) -f Makefile.mono clean
@@ -386,6 +423,9 @@ clean-PsScanCliClient:
 
 clean-RadarCliClient:
 	cd RadarCliClient && $(MAKE) -f Makefile.mono clean
+
+clean-ReadseqCliClient:
+	cd ReadseqCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-SapsCliClient:
 	cd SapsCliClient && $(MAKE) -f Makefile.mono clean
@@ -426,6 +466,7 @@ distclean-EmbossNewcpgreportCliClient \
 distclean-EmbossPepinfoCliClient \
 distclean-EmbossPepstatsCliClient \
 distclean-EmbossPepwindowCliClient \
+distclean-EmbossSeqretCliClient \
 distclean-EmbossSixpackCliClient \
 distclean-EmbossStretcherCliClient \
 distclean-EmbossTranseqCliClient \
@@ -434,10 +475,13 @@ distclean-FastaCliClient \
 distclean-FastmCliClient \
 distclean-FingerPRINTScanCliClient \
 distclean-GeneWiseCliClient \
+distclean-HmmerHmmscanCliClient \
+distclean-IPRScan5CliClient \
 distclean-IPRScanCliClient \
 distclean-KalignCliClient \
 distclean-LalignCliClient \
 distclean-MafftCliClient \
+distclean-MapMiCliClient \
 distclean-MaxsproutCliClient \
 distclean-MuscleCliClient \
 distclean-MViewCliClient \
@@ -449,6 +493,7 @@ distclean-PsiBlastCliClient \
 distclean-PsiSearchCliClient \
 distclean-PsScanCliClient \
 distclean-RadarCliClient \
+distclean-ReadseqCliClient \
 distclean-SapsCliClient \
 distclean-SeqCksumCliClient \
 distclean-TcoffeeCliClient \
@@ -510,6 +555,9 @@ distclean-EmbossPepstatsCliClient:
 distclean-EmbossPepwindowCliClient:
 	cd EmbossPepwindowCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-EmbossSeqretCliClient:
+	cd EmbossSeqretCliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-EmbossSixpackCliClient:
 	cd EmbossSixpackCliClient && $(MAKE) -f Makefile.mono distclean
 
@@ -534,6 +582,12 @@ distclean-FingerPRINTScanCliClient:
 distclean-GeneWiseCliClient:
 	cd GeneWiseCliClient && $(MAKE) -f Makefile.mono distclean
 
+distclean-HmmerHmmscanCliClient:
+	cd HmmerHmmscanCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-IPRScan5CliClient:
+	cd IPRScan5CliClient && $(MAKE) -f Makefile.mono distclean
+
 distclean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono distclean
 
@@ -545,6 +599,9 @@ distclean-LalignCliClient:
 
 distclean-MafftCliClient:
 	cd MafftCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-MapMiCliClient:
+	cd MapMiCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-MaxsproutCliClient:
 	cd MaxsproutCliClient && $(MAKE) -f Makefile.mono distclean
@@ -578,6 +635,9 @@ distclean-PsScanCliClient:
 
 distclean-RadarCliClient:
 	cd RadarCliClient && $(MAKE) -f Makefile.mono distclean
+
+distclean-ReadseqCliClient:
+	cd ReadseqCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-SapsCliClient:
 	cd SapsCliClient && $(MAKE) -f Makefile.mono distclean

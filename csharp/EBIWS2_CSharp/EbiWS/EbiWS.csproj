@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -23,8 +23,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>EbiWS</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -36,10 +34,6 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <AssemblyName>EbiWS</AssemblyName>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DefineConstants>
-    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AbstractWsClient.cs" />
@@ -142,6 +136,11 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
+    <Compile Include="EmbossSeqretClient.cs" />
+    <Compile Include="IPRScan5Client.cs" />
+    <Compile Include="MapMiClient.cs" />
+    <Compile Include="ReadseqClient.cs" />
+    <Compile Include="HmmerHmmscanClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

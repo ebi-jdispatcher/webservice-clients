@@ -75,6 +75,7 @@ EmbossNewcpgreportClient.cs \
 EmbossPepinfoClient.cs \
 EmbossPepstatsClient.cs \
 EmbossPepwindowClient.cs \
+EmbossSeqretClient.cs \
 EmbossSixpackClient.cs \
 EmbossStretcherClient.cs \
 EmbossTranseqClient.cs \
@@ -83,10 +84,13 @@ FastaClient.cs \
 FastmClient.cs \
 FingerPRINTScanClient.cs \
 GeneWiseClient.cs \
+HmmerHmmscanClient.cs \
+IPRScan5Client.cs \
 IPRScanClient.cs \
 KalignClient.cs \
 LalignClient.cs \
 MafftClient.cs \
+MapMiClient.cs \
 MaxsproutClient.cs \
 MuscleClient.cs \
 MViewClient.cs \
@@ -98,6 +102,7 @@ PsiBlastClient.cs \
 PsiSearchClient.cs \
 PsScanClient.cs \
 RadarClient.cs \
+ReadseqClient.cs \
 SapsClient.cs \
 SeqCksumClient.cs \
 TcoffeeClient.cs \
