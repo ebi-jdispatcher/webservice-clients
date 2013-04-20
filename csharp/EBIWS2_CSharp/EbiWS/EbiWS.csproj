@@ -56,17 +56,23 @@
     <Compile Include="WebReferences\EmbossBacktranambigWs\Reference.cs" />
     <Compile Include="EmbossBacktranseqClient.cs" />
     <Compile Include="WebReferences\EmbossBacktranseqWs\Reference.cs" />
+    <Compile Include="EmbossCpgplotClient.cs" />
     <Compile Include="WebReferences\EmbossCpgplotWs\Reference.cs" />
+    <Compile Include="EmbossIsochoreClient.cs" />
+    <Compile Include="WebReferences\EmbossIsochoreWs\Reference.cs" />
     <Compile Include="EmbossMatcherClient.cs" />
     <Compile Include="WebReferences\EmbossMatcherWs\Reference.cs" />
     <Compile Include="EmbossNeedleClient.cs" />
     <Compile Include="WebReferences\EmbossNeedleWs\Reference.cs" />
+    <Compile Include="EmbossNewcpgreportClient.cs" />
+    <Compile Include="WebReferences\EmbossNewcpgreportWs\Reference.cs" />
     <Compile Include="EmbossPepinfoClient.cs" />
     <Compile Include="WebReferences\EmbossPepinfoWs\Reference.cs" />
     <Compile Include="EmbossPepstatsClient.cs" />
     <Compile Include="WebReferences\EmbossPepstatsWs\Reference.cs" />
     <Compile Include="EmbossPepwindowClient.cs" />
     <Compile Include="WebReferences\EmbossPepwindowWs\Reference.cs" />
+    <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
     <Compile Include="EmbossSixpackClient.cs" />
     <Compile Include="WebReferences\EmbossSixpackWs\Reference.cs" />
     <Compile Include="EmbossStretcherClient.cs" />
@@ -114,6 +120,7 @@
     <Compile Include="WebReferences\PsScanWs\Reference.cs" />
     <Compile Include="RadarClient.cs" />
     <Compile Include="WebReferences\RadarWs\Reference.cs" />
+    <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
     <Compile Include="SapsClient.cs" />
     <Compile Include="WebReferences\SapsWs\Reference.cs" />
     <Compile Include="SeqCksumClient.cs" />
@@ -126,13 +133,6 @@
     <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
     <Compile Include="WuBlastClient.cs" />
     <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
-    <Compile Include="WebReferences\EmbossNewcpgreportWs\Reference.cs" />
-    <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
-    <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
-    <Compile Include="WebReferences\EmbossIsochoreWs\Reference.cs" />
-    <Compile Include="EmbossCpgplotClient.cs" />
-    <Compile Include="EmbossIsochoreClient.cs" />
-    <Compile Include="EmbossNewcpgreportClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -146,11 +146,14 @@
     <None Include="WebReferences\EmbossBacktranambigWs\Reference.map" />
     <None Include="WebReferences\EmbossBacktranseqWs\Reference.map" />
     <None Include="WebReferences\EmbossCpgplotWs\Reference.map" />
+    <None Include="WebReferences\EmbossIsochoreWs\Reference.map" />
     <None Include="WebReferences\EmbossMatcherWs\Reference.map" />
     <None Include="WebReferences\EmbossNeedleWs\Reference.map" />
+    <None Include="WebReferences\EmbossNewcpgreportWs\Reference.map" />
     <None Include="WebReferences\EmbossPepinfoWs\Reference.map" />
     <None Include="WebReferences\EmbossPepstatsWs\Reference.map" />
     <None Include="WebReferences\EmbossPepwindowWs\Reference.map" />
+    <None Include="WebReferences\EmbossSeqretWs\Reference.map" />
     <None Include="WebReferences\EmbossSixpackWs\Reference.map" />
     <None Include="WebReferences\EmbossStretcherWs\Reference.map" />
     <None Include="WebReferences\EmbossTranseqWs\Reference.map" />
@@ -175,22 +178,13 @@
     <None Include="WebReferences\PsiSearchWs\Reference.map" />
     <None Include="WebReferences\PsScanWs\Reference.map" />
     <None Include="WebReferences\RadarWs\Reference.map" />
+    <None Include="WebReferences\ReadseqWs\Reference.map" />
     <None Include="WebReferences\SapsWs\Reference.map" />
     <None Include="WebReferences\SeqCksumWs\Reference.map" />
     <None Include="WebReferences\TcoffeeWs\Reference.map" />
     <None Include="WebReferences\Wise2DBAWs\Reference.map" />
     <None Include="WebReferences\WSDbfetchWs\Reference.map" />
     <None Include="WebReferences\WuBlastWs\Reference.map" />
-    <None Include="WebReferences\EmbossNewcpgreportWs\Reference.map" />
-    <None Include="WebReferences\EmbossSeqretWs\Reference.map" />
-    <None Include="WebReferences\ReadseqWs\Reference.map" />
-    <None Include="WebReferences\EmbossIsochoreWs\Reference.map" />
-    <None Include="obj\EbiWS.csproj.FilesWrittenAbsolute.txt">
-      <Visible>False</Visible>
-    </None>
-    <None Include="obj\Debug\EbiWS.dll.mdb">
-      <Visible>False</Visible>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
