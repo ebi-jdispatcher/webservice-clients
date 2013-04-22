@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$
+======================================================================
+
+   Copyright 2012-2013 EMBL - European Bioinformatics Institute
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+======================================================================
+-->
+<project name="EBIWS2-Java-Test-InterProScan5">
+	<!-- Apache Axis 1.x -->
+	<target name="axis1-test-iprscan5" description="Axis 1.x: InterProScan 5 (SOAP) test">
+		<property name="client.jar.axis1" value="${jar.dir}/IPRScan5_Axis1.jar" />
+		<antcall target="test-iprscan5-help">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-params">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-paramdetail">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-dbid">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-idlist-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-idlist-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-multifasta-file">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+		<antcall target="test-iprscan5-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.axis1}" />
+		</antcall>
+	</target>
+	
+	<!-- JAX-WS RI -->
+	<target name="jaxws-test-iprscan5" description="JAX-WS RI: InterProScan 5 (SOAP) test">
+		<property name="client.jar.jaxws" value="${jar.dir}/IPRScan5_JAXWS.jar" />
+		<antcall target="test-iprscan5-help">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-params">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-paramdetail">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-dbid">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-sequence-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-idlist-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-idlist-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-multifasta-file">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+		<antcall target="test-iprscan5-multifasta-stdin">
+			<param name="client.jar" value="${client.jar.jaxws}" />
+		</antcall>
+	</target>
+
+	<target name="test-iprscan5-help">
+		<echo message="InterProScan 5 (SOAP): usage/help message" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--help" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-params">
+		<echo message="InterProScan 5 (SOAP): parameter names" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--params" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-paramdetail">
+		<echo message="InterProScan 5 (SOAP): parameter details" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--paramDetail" />
+			<arg value="appl" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-sequence-file">
+		<echo message="InterProScan 5 (SOAP): File input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="test_data/SWISSPROT_ABCC9_HUMAN.fasta" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-sequence-dbid">
+		<echo message="InterProScan 5 (SOAP): DB:ID input" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="UNIPROT:ABCC9_HUMAN" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-sequence-stdin">
+		<echo message="InterProScan 5 (SOAP): Input sequence from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/SWISSPROT_ABCC9_HUMAN.fasta">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Signature matches -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="-" /> <!-- Query sequence from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-idlist-file">
+		<echo message="InterProScan 5 (SOAP): ID list input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Signature matches -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@test_data/uniprot_id_list.txt" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-idlist-stdin">
+		<echo message="InterProScan 5 (SOAP): ID list input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/uniprot_id_list.txt">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Signature matches -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="@-" /> <!-- Query ID list from STDIN -->
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-multifasta-file">
+		<echo message="InterProScan 5 (SOAP): multifasta input file" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Signature matches -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="test_data/multi_prot.tfa" />
+		</java>
+	</target>
+	
+	<target name="test-iprscan5-multifasta-stdin">
+		<echo message="InterProScan 5 (SOAP): multifasta input from STDIN and result to STDOUT" />
+		<java fork="true" failonerror="true" jar="${client.jar}" input="test_data/multi_prot.tfa">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--email" />
+			<arg value="${test.email}" />
+			<arg value="--nogoterms" />
+			<arg value="--outformat" />
+			<arg value="out" /> <!-- Signature matches -->
+			<arg value="--outfile" />
+			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
+			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
+		</java>
+	</target>
+	
+	<!-- Clean-up -->
+	<target name="test-clean-iprscan5" description="InterProScan 5 (SOAP) test clean">
+		<delete>
+			<fileset dir="." includes="iprscan5-**"/>
+		</delete>
+	</target>
+	
+</project>
+

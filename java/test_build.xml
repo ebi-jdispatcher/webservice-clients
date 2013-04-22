@@ -46,12 +46,13 @@
 	<!-- import file="${ant.import.lib.dir}/client_test/prank.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/tcoffee.xml" />
 	<!-- Protein Function Analysis (PFA) -->
-	<!-- import file="${ant.import.lib.dir}/client_test/fingerprintscan.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/fingerprintscan.xml" />
+	<import file="${ant.import.lib.dir}/client_test/hmmer_hmmscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/iprscan5.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/iprscan5.xml" />
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
-	<!-- import file="${ant.import.lib.dir}/client_test/pratt.xml" / -->
-	<!-- import file="${ant.import.lib.dir}/client_test/ps_scan.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/pratt.xml" />
+	<import file="${ant.import.lib.dir}/client_test/ps_scan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/radar.xml" />
 	<!-- Phylogeny -->
 	<import file="${ant.import.lib.dir}/client_test/clustalw2_phylogeny.xml" />
@@ -64,6 +65,8 @@
 	<import file="${ant.import.lib.dir}/client_test/lalign.xml" />
 	<import file="${ant.import.lib.dir}/client_test/promoterwise.xml" />
 	<import file="${ant.import.lib.dir}/client_test/wise2dba.xml" />
+	<!-- RNA Analysis -->
+	<!-- import file="${ant.import.lib.dir}/client_test/mapmi.xml" / -->
 	<!-- Sequence Format Conversion (SFC) -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_seqret.xml" />
 	<import file="${ant.import.lib.dir}/client_test/readseq.xml" />
@@ -113,12 +116,13 @@
 		<!-- antcall target="test-clean-prank" / -->
 		<antcall target="test-clean-tcoffee" />
 		<!-- Protein Function Analysis (PFA) -->
-		<!-- antcall target="test-clean-fingerprintscan" / -->
+		<antcall target="test-clean-fingerprintscan" />
+		<antcall target="test-clean-hmmer_hmmscan" />
 		<antcall target="test-clean-iprscan" />
-		<!-- antcall target="test-clean-iprscan5" / -->
+		<antcall target="test-clean-iprscan5" />
 		<antcall target="test-clean-phobius" />
-		<!-- antcall target="test-clean-pratt" / -->
-		<!-- antcall target="test-clean-ps_scan" / -->
+		<antcall target="test-clean-pratt" />
+		<antcall target="test-clean-ps_scan" />
 		<antcall target="test-clean-radar" />
 		<!-- Phylogeny -->
 		<antcall target="test-clean-clustalw2_phylogeny" />
@@ -127,7 +131,7 @@
 		<antcall target="test-clean-emboss_needle" />
 		<antcall target="test-clean-emboss_stretcher" />
 		<antcall target="test-clean-emboss_water" />
-		<!-- antcall target="test-clean-genewise" / -->
+		<antcall target="test-clean-genewise" />
 		<antcall target="test-clean-lalign" />
 		<antcall target="test-clean-promoterwise" />
 		<antcall target="test-clean-wise2dba" />

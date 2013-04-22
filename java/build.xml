@@ -119,10 +119,13 @@
 		<antcall target="axis1-stubs-fastm" />
 		<antcall target="axis1-stubs-fingerprintscan" />
 		<antcall target="axis1-stubs-genewise" />
+		<antcall target="axis1-stubs-hmmer_hmmscan" />
 		<antcall target="axis1-stubs-iprscan" />
+		<antcall target="axis1-stubs-iprscan5" />
 		<antcall target="axis1-stubs-kalign" />
 		<antcall target="axis1-stubs-lalign" />
 		<antcall target="axis1-stubs-mafft"/>
+		<antcall target="axis1-stubs-mapmi"/>
 		<antcall target="axis1-stubs-maxsprout"/>
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-mview" />
@@ -290,15 +293,21 @@
 		</antcall>
 	</target>
 	<target name="axis1-stubs-fingerprintscan" description="Axis 1.x: generate stubs for FingerPRINTScan (SOAP)">
-			<antcall target="genAxis1Stubs">
-				<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fingerprintscan" />
-				<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl" />
-			</antcall>
-		</target>
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.fingerprintscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/fingerprintscan?wsdl" />
+		</antcall>
+	</target>
 	<target name="axis1-stubs-genewise" description="Axis 1.x: generate stubs for GeneWise (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.genewise" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/genewise?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-hmmer_hmmscan" description="Axis 1.x: generate stubs for HMMER hmmscan (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.hmmer.hmmscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/hmmer_hmmscan?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-iprscan" description="Axis 1.x: generate stubs for InterProScan (SOAP)">
@@ -307,7 +316,7 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
 		</antcall>
 	</target>
-	<target name="axis1-stubs-iprscan5" description="Axis 1.x: generate stubs for InterProScan5 (SOAP)">
+	<target name="axis1-stubs-iprscan5" description="Axis 1.x: generate stubs for InterProScan 5 (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.iprscan5" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan5?wsdl" />
@@ -329,6 +338,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.mafft" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-mapmi" description="Axis 1.x: generate stubs for MapMi (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.mapmi" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mapmi?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-maxsprout" description="Axis 1.x: generate stubs for MaxSprout (SOAP)">
@@ -707,11 +722,31 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<jar destfile="${jar.dir}/HmmerHmmscan_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/HmmerHmmscanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/hmmer/hmmscan/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.HmmerHmmscanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/IPRScan_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.IPRScanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/IPRScan5_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/IPRScan5Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan5/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.IPRScan5Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -747,6 +782,16 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- jar destfile="${jar.dir}/MapMi_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/MapMiClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mapmi/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MapMiClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar -->
 		<jar destfile="${jar.dir}/Maxsprout_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MaxsproutClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/maxsprout/**">
@@ -956,10 +1001,13 @@
 		<antcall target="axis1-distclean-stubs-fastm" />
 		<antcall target="axis1-distclean-stubs-fingerprintscan" />
 		<antcall target="axis1-distclean-stubs-genewise" />
+		<antcall target="axis1-distclean-stubs-hmmer_hmmscan" />
 		<antcall target="axis1-distclean-stubs-iprscan" />
+		<antcall target="axis1-distclean-stubs-iprscan5" />
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-lalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
+		<antcall target="axis1-distclean-stubs-mapmi" />
 		<antcall target="axis1-distclean-stubs-maxsprout"/>
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
@@ -1137,10 +1185,22 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="genewise" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-hmmer_hmmscan" description="Axis 1.x: remove HMMER hmmscan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/hmmer/hmmscan" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/hmmer" includes="hmmscan" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-iprscan" description="Axis 1.x: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/iprscan" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="iprscan" />
+	    </delete>
+	</target>
+	<target name="axis1-distclean-stubs-iprscan5" description="Axis 1.x: remove InterProScan 5 (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/iprscan5" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="iprscan5" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-kalign" description="Axis 1.x: remove Kalign (SOAP) stubs">
@@ -1307,10 +1367,13 @@
 		<antcall target="jaxws-stubs-fastm" />
 		<antcall target="jaxws-stubs-fingerprintscan" />
 		<antcall target="jaxws-stubs-genewise" />
+		<antcall target="jaxws-stubs-hmmer_hmmscan" />
 		<antcall target="jaxws-stubs-iprscan" />
+		<antcall target="jaxws-stubs-iprscan5" />
 		<antcall target="jaxws-stubs-kalign" />
 		<antcall target="jaxws-stubs-lalign" />
 		<antcall target="jaxws-stubs-mafft" />
+		<antcall target="jaxws-stubs-mapmi" />
 		<antcall target="jaxws-stubs-maxsprout" />
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-mview" />
@@ -1489,10 +1552,22 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/genewise?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-hmmer_hmmscan" description="JAX-WS RI: generate stubs for HMMER hmmscan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.hmmer.hmmscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/hmmer_hmmscan?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-iprscan" description="JAX-WS RI: generate stubs for InterProScan (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.iprscan" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-iprscan5" description="JAX-WS RI: generate stubs for InterProScan 5 (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.iprscan5" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan5?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-kalign" description="JAX-WS RI: generate stubs for Kalign (SOAP)">
@@ -1511,6 +1586,12 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mafft" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mafft?wsdl" />
+		</antcall>
+	</target>
+	<target name="jaxws-stubs-mapmi" description="JAX-WS RI: generate stubs for MapMi (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mapmi" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mapmit?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-maxsprout" description="JAX-WS RI: generate stubs for MaxSprout (SOAP)">
@@ -1638,11 +1719,12 @@
 		<tstamp>
 			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
 		</tstamp>
-		<!-- TODO CENSOR -->
-		<!-- TODO ClustalO -->
-		<!-- TODO ClustalW2 -->
-		<!-- TODO ClustalW2 Phylogeny -->
-		<!-- TODO DbClustal -->
+		<!-- TODO: CENSOR -->
+		<!-- TODO: ClustalO -->
+		<!-- TODO: ClustalW2 -->
+		<!-- TODO: ClustalW2 Phylogeny -->
+		<!-- TODO: DaliLite -->
+		<!-- TODO: DbClustal -->
 		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
@@ -1651,13 +1733,25 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- TODO EMBOSS matcher -->
-		<!-- TODO EMBOSS needle -->
-		<!-- TODO EMBOSS stretcher -->
-		<!-- TODO EMBOSS water -->
-		<!-- TODO FASTA -->
-		<!-- TODO FASTM -->
-		<!-- TODO FingerPRINTScan -->
+		<!-- TODO: EMBOSS backtranambig -->
+		<!-- TODO: EMBOSS backtranseq -->
+		<!-- TODO: EMBOSS cpgplot -->
+		<!-- TODO: EMBOSS isochore -->
+		<!-- TODO: EMBOSS matcher -->
+		<!-- TODO: EMBOSS needle -->
+		<!-- TODO: EMBOSS newcpgreport -->
+		<!-- TODO: EMBOSS pepinfo -->
+		<!-- TODO: EMBOSS pepstats -->
+		<!-- TODO: EMBOSS pepwindow -->
+		<!-- TODO: EMBOSS seqret -->
+		<!-- TODO: EMBOSS sixpack -->
+		<!-- TODO: EMBOSS stretcher -->
+		<!-- TODO: EMBOSS water -->
+		<!-- TODO: FASTA -->
+		<!-- TODO: FASTM -->
+		<!-- TODO: FingerPRINTScan -->
+		<!-- TODO: GeneWise -->
+		<!-- TODO: HMMER hmmscan -->
 		<jar destfile="${jar.dir}/IPRScan_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/iprscan/**">
@@ -1668,11 +1762,14 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- TODO Kalign -->
-		<!-- TODO lalign -->
-		<!-- TODO MAFFT -->
-		<!-- TODO MUSCLE -->
-		<!-- TODO MView -->
+		<!-- TODO: InterProScan 5 -->
+		<!-- TODO: Kalign -->
+		<!-- TODO: lalign -->
+		<!-- TODO: MAFFT -->
+		<!-- TODO: MapMi -->
+		<!-- TODO: MaxSprout -->
+		<!-- TODO: MUSCLE -->
+		<!-- TODO: MView -->
 		<jar destfile="${jar.dir}/NCBIBlast_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/NCBIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxws/stubs/ncbiblast/**">
@@ -1683,15 +1780,19 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- TODO Phobius -->
-		<!-- TODO PRANK -->
-		<!-- TODO Pratt -->
-		<!-- TODO PSI-BLAST -->
-		<!-- TODO PSI-Search -->
-		<!-- TODO PROSITE Scan -->
-		<!-- TODO SAPS -->
-		<!-- TODO SeqCksum -->
-		<!-- TODO T-COFFEE -->
+		<!-- TODO: Phobius -->
+		<!-- TODO: PRANK -->
+		<!-- TODO: Pratt -->
+		<!-- TODO: PromoterWise -->
+		<!-- TODO: PROSITE Scan (ps_scan)-->
+		<!-- TODO: PSI-BLAST -->
+		<!-- TODO: PSI-Search -->
+		<!-- TODO: RADAR -->
+		<!-- TODO: Readseq -->
+		<!-- TODO: SAPS -->
+		<!-- TODO: SeqCksum -->
+		<!-- TODO: T-COFFEE -->
+		<!-- TODO: Wise2DBA -->
 		<jar destfile="${jar.dir}/WSDbfetch_JAXWS.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/jaxws/WSDbfetchClient.** uk/ac/ebi/webservices/jaxws/stubs/wsdbfetch/**">
@@ -1702,7 +1803,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- TODO WU-BLAST -->
+		<!-- TODO: WU-BLAST -->
 	</target>
 
 	<!-- Clean-up JAX-WS generated files -->
@@ -1733,10 +1834,13 @@
 		<antcall target="jaxws-distclean-stubs-fastm" />
 		<antcall target="jaxws-distclean-stubs-fingerprintscan" />
 		<antcall target="jaxws-distclean-stubs-genewise" />
+		<antcall target="jaxws-distclean-stubs-hmmer_hmmscan" />
 		<antcall target="jaxws-distclean-stubs-iprscan" />
+		<antcall target="jaxws-distclean-stubs-iprscan5" />
 		<antcall target="jaxws-distclean-stubs-kalign" />
 		<antcall target="jaxws-distclean-stubs-lalign" />
 		<antcall target="jaxws-distclean-stubs-mafft" />
+		<antcall target="jaxws-distclean-stubs-mapmi" />
 		<antcall target="jaxws-distclean-stubs-maxsprout" />
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-mview" />
@@ -1914,10 +2018,22 @@
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="genewise" />
 	    </delete>
 	</target>
+	<target name="jaxws-distclean-stubs-hmmer_hmmscan" description="JAX-WS RI: remove HMMER hmmscan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/hmmer/hmmscan" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/hmmer/" includes="hmmscan" />
+	    </delete>
+	</target>
 	<target name="jaxws-distclean-stubs-iprscan" description="JAX-WS RI: remove InterProScan (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/iprscan" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="iprscan" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-iprscan5" description="JAX-WS RI: remove InterProScan 5 (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/iprscan5" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="iprscan5" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-kalign" description="JAX-WS RI: remove Kalign (SOAP) stubs">
@@ -1936,6 +2052,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/mafft" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mafft" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-mapmi" description="JAX-WS RI: remove MapMi (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/mapmi" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="mapmi" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-maxsprout" description="JAX-WS RI: remove MaxSprout (SOAP) stubs">
