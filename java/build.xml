@@ -229,7 +229,7 @@
 	<target name="axis1-stubs-emboss_newcpgreport" description="Axis 1.x: generate stubs for EMBOSS newcpgreport (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.emboss.newcpgreport" />
-			<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_pepinfo" description="Axis 1.x: generate stubs for EMBOSS pepinfo (SOAP)">
@@ -1477,7 +1477,7 @@
 	<target name="jaxws-stubs-emboss_newcpgreport" description="JAX-WS RI: generate stubs for EMBOSS newcpgreport (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.emboss.newcpgreport" />
-			<param name="wsdlUrl" value="http://wwwdev.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-emboss_pepinfo" description="JAX-WS RI: generate stubs for EMBOSS pepinfo (SOAP)">
