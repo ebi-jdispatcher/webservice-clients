@@ -222,7 +222,7 @@ $(STUBSRCDIR)/EmbossNeedleWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNeedleWs -out:$@ "$(WSDLBASE)/emboss_needle?wsdl"
 
 $(STUBSRCDIR)/EmbossNewcpgreportWs/Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs -out:$@ "$(WSDLBASE)/emboss_cpgreport?wsdl"
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs -out:$@ "$(WSDLBASE)/emboss_newcpgreport?wsdl"
 
 $(STUBSRCDIR)/EmbossPepinfoWs/Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs -out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"

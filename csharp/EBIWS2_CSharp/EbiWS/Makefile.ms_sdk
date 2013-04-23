@@ -203,13 +203,13 @@ $(STUBSRCDIR)\EmbossBacktranambigWs\Reference.cs:
 
 $(STUBSRCDIR)\EmbossBacktranseqWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranseqWs /out:$@ "$(WSDLBASE)/emboss_backtranseq?wsdl"
-	
+
 $(STUBSRCDIR)\EmbossCpgplotWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossCpgplotWs /out:$@ "$(WSDLBASE)/emboss_cpgplot?wsdl"
-	
+
 $(STUBSRCDIR)\EmbossIsochoreWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossIsochoreWs /out:$@ "$(WSDLBASE)/emboss_isochore?wsdl"
-	
+
 $(STUBSRCDIR)\EmbossMatcherWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossMatcherWs /out:$@ "$(WSDLBASE)/emboss_matcher?wsdl"
 
@@ -217,8 +217,8 @@ $(STUBSRCDIR)\EmbossNeedleWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNeedleWs /out:$@ "$(WSDLBASE)/emboss_needle?wsdl"
 
 $(STUBSRCDIR)\EmbossNewcpgreportWs\Reference.cs:
-	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs /out:$@ "$(WSDLBASE)/emboss_cpgreport?wsdl"
-	
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs /out:$@ "$(WSDLBASE)/emboss_newcpgreport?wsdl"
+
 $(STUBSRCDIR)\EmbossPepinfoWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs /out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"
 
@@ -251,7 +251,7 @@ $(STUBSRCDIR)\FastmWs\Reference.cs:
 
 $(STUBSRCDIR)\FingerPRINTScanWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).FingerPRINTScanWs /out:$@ "$(WSDLBASE)/fingerprintscan?wsdl"
-	
+
 $(STUBSRCDIR)\GeneWiseWs\Reference.cs:
 	$(WSDL2CS) $(WSDL2CSFLAGS).GeneWiseWs /out:$@ "$(WSDLBASE)/genewise?wsdl"
 
