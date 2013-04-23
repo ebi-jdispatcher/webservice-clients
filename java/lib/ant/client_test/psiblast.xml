@@ -40,18 +40,18 @@
 		<antcall target="test-psiblast-sequence-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-psiblast-idlist-file">
+		<antcall target="test-psiblast-idlist-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psiblast-idlist-stdin">
+		</antcall>
+		<antcall target="test-psiblast-idlist-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psiblast-multifasta-file">
+		</antcall>
+		<antcall target="test-psiblast-multifasta-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psiblast-multifasta-stdin">
+		</antcall>
+		<antcall target="test-psiblast-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->

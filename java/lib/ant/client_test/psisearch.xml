@@ -40,18 +40,18 @@
 		<antcall target="test-psisearch-sequence-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-psisearch-idlist-file">
+		<antcall target="test-psisearch-idlist-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-idlist-stdin">
+		</antcall>
+		<antcall target="test-psisearch-idlist-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-multifasta-file">
+		</antcall>
+		<antcall target="test-psisearch-multifasta-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-multifasta-stdin">
+		</antcall>
+		<antcall target="test-psisearch-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->
@@ -75,18 +75,18 @@
 		<antcall target="test-psisearch-sequence-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
-		<!-- antcall target="test-psisearch-idlist-file">
+		<antcall target="test-psisearch-idlist-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-idlist-stdin">
+		</antcall>
+		<antcall target="test-psisearch-idlist-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-multifasta-file">
+		</antcall>
+		<antcall target="test-psisearch-multifasta-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-psisearch-multifasta-stdin">
+		</antcall>
+		<antcall target="test-psisearch-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
+		</antcall>
 	</target>
 
 	<target name="test-psisearch-help">
