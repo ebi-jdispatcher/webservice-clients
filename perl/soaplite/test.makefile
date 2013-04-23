@@ -1130,8 +1130,37 @@ iprscan_clean:
 	rm -f iprscan-*
 
 # TODO: InterProScan 5
-iprscan5:
-	echo 'TODO:' $@
+iprscan5: iprscan5_params iprscan5_param_detail \
+iprscan5_file iprscan5_dbid iprscan5_stdin_stdout \
+iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout \
+iprscan5_multifasta_file iprscan5_multifasta_file_stdin_stdout
+
+iprscan5_params:
+	${PERL} iprscan5_soaplite.pl --params ${JDispatcher_params_suffix}
+
+iprscan5_param_detail:
+	${PERL} iprscan5_soaplite.pl --paramDetail appl
+
+iprscan5_file: test_data
+	-${PERL} iprscan5_soaplite.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+iprscan5_dbid:
+	-${PERL} iprscan5_soaplite.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+iprscan5_stdin_stdout: test_data
+	-cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan5_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan5-blah.txt
+
+iprscan5_id_list_file: test_data
+	-${PERL} iprscan5_soaplite.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+
+iprscan5_id_list_file_stdin_stdout: test_data
+	-cat ../test_data/uniprot_id_list.txt | ${PERL} iprscan5_soaplite.pl --email ${EMAIL} --outformat out --outfile - --sequence @- > iprscan5-idfile.txt
+
+iprscan5_multifasta_file: test_data
+	-${PERL} iprscan5_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+
+iprscan5_multifasta_file_stdin_stdout: test_data
+	-cat ../test_data/multi_prot.tfa | ${PERL} iprscan5_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > iprscan5-file.txt
 
 iprscan5_clean:
 	rm -f iprscan5-*
