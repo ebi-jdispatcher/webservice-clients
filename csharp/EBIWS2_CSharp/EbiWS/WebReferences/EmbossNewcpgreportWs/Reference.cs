@@ -41,7 +41,7 @@ namespace EbiWS.EmbossNewcpgreportWs {
         
         /// <remarks/>
         public JDispatcherService() {
-            this.Url = "http://www.ebi.ac.uk/Tools/services/soap/emboss_cpgreport";
+            this.Url = "http://www.ebi.ac.uk/Tools/services/soap/emboss_newcpgreport";
         }
         
         /// <remarks/>
