@@ -1591,7 +1591,7 @@
 	<target name="jaxws-stubs-mapmi" description="JAX-WS RI: generate stubs for MapMi (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.mapmi" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mapmit?wsdl" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/mapmi?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-maxsprout" description="JAX-WS RI: generate stubs for MaxSprout (SOAP)">
