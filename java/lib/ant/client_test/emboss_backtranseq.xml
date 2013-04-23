@@ -40,18 +40,18 @@
 		<antcall target="test-emboss_backtranseq-sequence-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-emboss_backtranseq-idlist-file">
+		<antcall target="test-emboss_backtranseq-idlist-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-idlist-stdin">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-idlist-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-multifasta-file">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-multifasta-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-multifasta-stdin">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->
@@ -75,18 +75,18 @@
 		<antcall target="test-emboss_backtranseq-sequence-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
-		<!-- antcall target="test-emboss_backtranseq-idlist-file">
+		<antcall target="test-emboss_backtranseq-idlist-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-idlist-stdin">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-idlist-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-multifasta-file">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-multifasta-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_backtranseq-multifasta-stdin">
+		</antcall>
+		<antcall target="test-emboss_backtranseq-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
+		</antcall>
 	</target>
 
 	<target name="test-emboss_backtranseq-help">

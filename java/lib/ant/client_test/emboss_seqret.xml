@@ -40,18 +40,18 @@
 		<antcall target="test-emboss_seqret-sequence-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
 		</antcall>
-		<!-- antcall target="test-emboss_seqret-idlist-file">
+		<antcall target="test-emboss_seqret-idlist-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-idlist-stdin">
+		</antcall>
+		<antcall target="test-emboss_seqret-idlist-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-multifasta-file">
+		</antcall>
+		<antcall target="test-emboss_seqret-multifasta-file">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-multifasta-stdin">
+		</antcall>
+		<antcall target="test-emboss_seqret-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.axis1}" />
-		</antcall -->
+		</antcall>
 	</target>
 	
 	<!-- JAX-WS RI -->
@@ -75,18 +75,18 @@
 		<antcall target="test-emboss_seqret-sequence-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
 		</antcall>
-		<!-- antcall target="test-emboss_seqret-idlist-file">
+		<antcall target="test-emboss_seqret-idlist-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-idlist-stdin">
+		</antcall>
+		<antcall target="test-emboss_seqret-idlist-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-multifasta-file">
+		</antcall>
+		<antcall target="test-emboss_seqret-multifasta-file">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
-		<!-- antcall target="test-emboss_seqret-multifasta-stdin">
+		</antcall>
+		<antcall target="test-emboss_seqret-multifasta-stdin">
 			<param name="client.jar" value="${client.jar.jaxws}" />
-		</antcall -->
+		</antcall>
 	</target>
 
 	<target name="test-emboss_seqret-help">
