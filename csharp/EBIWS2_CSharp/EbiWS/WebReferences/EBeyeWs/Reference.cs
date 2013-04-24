@@ -1178,6 +1178,8 @@ namespace EbiWS.EBeyeWs {
         
         private string labelField;
         
+        private string valueField;
+        
         private int hitCountField;
         
         private bool hitCountFieldSpecified;
@@ -1189,6 +1191,16 @@ namespace EbiWS.EBeyeWs {
             }
             set {
                 this.labelField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
             }
         }
         
@@ -1222,9 +1234,22 @@ namespace EbiWS.EBeyeWs {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://webservice.ebinocle.ebi.ac.uk")]
     public partial class Facet {
         
+        private string idField;
+        
         private string labelField;
         
         private FacetValue[] facetValuesField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
