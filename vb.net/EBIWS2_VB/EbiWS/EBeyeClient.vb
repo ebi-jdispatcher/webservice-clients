@@ -685,7 +685,29 @@ Namespace EbiWS
 			PrintDebugMessage("PrintListFieldsInformation", "End", 1)
 		End Sub
 		
-		' Split a string based on a set of seperator characters.
+        ' Get information about the available facets for a query.
+        Public Function GetFacets(ByVal domain As String, ByVal query As String) As EbiWS.EBeyeWs.Facet()
+            PrintDebugMessage("GetFacets", "Begin", 1)
+            ServiceProxyConnect()
+            Dim result As EbiWS.EBeyeWs.Facet() = SrvProxy.getFacets(domain, query)
+            PrintDebugMessage("GetFacets", "End", 1)
+            Return result
+        End Function
+
+        ' Print details about the available facets for a query.
+        Public Sub PrintGetFacets(ByVal domain As String, ByVal query As String)
+            PrintDebugMessage("PrintGetFacets", "Begin", 1)
+            Dim result As EbiWS.EBeyeWs.Facet() = GetFacets(domain, query)
+            For Each facet As EbiWS.EBeyeWs.Facet In result
+                Console.WriteLine(facet.label & ":")
+                For Each facetVal As EbiWS.EBeyeWs.FacetValue In facet.facetValues
+                    Console.WriteLine(facetVal.hitCount & Tab & facetVal.label)
+                Next facetVal
+            Next facet
+            PrintDebugMessage("PrintGetFacets", "End", 1)
+        End Sub
+
+        ' Split a string based on a set of seperator characters.
 		Private Function SplitString(ByVal inStr As String, ByVal seperators As Char()) As String()
 			PrintDebugMessage("SplitString", "Begin", 11)
 			Dim retVal As String() = inStr.Split(seperators)

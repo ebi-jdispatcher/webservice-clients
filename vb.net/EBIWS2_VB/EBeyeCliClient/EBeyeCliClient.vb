@@ -119,6 +119,9 @@ Environment.NewLine & _
 "  Returns the list of fields that can be retrievedand/or searched for a " & Environment.NewLine & _
 "  particular domain. " & Environment.NewLine & _
 Environment.NewLine & _
+"--getFacets <domain> <query>" & Environment.NewLine & _
+"  Execute a query and return details of the available facets for the result." & Environment.NewLine & _
+Environment.NewLine & _
 "Further information:" & Environment.NewLine & _
 Environment.NewLine & _
 "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye" & Environment.NewLine & _
@@ -453,6 +456,19 @@ Environment.NewLine & _
                         Dim paramList As String() = GetOptionParameters(args, i, retVal, 1)
                         If paramList.Length > 0 Then
                             PrintListFieldsInformation(paramList(0))
+                        End If
+                        Exit Select
+
+                    Case "--getFacets" ' Facets for a query.
+                        Dim paramList As String() = GetOptionParameters(args, i, retVal, 2)
+                        If paramList.Length > 0 Then
+                            PrintGetFacets(paramList(0), paramList(1))
+                        End If
+                        Exit Select
+                    Case "--getfacets"
+                        Dim paramList As String() = GetOptionParameters(args, i, retVal, 2)
+                        If paramList.Length > 0 Then
+                            PrintGetFacets(paramList(0), paramList(1))
                         End If
                         Exit Select
 
