@@ -1289,7 +1289,7 @@ sub print_get_facets {
 	my (@facet_list) = soap_get_facets($domain, $query);
 	print_debug_message( 'print_get_facets', "facet_list:\n" . Dumper(\@facet_list), 11 );
 	foreach my $facet (@facet_list) {
-		print $facet->{'label'}, ":\n";
+		print $facet->{'label'}, ":", $facet->{'id'}, "\n";
 		if(ref($facet->{'facetValues'}->{'FacetValue'}) eq 'ARRAY') {
 			foreach my $facet_value (@{$facet->{'facetValues'}->{'FacetValue'}}) {
 				&_print_facet_value($facet_value);
@@ -1309,7 +1309,7 @@ sub print_get_facets {
 sub _print_facet_value {
 	my $facet_value = shift;
 	#print Dumper($facet_value);
-	print "\t", $facet_value->{'hitCount'}, "\t", $facet_value->{'label'}, "\n";
+	print "\t", $facet_value->{'hitCount'}, "\t", $facet_value->{'label'}, "\t", $facet_value->{'value'}, "\n";
 }
 
 =head2 usage()
