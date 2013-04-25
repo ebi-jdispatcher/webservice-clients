@@ -481,10 +481,10 @@ def printGetFacets(domain, query):
     printDebugMessage('printGetFacets', 'Begin', 1)
     facetList = soapGetFacets(domain, query)
     for facet in facetList:
-        print "%s:" % (facet.label)
+        print "%s:%s" % (facet.label,facet.id)
         for facetVal in facet.facetValues.FacetValue:
-            print "\t%s\t%s" % (
-                facetVal.hitCount, facetVal.label)
+            print "\t%s\t%s\t%s" % (
+                facetVal.hitCount, facetVal.label,facetVal.value)
     printDebugMessage('printGetFacets', 'End', 1)
 
 ### End Functions ###
