@@ -1460,9 +1460,9 @@ namespace EbiWS {
 			PrintDebugMessage("PrintGetFacets", "Begin", 1);
 			EbiWS.EBeyeWs.Facet[] result = GetFacets(domain, query);
 			foreach(EbiWS.EBeyeWs.Facet facet in result) {
-				Console.WriteLine(facet.label);
+				Console.WriteLine(facet.label+ ":"+facet.id);
 				foreach(EbiWS.EBeyeWs.FacetValue facetVal in facet.facetValues) {
-					Console.WriteLine("\t" + facetVal.hitCount + "\t" + facetVal.label);
+					Console.WriteLine("\t" + facetVal.hitCount + "\t" + facetVal.label + "\t" +facetVal.value);
 				}
 			}
 			PrintDebugMessage("PrintGetFacets", "End", 1);
