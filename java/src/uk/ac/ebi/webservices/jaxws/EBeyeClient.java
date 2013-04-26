@@ -1367,10 +1367,12 @@ public class EBeyeClient {
 		Facet[] facetList = getFacets(domain, query);
 		for (int i = 0; i < facetList.length; i++) {
 			Facet facet = facetList[i];
-			System.out.println(facet.getLabel().getValue() + ":");
+			System.out.print(facet.getLabel().getValue() + ":");
+			System.out.println(facet.getId());
 			for ( FacetValue facetVal : facet.getFacetValues().getValue().getFacetValue()) {
 				System.out.print("\t" + facetVal.getHitCount());
-				System.out.println("\t" + facetVal.getLabel());
+				System.out.print("\t" + facetVal.getLabel());
+				System.out.println("\t" + facetVal.getValue());
 			}
 		}
 		printDebugMessage("printGetFacets", "End", 1);
