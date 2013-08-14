@@ -92,13 +92,17 @@ GetOptions(
 
 	# Tool specific options
 	'appl=s'     => \$params{'appl'},          # Signature methods.
+	'goterms'    => \$params{'goterms'},       # Enable Gene Ontology terms.
 	'nogoterms'  => \$params{'nogoterms'},     # Disable Gene Ontology terms.
+	'pathways'   => \$params{'pathways'},      # Enable pathway terms.
+	'nopathways' => \$params{'nopathways'},    # Disable pathway terms.
 	'sequence=s' => \$params{'sequence'},      # Input sequence(s).
 	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Compatability options (old command-line)
 	'app=s'   => \$params{'app'},              # Signature methods.
-	'goterms' => \$params{'goterms'},          # Enable GO terms.
+	'crc'     => \$params{'crc'},              # Enable CRC look-up (ignored).
+	'nocrc'   => \$params{'nocrc'},            # Disable CRC look-up (ignored).
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -840,13 +844,7 @@ sub load_params {
 		$params{'appl'} = $params{'app'};
 	}
 
-	# --crc vs. --nocrc
-	if ( $params{'nocrc'} ) {
-		$tool_params{'nocrc'} = 'true';
-	}
-	elsif ( $params{'crc'} ) {
-		$tool_params{'nocrc'} = 'false';
-	}
+	# --crc vs. --nocrc (ignored)
 
 	# --goterms vs. --nogoterms
 	if ( $params{'nogoterms'} ) {
@@ -854,6 +852,14 @@ sub load_params {
 	}
 	elsif ( $params{'goterms'} ) {
 		$tool_params{'goterms'} = 'true';
+	}
+	
+	# --pathways vs. --nopathways
+	if ( $params{'nopathways'} ) {
+		$tool_params{'pathways'} = 'false';
+	}
+	elsif ( $params{'pathways'} ) {
+		$tool_params{'pathways'} = 'true';
 	}
 
 	# Signature methods to use.
@@ -1070,7 +1076,10 @@ http://www.ebi.ac.uk/Tools/pfa/iprscan5
 
       --appl         : str  : Comma separated list of signature methods to run,
                               see --paramDetail appl. 
-      --goterms      : bool : retrieve GO terms for matched InterPro signatures
+      --goterms      :      : retrieve GO terms
+      --nogoterms    :      : do not retrieve GO terms
+      --pathways     :      : retrieve pathway terms
+      --nopathways   :      : do not retrieve pathway terms
       --multifasta   :      : treat input as a set of fasta formatted sequences
  
 [General]
