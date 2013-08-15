@@ -75,6 +75,8 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "                              see --paramDetail appl. \n"
 			+ "      --goterms      :      : enable retrieval of GO terms\n"
 			+ "      --nogoterms    :      : disable retrieval of GO terms\n"
+			+ "      --pathways     :      : enable retrieval of pathway terms\n"
+			+ "      --nopathways   :      : disable retrieval of pathway terms\n"
 			+ "      --multifasta   :      : treat input as a set of fasta formatted sequences\n"
 			+ "\n";
 
@@ -404,6 +406,10 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			params.setGoterms(new Boolean(true));
 		else if (line.hasOption("nogoterms"))
 			params.setGoterms(new Boolean(false));
+		if (line.hasOption("pathways"))
+			params.setPathways(new Boolean(true));
+		else if (line.hasOption("nopathways"))
+			params.setPathways(new Boolean(false));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -471,8 +477,13 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		options.addOption("app", "app", true, "Signature methods");
 		options.addOption("goterms", "goterms", false, "Enable GO terms");
 		options.addOption("nogoterms", "nogoterms", false, "Disable GO terms");
+		options.addOption("pathways", "pathways", false, "Enable pathway terms");
+		options.addOption("nopathways", "nopathways", false, "Disable pathway terms");
 		options.addOption("sequence", true,
 				"sequence file or datbase entry database:acc.no");
+		// Compatibility options.
+		options.addOption("crc", "crc", false, "Enable CRC look-up (ignored)");
+		options.addOption("nocrc", "nocrc", false, "Disable CRC look-up (ignored)");
 
 		CommandLineParser cliParser = new GnuParser(); // Create the command
 														// line parser
