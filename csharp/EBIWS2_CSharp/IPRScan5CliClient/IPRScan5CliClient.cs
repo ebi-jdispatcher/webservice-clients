@@ -45,10 +45,11 @@ For more information see:
 
       --appl         : str  : Comma separated list of signature methods to run,
                               see --paramDetail appl. 
-      --goterms      :      : enable retrieval of GO terms.
-      --nogoterms    :      : disable retrieval of GO terms.
-      --multifasta   :      : treat input as a set of fasta formatted 
-                              sequences.
+      --goterms      :      : retrieve GO terms
+      --nogoterms    :      : do not retrieve GO terms
+      --pathways     :      : retrieve pathway terms
+      --nopathways   :      : do not retrieve pathway terms
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 ";
 
 		/// <summary>Execution entry point</summary>
@@ -259,14 +260,28 @@ For more information see:
 					goto case "--appl";
 				case "--goterms": // Enable GO terms in result.
 					InParams.goterms = true;
+					InParams.gotermsSpecified = true;
 					break;
 				case "/goterms":
 					goto case "--goterms";
 				case "--nogoterms":
 					InParams.goterms = false;
+					InParams.gotermsSpecified = true;
 					break;
 				case "/nogoterms": // Disable GO terms in result.
 					goto case "--nogoterms";
+				case "--pathways": // Enable pathway terms in result.
+					InParams.pathways = true;
+					InParams.pathwaysSpecified = true;
+					break;
+				case "/pathways":
+					goto case "--pathways";
+				case "--nopathways": // Disable pathways terms in result.
+					InParams.pathways = false;
+					InParams.pathwaysSpecified = true;
+					break;
+				case "/nopathways":
+					goto case "--nopathways";
 
 						// Input data/sequence option
 					case "--sequence": // Input sequence
