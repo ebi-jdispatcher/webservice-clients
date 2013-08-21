@@ -60,7 +60,7 @@ For more information see:
   -x, --gapext         : int  : gap extension penalty
   -d, --dropoff        : int  : drop-off score
   -g, --gapalign       :      : optimise gapped alignments
-      --seqrange       : str  : region in query sequence to use for search
+  -L, --seqrange       : str  : region in query sequence to use for search
       --multifasta     :      : treat input as a set of fasta formatted 
                                 sequences.
 ";
@@ -394,6 +394,15 @@ For more information see:
 						break;
 					case "/nogapalign":
 						goto case "--gapalign";
+					case "--seqrange": // Query sequence region
+						InParams.seqrange = args[++i];
+						break;
+					case "/seqrange":
+						goto case "--seqrange";
+					case "-L":
+						goto case "--seqrange";
+					case "/L":
+						goto case "--seqrange";
 
 						// Input data/sequence option
 					case "--sequence": // Input sequence
