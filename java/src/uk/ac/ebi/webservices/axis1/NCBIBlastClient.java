@@ -70,30 +70,30 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			+ "\n"
 			+ "[Required]\n"
 			+ "\n"
-			+ "  -p, --program        : str  : BLAST program to use: see --paramDetail program\n"
-			+ "  -D, --database       : str  : database(s) to search, space seperated: see\n"
-			+ "                                --paramDetail database\n"
-			+ "      --stype          : str  : query sequence type\n"
-			+ "  seqFile              : file : query sequence (\"-\" for STDIN, @filename for \n"
-			+ "                                identifier list file)\n"
+			+ "  -p, --program       : str  : BLAST program to use: see --paramDetail program\n"
+			+ "  -D, --database      : str  : database(s) to search, space seperated: see\n"
+			+ "                               --paramDetail database\n"
+			+ "      --stype         : str  : query sequence type\n"
+			+ "  seqFile             : file : query sequence (\"-\" for STDIN, @filename for \n"
+			+ "                               identifier list file)\n"
 			+ "\n"
 			+ "[Optional]\n"
 			+ "\n"
-			+ "  -m, --matrix         : str  : scoring matrix, see --paramDetail matrix\n"
-			+ "  -e, --exp            : real : 0<E<= 1000. Statistical significance threshold\n"
-			+ "                                for reporting database sequence matches.\n"
-			+ "  -f, --filter         :      : low complexity sequence filter, see\n"
-			+ "                                --paramDetail filter\n"
-			+ "  -A, --align          : int  : alignment format, see --paramDetail align\n"
-			+ "  -s, --scores         : int  : maximum number of scores to report\n"
-			+ "  -n, --alignments     : int  : maximum number of alignments to report\n"
-			+ "  -u, --match          : int  : score for a match (BLASTN only)\n"
-			+ "  -v, --mismatch       : int  : score for a missmatch (BLASTN only)\n"
-			+ "  -o, --gapopen        : int  : gap open penalty\n"
-			+ "  -x, --gapext         : int  : gap extension penalty\n"
-			+ "  -d, --dropoff        : int  : drop-off score\n"
-			+ "  -g, --gapalign       :      : optimise gapped alignments\n"
-			+ "      --seqrange       : str  : region in query sequence to use for search\n"
+			+ "  -m, --matrix        : str  : scoring matrix, see --paramDetail matrix\n"
+			+ "  -e, --exp           : real : 0<E<= 1000. Statistical significance threshold\n"
+			+ "                               for reporting database sequence matches.\n"
+			+ "  -f, --filter        :      : low complexity sequence filter, see\n"
+			+ "                               --paramDetail filter\n"
+			+ "  -A, --align         : int  : alignment format, see --paramDetail align\n"
+			+ "  -s, --scores        : int  : maximum number of scores to report\n"
+			+ "  -n, --alignments    : int  : maximum number of alignments to report\n"
+			+ "  -u, --match         : int  : score for a match (BLASTN only)\n"
+			+ "  -v, --mismatch      : int  : score for a missmatch (BLASTN only)\n"
+			+ "  -o, --gapopen       : int  : gap open penalty\n"
+			+ "  -x, --gapext        : int  : gap extension penalty\n"
+			+ "  -d, --dropoff       : int  : drop-off score\n"
+			+ "  -g, --gapalign      :      : optimise gapped alignments\n"
+			+ "  -L, --seqrange      : str  : region in query sequence to use for search\n"
 			+ "      --multifasta    :      : treat input as a set of fasta formatted sequences\n";
 
 	/**
@@ -472,8 +472,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("f"))
 			params.setFilter(line.getOptionValue("f"));
 		// if (line.hasOption("F")) params.setFormat(new Boolean(true));
-		if (line.hasOption("S"))
-			params.setSeqrange(line.getOptionValue("S"));
+		if (line.hasOption("L"))
+			params.setSeqrange(line.getOptionValue("L"));
 		printDebugMessage("loadParams", "End", 1);
 		return params;
 	}
@@ -557,7 +557,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("o", "gapopen", true, "Gap creation penalty");
 		options.addOption("x", "gapext", true, "Gap extension penalty");
 		options.addOption("d", "dropoff", true, "Drop off score");
-		options.addOption("seqrange", "seqrange", true,
+		options.addOption("L", "seqrange", true,
 				"Region in query sequence to use for search");
 		options.addOption("stype", "stype", true, "Sequence type");
 		options.addOption("sequence", "sequence", true, "Query sequence");

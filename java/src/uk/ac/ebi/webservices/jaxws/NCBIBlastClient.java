@@ -87,7 +87,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -x, --gapext         : int  : gap extension penalty\n"
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
-		+ "      --seqrange       : str  : region in query sequence to use for search\n"
+		+ "  -L, --seqrange       : str  : region in query sequence to use for search\n"
 		+ "      --multifasta     :      : treat input as a set of fasta formatted \n"
 		+ "                                sequences\n";
 
@@ -444,8 +444,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("f")) {
 			params.setFilter(objFactory.createInputParametersFilter(line.getOptionValue("f")));
 		}
-		if (line.hasOption("S")) {
-			params.setSeqrange(objFactory.createInputParametersSeqrange(line.getOptionValue("S")));
+		if (line.hasOption("L")) {
+			params.setSeqrange(objFactory.createInputParametersSeqrange(line.getOptionValue("L")));
 		}
 		printDebugMessage("loadParams", "End", 1);
 		return params;
@@ -525,7 +525,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("o", "gapopen", true, "Gap creation penalty");
 		options.addOption("x", "gapext", true, "Gap extension penalty");
 		options.addOption("d", "dropoff", true, "Drop off score");
-		options.addOption("seqrange", "seqrange", true, "Region in query sequence to use for search");
+		options.addOption("L", "seqrange", true, "Region in query sequence to use for search");
 		options.addOption("stype", "stype", true, "Sequence type");
 		options.addOption("sequence", "sequence", true, "Query sequence");
 
