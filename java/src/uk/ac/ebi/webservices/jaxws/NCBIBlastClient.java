@@ -87,6 +87,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -x, --gapext         : int  : gap extension penalty\n"
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
+		+ "      --compstats      : str  : Composition adjustment/statistics method, see " 
+		+ "                                --paramDetail compstats\n"
 		+ "  -L, --seqrange       : str  : region in query sequence to use for search\n"
 		+ "      --multifasta     :      : treat input as a set of fasta formatted \n"
 		+ "                                sequences\n";
@@ -441,6 +443,9 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (line.hasOption("g")) {
 			params.setGapalign(objFactory.createInputParametersGapalign(new Boolean(true)));
 		}
+		if (line.hasOption("compstats")) {
+			params.setCompstats(objFactory.createInputParametersCompstats(line.getOptionValue("compstats")));
+		}
 		if (line.hasOption("f")) {
 			params.setFilter(objFactory.createInputParametersFilter(line.getOptionValue("f")));
 		}
@@ -517,6 +522,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("e", "exp", true, "Expectation value threshold");
 		options.addOption("f", "filter", true, "Low complexity sequence filter");
 		options.addOption("g", "gapalign", true, "Perform gapped alignments");
+		options.addOption("compstats", true, "Composition adjustment/statistics");
 		options.addOption("A", "align", true, "Alignment format");
 		options.addOption("s", "scores", true, "Maximum number of scores to display");
 		options.addOption("n", "alignments", true, "Maximum number of alignments to display");
