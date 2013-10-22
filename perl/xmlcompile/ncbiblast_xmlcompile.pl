@@ -102,6 +102,7 @@ GetOptions(
 	"gapopen|o=i"    => \$tool_params{'gapopen'},      # Open gap penalty
 	"gapext|x=i"     => \$tool_params{'gapext'},       # Gap extension penality
 	"gapalign|g"     => \$tool_params{'gapalign'},     # Optimise gap alignments
+	'compstats=s'    => \$tool_params{'compstats'},    # Composition adjustment/statistics.
 	"stype=s" => \$tool_params{'stype'},    # Sequence type 'protein' or 'dna'
 	"seqrange=s" => \$tool_params{'seqrange'},    # Query subsequence to use
 	"sequence=s" => \$params{'sequence'},         # Query sequence file or DB:ID
@@ -988,28 +989,30 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 
 [Optional]
 
-  -m, --matrix      : str  : scoring matrix, see --paramDetail matrix
-  -e, --exp         : real : 0<E<= 1000. Statistical significance threshold 
-                             for reporting database sequence matches.
-  -f, --filter	    :      : filter the query sequence for low complexity 
-                             regions, see --paramDetail filter
-  -A, --align	    : int  : pairwise alignment format, see --paramDetail align
-  -s, --scores	    : int  : number of scores to be reported
-  -n, --alignments  : int  : number of alignments to report
-  -u, --match       : int  : Match score (BLASTN only)
-  -v, --mismatch    : int  : Mismatch score (BLASTN only)
-  -o, --gapopen	    : int  : Gap open penalty
-  -x, --gapext      : int  : Gap extension penalty
-  -d, --dropoff	    : int  : Drop-off
-  -g, --gapalign    :      : Optimise gapped alignments
-      --seqrange    : str  : region within input to use as query
-      --multifasta  :      : treat input as a set of fasta formatted sequences
+  -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
+  -e, --exp          : real : 0<E<= 1000. Statistical significance threshold 
+                              for reporting database sequence matches.
+  -f, --filter       :      : filter the query sequence for low complexity 
+                              regions, see --paramDetail filter
+  -A, --align        : int  : pairwise alignment format, see --paramDetail align
+  -s, --scores       : int  : number of scores to be reported
+  -n, --alignments   : int  : number of alignments to report
+  -u, --match        : int  : Match score (BLASTN only)
+  -v, --mismatch     : int  : Mismatch score (BLASTN only)
+  -o, --gapopen      : int  : Gap open penalty
+  -x, --gapext       : int  : Gap extension penalty
+  -d, --dropoff      : int  : Drop-off
+  -g, --gapalign     :      : Optimise gapped alignments
+      --compstats    : str  : Composition adjustment/statistics method, see 
+                              --paramDetail compstats
+      --seqrange     : str  : region within input to use as query
+      --multifasta   :      : treat input as a set of fasta formatted sequences
 
 [General]
 
   -h, --help        :      : prints this help text
       --async       :      : forces to make an asynchronous query
-      --email	    : str  : e-mail address
+      --email       : str  : e-mail address
       --title       : str  : title for job
       --status      :      : get job status
       --resultTypes :      : get available result types for job
