@@ -110,6 +110,7 @@ GetOptions(
 	'gapopen|o=i'    => \$tool_params{'gapopen'},      # Open gap penalty
 	'gapext|x=i'     => \$tool_params{'gapext'},       # Gap extension penality
 	'gapalign|g'     => \$tool_params{'gapalign'},     # Optimise gap alignments
+	'compstats=s'    => \$tool_params{'compstats'},    # Composition adjustment/statistics.
 	'stype=s' => \$tool_params{'stype'},    # Sequence type
 	'seqrange=s' => \$tool_params{'seqrange'},    # Query subsequence
 	'sequence=s' => \$params{'sequence'},         # Query sequence
@@ -1106,6 +1107,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -x, --gapext       : int  : Gap extension penalty
   -d, --dropoff      : int  : Drop-off
   -g, --gapalign     :      : Optimise gapped alignments
+      --compstats    : str  : Composition adjustment/statistics method, see 
+                              --paramDetail compstats
       --seqrange     : str  : region within input to use as query
       --multifasta   :      : treat input as a set of fasta formatted sequences
 
