@@ -60,6 +60,8 @@ For more information see:
   -x, --gapext         : int  : gap extension penalty
   -d, --dropoff        : int  : drop-off score
   -g, --gapalign       :      : optimise gapped alignments
+      --compstats      : str  : Composition adjustment/statistics method, see 
+                                --paramDetail compstats
   -L, --seqrange       : str  : region in query sequence to use for search
       --multifasta     :      : treat input as a set of fasta formatted 
                                 sequences.
@@ -394,6 +396,11 @@ For more information see:
 						break;
 					case "/nogapalign":
 						goto case "--gapalign";
+					case "--compstats": // Composition adjustment/statistics method.
+						InParams.compstats = args[++i];
+						break;
+					case "/compstats":
+						goto case "--compstats";
 					case "--seqrange": // Query sequence region
 						InParams.seqrange = args[++i];
 						break;
