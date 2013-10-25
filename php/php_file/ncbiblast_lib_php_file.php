@@ -20,7 +20,9 @@
 # PHP NCBI BLAST REST client library
 #
 # Tested with:
-#   PHP 5.2.6 (Ubuntu 9.04)
+#   PHP 5.2.4 (Ubuntu 8.04 LTS)
+#   PHP 5.3.2 (Ubuntu 10.04 LTS)
+#   PHP 5.3.10 (Ubuntu 12.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
