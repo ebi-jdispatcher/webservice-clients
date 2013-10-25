@@ -24,7 +24,9 @@
 #
 # Tested with:
 #   PHP 5.1.6 (CentOS 5)
-#   PHP 5.2.6 (Ubuntu 9.04)
+#   PHP 5.2.4 (Ubuntu 8.04 LTS)
+#   PHP 5.3.2 (Ubuntu 10.04 LTS)
+#   PHP 5.3.10 (Ubuntu 12.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbiblast
@@ -397,6 +399,11 @@ function parseCommandLine($argList) {
     case '-g':
       $options['params']['gapalign'] = TRUE;
       break;
+      // Compositional adjustment/statistics mode.
+    case '--compstats':
+      $i++;
+      $options['params']['compstats'] = $argList[$i];
+      break;
       // Query sequence range
     case '--seqrange':
       $i++;
@@ -453,6 +460,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -x, --gapext       : int  : Gap extension penalty
   -d, --dropoff      : int  : Drop-off
   -g, --gapalign     :      : Optimise gapped alignments
+      --compstats    : str  : Compositional adjustment/statistics mode, see
+                              --paramDetails compstats
       --seqrange     : str  : region within input to use as query
 
 [General]
