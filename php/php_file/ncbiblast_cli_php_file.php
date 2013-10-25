@@ -177,12 +177,11 @@ try {
   }
 
   // Debug options
-  if(array_key_exists('trace', $options)) $client->trace = 1;
   if(array_key_exists('debugLevel', $options)) {
     $client->debugLevel = $options['debugLevel'];
   }
-  if(array_key_exists('WSDL', $options)) {
-    $client->setWsdlUrl($options['WSDL']);
+  if(array_key_exists('baseUrl', $options)) {
+    $client->setBaseUrl($options['baseUrl']);
   }
 
   // Perform requested action
@@ -236,19 +235,15 @@ function parseCommandLine($argList) {
       case '--help':
         $options['action'] = 'help';
         break;
-      // SOAP message trace
-      case '--trace':
-        $options['trace'] = 1;
-        break;
       // Debug output
       case '--debugLevel':
 	$i++;
         $options['debugLevel'] = $argList[$i];
         break;
-      // Service WSDL location
-      case '--WSDL':
+      // Service base URL location
+      case '--baseUrl':
 	$i++;
-        $options['WSDL'] = $argList[$i];
+        $options['baseUrl'] = $argList[$i];
         break;
 
 	// List params
@@ -479,7 +474,6 @@ Rapid sequence database search programs utilizing the BLAST algorithm
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
       --paramDetail  : str  : display details for input parameter
-      --trace        :      : show SOAP messages being interchanged 
 
 Synchronous job:
 
