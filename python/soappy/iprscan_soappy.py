@@ -22,6 +22,7 @@
 # Tested with:
 #   Python 2.5.2 with SOAPpy 0.12.0 (Ubuntu 8.04 LTS)
 #   Python 2.6.5 with SOAPpy 0.12.0 (Ubuntu 10.04 LTS)
+#   Python 2.7.3 with SOAPpy 0.12.0 (Ubuntu 12.04 LTS)
 #
 # See:
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap
