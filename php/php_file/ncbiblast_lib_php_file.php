@@ -105,7 +105,12 @@ class NcbiBlastClient {
       $contextOpts['http']['proxy'] = $this->getHttpProxyStr();
     }
     $context = stream_context_create($contextOpts);
-    $retVal = file_get_contents($url, false, $context);
+    $retVal = @file_get_contents($url, false, $context);
+    if ($retVal === FALSE) {
+       // Convert warning into exception.
+       $error = error_get_last();
+       throw new Exception($error['message']);
+    }
     $this->printDebugMessage('httpGet', 'Response: ' . $retVal, 21);
     $this->printDebugMessage('httpGet', 'End', 11);
     return $retVal;
@@ -114,6 +119,9 @@ class NcbiBlastClient {
   // Perform an HTTP POST request.
   function httpPost($url, $postdata) {
     $this->printDebugMessage('httpPost', 'Begin', 11);
+    if($this->debugLevel > 20) {
+    	 print_r($postdata);
+    }
     $opts = array('http' => array(
 				  'method'  => 'POST',
 				  'request_fulluri' => true,
@@ -127,7 +135,12 @@ class NcbiBlastClient {
       $contextOpts['http']['proxy'] = $this->getHttpProxyStr();
     }
     $context  = stream_context_create($opts);
-    $retVal = file_get_contents($url, false, $context);
+    $retVal = @file_get_contents($url, false, $context);
+    if ($retVal === FALSE) {
+       // Convert warning into exception.
+       $error = error_get_last();
+       throw new Exception($error['message']);
+    }
     $this->printDebugMessage('httpPost', 'End', 11);
     return $retVal;
   }

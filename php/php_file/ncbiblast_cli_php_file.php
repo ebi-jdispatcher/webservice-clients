@@ -399,6 +399,11 @@ function parseCommandLine($argList) {
     case '-g':
       $options['params']['gapalign'] = TRUE;
       break;
+      // Compositional adjustment/statistics.
+    case '--compstats':
+      $i++;
+      $options['params']['compstats'] = $argList[$i];
+      break;
       // Query sequence range
     case '--seqrange':
       $i++;
@@ -455,6 +460,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -x, --gapext       : int  : Gap extension penalty
   -d, --dropoff      : int  : Drop-off
   -g, --gapalign     :      : Optimise gapped alignments
+      --compstats    : str  : Compositional adjustment/statistics mode, see
+                              --paramDetail compstats
       --seqrange     : str  : region within input to use as query
 
 [General]
