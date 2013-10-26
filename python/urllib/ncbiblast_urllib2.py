@@ -68,6 +68,7 @@ parser.add_option('--match_score', help='match/missmatch score')
 parser.add_option('-o', '--gapopen', type='int', help='open gap penalty')
 parser.add_option('-x', '--gapext', type='int', help='extend gap penalty')
 parser.add_option('-g', '--gapalign', action="store_true", help='optimise gap alignments')
+parser.add_option('--compstats', help='compositional adjustment/statistics mode')
 parser.add_option('--seqrange', help='region within input to use as query')
 parser.add_option('--sequence', help='input sequence file name')
 # General options
@@ -355,10 +356,11 @@ elif options.email and not options.jobid:
         else: # Argument is a sequence id
             params['sequence'] = options.sequence
     # Booleans need to be represented as 1/0 rather than True/False
-    if options.gapalign:
-        params['gapalign'] = True
-    else:
-        params['gapalign'] = False
+    if options.gapalign is not None:
+        if options.gapalign:
+            params['gapalign'] = True
+        else:
+            params['gapalign'] = False
     # Add the other options (if defined)
     if options.program:
         params['program'] = options.program
@@ -384,6 +386,8 @@ elif options.email and not options.jobid:
         params['gapopen'] = options.gapopen
     if options.gapext:
         params['gapext'] = options.gapext
+    if options.compstats:
+        params['compstats'] = options.compstats
     
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
