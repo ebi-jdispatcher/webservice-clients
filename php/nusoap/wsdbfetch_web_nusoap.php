@@ -311,12 +311,12 @@ else {
       print '</pre></p>';
     }
   }
-  /*catch(Exception $ex) {
+  catch(Exception $ex) {
     echo '<p><b>Error</b>: ';
     if($ex->getMessage() != '') echo $ex->getMessage();
     else echo $ex;
     echo "</p>\n";
-  } */
+  }
 }
 ?>
 <hr />
