@@ -67,6 +67,8 @@ Rapid sequence database search programs utilising the BLAST algorithm
   -x, --gapext      : int  : Gap extension penalty
   -d, --dropoff     : int  : Drop-off
   -g, --gapalign    :      : Optimise gaped alignments
+      --compstats   : str  : Compositional adjustment/statistics mode, see
+                             --paramDetail compstats
       --seqrange    : str  : region within input to use as query
 
 [General]
@@ -122,8 +124,13 @@ class EbiWsNcbiBlast
   attr_reader :timeout, :outputLevel, :debugLevel, :baseUrl
 
   # Constructor
-  def initialize(outputLevel, debugLevel, timeout)
-    @baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
+  def initialize(
+                 outputLevel=1,
+                 debugLevel=0,
+                 timeout=120,
+                 baseUrl='http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
+                 )
+    @baseUrl = baseUrl
     @outputLevel = outputLevel.to_i
     @debugLevel = debugLevel.to_i
     @timeout = timeout
@@ -259,6 +266,7 @@ class EbiWsNcbiBlast
         post_data += "&#{key}=" + CGI::escape(val)
       end
     end
+    printDebugMessage('run', 'post_data: ' + post_data, 10)
     # Submit the job (POST)
     uri = URI.parse(submitUrl)
     httpConn = Net::HTTP.new(uri.host, uri.port)
@@ -400,6 +408,7 @@ optParser = GetoptLong.new(
                            ['--verbose', GetoptLong::NO_ARGUMENT],
                            ['--debugLevel', GetoptLong::REQUIRED_ARGUMENT],
                            ['--timeout', GetoptLong::REQUIRED_ARGUMENT],
+                           ['--baseUrl', GetoptLong::REQUIRED_ARGUMENT],
                            
                            # Tool specific options
                            ['--program', '-p', GetoptLong::REQUIRED_ARGUMENT],
@@ -417,6 +426,7 @@ optParser = GetoptLong.new(
                            ['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
                            ['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
                            ['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
+                           ['--compstats', GetoptLong::REQUIRED_ARGUMENT],
                            ['--stype', GetoptLong::REQUIRED_ARGUMENT],
                            ['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
                            ['--sequence', GetoptLong::REQUIRED_ARGUMENT]
@@ -440,6 +450,7 @@ excludeOpts = {
   'verbose' => 1,
   'debugLevel' => 1,
   'timeout' => 1,
+  'baseUrl' => 1,
   'gapalign' => 1
 }
 
@@ -461,7 +472,7 @@ begin
     end
   end
 rescue
-  $stderr.print 'Error: command line parsing failed: ' + $!
+  $stderr.print 'Error: command line parsing failed: ' + $! + "\n"
   exit(1)
 end
 
@@ -476,7 +487,11 @@ begin
   # Adjust output level.
   outputLevel += 1 if(argHash['verbose'])
   outputLevel -= 1 if(argHash['quiet'])
-  ebiWsApp = EbiWsNcbiBlast.new(outputLevel, argHash['debugLevel'], timeout)
+  if argHash['baseUrl']
+    ebiWsApp = EbiWsNcbiBlast.new(outputLevel, argHash['debugLevel'], timeout, baseUrl)
+  else
+    ebiWsApp = EbiWsNcbiBlast.new(outputLevel, argHash['debugLevel'], timeout)
+  end
   
   # Help info
   if argHash['help'] || numArgs == 0
@@ -517,9 +532,19 @@ begin
 
   # Submit a job
   elsif(ARGV[0] || argHash['sequence'])
-    # TODO: implement input sequence fetch from file.
-    if(ARGV[0])
-      params['sequence'] = ARGV[0]
+    # Get input data to pass to service.
+    inputData = ARGV[0] || argHash['sequence']
+    if(inputData)
+      # TODO: read data from STDIN.
+      if File.exist?(inputData)
+        # Read input from file.
+        inFile = File.open(inputData, 'rb') # Read data in binary mode.
+        params['sequence'] = inFile.read
+        inFile.close
+      else
+        # Use parameter value as input.
+        params['sequence'] = inputData
+      end
     end
     # Convert database into list.
     if(params['database'])
@@ -528,8 +553,8 @@ begin
     # Handle boolean options
     if argHash['gapalign']
       params['gapalign'] = '0'
-    else
-      params['gapalign'] = '1'
+    #else
+    #  params['gapalign'] = '1'
     end
     jobId = ebiWsApp.run(argHash['email'], argHash['title'], params)
     # In synchronous mode can now get results otherwise print the jobId
