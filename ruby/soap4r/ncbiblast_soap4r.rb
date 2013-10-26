@@ -22,6 +22,7 @@
 # Tested with:
 #   SOAP4R 1.5.5 and Ruby 1.8.6 (Ubuntu 8.04 LTS)
 #   SOAP4R 1.5.5 and Ruby 1.8.7 (Ubuntu 10.04 LTS)
+#   SOAP4R 1.5.5 and Ruby 1.8.7 (Ubuntu 12.04 LTS)
 #   SOAP4R 1.5.8 and Ruby 1.8.7
 #
 # See:
@@ -68,6 +69,8 @@ Rapid sequence database search programs utilising the BLAST algorithm.
   -x, --gapext      : int  : Gap extension penalty
   -d, --dropoff     : int  : Drop-off
   -g, --gapalign    :      : Optimise gaped alignments
+      --compstats   : str  : Compositional ajustment/statistics mode, see
+                             --paramDetail compstats
       --seqrange    : str  : region within input to use as query
 
 [General]
@@ -158,6 +161,7 @@ optParser = GetoptLong.new(
                            ['--gapopen', '-o', GetoptLong::REQUIRED_ARGUMENT],
                            ['--gapext', '-x', GetoptLong::REQUIRED_ARGUMENT],
                            ['--gapalign', '-g', GetoptLong::NO_ARGUMENT],
+                           ['--compstats', GetoptLong::REQUIRED_ARGUMENT],
                            ['--stype', GetoptLong::REQUIRED_ARGUMENT],
                            ['--seqrange', GetoptLong::REQUIRED_ARGUMENT],
                            ['--sequence', GetoptLong::REQUIRED_ARGUMENT]
@@ -490,7 +494,7 @@ begin
     end
   end
 rescue
-  $stderr.print 'Error: command line parsing failed: ' + $!
+  $stderr.print 'Error: command line parsing failed: ' + $! +"\n"
   exit(1)
 end
 
