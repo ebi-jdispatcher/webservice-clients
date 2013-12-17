@@ -77,7 +77,7 @@ use Data::Dumper;
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pfamscan';
 
 # Set interval for checking status
-my $checkInterval = 3;
+my $checkInterval = 1;
 
 # Output level
 my $outputLevel = 1;
@@ -97,6 +97,7 @@ GetOptions(
 	'asp'            => \$params{'asp'},               # Enalbe active site prediction
 	'noasp'          => \$params{'noasp'},             # Disalbe active site prediction
 	'sequence=s'     => \$params{'sequence'},          # Query sequence
+	'multifasta'     => \$params{'multifasta'},        # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -187,8 +188,13 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 # Submit a job
 else {
 
+	# Multiple input sequence mode, assume fasta format.
+	if ( $params{'multifasta'} ) {
+		&multi_submit_job();
+	}
+
 	# Entry identifier list file.
-	if (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
+	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
 		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
 	{
 		my $list_filename = $params{'sequence'} || $ARGV[0];
@@ -701,6 +707,70 @@ sub submit_job {
 	print_debug_message( 'submit_job', 'End', 1 );
 }
 
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+	print_debug_message( 'multi_submit_job', 'Begin', 1 );
+	my $jobIdForFilename = 1;
+	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	my (@filename_list) = ();
+
+	# Query sequence
+	if ( defined( $ARGV[0] ) ) {    # Bare option
+		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
+			push( @filename_list, $ARGV[0] );
+		}
+		else {
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist';
+		}
+	}
+	if ( $params{'sequence'} ) {                   # Via --sequence
+		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
+			push( @filename_list, $params{'sequence'} );
+		}
+		else {
+			warn 'Warning: Input file "'
+			  . $params{'sequence'}
+			  . '" does not exist';
+		}
+	}
+
+	$/ = '>';
+	foreach my $filename (@filename_list) {
+		my $INFILE;
+		if ( $filename eq '-' ) {    # STDIN.
+			open( $INFILE, '<-' )
+			  or die 'Error: unable to STDIN (' . $! . ')';
+		}
+		else {                       # File.
+			open( $INFILE, '<', $filename )
+			  or die 'Error: unable to open file '
+			  . $filename . ' ('
+			  . $! . ')';
+		}
+		while (<$INFILE>) {
+			my $seq = $_;
+			$seq =~ s/>$//;
+			if ( $seq =~ m/(\S+)/ ) {
+				print STDERR "Submitting job for: $1\n"
+				  if ( $outputLevel > 0 );
+				$seq = '>' . $seq;
+				&print_debug_message( 'multi_submit_job', $seq, 11 );
+				&submit_job($seq);
+				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+		}
+		close $INFILE;
+	}
+	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
 =head2 list_file_submit_job()
 
 Submit multiple jobs using a file containing a list of entry identifiers as 
@@ -989,12 +1059,11 @@ Print program usage message.
 sub usage {
 	print STDERR <<EOF
 PfamScan
-=============
+========
 
-PfamScan is used to search a FASTA sequence against a library of Pfam HMM. 
+PfamScan is used to search a protein sequence against Pfam. 
     
 [Required]
-
 
   seqFile            : file : query sequence ("-" for STDIN, \@filename for
                               identifier list file).
@@ -1007,8 +1076,8 @@ PfamScan is used to search a FASTA sequence against a library of Pfam HMM.
                               threshold for reporting database sequence 
                               matches. 
   -F, --format       : str  : Output format. See --paramDetail format. 
-      --asp          :      : Enalbe active site prediction.
-      --noasp        :      : Disalbe active site prediction.
+      --asp          :      : Enable active site prediction.
+      --noasp        :      : Disable active site prediction.
 
 [General]
 
