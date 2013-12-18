@@ -76,7 +76,7 @@ use Data::Dumper;
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pfamscan';
 
-# Set interval for checking status
+# Set interval for checking status (seconds)
 my $checkInterval = 1;
 
 # Output level
@@ -84,7 +84,10 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params = (
+    'debugLevel' => 0,
+    'numConcurrentJobs' => 1
+);
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
@@ -103,6 +106,7 @@ GetOptions(
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
 	'outfile=s'     => \$params{'outfile'},        # Output file name
+    'useSeqId' => \$params{'useSeqId'}, # Seq Id file name
 	'outformat=s'   => \$params{'outformat'},      # Output file type
 	'jobid=s'       => \$params{'jobid'},          # JobId
 	'help|h'        => \$params{'help'},           # Usage help
@@ -116,6 +120,7 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
+    'numConcurrentJobs=i' => \$params{'numConcurrentJobs'},
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )   { $outputLevel-- }
@@ -177,11 +182,17 @@ elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
 
 # Result types
 elsif ( $params{'resultTypes'} && defined( $params{'jobid'} ) ) {
+	# Check status, and wait if not finished
+	&client_poll($params{'jobid'});
+	# Get result types.
 	&print_result_types( $params{'jobid'} );
 }
 
 # Poll job and get results
 elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
+	# Check status, and wait if not finished
+	&client_poll($params{'jobid'});
+	# Get results.
 	&get_results( $params{'jobid'} );
 }
 
@@ -689,7 +700,7 @@ sub submit_job {
 	# Submit the job
 	my $jobid = &rest_run( $params{'email'}, $params{'title'}, \%tool_params );
 
-	# Simulate sync/async mode
+	# Asychronus submission.
 	if ( defined( $params{'async'} ) ) {
 		print STDOUT $jobid, "\n";
 		if ( $outputLevel > 0 ) {
@@ -697,14 +708,26 @@ sub submit_job {
 			  "To check status: $scriptName --status --jobid $jobid\n";
 		}
 	}
+	# Parallel submission mode.
+	elsif($params{'numConcurrentJobs'} > 1) {
+		if ( $outputLevel > 0 ) {
+			print STDERR "JobId: $jobid\n";
+		}
+		select(undef, undef, undef, 0.25); # 0.25 second sleep.
+	}
+	# Simulate synchronous submission.
 	else {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
-		sleep 1;
+		select(undef, undef, undef, 0.5); # 0.5 second sleep.
+		# Check status, and wait if not finished
+		&client_poll($jobid);
+		# Get results.
 		&get_results($jobid);
 	}
 	print_debug_message( 'submit_job', 'End', 1 );
+	return $jobid;
 }
 
 =head2 multi_submit_job()
@@ -740,7 +763,8 @@ sub multi_submit_job {
 			  . '" does not exist';
 		}
 	}
-
+	# Job identifier tracking for parallel execution.
+	my @jobid_list = ();
 	$/ = '>';
 	foreach my $filename (@filename_list) {
 		my $INFILE;
@@ -758,17 +782,63 @@ sub multi_submit_job {
 			my $seq = $_;
 			$seq =~ s/>$//;
 			if ( $seq =~ m/(\S+)/ ) {
-				print STDERR "Submitting job for: $1\n"
+			    my $seq_id = $1;
+				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				&submit_job($seq);
+				push(@jobid_list, &submit_job($seq) . ' ' . $seq_id);
 				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+			}
+			# Parallel mode, wait for job(s) to finish to free slots.
+			if($params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) >= $params{'numConcurrentJobs'}) {
+			    &_job_list_poll(\@jobid_list);
+			    print_debug_message( 'multi_submit_job', 'Remaining jobs: ' . scalar(@jobid_list), 1 );
 			}
 		}
 		close $INFILE;
 	}
+	# Parallel mode, wait for remaining jobs to finish.
+	while($params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) > 0) {
+	    &_job_list_poll(\@jobid_list);
+	    print_debug_message( 'multi_submit_job', 'Remaining jobs: ' . scalar(@jobid_list), 1 );
+	}
 	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 _job_list_poll()
+
+Poll the status of a list of jobs and fetch results for finished jobs.
+
+  while(scalar(@jobid_list) > 0) {
+    &_job_list_poll(\@jobid_list);
+  }
+
+=cut
+
+sub _job_list_poll {
+    print_debug_message( '_job_list_poll', 'Begin', 1 );
+    my $jobid_list = shift;
+    print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list), 11 );
+    # Loop though job Id list polling job status.
+    for(my $jobNum = (scalar(@$jobid_list) - 1); $jobNum > -1; $jobNum--) {
+	my ($jobid, $seq_id) = split(/\s+/, $jobid_list->[$jobNum]);
+	print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
+	print_debug_message( '_job_list_poll', 'JobId: ' . $jobid, 12 );
+	print_debug_message( '_job_list_poll', 'SeqId: ' . $seq_id, 12 );
+	# Get job status.
+	my $job_status = &rest_get_status($jobid);
+	print_debug_message( '_job_list_poll', 'Status: ' . $job_status, 12 );
+	# Fetch results and remove finished/failed jobs from list.
+	if(!($job_status eq 'RUNNING'
+	     || $job_status eq 'PENDING'
+	     || $job_status eq 'ERROR')) {
+	    &get_results($jobid, $seq_id);
+	    splice(@$jobid_list, $jobNum, 1);
+	}
+    }
+    print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list), 11 );
+    print_debug_message( '_job_list_poll', 'End', 1 );
 }
 
 =head2 list_file_submit_job()
@@ -803,7 +873,7 @@ sub list_file_submit_job {
 			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
 				print STDERR "Submitting job for: $line\n"
 				  if ( $outputLevel > 0 );
-				&submit_job($line);
+				&submit_job($line, $line);
 			}
 			else {
 				print STDERR
@@ -883,7 +953,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+        # Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -921,19 +991,24 @@ Get the results for a job identifier.
 sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
 	my $jobid = shift;
+	my $seq_id = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
+	my $output_basename = $jobid;
 
 	# Verbose
 	if ( $outputLevel > 1 ) {
 		print 'Getting results for job ', $jobid, "\n";
 	}
 
-	# Check status, and wait if not finished
-	client_poll($jobid);
-
-	# Use JobId if output file name is not defined
-	unless ( defined( $params{'outfile'} ) ) {
-		$params{'outfile'} = $jobid;
+	# Default output file names use JobId, however the name can be specified...
+	if ( defined( $params{'outfile'} ) ) {
+		$output_basename = $params{'outfile'};
+	}
+	# Or use sequence identifer.
+	elsif ( defined( $params{'useSeqId'} )) {
+	    $output_basename = $seq_id;
+	    # TODO: Make safe to use as a file name.
+	    $output_basename =~ s/[\!\"\$\&\*\?\(\)\{\}\[\]:\'\<\>\\\/\|]/_/g;
 	}
 
 	# Get list of data types
@@ -950,12 +1025,12 @@ sub get_results {
 		if ( defined($selResultType) ) {
 			my $result =
 			  rest_get_result( $jobid, $selResultType->{'identifier'} );
-			if ( $params{'outfile'} eq '-' ) {
+			if ( defined($params{'outfile'}) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
 				write_file(
-					$params{'outfile'} . '.'
+					$output_basename . '.'
 					  . $selResultType->{'identifier'} . '.'
 					  . $selResultType->{'fileSuffix'},
 					$result
@@ -973,12 +1048,12 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( $params{'outfile'} eq '-' ) {
+			if ( defined($params{'outfile'}) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
 				write_file(
-					$params{'outfile'} . '.'
+					$output_basename . '.'
 					  . $resultType->{'identifier'} . '.'
 					  . $resultType->{'fileSuffix'},
 					$result
