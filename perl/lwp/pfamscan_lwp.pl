@@ -1194,6 +1194,8 @@ PfamScan is used to search a protein sequence against Pfam.
   -F, --format       : str  : Output format. See --paramDetail format. 
       --asp          :      : Enable active site prediction.
       --noasp        :      : Disable active site prediction.
+      --multifasta   :      : treat input as a set of fasta formatted 
+                              sequences.
 
 [General]
 
@@ -1209,7 +1211,7 @@ PfamScan is used to search a protein sequence against Pfam.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
       --useSeqId     :      : use sequence identifiers for output filenames.
-      --numJobs      :      : maximum number of concurrent jobs. Only used in 
+      --numJobs      : int  : maximum number of concurrent jobs. Only used in 
                               multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
