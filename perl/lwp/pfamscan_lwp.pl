@@ -84,9 +84,9 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = (
-    'debugLevel' => 0,
-    'numConcurrentJobs' => 1
+my %params  = (
+	'debugLevel'        => 0,
+	'numConcurrentJobs' => 1
 );
 
 # Default parameter values (should get these from the service)
@@ -94,19 +94,19 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options.
-	'database|D=s'   => \$tool_params{'database'},     # Database to search
-	'evalue|E=f'     => \$tool_params{'evalue'},       # E-value threshold
-	'format|F=s'     => \$tool_params{'format'},       # Output format
-	'asp'            => \$params{'asp'},               # Enalbe active site prediction
-	'noasp'          => \$params{'noasp'},             # Disalbe active site prediction
-	'sequence=s'     => \$params{'sequence'},          # Query sequence
-	'multifasta'     => \$params{'multifasta'},        # Multiple fasta input
+	'database|D=s' => \$tool_params{'database'}, # Database to search
+	'evalue|E=f'   => \$tool_params{'evalue'},   # E-value threshold
+	'format|F=s'   => \$tool_params{'format'},   # Output format
+	'asp'          => \$params{'asp'},           # Enalbe active site prediction
+	'noasp'      => \$params{'noasp'},         # Disalbe active site prediction
+	'sequence=s' => \$params{'sequence'},      # Query sequence
+	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
 	'outfile=s'     => \$params{'outfile'},        # Output file name
-    'useSeqId' => \$params{'useSeqId'}, # Seq Id file name
+	'useSeqId'      => \$params{'useSeqId'},       # Seq Id file name
 	'outformat=s'   => \$params{'outformat'},      # Output file type
 	'jobid=s'       => \$params{'jobid'},          # JobId
 	'help|h'        => \$params{'help'},           # Usage help
@@ -120,7 +120,7 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
-    'numConcurrentJobs=i' => \$params{'numConcurrentJobs'},
+	'numConcurrentJobs=i' => \$params{'numConcurrentJobs'},
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )   { $outputLevel-- }
@@ -182,16 +182,20 @@ elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
 
 # Result types
 elsif ( $params{'resultTypes'} && defined( $params{'jobid'} ) ) {
+
 	# Check status, and wait if not finished
-	&client_poll($params{'jobid'});
+	&client_poll( $params{'jobid'} );
+
 	# Get result types.
 	&print_result_types( $params{'jobid'} );
 }
 
 # Poll job and get results
 elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
+
 	# Check status, and wait if not finished
-	&client_poll($params{'jobid'});
+	&client_poll( $params{'jobid'} );
+
 	# Get results.
 	&get_results( $params{'jobid'} );
 }
@@ -555,14 +559,14 @@ sub print_param_details {
 	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	if(defined($paramDetail->{'values'}->{'value'})) {
-		if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+	if ( defined( $paramDetail->{'values'}->{'value'} ) ) {
+		if ( ref( $paramDetail->{'values'}->{'value'} ) eq 'ARRAY' ) {
 			foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
 				&print_param_value($value);
 			}
 		}
 		else {
-				&print_param_value($paramDetail->{'values'}->{'value'});
+			&print_param_value( $paramDetail->{'values'}->{'value'} );
 		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
@@ -708,21 +712,24 @@ sub submit_job {
 			  "To check status: $scriptName --status --jobid $jobid\n";
 		}
 	}
+
 	# Parallel submission mode.
-	elsif($params{'numConcurrentJobs'} > 1) {
+	elsif ( $params{'numConcurrentJobs'} > 1 ) {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
-		select(undef, undef, undef, 0.25); # 0.25 second sleep.
+		select( undef, undef, undef, 0.25 );    # 0.25 second sleep.
 	}
+
 	# Simulate synchronous submission.
 	else {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
-		select(undef, undef, undef, 0.5); # 0.5 second sleep.
-		# Check status, and wait if not finished
+		select( undef, undef, undef, 0.5 );     # 0.5 second sleep.
+		       # Check status, and wait if not finished
 		&client_poll($jobid);
+
 		# Get results.
 		&get_results($jobid);
 	}
@@ -763,6 +770,7 @@ sub multi_submit_job {
 			  . '" does not exist';
 		}
 	}
+
 	# Job identifier tracking for parallel execution.
 	my @jobid_list = ();
 	$/ = '>';
@@ -782,26 +790,32 @@ sub multi_submit_job {
 			my $seq = $_;
 			$seq =~ s/>$//;
 			if ( $seq =~ m/(\S+)/ ) {
-			    my $seq_id = $1;
+				my $seq_id = $1;
 				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				push(@jobid_list, &submit_job($seq) . ' ' . $seq_id);
+				push( @jobid_list, &submit_job($seq) . ' ' . $seq_id );
 				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 			}
+
 			# Parallel mode, wait for job(s) to finish to free slots.
-			if($params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) >= $params{'numConcurrentJobs'}) {
-			    &_job_list_poll(\@jobid_list);
-			    print_debug_message( 'multi_submit_job', 'Remaining jobs: ' . scalar(@jobid_list), 1 );
+			if ( $params{'numConcurrentJobs'} > 1
+				&& scalar(@jobid_list) >= $params{'numConcurrentJobs'} )
+			{
+				&_job_list_poll( \@jobid_list );
+				print_debug_message( 'multi_submit_job',
+					'Remaining jobs: ' . scalar(@jobid_list), 1 );
 			}
 		}
 		close $INFILE;
 	}
+
 	# Parallel mode, wait for remaining jobs to finish.
-	while($params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) > 0) {
-	    &_job_list_poll(\@jobid_list);
-	    print_debug_message( 'multi_submit_job', 'Remaining jobs: ' . scalar(@jobid_list), 1 );
+	while ( $params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) > 0 ) {
+		&_job_list_poll( \@jobid_list );
+		print_debug_message( 'multi_submit_job',
+			'Remaining jobs: ' . scalar(@jobid_list), 1 );
 	}
 	print_debug_message( 'multi_submit_job', 'End', 1 );
 }
@@ -817,28 +831,39 @@ Poll the status of a list of jobs and fetch results for finished jobs.
 =cut
 
 sub _job_list_poll {
-    print_debug_message( '_job_list_poll', 'Begin', 1 );
-    my $jobid_list = shift;
-    print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list), 11 );
-    # Loop though job Id list polling job status.
-    for(my $jobNum = (scalar(@$jobid_list) - 1); $jobNum > -1; $jobNum--) {
-	my ($jobid, $seq_id) = split(/\s+/, $jobid_list->[$jobNum]);
-	print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
-	print_debug_message( '_job_list_poll', 'JobId: ' . $jobid, 12 );
-	print_debug_message( '_job_list_poll', 'SeqId: ' . $seq_id, 12 );
-	# Get job status.
-	my $job_status = &rest_get_status($jobid);
-	print_debug_message( '_job_list_poll', 'Status: ' . $job_status, 12 );
-	# Fetch results and remove finished/failed jobs from list.
-	if(!($job_status eq 'RUNNING'
-	     || $job_status eq 'PENDING'
-	     || $job_status eq 'ERROR')) {
-	    &get_results($jobid, $seq_id);
-	    splice(@$jobid_list, $jobNum, 1);
+	print_debug_message( '_job_list_poll', 'Begin', 1 );
+	my $jobid_list = shift;
+	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+		11 );
+
+	# Loop though job Id list polling job status.
+	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
+	{
+		my ( $jobid, $seq_id ) = split( /\s+/, $jobid_list->[$jobNum] );
+		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
+		print_debug_message( '_job_list_poll', 'JobId: ' . $jobid,   12 );
+		print_debug_message( '_job_list_poll', 'SeqId: ' . $seq_id,  12 );
+
+		# Get job status.
+		my $job_status = &rest_get_status($jobid);
+		print_debug_message( '_job_list_poll', 'Status: ' . $job_status, 12 );
+
+		# Fetch results and remove finished/failed jobs from list.
+		if (
+			!(
+				   $job_status eq 'RUNNING'
+				|| $job_status eq 'PENDING'
+				|| $job_status eq 'ERROR'
+			)
+		  )
+		{
+			&get_results( $jobid, $seq_id );
+			splice( @$jobid_list, $jobNum, 1 );
+		}
 	}
-    }
-    print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list), 11 );
-    print_debug_message( '_job_list_poll', 'End', 1 );
+	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+		11 );
+	print_debug_message( '_job_list_poll', 'End', 1 );
 }
 
 =head2 list_file_submit_job()
@@ -873,7 +898,7 @@ sub list_file_submit_job {
 			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
 				print STDERR "Submitting job for: $line\n"
 				  if ( $outputLevel > 0 );
-				&submit_job($line, $line);
+				&submit_job( $line, $line );
 			}
 			else {
 				print STDERR
@@ -953,7 +978,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-        # Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -990,7 +1015,7 @@ Get the results for a job identifier.
 
 sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
-	my $jobid = shift;
+	my $jobid  = shift;
 	my $seq_id = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
 	my $output_basename = $jobid;
@@ -1004,11 +1029,13 @@ sub get_results {
 	if ( defined( $params{'outfile'} ) ) {
 		$output_basename = $params{'outfile'};
 	}
+
 	# Or use sequence identifer.
-	elsif ( defined( $params{'useSeqId'} )) {
-	    $output_basename = $seq_id;
-	    # TODO: Make safe to use as a file name.
-	    $output_basename =~ s/[\!\"\$\&\*\?\(\)\{\}\[\]:\'\<\>\\\/\|]/_/g;
+	elsif ( defined( $params{'useSeqId'} ) ) {
+		$output_basename = $seq_id;
+
+		# TODO: Make safe to use as a file name.
+		$output_basename =~ s/[\!\"\$\&\*\?\(\)\{\}\[\]:\'\<\>\\\/\|]/_/g;
 	}
 
 	# Get list of data types
@@ -1025,7 +1052,7 @@ sub get_results {
 		if ( defined($selResultType) ) {
 			my $result =
 			  rest_get_result( $jobid, $selResultType->{'identifier'} );
-			if ( defined($params{'outfile'}) && $params{'outfile'} eq '-' ) {
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
@@ -1048,7 +1075,7 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( defined($params{'outfile'}) && $params{'outfile'} eq '-' ) {
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
