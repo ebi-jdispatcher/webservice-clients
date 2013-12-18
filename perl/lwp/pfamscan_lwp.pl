@@ -85,8 +85,8 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 my %params  = (
-	'debugLevel'        => 0,
-	'numConcurrentJobs' => 1
+	'debugLevel' => 0,
+	'maxJobs'    => 1
 );
 
 # Default parameter values (should get these from the service)
@@ -120,7 +120,7 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
-	'numConcurrentJobs=i' => \$params{'numConcurrentJobs'},
+	'maxJobs=i'     => \$params{'maxJobs'},
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )   { $outputLevel-- }
@@ -714,7 +714,7 @@ sub submit_job {
 	}
 
 	# Parallel submission mode.
-	elsif ( $params{'numConcurrentJobs'} > 1 ) {
+	elsif ( $params{'maxJobs'} > 1 ) {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
@@ -800,8 +800,8 @@ sub multi_submit_job {
 			}
 
 			# Parallel mode, wait for job(s) to finish to free slots.
-			if ( $params{'numConcurrentJobs'} > 1
-				&& scalar(@jobid_list) >= $params{'numConcurrentJobs'} )
+			if ( $params{'maxJobs'} > 1
+				&& scalar(@jobid_list) >= $params{'maxJobs'} )
 			{
 				&_job_list_poll( \@jobid_list );
 				print_debug_message( 'multi_submit_job',
@@ -812,7 +812,7 @@ sub multi_submit_job {
 	}
 
 	# Parallel mode, wait for remaining jobs to finish.
-	while ( $params{'numConcurrentJobs'} > 1 && scalar(@jobid_list) > 0 ) {
+	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
 		&_job_list_poll( \@jobid_list );
 		print_debug_message( 'multi_submit_job',
 			'Remaining jobs: ' . scalar(@jobid_list), 1 );
@@ -978,7 +978,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -1034,8 +1034,8 @@ sub get_results {
 	elsif ( defined( $params{'useSeqId'} ) ) {
 		$output_basename = $seq_id;
 
-		# TODO: Make safe to use as a file name.
-		$output_basename =~ s/[\!\"\$\&\*\?\(\)\{\}\[\]:\'\<\>\\\/\|]/_/g;
+		# Make safe to use as a file name.
+		$output_basename =~ s/\W/_/g;
 	}
 
 	# Get list of data types
@@ -1194,6 +1194,9 @@ PfamScan is used to search a protein sequence against Pfam.
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
+      --useSeqId     :      : use sequence identifiers for output filenames.
+      --numJobs      :      : maximum number of concurrent jobs. Only used in 
+                              multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
       --paramDetail  : str  : display details for input parameter
