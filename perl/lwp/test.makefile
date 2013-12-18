@@ -91,6 +91,7 @@ fingerprintscan \
 hmmer_hmmscan \
 iprscan \
 iprscan5 \
+pfamscan \
 phobius \
 pratt \
 ps_scan \
@@ -101,6 +102,7 @@ fingerprintscan_clean \
 hmmer_hmmscan_clean \
 iprscan_clean \
 iprscan5_clean \
+pfamscan_clean \
 phobius_clean \
 pratt_clean \
 ps_scan_clean \
@@ -1226,6 +1228,42 @@ ncbiblast_multifasta_file_stdin_stdout: test_data
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
+
+# pfam_scan
+pfamscan: pfamscan_params pfamscan_param_detail \
+pfamscan_file pfamscan_dbid pfamscan_stdin_stdout \
+pfamscan_id_list_file pfamscan_id_list_file_stdin_stdout \
+pfamscan_multifasta_file pfamscan_multifasta_file_stdin_stdout
+
+pfamscan_params:
+	${PERL} pfamscan_lwp.pl --params
+
+pfamscan_param_detail:
+	${PERL} pfamscan_lwp.pl --paramDetail format
+
+pfamscan_file: test_data
+	${PERL} pfamscan_lwp.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+pfamscan_dbid:
+	${PERL} pfamscan_lwp.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+pfamscan_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} pfamscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - - > pfamscan-blah.txt
+
+pfamscan_id_list_file: test_data
+	${PERL} pfamscan_lwp.pl --email ${EMAIL} @../test_data/uniprot_id_list.txt
+
+pfamscan_id_list_file_stdin_stdout: test_data
+	cat ../test_data/uniprot_id_list.txt | ${PERL} pfamscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --sequence @- > pfamscan-idfile.txt
+
+pfamscan_multifasta_file: test_data
+	${PERL} pfamscan_lwp.pl --email ${EMAIL} --multifasta --sequence ../test_data/multi_prot.tfa
+
+pfamscan_multifasta_file_stdin_stdout: test_data
+	cat ../test_data/multi_prot.tfa | ${PERL} pfamscan_lwp.pl --email ${EMAIL} --quiet --outformat out --outfile - --multifasta --sequence - > pfamscan-file.txt
+
+pfamscan_clean:
+	rm -f pfamscan-*
 
 # Phobius
 phobius: phobius_params phobius_param_detail \
