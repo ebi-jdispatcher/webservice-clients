@@ -79,6 +79,9 @@ my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pfamscan';
 # Set interval for checking status (seconds)
 my $checkInterval = 1;
 
+# Set maximum number of 'ERROR' status calls to call job failed.
+my $maxErrorStatusCount = 3;
+
 # Output level
 my $outputLevel = 1;
 
@@ -795,7 +798,7 @@ sub multi_submit_job {
 				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				push( @jobid_list, &submit_job($seq) . ' ' . $seq_id );
+				push( @jobid_list, &submit_job($seq) . ' ' . $seq_id . ' 0' );
 				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 			}
 
@@ -839,7 +842,7 @@ sub _job_list_poll {
 	# Loop though job Id list polling job status.
 	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
 	{
-		my ( $jobid, $seq_id ) = split( /\s+/, $jobid_list->[$jobNum] );
+		my ( $jobid, $seq_id, $error_count ) = split( /\s+/, $jobid_list->[$jobNum] );
 		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
 		print_debug_message( '_job_list_poll', 'JobId: ' . $jobid,   12 );
 		print_debug_message( '_job_list_poll', 'SeqId: ' . $seq_id,  12 );
@@ -853,12 +856,23 @@ sub _job_list_poll {
 			!(
 				   $job_status eq 'RUNNING'
 				|| $job_status eq 'PENDING'
-				|| $job_status eq 'ERROR'
+				|| ( $job_status eq 'ERROR' && $error_count < $maxErrorStatusCount )
 			)
 		  )
 		{
 			&get_results( $jobid, $seq_id );
 			splice( @$jobid_list, $jobNum, 1 );
+		}
+		else {
+			# Update error count, increment for new error or clear old errors. 
+			if ( $job_status eq 'ERROR' ) {
+				$error_count++;
+			}
+			elsif ( $error_count > 0 ) {
+				$error_count--;
+			}
+			# Update job tracking info.
+			$jobid_list->[$jobNum] = $jobid . ' ' . $seq_id . ' ' . $error_count;
 		}
 	}
 	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
@@ -982,7 +996,7 @@ sub client_poll {
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
-		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
+		|| ( $status eq 'ERROR' && $errorCount < $maxErrorStatusCount ) )
 	{
 		$status = rest_get_status($jobid);
 		print STDERR "$status\n" if ( $outputLevel > 0 );
