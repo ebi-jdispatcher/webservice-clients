@@ -100,16 +100,17 @@ GetOptions(
 	'database|D=s' => \$tool_params{'database'}, # Database to search
 	'evalue|E=f'   => \$tool_params{'evalue'},   # E-value threshold
 	'format|F=s'   => \$tool_params{'format'},   # Output format
-	'asp'          => \$params{'asp'},           # Enalbe active site prediction
-	'noasp'      => \$params{'noasp'},         # Disalbe active site prediction
-	'sequence=s' => \$params{'sequence'},      # Query sequence
-	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
+	'asp'          => \$params{'asp'},           # Enable active site prediction
+	'noasp'        => \$params{'noasp'},         # Disable active site prediction
+	'sequence=s'   => \$params{'sequence'},      # Query sequence
+	'multifasta'   => \$params{'multifasta'},    # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
 	'outfile=s'     => \$params{'outfile'},        # Output file name
 	'useSeqId'      => \$params{'useSeqId'},       # Seq Id file name
+	'maxJobs=i'     => \$params{'maxJobs'},        # Max. parallel jobs
 	'outformat=s'   => \$params{'outformat'},      # Output file type
 	'jobid=s'       => \$params{'jobid'},          # JobId
 	'help|h'        => \$params{'help'},           # Usage help
@@ -123,7 +124,6 @@ GetOptions(
 	'verbose'       => \$params{'verbose'},        # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
 	'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
-	'maxJobs=i'     => \$params{'maxJobs'},
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )   { $outputLevel-- }
@@ -206,7 +206,7 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 # Submit a job
 else {
 
-	# Multiple input sequence mode, assume fasta format.
+	# Multiple input sequence mode, assumes fasta format.
 	if ( $params{'multifasta'} ) {
 		&multi_submit_job();
 	}
@@ -223,6 +223,10 @@ else {
 	# Default: single sequence/identifier.
 	else {
 
+		# Warn for invalid batch only option use.
+		print STDERR "Warning: --useSeqId option ignored." if ( $params{'useSeqId'} );
+		print STDERR "Warning: --maxJobs option ignored." if ( $params{'maxJobs'} > 1 );
+		
 		# Load the sequence data and submit.
 		&submit_job( &load_data() );
 	}
@@ -750,8 +754,6 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 
 sub multi_submit_job {
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
-	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 	my (@filename_list) = ();
 
 	# Query sequence
@@ -776,6 +778,7 @@ sub multi_submit_job {
 
 	# Job identifier tracking for parallel execution.
 	my @jobid_list = ();
+	my $job_number = 0;
 	$/ = '>';
 	foreach my $filename (@filename_list) {
 		my $INFILE;
@@ -798,8 +801,10 @@ sub multi_submit_job {
 				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				push( @jobid_list, &submit_job($seq) . ' ' . $seq_id . ' 0' );
-				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+				$job_number++;
+				my $job_id = &submit_job($seq);
+				my $job_info_str = sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+				push( @jobid_list, $job_info_str );
 			}
 
 			# Parallel mode, wait for job(s) to finish to free slots.
@@ -842,10 +847,9 @@ sub _job_list_poll {
 	# Loop though job Id list polling job status.
 	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
 	{
-		my ( $jobid, $seq_id, $error_count ) = split( /\s+/, $jobid_list->[$jobNum] );
+		my ( $jobid, $seq_id, $error_count, $job_number ) = split( /\s+/, $jobid_list->[$jobNum] );
 		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
-		print_debug_message( '_job_list_poll', 'JobId: ' . $jobid,   12 );
-		print_debug_message( '_job_list_poll', 'SeqId: ' . $seq_id,  12 );
+		print_debug_message( '_job_list_poll', 'Job info: ' . $jobid_list->[$jobNum],   12 );
 
 		# Get job status.
 		my $job_status = &rest_get_status($jobid);
@@ -860,6 +864,9 @@ sub _job_list_poll {
 			)
 		  )
 		{
+			if( $job_status eq 'ERROR' || $job_status eq 'FAILED' ) {
+				print STDERR "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
+			}
 			&get_results( $jobid, $seq_id );
 			splice( @$jobid_list, $jobNum, 1 );
 		}
@@ -872,7 +879,8 @@ sub _job_list_poll {
 				$error_count--;
 			}
 			# Update job tracking info.
-			$jobid_list->[$jobNum] = $jobid . ' ' . $seq_id . ' ' . $error_count;
+			my $job_info_str = sprintf('%s %s %d %d', $jobid, $seq_id, $error_count, $job_number);
+			$jobid_list->[$jobNum] = $job_info_str;
 		}
 	}
 	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
@@ -890,11 +898,10 @@ input.
 =cut
 
 sub list_file_submit_job {
-	my $filename         = shift;
-	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	print_debug_message( 'list_file_submit_job', 'Begin', 1 );
+	my $filename = shift;
 
-	# Iterate over identifiers, submitting each job
+	# Open the file of identifiers.
 	my $LISTFILE;
 	if ( $filename eq '-' ) {    # STDIN.
 		open( $LISTFILE, '<-' )
@@ -904,24 +911,48 @@ sub list_file_submit_job {
 		open( $LISTFILE, '<', $filename )
 		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
 	}
+	# Job identifier tracking for parallel execution.
+	my @jobid_list = ();
+	my $job_number = 0;
+
+	# Iterate over identifiers, submitting each job
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
 		if ( $line ne '' ) {
 			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
 			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
-				print STDERR "Submitting job for: $line\n"
+				my $seq_id = $line;
+				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
-				&submit_job( $line, $line );
+				$job_number++;
+				my $job_id = &submit_job( $seq_id );
+				my $job_info_str = sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+				push( @jobid_list, $job_info_str );
 			}
 			else {
 				print STDERR
 "Warning: line \"$line\" is not recognised as an identifier\n";
 			}
+			# Parallel mode, wait for job(s) to finish to free slots.
+			if ( $params{'maxJobs'} > 1
+				&& scalar(@jobid_list) >= $params{'maxJobs'} )
+			{
+				&_job_list_poll( \@jobid_list );
+				print_debug_message( 'list_file_submit_job',
+					'Remaining jobs: ' . scalar(@jobid_list), 1 );
+			}
 		}
-		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 	}
 	close $LISTFILE;
+	
+	# Parallel mode, wait for remaining jobs to finish.
+	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
+		&_job_list_poll( \@jobid_list );
+		print_debug_message( 'list_file_submit_job',
+			'Remaining jobs: ' . scalar(@jobid_list), 1 );
+	}
+	print_debug_message( 'list_file_submit_job', 'End', 1 );
 }
 
 =head2 load_data()
@@ -992,7 +1023,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
@@ -1210,9 +1241,10 @@ PfamScan is used to search a protein sequence against Pfam.
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
-      --useSeqId     :      : use sequence identifiers for output filenames.
-      --numJobs      : int  : maximum number of concurrent jobs. Only used in 
-                              multifasta or list file modes.
+      --useSeqId     :      : use sequence identifiers for output filenames. 
+                              Only available in multifasta or list file modes.
+      --numJobs      : int  : maximum number of concurrent jobs. Only 
+                              available in multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
       --paramDetail  : str  : display details for input parameter
