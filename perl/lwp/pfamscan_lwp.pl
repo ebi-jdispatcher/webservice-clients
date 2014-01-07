@@ -224,10 +224,14 @@ else {
 	else {
 
 		# Warn for invalid batch only option use.
-		print STDERR "Warning: --useSeqId option ignored."
-		  if ( $params{'useSeqId'} );
-		print STDERR "Warning: --maxJobs option ignored."
-		  if ( $params{'maxJobs'} > 1 );
+		if ( $params{'useSeqId'} ) {
+			print STDERR "Warning: --useSeqId option ignored.\n";
+			delete $params{'useSeqId'};
+		}
+		if ( $params{'maxJobs'} > 1 ) {
+			print STDERR "Warning: --maxJobs option ignored.\n";
+			delete $params{'maxJobs'};
+		}
 
 		# Load the sequence data and submit.
 		&submit_job( &load_data() );
@@ -706,6 +710,8 @@ sub submit_job {
 
 	# Set input sequence
 	$tool_params{'sequence'} = shift;
+	my $seq_id = shift;
+	print_debug_message( 'submit_job', 'seq_id: ' . $seq_id, 1 ) if($seq_id);
 
 	# Load parameters
 	&load_params();
@@ -730,17 +736,17 @@ sub submit_job {
 		select( undef, undef, undef, 0.25 );    # 0.25 second sleep.
 	}
 
-	# Simulate synchronous submission.
+	# Simulate synchronous submission serial mode.
 	else {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
 		select( undef, undef, undef, 0.5 );     # 0.5 second sleep.
-		       # Check status, and wait if not finished
+		# Check status, and wait if not finished
 		&client_poll($jobid);
 
 		# Get results.
-		&get_results($jobid);
+		&get_results($jobid, $seq_id);
 	}
 	print_debug_message( 'submit_job', 'End', 1 );
 	return $jobid;
@@ -804,7 +810,7 @@ sub multi_submit_job {
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				$job_number++;
-				my $job_id = &submit_job($seq);
+				my $job_id = &submit_job($seq, $seq_id);
 				my $job_info_str =
 				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
 				push( @jobid_list, $job_info_str );
@@ -937,7 +943,7 @@ sub list_file_submit_job {
 				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
 				$job_number++;
-				my $job_id = &submit_job($seq_id);
+				my $job_id = &submit_job($seq_id, $seq_id);
 				my $job_info_str =
 				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
 				push( @jobid_list, $job_info_str );
@@ -1076,6 +1082,7 @@ sub get_results {
 	my $jobid  = shift;
 	my $seq_id = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
+	print_debug_message( 'get_results', 'seq_id: ' . $seq_id, 1 ) if($seq_id);
 	my $output_basename = $jobid;
 
 	# Verbose
@@ -1089,7 +1096,7 @@ sub get_results {
 	}
 
 	# Or use sequence identifer.
-	elsif ( defined( $params{'useSeqId'} ) ) {
+	elsif ( defined( $params{'useSeqId'} && defined($seq_id) && $seq_id ne '') ) {
 		$output_basename = $seq_id;
 
 		# Make safe to use as a file name.
