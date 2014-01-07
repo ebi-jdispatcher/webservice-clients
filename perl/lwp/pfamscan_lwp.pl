@@ -1243,7 +1243,7 @@ PfamScan is used to search a protein sequence against Pfam.
                               "-" for STDOUT)
       --useSeqId     :      : use sequence identifiers for output filenames. 
                               Only available in multifasta or list file modes.
-      --numJobs      : int  : maximum number of concurrent jobs. Only 
+      --maxJobs      : int  : maximum number of concurrent jobs. Only 
                               available in multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
