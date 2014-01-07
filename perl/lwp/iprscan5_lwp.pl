@@ -79,12 +79,18 @@ my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/iprscan5';
 # Set interval for checking status
 my $checkInterval = 3;
 
+# Set maximum number of 'ERROR' status calls to call job failed.
+my $maxErrorStatusCount = 3;
+
 # Output level
 my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params  = ( 'debugLevel' => 0 );
+my %params  = (
+	'debugLevel' => 0,
+	'maxJobs'    => 1
+);
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
@@ -100,14 +106,16 @@ GetOptions(
 	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Compatability options (old command-line)
-	'app=s'   => \$params{'app'},              # Signature methods.
-	'crc'     => \$params{'crc'},              # Enable CRC look-up (ignored).
-	'nocrc'   => \$params{'nocrc'},            # Disable CRC look-up (ignored).
+	'app=s' => \$params{'app'},                # Signature methods.
+	'crc'   => \$params{'crc'},                # Enable CRC look-up (ignored).
+	'nocrc' => \$params{'nocrc'},              # Disable CRC look-up (ignored).
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
 	'title=s'       => \$params{'title'},          # Job title
 	'outfile=s'     => \$params{'outfile'},        # Output file name
+	'useSeqId'      => \$params{'useSeqId'},       # Seq Id file name
+	'maxJobs=i'     => \$params{'maxJobs'},        # Max. parallel jobs
 	'outformat=s'   => \$params{'outformat'},      # Output file type
 	'jobid=s'       => \$params{'jobid'},          # JobId
 	'help|h'        => \$params{'help'},           # Usage help
@@ -182,18 +190,28 @@ elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
 
 # Result types
 elsif ( $params{'resultTypes'} && defined( $params{'jobid'} ) ) {
+
+	# Check status, and wait if not finished
+	&client_poll( $params{'jobid'} );
+
+	# Get result types.
 	&print_result_types( $params{'jobid'} );
 }
 
 # Poll job and get results
 elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
+
+	# Check status, and wait if not finished
+	&client_poll( $params{'jobid'} );
+
+	# Get results.
 	&get_results( $params{'jobid'} );
 }
 
 # Submit a job
 else {
 
-	# Multiple input sequence mode, assume fasta format.
+	# Multiple input sequence mode, assumes fasta format.
 	if ( $params{'multifasta'} ) {
 		&multi_submit_job();
 	}
@@ -209,6 +227,12 @@ else {
 
 	# Default: single sequence/identifier.
 	else {
+
+		# Warn for invalid batch only option use.
+		print STDERR "Warning: --useSeqId option ignored."
+		  if ( $params{'useSeqId'} );
+		print STDERR "Warning: --maxJobs option ignored."
+		  if ( $params{'maxJobs'} > 1 );
 
 		# Load the sequence data and submit.
 		&submit_job( &load_data() );
@@ -231,11 +255,14 @@ Get a LWP UserAgent to use to perform REST requests.
 
 sub rest_user_agent() {
 	print_debug_message( 'rest_user_agent', 'Begin', 21 );
+
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
+
 	# Set 'User-Agent' HTTP header to identifiy the client.
 	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	$ua->agent( "EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent() );
+
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
 	print_debug_message( 'rest_user_agent', 'End', 21 );
@@ -254,24 +281,30 @@ sub rest_error() {
 	print_debug_message( 'rest_error', 'Begin', 21 );
 	my $response = shift;
 	my $contentdata;
-	if(scalar(@_) > 0) {
+	if ( scalar(@_) > 0 ) {
 		$contentdata = shift;
 	}
-	if(!defined($contentdata) || $contentdata eq '') {
+	if ( !defined($contentdata) || $contentdata eq '' ) {
 		$contentdata = $response->content();
 	}
+
 	# Check for HTTP error codes
 	if ( $response->is_error ) {
 		my $error_message = '';
+
 		# HTML response.
-		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
+		if ( $contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
 			$error_message = $1;
 		}
+
 		#  XML response.
-		elsif($contentdata =~ m/<description>([^<]+)<\/description>/) {
+		elsif ( $contentdata =~ m/<description>([^<]+)<\/description>/ ) {
 			$error_message = $1;
 		}
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+		die 'http status: '
+		  . $response->code . ' '
+		  . $response->message . '  '
+		  . $error_message;
 	}
 	print_debug_message( 'rest_error', 'End', 21 );
 }
@@ -291,33 +324,37 @@ sub rest_request {
 
 	# Get an LWP UserAgent.
 	$ua = &rest_user_agent() unless defined($ua);
+
 	# Available HTTP compression methods.
 	my $can_accept;
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
+	eval { $can_accept = HTTP::Message::decodable(); };
 	$can_accept = '' unless defined($can_accept);
+
 	# Perform the request
-	my $response = $ua->get($requestUrl,
-		'Accept-Encoding' => $can_accept, # HTTP compression.
+	my $response = $ua->get(
+		$requestUrl,
+		'Accept-Encoding' => $can_accept,    # HTTP compression.
 	);
 	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
 		11 );
 	print_debug_message( 'rest_request',
-		'response length: ' . length($response->content()), 11 );
+		'response length: ' . length( $response->content() ), 11 );
 	print_debug_message( 'rest_request',
-		'request:' ."\n" . $response->request()->as_string(), 32 );
+		'request:' . "\n" . $response->request()->as_string(), 32 );
 	print_debug_message( 'rest_request',
 		'response: ' . "\n" . $response->as_string(), 32 );
+
 	# Unpack possibly compressed response.
 	my $retVal;
-	if ( defined($can_accept) && $can_accept ne '') {
-	    $retVal = $response->decoded_content();
+	if ( defined($can_accept) && $can_accept ne '' ) {
+		$retVal = $response->decoded_content();
 	}
+
 	# If unable to decode use orginal content.
 	$retVal = $response->content() unless defined($retVal);
+
 	# Check for an error.
-	&rest_error($response, $retVal);
+	&rest_error( $response, $retVal );
 	print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
 	print_debug_message( 'rest_request', 'End', 11 );
 
@@ -400,9 +437,14 @@ sub rest_run {
 	my $response = $ua->post( $url, \%tmp_params );
 	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
 	print_debug_message( 'rest_run',
-		'request:' ."\n" . $response->request()->as_string(), 11 );
-	print_debug_message( 'rest_run',
-		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
+		'request:' . "\n" . $response->request()->as_string(), 11 );
+	print_debug_message(
+		'rest_run',
+		'response: '
+		  . length( $response->as_string() ) . "\n"
+		  . $response->as_string(),
+		11
+	);
 
 	# Check for an error.
 	&rest_error($response);
@@ -529,14 +571,14 @@ sub print_param_details {
 	my $paramDetail = &rest_get_parameter_details($paramName);
 	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
 	print $paramDetail->{'description'}, "\n";
-	if(defined($paramDetail->{'values'}->{'value'})) {
-		if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+	if ( defined( $paramDetail->{'values'}->{'value'} ) ) {
+		if ( ref( $paramDetail->{'values'}->{'value'} ) eq 'ARRAY' ) {
 			foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
 				&print_param_value($value);
 			}
 		}
 		else {
-				&print_param_value($paramDetail->{'values'}->{'value'});
+			&print_param_value( $paramDetail->{'values'}->{'value'} );
 		}
 	}
 	print_debug_message( 'print_param_details', 'End', 1 );
@@ -674,7 +716,7 @@ sub submit_job {
 	# Submit the job
 	my $jobid = &rest_run( $params{'email'}, $params{'title'}, \%tool_params );
 
-	# Simulate sync/async mode
+	# Asychronus submission.
 	if ( defined( $params{'async'} ) ) {
 		print STDOUT $jobid, "\n";
 		if ( $outputLevel > 0 ) {
@@ -682,14 +724,29 @@ sub submit_job {
 			  "To check status: $scriptName --status --jobid $jobid\n";
 		}
 	}
+
+	# Parallel submission mode.
+	elsif ( $params{'maxJobs'} > 1 ) {
+		if ( $outputLevel > 0 ) {
+			print STDERR "JobId: $jobid\n";
+		}
+		select( undef, undef, undef, 0.25 );    # 0.25 second sleep.
+	}
+
+	# Simulate synchronous submission.
 	else {
 		if ( $outputLevel > 0 ) {
 			print STDERR "JobId: $jobid\n";
 		}
-		sleep 1;
+		select( undef, undef, undef, 0.5 );     # 0.5 second sleep.
+		       # Check status, and wait if not finished
+		&client_poll($jobid);
+
+		# Get results.
 		&get_results($jobid);
 	}
 	print_debug_message( 'submit_job', 'End', 1 );
+	return $jobid;
 }
 
 =head2 multi_submit_job()
@@ -702,8 +759,6 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 
 sub multi_submit_job {
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
-	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
 	my (@filename_list) = ();
 
 	# Query sequence
@@ -712,7 +767,7 @@ sub multi_submit_job {
 			push( @filename_list, $ARGV[0] );
 		}
 		else {
-			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist'
+			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist';
 		}
 	}
 	if ( $params{'sequence'} ) {                   # Via --sequence
@@ -720,35 +775,130 @@ sub multi_submit_job {
 			push( @filename_list, $params{'sequence'} );
 		}
 		else {
-			warn 'Warning: Input file "' . $params{'sequence'} . '" does not exist'
+			warn 'Warning: Input file "'
+			  . $params{'sequence'}
+			  . '" does not exist';
 		}
 	}
 
+	# Job identifier tracking for parallel execution.
+	my @jobid_list = ();
+	my $job_number = 0;
 	$/ = '>';
 	foreach my $filename (@filename_list) {
 		my $INFILE;
-		if($filename eq '-') { # STDIN.
+		if ( $filename eq '-' ) {    # STDIN.
 			open( $INFILE, '<-' )
 			  or die 'Error: unable to STDIN (' . $! . ')';
-		} else { # File.
+		}
+		else {                       # File.
 			open( $INFILE, '<', $filename )
-			  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+			  or die 'Error: unable to open file '
+			  . $filename . ' ('
+			  . $! . ')';
 		}
 		while (<$INFILE>) {
 			my $seq = $_;
 			$seq =~ s/>$//;
 			if ( $seq =~ m/(\S+)/ ) {
-				print STDERR "Submitting job for: $1\n"
+				my $seq_id = $1;
+				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
 				$seq = '>' . $seq;
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				&submit_job($seq);
-				$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
+				$job_number++;
+				my $job_id = &submit_job($seq);
+				my $job_info_str =
+				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
+				push( @jobid_list, $job_info_str );
+			}
+
+			# Parallel mode, wait for job(s) to finish to free slots.
+			while ( $params{'maxJobs'} > 1
+				&& scalar(@jobid_list) >= $params{'maxJobs'} )
+			{
+				&_job_list_poll( \@jobid_list );
+				print_debug_message( 'multi_submit_job',
+					'Remaining jobs: ' . scalar(@jobid_list), 1 );
 			}
 		}
 		close $INFILE;
 	}
+
+	# Parallel mode, wait for remaining jobs to finish.
+	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
+		&_job_list_poll( \@jobid_list );
+		print_debug_message( 'multi_submit_job',
+			'Remaining jobs: ' . scalar(@jobid_list), 1 );
+	}
 	print_debug_message( 'multi_submit_job', 'End', 1 );
+}
+
+=head2 _job_list_poll()
+
+Poll the status of a list of jobs and fetch results for finished jobs.
+
+  while(scalar(@jobid_list) > 0) {
+    &_job_list_poll(\@jobid_list);
+  }
+
+=cut
+
+sub _job_list_poll {
+	print_debug_message( '_job_list_poll', 'Begin', 1 );
+	my $jobid_list = shift;
+	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+		11 );
+
+	# Loop though job Id list polling job status.
+	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
+	{
+		my ( $jobid, $seq_id, $error_count, $job_number ) =
+		  split( /\s+/, $jobid_list->[$jobNum] );
+		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
+		print_debug_message( '_job_list_poll',
+			'Job info: ' . $jobid_list->[$jobNum], 12 );
+
+		# Get job status.
+		my $job_status = &rest_get_status($jobid);
+		print_debug_message( '_job_list_poll', 'Status: ' . $job_status, 12 );
+
+		# Fetch results and remove finished/failed jobs from list.
+		if (
+			!(
+				   $job_status eq 'RUNNING'
+				|| $job_status eq 'PENDING'
+				|| (   $job_status eq 'ERROR'
+					&& $error_count < $maxErrorStatusCount )
+			)
+		  )
+		{
+			if ( $job_status eq 'ERROR' || $job_status eq 'FAILED' ) {
+				print STDERR
+"Warning: job $jobid failed for sequence $job_number: $seq_id\n";
+			}
+			&get_results( $jobid, $seq_id );
+			splice( @$jobid_list, $jobNum, 1 );
+		}
+		else {
+
+			# Update error count, increment for new error or clear old errors.
+			if ( $job_status eq 'ERROR' ) {
+				$error_count++;
+			}
+			elsif ( $error_count > 0 ) {
+				$error_count--;
+			}
+
+			# Update job tracking info.
+			my $job_info_str = sprintf( '%s %s %d %d',
+				$jobid, $seq_id, $error_count, $job_number );
+			$jobid_list->[$jobNum] = $job_info_str;
+		}
+	}
+	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+		11 );
+	print_debug_message( '_job_list_poll', 'End', 1 );
 }
 
 =head2 list_file_submit_job()
@@ -761,37 +911,64 @@ input.
 =cut
 
 sub list_file_submit_job {
-	my $filename         = shift;
-	my $jobIdForFilename = 1;
-	$jobIdForFilename = 0 if ( defined( $params{'outfile'} ) );
+	print_debug_message( 'list_file_submit_job', 'Begin', 1 );
+	my $filename = shift;
 
-	# Iterate over identifiers, submitting each job
+	# Open the file of identifiers.
 	my $LISTFILE;
-	if($filename eq '-') { # STDIN.
+	if ( $filename eq '-' ) {    # STDIN.
 		open( $LISTFILE, '<-' )
 		  or die 'Error: unable to STDIN (' . $! . ')';
-	} else { # File.
+	}
+	else {                       # File.
 		open( $LISTFILE, '<', $filename )
 		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
 	}
+
+	# Job identifier tracking for parallel execution.
+	my @jobid_list = ();
+	my $job_number = 0;
+
+	# Iterate over identifiers, submitting each job
 	while (<$LISTFILE>) {
 		my $line = $_;
 		chomp($line);
 		if ( $line ne '' ) {
 			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
 			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
-				print STDERR "Submitting job for: $line\n"
+				my $seq_id = $line;
+				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
-				&submit_job($line);
+				$job_number++;
+				my $job_id = &submit_job($seq_id);
+				my $job_info_str =
+				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
+				push( @jobid_list, $job_info_str );
 			}
 			else {
 				print STDERR
 "Warning: line \"$line\" is not recognised as an identifier\n";
 			}
+
+			# Parallel mode, wait for job(s) to finish to free slots.
+			while ( $params{'maxJobs'} > 1
+				&& scalar(@jobid_list) >= $params{'maxJobs'} )
+			{
+				&_job_list_poll( \@jobid_list );
+				print_debug_message( 'list_file_submit_job',
+					'Remaining jobs: ' . scalar(@jobid_list), 1 );
+			}
 		}
-		$params{'outfile'} = undef if ( $jobIdForFilename == 1 );
 	}
 	close $LISTFILE;
+
+	# Parallel mode, wait for remaining jobs to finish.
+	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
+		&_job_list_poll( \@jobid_list );
+		print_debug_message( 'list_file_submit_job',
+			'Remaining jobs: ' . scalar(@jobid_list), 1 );
+	}
+	print_debug_message( 'list_file_submit_job', 'End', 1 );
 }
 
 =head2 load_data()
@@ -853,7 +1030,7 @@ sub load_params {
 	elsif ( $params{'goterms'} ) {
 		$tool_params{'goterms'} = 'true';
 	}
-	
+
 	# --pathways vs. --nopathways
 	if ( $params{'nopathways'} ) {
 		$tool_params{'pathways'} = 'false';
@@ -888,7 +1065,7 @@ sub client_poll {
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
-		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
+		|| ( $status eq 'ERROR' && $errorCount < $maxErrorStatusCount ) )
 	{
 		$status = rest_get_status($jobid);
 		print STDERR "$status\n" if ( $outputLevel > 0 );
@@ -921,20 +1098,27 @@ Get the results for a job identifier.
 
 sub get_results {
 	print_debug_message( 'get_results', 'Begin', 1 );
-	my $jobid = shift;
+	my $jobid  = shift;
+	my $seq_id = shift;
 	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
+	my $output_basename = $jobid;
 
 	# Verbose
 	if ( $outputLevel > 1 ) {
 		print 'Getting results for job ', $jobid, "\n";
 	}
 
-	# Check status, and wait if not finished
-	client_poll($jobid);
+	# Default output file names use JobId, however the name can be specified...
+	if ( defined( $params{'outfile'} ) ) {
+		$output_basename = $params{'outfile'};
+	}
 
-	# Use JobId if output file name is not defined
-	unless ( defined( $params{'outfile'} ) ) {
-		$params{'outfile'} = $jobid;
+	# Or use sequence identifer.
+	elsif ( defined( $params{'useSeqId'} ) ) {
+		$output_basename = $seq_id;
+
+		# Make safe to use as a file name.
+		$output_basename =~ s/\W/_/g;
 	}
 
 	# Get list of data types
@@ -951,12 +1135,12 @@ sub get_results {
 		if ( defined($selResultType) ) {
 			my $result =
 			  rest_get_result( $jobid, $selResultType->{'identifier'} );
-			if ( $params{'outfile'} eq '-' ) {
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
 				write_file(
-					$params{'outfile'} . '.'
+					$output_basename . '.'
 					  . $selResultType->{'identifier'} . '.'
 					  . $selResultType->{'fileSuffix'},
 					$result
@@ -974,12 +1158,12 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( $params{'outfile'} eq '-' ) {
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
 				write_file(
-					$params{'outfile'} . '.'
+					$output_basename . '.'
 					  . $resultType->{'identifier'} . '.'
 					  . $resultType->{'fileSuffix'},
 					$result
@@ -1095,6 +1279,10 @@ http://www.ebi.ac.uk/Tools/pfa/iprscan5
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
+      --useSeqId     :      : use sequence identifiers for output filenames. 
+                              Only available in multifasta or list file modes.
+      --maxJobs      : int  : maximum number of concurrent jobs. Only 
+                              available in multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters
       --paramDetail  : str  : display details for input parameter

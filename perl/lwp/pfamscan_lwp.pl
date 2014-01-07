@@ -101,9 +101,9 @@ GetOptions(
 	'evalue|E=f'   => \$tool_params{'evalue'},   # E-value threshold
 	'format|F=s'   => \$tool_params{'format'},   # Output format
 	'asp'          => \$params{'asp'},           # Enable active site prediction
-	'noasp'        => \$params{'noasp'},         # Disable active site prediction
-	'sequence=s'   => \$params{'sequence'},      # Query sequence
-	'multifasta'   => \$params{'multifasta'},    # Multiple fasta input
+	'noasp'      => \$params{'noasp'},         # Disable active site prediction
+	'sequence=s' => \$params{'sequence'},      # Query sequence
+	'multifasta' => \$params{'multifasta'},    # Multiple fasta input
 
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -224,9 +224,11 @@ else {
 	else {
 
 		# Warn for invalid batch only option use.
-		print STDERR "Warning: --useSeqId option ignored." if ( $params{'useSeqId'} );
-		print STDERR "Warning: --maxJobs option ignored." if ( $params{'maxJobs'} > 1 );
-		
+		print STDERR "Warning: --useSeqId option ignored."
+		  if ( $params{'useSeqId'} );
+		print STDERR "Warning: --maxJobs option ignored."
+		  if ( $params{'maxJobs'} > 1 );
+
 		# Load the sequence data and submit.
 		&submit_job( &load_data() );
 	}
@@ -803,12 +805,13 @@ sub multi_submit_job {
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				$job_number++;
 				my $job_id = &submit_job($seq);
-				my $job_info_str = sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+				my $job_info_str =
+				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
 				push( @jobid_list, $job_info_str );
 			}
 
 			# Parallel mode, wait for job(s) to finish to free slots.
-			if ( $params{'maxJobs'} > 1
+			while ( $params{'maxJobs'} > 1
 				&& scalar(@jobid_list) >= $params{'maxJobs'} )
 			{
 				&_job_list_poll( \@jobid_list );
@@ -847,9 +850,11 @@ sub _job_list_poll {
 	# Loop though job Id list polling job status.
 	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
 	{
-		my ( $jobid, $seq_id, $error_count, $job_number ) = split( /\s+/, $jobid_list->[$jobNum] );
+		my ( $jobid, $seq_id, $error_count, $job_number ) =
+		  split( /\s+/, $jobid_list->[$jobNum] );
 		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
-		print_debug_message( '_job_list_poll', 'Job info: ' . $jobid_list->[$jobNum],   12 );
+		print_debug_message( '_job_list_poll',
+			'Job info: ' . $jobid_list->[$jobNum], 12 );
 
 		# Get job status.
 		my $job_status = &rest_get_status($jobid);
@@ -860,26 +865,31 @@ sub _job_list_poll {
 			!(
 				   $job_status eq 'RUNNING'
 				|| $job_status eq 'PENDING'
-				|| ( $job_status eq 'ERROR' && $error_count < $maxErrorStatusCount )
+				|| (   $job_status eq 'ERROR'
+					&& $error_count < $maxErrorStatusCount )
 			)
 		  )
 		{
-			if( $job_status eq 'ERROR' || $job_status eq 'FAILED' ) {
-				print STDERR "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
+			if ( $job_status eq 'ERROR' || $job_status eq 'FAILED' ) {
+				print STDERR
+"Warning: job $jobid failed for sequence $job_number: $seq_id\n";
 			}
 			&get_results( $jobid, $seq_id );
 			splice( @$jobid_list, $jobNum, 1 );
 		}
 		else {
-			# Update error count, increment for new error or clear old errors. 
+
+			# Update error count, increment for new error or clear old errors.
 			if ( $job_status eq 'ERROR' ) {
 				$error_count++;
 			}
 			elsif ( $error_count > 0 ) {
 				$error_count--;
 			}
+
 			# Update job tracking info.
-			my $job_info_str = sprintf('%s %s %d %d', $jobid, $seq_id, $error_count, $job_number);
+			my $job_info_str = sprintf( '%s %s %d %d',
+				$jobid, $seq_id, $error_count, $job_number );
 			$jobid_list->[$jobNum] = $job_info_str;
 		}
 	}
@@ -911,6 +921,7 @@ sub list_file_submit_job {
 		open( $LISTFILE, '<', $filename )
 		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
 	}
+
 	# Job identifier tracking for parallel execution.
 	my @jobid_list = ();
 	my $job_number = 0;
@@ -926,16 +937,18 @@ sub list_file_submit_job {
 				print STDERR "Submitting job for: $seq_id\n"
 				  if ( $outputLevel > 0 );
 				$job_number++;
-				my $job_id = &submit_job( $seq_id );
-				my $job_info_str = sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+				my $job_id = &submit_job($seq_id);
+				my $job_info_str =
+				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
 				push( @jobid_list, $job_info_str );
 			}
 			else {
 				print STDERR
 "Warning: line \"$line\" is not recognised as an identifier\n";
 			}
+
 			# Parallel mode, wait for job(s) to finish to free slots.
-			if ( $params{'maxJobs'} > 1
+			while ( $params{'maxJobs'} > 1
 				&& scalar(@jobid_list) >= $params{'maxJobs'} )
 			{
 				&_job_list_poll( \@jobid_list );
@@ -945,7 +958,7 @@ sub list_file_submit_job {
 		}
 	}
 	close $LISTFILE;
-	
+
 	# Parallel mode, wait for remaining jobs to finish.
 	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
 		&_job_list_poll( \@jobid_list );
