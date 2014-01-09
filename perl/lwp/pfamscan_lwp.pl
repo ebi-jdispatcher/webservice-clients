@@ -228,9 +228,9 @@ else {
 			print STDERR "Warning: --useSeqId option ignored.\n";
 			delete $params{'useSeqId'};
 		}
-		if ( $params{'maxJobs'} > 1 ) {
+		if ( $params{'maxJobs'} != 1 ) {
 			print STDERR "Warning: --maxJobs option ignored.\n";
-			delete $params{'maxJobs'};
+			$params{'maxJobs'} = 1;
 		}
 
 		# Load the sequence data and submit.
