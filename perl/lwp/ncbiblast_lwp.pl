@@ -237,7 +237,7 @@ else {
 			print STDERR "Warning: --useSeqId option ignored.\n";
 			delete $params{'useSeqId'};
 		}
-		if ( $params{'maxJobs'} > 1 ) {
+		if ( $params{'maxJobs'} != 1 ) {
 			print STDERR "Warning: --maxJobs option ignored.\n";
 			$params{'maxJobs'} = 1;
 		}
@@ -753,7 +753,7 @@ sub multi_submit_job {
 	print_debug_message( 'multi_submit_job', 'Begin', 1 );
 	my (@filename_list) = ();
 
-	# Query sequence
+	# Query/input sequence
 	if ( defined( $ARGV[0] ) ) {    # Bare option
 		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
 			push( @filename_list, $ARGV[0] );
@@ -837,10 +837,10 @@ Poll the status of a list of jobs and fetch results for finished jobs.
 =cut
 
 sub _job_list_poll {
-	print_debug_message( '_job_list_poll', 'Begin', 1 );
+	print_debug_message( '_job_list_poll', 'Begin', 11 );
 	my $jobid_list = shift;
 	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
-		11 );
+		12 );
 
 	# Loop though job Id list polling job status.
 	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
@@ -889,8 +889,8 @@ sub _job_list_poll {
 		}
 	}
 	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
-		11 );
-	print_debug_message( '_job_list_poll', 'End', 1 );
+		12 );
+	print_debug_message( '_job_list_poll', 'End', 11 );
 }
 
 =head2 list_file_submit_job()
@@ -1044,7 +1044,7 @@ sub client_poll {
 	my $jobid  = shift;
 	my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
+	# Check status and wait if not finished. Terminate if three attempts get "ERROR".
 	my $errorCount = 0;
 	while ($status eq 'RUNNING'
 		|| $status eq 'PENDING'
