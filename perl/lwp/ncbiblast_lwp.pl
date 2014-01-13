@@ -269,7 +269,7 @@ sub rest_user_agent() {
 	my $revisionNumber = 0;
 	'$Revision$' =~ m/(\d+)/;
 	$revisionNumber = $1 if(defined($1) && $1 ne '');	
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
 	print_debug_message( 'rest_user_agent', 'End', 21 );
