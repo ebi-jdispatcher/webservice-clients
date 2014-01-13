@@ -260,8 +260,7 @@ sub rest_user_agent() {
 
 	# Set 'User-Agent' HTTP header to identifiy the client.
 	my $revisionNumber = 0;
-	'$Revision$' =~ m/(\d+)/;
-	$revisionNumber = $1 if(defined($1) && $1 ne '');	
+	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);	
 	$ua->agent( "EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent() );
 
 	# Configure HTTP proxy support from environment.
