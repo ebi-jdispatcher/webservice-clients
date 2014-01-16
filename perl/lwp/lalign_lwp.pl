@@ -216,8 +216,9 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	'$Revision$' =~ m/(\d+)/;
-	$ua->agent("EBI-Sample-Client/$1 ($scriptName; $OSNAME) " . $ua->agent());
+	my $revisionNumber = 0;	
+	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);	
+	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
 	print_debug_message( 'rest_user_agent', 'End', 21 );
