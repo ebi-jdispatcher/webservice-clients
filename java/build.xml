@@ -2,7 +2,7 @@
 <!-- $Id$
 ======================================================================
 
-   Copyright 2010-2013 EMBL - European Bioinformatics Institute
+   Copyright 2010-2014 EMBL - European Bioinformatics Institute
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -130,6 +130,7 @@
 		<antcall target="axis1-stubs-muscle" />
 		<antcall target="axis1-stubs-mview" />
 		<antcall target="axis1-stubs-ncbiblast" />
+		<antcall target="axis1-stubs-pfamscan" />
 		<antcall target="axis1-stubs-phobius" />
 		<antcall target="axis1-stubs-prank" />
 		<antcall target="axis1-stubs-pratt" />
@@ -368,6 +369,12 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ncbiblast" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
+		</antcall>
+	</target>
+	<target name="axis1-stubs-pfamscan" description="Axis 1.x: generate stubs for PfamScan (SOAP)">
+		<antcall target="genAxis1Stubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.pfamscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/pfamscan?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-phobius" description="Axis 1.x: generate stubs for Phobius (SOAP)">
@@ -830,6 +837,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- TODO PfamScan -->
 		<jar destfile="${jar.dir}/Phobius_Axis1.jar"
 			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/PhobiusClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/phobius/** client-config.wsdd">
@@ -1012,6 +1020,7 @@
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
 		<antcall target="axis1-distclean-stubs-ncbiblast" />
+		<antcall target="axis1-distclean-stubs-pfamscan" />
 		<antcall target="axis1-distclean-stubs-phobius" />
 		<antcall target="axis1-distclean-stubs-prank" />
 		<antcall target="axis1-distclean-stubs-pratt" />
@@ -1245,6 +1254,12 @@
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="ncbiblast" />
 	    </delete>
 	</target>
+	<target name="axis1-distclean-stubs-pfamscan" description="Axis 1.x: remove PfamScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${axis1.stubs.src.dir}/pfamscan" includes="*/**" />
+	        <fileset dir="${axis1.stubs.src.dir}/" includes="pfamscan" />
+	    </delete>
+	</target>
 	<target name="axis1-distclean-stubs-phobius" description="Axis 1.x: remove Phobius (SOAP) stubs">
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/phobius" includes="*/**" />
@@ -1378,6 +1393,7 @@
 		<antcall target="jaxws-stubs-muscle" />
 		<antcall target="jaxws-stubs-mview" />
 		<antcall target="jaxws-stubs-ncbiblast" />
+		<antcall target="jaxws-stubs-pfamscan" />
 		<antcall target="jaxws-stubs-phobius" />
 		<antcall target="jaxws-stubs-prank" />
 		<antcall target="jaxws-stubs-pratt" />
@@ -1618,6 +1634,12 @@
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl" />
 		</antcall>
 	</target>
+	<target name="jaxws-stubs-pfamscan" description="JAX-WS RI: generate stubs for PfamScan (SOAP)">
+		<antcall target="genJaxwsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.pfamscan" />
+			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/pfamscan?wsdl" />
+		</antcall>
+	</target>
 	<target name="jaxws-stubs-phobius" description="JAX-WS RI: generate stubs for Phobius (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.phobius" />
@@ -1780,6 +1802,7 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
+		<!-- TODO: PfamScan -->
 		<!-- TODO: Phobius -->
 		<!-- TODO: PRANK -->
 		<!-- TODO: Pratt -->
@@ -1845,6 +1868,7 @@
 		<antcall target="jaxws-distclean-stubs-muscle" />
 		<antcall target="jaxws-distclean-stubs-mview" />
 		<antcall target="jaxws-distclean-stubs-ncbiblast" />
+		<antcall target="jaxws-distclean-stubs-pfamscan" />
 		<antcall target="jaxws-distclean-stubs-phobius" />
 		<antcall target="jaxws-distclean-stubs-prank" />
 		<antcall target="jaxws-distclean-stubs-pratt" />
@@ -2082,6 +2106,12 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/ncbiblast" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ncbiblast" />
+	    </delete>
+	</target>
+	<target name="jaxws-distclean-stubs-pfamscan" description="JAX-WS RI: remove PfamScan (SOAP) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxws.stubs.src.dir}/pfamscan" includes="*/**" />
+	        <fileset dir="${jaxws.stubs.src.dir}/" includes="pfamscan" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-phobius" description="JAX-WS RI: remove Phobius (SOAP) stubs">
