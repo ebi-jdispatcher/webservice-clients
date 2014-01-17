@@ -641,6 +641,18 @@ public abstract class AbstractWsToolClient {
 	abstract public void submitJobFromCli(CommandLine cli, String inputData)
 			throws ServiceException, IOException;
 
+	/** Submit a set of jobs using input containing multiple fasta format 
+	 * sequences. Each sequence corresponds to a job.
+	 * 
+	 * NB: services which require multiple input sequences (e.g. multiple 
+	 * sequence alignment) or multiple data inputs (e.g. pairwise alignment) 
+	 * are not supported by this method.
+	 * 
+	 * @param dataOption Input data file name or '-' for STDIN.
+	 * @param cli Command-line options for the jobs.
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
 	public void multifastaSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
 		this.printDebugMessage("multifastaSubmitCli", "Mode: multifasta", 11);
 		int numSeq = 0;
@@ -707,9 +719,17 @@ public abstract class AbstractWsToolClient {
 		this.identifierListReader = null;
 	}
 	
+	/** Submit a set of jobs using input from an identifier list (DB:ID format).
+	 * 
+	 * @param dataOption Name of the identifier list file.
+	 * @param cli Command-line options for the jobs.
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
 	public void idlistSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
 		this.printDebugMessage("main", "Mode: Id list", 11);
 		int numId = 0;
+		// Trim initial '@' from filename.
 		this.setIdentifierListFile(dataOption.substring(1));
 		// Loop over input sequences, submitting each one.
 		String id = null;
