@@ -1211,7 +1211,8 @@ sub usage {
 EMBOSS pepstats
 ===============
 
-Plot amino acid properties of a protein sequence.
+Calculate statistics for a protein such as molecular weight and isoelectric 
+point.
 
 [Required]
 
