@@ -99,34 +99,34 @@ GetOptions(
 	'structure2=s' => \$params{'structure2'},       #
 	'chainid1=s'   => \$tool_params{'chainid1'},    #
 	'chainid2=s'   => \$tool_params{'chainid2'},    #
-	
+
 	# Compatability options, old command-line
-	'pdb1=s'       => \$params{'structure1'},       #
-	'pdb2=s'       => \$params{'structure2'},       #
+	'pdb1=s' => \$params{'structure1'},             #
+	'pdb2=s' => \$params{'structure2'},             #
 
 	# Generic options
-	'email=s'       => \$params{'email'},          # User e-mail address
-	'title=s'       => \$params{'title'},          # Job title
-	'outfile=s'     => \$params{'outfile'},        # Output file name
-	'outformat=s'   => \$params{'outformat'},      # Output file type
-	'jobid=s'       => \$params{'jobid'},          # JobId
-	'help|h'        => \$params{'help'},           # Usage help
-	'async'         => \$params{'async'},          # Asynchronous submission
-	'polljob'       => \$params{'polljob'},        # Get results
-	'resultTypes'   => \$params{'resultTypes'},    # Get result types
-	'status'        => \$params{'status'},         # Get status
-	'params'        => \$params{'params'},         # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
-	'quiet'         => \$params{'quiet'},          # Decrease output level
-	'verbose'       => \$params{'verbose'},        # Increase output level
-	'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
-	'trace'         => \$params{'trace'},          # SOAP message debug
-	'endpoint=s'    => \$params{'endpoint'},       # SOAP service endpoint
-	'namespace=s'   => \$params{'namespace'},      # SOAP service namespace
-	'WSDL=s'        => \$WSDL,                     # SOAP service WSDL
+	'email=s'       => \$params{'email'},           # User e-mail address
+	'title=s'       => \$params{'title'},           # Job title
+	'outfile=s'     => \$params{'outfile'},         # Output file name
+	'outformat=s'   => \$params{'outformat'},       # Output file type
+	'jobid=s'       => \$params{'jobid'},           # JobId
+	'help|h'        => \$params{'help'},            # Usage help
+	'async'         => \$params{'async'},           # Asynchronous submission
+	'polljob'       => \$params{'polljob'},         # Get results
+	'resultTypes'   => \$params{'resultTypes'},     # Get result types
+	'status'        => \$params{'status'},          # Get status
+	'params'        => \$params{'params'},          # List input parameters
+	'paramDetail=s' => \$params{'paramDetail'},     # Get details for parameter
+	'quiet'         => \$params{'quiet'},           # Decrease output level
+	'verbose'       => \$params{'verbose'},         # Increase output level
+	'debugLevel=i'  => \$params{'debugLevel'},      # Debug output level
+	'trace'         => \$params{'trace'},           # SOAP message debug
+	'endpoint=s'    => \$params{'endpoint'},        # SOAP service endpoint
+	'namespace=s'   => \$params{'namespace'},       # SOAP service namespace
+	'WSDL=s'        => \$WSDL,                      # SOAP service WSDL
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )   { $outputLevel-- }
 
 # Debug mode: SOAP::Lite version
 &print_debug_message( 'MAIN', 'SOAP::Lite::VERSION: ' . $SOAP::Lite::VERSION,
@@ -171,10 +171,11 @@ $serviceNamespace = $params{'namespace'} if ( $params{'namespace'} );
 my $soap = SOAP::Lite->proxy(
 	$serviceEndpoint,
 	timeout => 6000,    # HTTP connection timeout
-	#proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
+	     #proxy => ['http' => 'http://your.proxy.server/'], # HTTP proxy
 	options => {
+
 		# HTTP compression (requires Compress::Zlib)
-		compress_threshold => 100000000, # Prevent request compression.
+		compress_threshold => 100000000,    # Prevent request compression.
 	},
   )->uri($serviceNamespace)->on_fault(
 
@@ -191,8 +192,9 @@ my $soap = SOAP::Lite->proxy(
 		return new SOAP::SOM;
 	}
   );
+
 # Modify the user-agent to add a more specific prefix (see RFC2616 section 14.43)
-$soap->transport->agent(&get_agent_string() . $soap->transport->agent());
+$soap->transport->agent( &get_agent_string() . $soap->transport->agent() );
 &print_debug_message( 'MAIN', 'user-agent: ' . $soap->transport->agent(), 11 );
 
 # Check that arguments include required parameters
@@ -204,8 +206,11 @@ if (
 		|| $params{'params'}
 		|| $params{'paramDetail'}
 	)
-	&& !( ( defined( $ARGV[0] ) && defined( $ARGV[1] ) ) ||
-		  ( defined( $params{'structure1'} ) && defined( $params{'structure2'} ) ) )
+	&& !(
+		( defined( $ARGV[0] ) && defined( $ARGV[1] ) )
+		|| (   defined( $params{'structure1'} )
+			&& defined( $params{'structure2'} ) )
+	)
   )
 {
 
@@ -242,6 +247,7 @@ elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
 
 # Submit a job
 else {
+
 	# Load the sequence data and submit.
 	&submit_job( &load_data() );
 }
@@ -261,12 +267,12 @@ Get the user agent string for the client.
 sub get_agent_string {
 	print_debug_message( 'get_agent_string', 'Begin', 11 );
 	my $clientVersion = '0';
-	if('$Revision: 2097 $' =~ m/(\d+)/) { # SCM revision tag.
+	if ( '$Revision: 2097 $' =~ m/(\d+)/ ) {    # SCM revision tag.
 		$clientVersion = $1;
 	}
 	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
 	print_debug_message( 'get_agent_string', 'End', 11 );
-	return 	$agent_str;
+	return $agent_str;
 }
 
 ### Wrappers for SOAP operations ###
@@ -304,11 +310,16 @@ sub soap_get_parameter_details {
 		SOAP::Data->name( 'parameterId' => $parameterId )
 		  ->attr( { 'xmlns' => '' } ) );
 	my $paramDetail = $ret->valueof('//parameterDetails');
+
 	# Convert parameter values into a list.
 	my (@paramValueList) = $ret->valueof('//parameterDetails/values/value');
+
 	# Convert WsProperties for each value into a list.
-	for(my $i = 0; $i < scalar(@paramValueList); $i++) {
-		my (@propertyList) = $ret->valueof('//parameterDetails/values/[' . ($i + 1) . ']/properties/property');
+	for ( my $i = 0 ; $i < scalar(@paramValueList) ; $i++ ) {
+		my (@propertyList) =
+		  $ret->valueof( '//parameterDetails/values/['
+			  . ( $i + 1 )
+			  . ']/properties/property' );
 		$paramValueList[$i]->{'properties'} = \@propertyList;
 	}
 	$paramDetail->{'values'} = \@paramValueList;
@@ -418,7 +429,6 @@ sub soap_get_result {
 	return $result;
 }
 
-
 =head2 soap_get_resultforalignment()
 
 Get result data of a specified type for a finished job.
@@ -427,26 +437,30 @@ Get result data of a specified type for a finished job.
 
 =cut
 
-sub soap_get_resultforalignment
-{
+sub soap_get_resultforalignment {
 	print_debug_message( 'soap_get_result', 'Begin', 1 );
-	my $jobid = shift;
-	my $type  = shift;
+	my $jobid       = shift;
+	my $type        = shift;
 	my $alignmentno = shift;
-	
-	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'soap_get_result', 'type: ' . $type,   1 );
-	print_debug_message( 'soap_get_result', 'alignmentno: ' . $alignmentno,   1 );
+
+	print_debug_message( 'soap_get_result', 'jobid: ' . $jobid,             1 );
+	print_debug_message( 'soap_get_result', 'type: ' . $type,               1 );
+	print_debug_message( 'soap_get_result', 'alignmentno: ' . $alignmentno, 1 );
 
 	my (@paramsList) = ();
 
 	push @paramsList,
-	  SOAP::Data->name( 'parameter' => \SOAP::Data->value(
-		SOAP::Data->name('name' => 'alignmentno'),
-		SOAP::Data->name('value' => \SOAP::Data->value(
-			SOAP::Data->name('string' => $alignmentno)))
-	));
-	
+	  SOAP::Data->name(
+		'parameter' => \SOAP::Data->value(
+			SOAP::Data->name( 'name' => 'alignmentno' ),
+			SOAP::Data->name(
+				'value' => \SOAP::Data->value(
+					SOAP::Data->name( 'string' => $alignmentno )
+				)
+			)
+		)
+	  );
+
 	my $res = $soap->getResult(
 		SOAP::Data->name( 'jobId' => $jobid )->attr( { 'xmlns' => '' } ),
 		SOAP::Data->name( 'type'  => $type )->attr(  { 'xmlns' => '' } ),
@@ -459,7 +473,6 @@ sub soap_get_resultforalignment
 	print_debug_message( 'soap_get_result', 'End', 1 );
 	return $result;
 }
-
 
 ### Service actions and utility functions ###
 
@@ -507,47 +520,55 @@ sub from_wsdl {
 	my (@retVal) = ();
 	my $wsdlStr;
 	my $fetchAttemptCount = 0;
+
 	# Create a user agent
 	my $ua = LWP::UserAgent->new();
-	$ua->agent( &get_agent_string() . $ua->agent() ); # User-agent.
-	$ua->env_proxy; # HTTP proxy.
-	my $can_accept; # Available message encodings.
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
+	$ua->agent( &get_agent_string() . $ua->agent() );    # User-agent.
+	$ua->env_proxy;                                      # HTTP proxy.
+	my $can_accept;    # Available message encodings.
+	eval { $can_accept = HTTP::Message::decodable(); };
 	$can_accept = '' unless defined($can_accept);
-	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
+	while ( scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES ) {
+
 		# Fetch WSDL document.
-		my $response = $ua->get($WSDL, 
-			'Accept-Encoding' => $can_accept, # HTTP compression.
+		my $response = $ua->get(
+			$WSDL,
+			'Accept-Encoding' => $can_accept,    # HTTP compression.
 		);
-		if ( $params{'trace'} ) { # Request/response trace.
+		if ( $params{'trace'} ) {                # Request/response trace.
 			print( $response->request()->as_string(), "\n" );
-			print( $response->as_string(), "\n" );
+			print( $response->as_string(),            "\n" );
 		}
+
 		# Unpack possibly compressed response.
-		if ( defined($can_accept) && $can_accept ne '') {
-	    	$wsdlStr = $response->decoded_content();
+		if ( defined($can_accept) && $can_accept ne '' ) {
+			$wsdlStr = $response->decoded_content();
 		}
+
 		# If unable to decode use orginal content.
-		$wsdlStr = $response->content() if (!defined($wsdlStr));
+		$wsdlStr = $response->content() if ( !defined($wsdlStr) );
 		$fetchAttemptCount++;
-		if(defined($wsdlStr) && $wsdlStr ne '') {
+		if ( defined($wsdlStr) && $wsdlStr ne '' ) {
+
 			# Extract service endpoint.
 			if ( $wsdlStr =~ m/<(\w+:)?address\s+location=["']([^'"]+)['"]/ ) {
 				$retVal[0] = $2;
 			}
+
 			# Extract service namespace.
 			if ( $wsdlStr =~
-				m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/ )
+m/<(\w+:)?definitions\s*[^>]*\s+targetNamespace=['"]([^"']+)["']/
+			  )
 			{
 				$retVal[1] = $2;
 			}
 		}
 	}
+
 	# Check endpoint and namespace have been obtained.
-	if(scalar(@retVal) != 2 || $retVal[0] eq '' || $retVal[1] eq '') {
-		die "Error: Unable to determine service endpoint and namespace for requests.";
+	if ( scalar(@retVal) != 2 || $retVal[0] eq '' || $retVal[1] eq '' ) {
+		die
+"Error: Unable to determine service endpoint and namespace for requests.";
 	}
 	&print_debug_message( 'from_wsdl', 'End', 1 );
 	return @retVal;
@@ -592,10 +613,10 @@ sub print_param_details {
 		}
 		print "\n";
 		print "\t", $value->{'label'}, "\n";
-		if(defined($value->{'properties'})) {
-			foreach my $wsProperty (@{$value->{'properties'}}) {
+		if ( defined( $value->{'properties'} ) ) {
+			foreach my $wsProperty ( @{ $value->{'properties'} } ) {
 				print "\t", $wsProperty->{'key'},
-					"\t", $wsProperty->{'value'}, "\n";
+				  "\t", $wsProperty->{'value'}, "\n";
 			}
 		}
 	}
@@ -737,14 +758,15 @@ sub load_data {
 			$retSeq[0] = $ARGV[0];
 		}
 	}
-	if ( $params{'structure1'} ) {                   # Via --structure
-		if ( -f $params{'structure1'} || $params{'structure1'} eq '-' ) {    # File
+	if ( $params{'structure1'} ) {                 # Via --structure
+		if ( -f $params{'structure1'} || $params{'structure1'} eq '-' ) { # File
 			$retSeq[0] = &read_file( $params{'structure1'} );
 		}
 		else {    # DB:ID or sequence
 			$retSeq[0] = $params{'structure1'};
 		}
 	}
+
 	# Second sequence
 	if ( defined( $ARGV[1] ) ) {    # Bare option
 		if ( -f $ARGV[1] || $ARGV[1] eq '-' ) {    # File
@@ -754,8 +776,8 @@ sub load_data {
 			$retSeq[1] = $ARGV[1];
 		}
 	}
-	if ( $params{'structure2'} ) {                   # Via --structure
-		if ( -f $params{'structure2'} || $params{'structure2'} eq '-' ) {    # File
+	if ( $params{'structure2'} ) {                 # Via --structure
+		if ( -f $params{'structure2'} || $params{'structure2'} eq '-' ) { # File
 			$retSeq[1] = &read_file( $params{'structure2'} );
 		}
 		else {    # DB:ID or sequence
@@ -855,7 +877,6 @@ sub get_results {
 		my $nalignments = soap_get_result( $jobid, "nalignments" );
 		print "Number of alignments: $nalignments\n";
 
-
 		# Get the data and write it to a file
 		if ( defined( $params{'outformat'} ) ) {    # Specified data type
 			my $selResultType;
@@ -892,45 +913,50 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n"
 				  if ( $outputLevel > 1 );
 
-			if (   $resultType->{'identifier'} eq 'calphatraces'
-				|| $resultType->{'identifier'} eq 'rt' )
-			{
-				for (my $alignmentno=1; $alignmentno<=$nalignments; $alignmentno++)
+				# Data types which can have multiple results
+				if (   $resultType->{'identifier'} eq 'calphatraces'
+					|| $resultType->{'identifier'} eq 'rt' )
 				{
+					for (
+						my $alignmentno = 1 ;
+						$alignmentno <= $nalignments ;
+						$alignmentno++
+					  )
+					{
 
-				my $result =
-				  soap_get_resultforalignment( $jobid,
-				   $resultType->{'identifier'}, $alignmentno );
-				   
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
+						my $result =
+						  soap_get_resultforalignment( $jobid,
+							$resultType->{'identifier'}, $alignmentno );
+
+						if ( $params{'outfile'} eq '-' ) {
+							write_file( $params{'outfile'}, $result );
+						}
+						else {
+							write_file(
+								$params{'outfile'} . '.'
+								  . $resultType->{'identifier'} . '.'
+								  . $alignmentno . '.'
+								  . $resultType->{'fileSuffix'},
+								$result
+							);
+						}
+					}
 				}
 				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $resultType->{'identifier'} . '.'
-						  . $resultType->{'fileSuffix'},
-						$result
-					);
+					my $result =
+					  soap_get_result( $jobid, $resultType->{'identifier'} );
+					if ( $params{'outfile'} eq '-' ) {
+						write_file( $params{'outfile'}, $result );
+					}
+					else {
+						write_file(
+							$params{'outfile'} . '.'
+							  . $resultType->{'identifier'} . '.'
+							  . $resultType->{'fileSuffix'},
+							$result
+						);
+					}
 				}
-				}
-			}
-			else
-			{
-				my $result =
-				  soap_get_result( $jobid, $resultType->{'identifier'} );
-				if ( $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$params{'outfile'} . '.'
-						  . $resultType->{'identifier'} . '.'
-						  . $resultType->{'fileSuffix'},
-						$result
-					);
-				}
-			}
 
 			}
 		}
