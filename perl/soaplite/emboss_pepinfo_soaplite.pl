@@ -1194,7 +1194,7 @@ sub usage {
 EMBOSS pepinfo
 ==============
 
- Pepinfo plot amino acid properties of a protein sequence.
+Plot amino acid properties of a protein sequence.
 
 [Required]
 
