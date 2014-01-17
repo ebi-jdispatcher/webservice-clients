@@ -50,6 +50,7 @@
 	<import file="${ant.import.lib.dir}/client_test/hmmer_hmmscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/iprscan5.xml" />
+	<!-- TODO import file="${ant.import.lib.dir}/client_test/pfamscan.xml" / -->
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
 	<import file="${ant.import.lib.dir}/client_test/pratt.xml" />
 	<import file="${ant.import.lib.dir}/client_test/ps_scan.xml" />
@@ -66,7 +67,7 @@
 	<import file="${ant.import.lib.dir}/client_test/promoterwise.xml" />
 	<import file="${ant.import.lib.dir}/client_test/wise2dba.xml" />
 	<!-- RNA Analysis -->
-	<!-- import file="${ant.import.lib.dir}/client_test/mapmi.xml" / -->
+	<!-- TODO import file="${ant.import.lib.dir}/client_test/mapmi.xml" / -->
 	<!-- Sequence Format Conversion (SFC) -->
 	<import file="${ant.import.lib.dir}/client_test/emboss_seqret.xml" />
 	<import file="${ant.import.lib.dir}/client_test/readseq.xml" />
@@ -120,6 +121,7 @@
 		<antcall target="test-clean-hmmer_hmmscan" />
 		<antcall target="test-clean-iprscan" />
 		<antcall target="test-clean-iprscan5" />
+		<!-- TODO antcall target="test-clean-pfamscan" / -->
 		<antcall target="test-clean-phobius" />
 		<antcall target="test-clean-pratt" />
 		<antcall target="test-clean-ps_scan" />
@@ -191,16 +193,21 @@
 		<antcall target="axis1-test-promoterwise" />
 		<antcall target="axis1-test-wise2dba" />
 		<!-- Protein Function Analysis (PFA) -->
+		<antcall target="axis1-test-fingerprintscan" />
+		<antcall target="axis1-test-hmmer_hmmscan" />
 		<antcall target="axis1-test-iprscan" />
-		<!-- antcall target="axis1-test-iprscan5" / -->
+		<antcall target="axis1-test-iprscan5" />
+		<!-- TODO antcall target="axis1-test-pfamscan" -->
 		<antcall target="axis1-test-phobius" />
+		<antcall target="axis1-test-pratt" />
+		<antcall target="axis1-test-ps_scan" />
 		<antcall target="axis1-test-radar" />
 		<!-- Phylogeny -->
 		<antcall target="axis1-test-clustalw2_phylogeny" />
 		<!-- Sequence Format Conversion (SFC) -->
 		<antcall target="axis1-test-emboss_seqret" />
 		<antcall target="axis1-test-readseq" />
-		<!-- TODO: Sequence Operations (SO) -->
+		<!-- Sequence Operations (SO) -->
 		<antcall target="axis1-test-censor" />
 		<antcall target="axis1-test-seqcksum" />
 		<!-- Sequence Similarity Search (SSS) -->
@@ -211,6 +218,9 @@
 		<antcall target="axis1-test-psisearch" />
 		<antcall target="axis1-test-wublast" />
 		<!-- Sequence Statistics -->
+		<antcall target="axis1-test-emboss_cpgplot" />
+		<antcall target="axis1-test-emboss_isochore" />
+		<antcall target="axis1-test-emboss_newcpgreport" />
 		<antcall target="axis1-test-emboss_pepinfo" />
 		<antcall target="axis1-test-emboss_pepstats" />
 		<antcall target="axis1-test-emboss_pepwindow" />
