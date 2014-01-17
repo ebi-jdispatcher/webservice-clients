@@ -1,7 +1,7 @@
 /* $Id$
  * ======================================================================
  * 
- * Copyright 2009-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2009-2014 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays; 
 import java.util.Map;
-
 import javax.xml.rpc.ServiceException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
-
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.jaxws.stubs.ncbiblast.*;
 
@@ -614,40 +612,11 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 						.getOptionValue("sequence") : cli.getArgs()[0];
 				// Multi-fasta sequence input.
 				if (cli.hasOption("multifasta")) {
-					client.printDebugMessage("main", "Mode: multifasta", 11);
-					int numSeq = 0;
-					client.setFastaInputFile(dataOption);
-					// Loop over input sequences, submitting each one.
-					String fastaSeq = null;
-					fastaSeq = client.nextFastaSequence();
-					client.printDebugMessage("main", "fastaSeq: " + fastaSeq,
-							12);
-					while (fastaSeq != null) {
-						numSeq++;
-						client.submitJobFromCli(cli, fastaSeq);
-						fastaSeq = client.nextFastaSequence();
-					}
-					client.closeFastaFile();
-					client.printProgressMessage("Processed " + numSeq
-							+ " input sequences", 2);
+					client.multifastaSubmitCli(dataOption, cli);
 				}
 				// Entry identifier list.
 				else if (dataOption.startsWith("@")) {
-					client.printDebugMessage("main", "Mode: Id list", 11);
-					int numId = 0;
-					client.setIdentifierListFile(dataOption.substring(1));
-					// Loop over input sequences, submitting each one.
-					String id = null;
-					id = client.nextIdentifier();
-					while (id != null) {
-						numId++;
-						client.printProgressMessage("ID: " + id, 1);
-						client.submitJobFromCli(cli, id);
-						id = client.nextIdentifier();
-					}
-					client.closeIdentifierListFile();
-					client.printProgressMessage("Processed " + numId
-							+ " input identifiers", 2);
+					client.idlistSubmitCli(dataOption, cli);
 				}
 				// Submit a job
 				else {
