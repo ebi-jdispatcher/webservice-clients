@@ -92,12 +92,8 @@
 			<arg value="${test.email}" />
 			<arg value="--structure1" />
 			<arg value="test_data/pdb11as.ent" />
-			<arg value="--chainid1" />
-			<arg value="A" />
 			<arg value="--structure2" />
 			<arg value="test_data/pdb12as.ent" />
-			<arg value="--chainid2" />
-			<arg value="A" />
 		</java>
 	</target>
 	
