@@ -1,7 +1,7 @@
 /* $Id: DaliliteClient.java 1816 2011-04-05 09:51:24Z hpm $
  * ======================================================================
  * 
- * Copyright 2012-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2012-2014 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -427,9 +427,56 @@ public class DaliliteClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Tool specific options
 		if (line.hasOption("chainid1")) params.setChainid1(line.getOptionValue("chainid1"));
 		if (line.hasOption("chainid2")) params.setChainid2(line.getOptionValue("chainid2"));
+		// Input data.
+		String dataOption = null;
+		dataOption = (line.hasOption("structure1")) ? line.getOptionValue("structure1") : line.getArgs()[0];
+		params.setStructure1(new String(loadData(dataOption)));
+		dataOption = (line.hasOption("structure2")) ? line.getOptionValue("structure2") : line.getArgs()[1];
+		params.setStructure2(new String(loadData(dataOption)));
 
 		printDebugMessage("loadParams", "End", 1);
 		return params;
+	}
+
+	/**
+	 * Submit a job using the command-line information to construct the input.
+	 * 
+	 * @param cli
+	 *            Command-line parameters.
+	 * @param inputData
+	 *            Data input. Ignored, use the 'structure1' and 'structure2' parameters.
+	 * @throws ServiceException
+	 * @throws IOException
+	 */
+	public void submitJobFromCli(CommandLine cli, String inputData)
+			throws ServiceException, IOException {
+		// Create job submission parameters from command-line
+		InputParameters params = this.loadParams(cli);
+		// Submit the job
+		String email = null, title = null;
+		if (cli.hasOption("email"))
+			email = cli.getOptionValue("email");
+		if (cli.hasOption("title"))
+			title = cli.getOptionValue("title");
+		String jobid = this.runApp(email, title, params);
+		// For asynchronous mode
+		if (cli.hasOption("async")) {
+			System.out.println(jobid); // Output the job id.
+			System.err
+					.println("To get status: java -jar Dalilite_Axis1.jar --status --jobid "
+							+ jobid);
+		} else {
+			// In synchronous mode try to get the results
+			this.printProgressMessage(jobid, 1);
+			String[] resultFilenames = this
+					.getResults(jobid, cli.getOptionValue("outfile"), cli
+							.getOptionValue("outformat"));
+			for (int i = 0; i < resultFilenames.length; i++) {
+				if (resultFilenames[i] != null) {
+					System.out.println("Wrote file: " + resultFilenames[i]);
+				}
+			}
+		}
 	}
 
 	/** Entry point for running as an application.
@@ -519,32 +566,8 @@ public class DaliliteClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			}
 			// Submit a job
 			else if(cli.hasOption("email") && ((cli.hasOption("structure1") && cli.hasOption("structure2")) || cli.getArgs().length > 1)) {
-				// Create job submission parameters from command-line
-				InputParameters params = client.loadParams(cli);
-				String dataOption = null;
-				dataOption = (cli.hasOption("structure1")) ? cli.getOptionValue("structure1") : cli.getArgs()[0];
-				params.setStructure1(new String(client.loadData(dataOption)));
-				dataOption = (cli.hasOption("structure2")) ? cli.getOptionValue("structure2") : cli.getArgs()[1];
-				params.setStructure2(new String(client.loadData(dataOption)));
-				// Submit the job
-				String email = null, title = null;
-				if (cli.hasOption("email")) email = cli.getOptionValue("email"); 
-				if (cli.hasOption("title")) title = cli.getOptionValue("title"); 
-				String jobid = client.runApp(email, title, params);
-				// For asynchronous mode
-				if (cli.hasOption("async")) {
-					System.out.println(jobid); // Output the job id.
-					System.err.println("To get status: java -jar Dalilite_Axis1.jar --status --jobid " + jobid);
-				} else {
-					// In synchronous mode try to get the results
-					client.printProgressMessage(jobid, 1);
-					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-					for(int i = 0; i < resultFilenames.length; i++) {
-						if(resultFilenames[i] != null) {
-							System.out.println("Wrote file: " + resultFilenames[i]);
-						}
-					}
-				}	
+				// NB: Input data is passed via structure1 and structure2 command-line parameters. 
+				client.submitJobFromCli(cli, null);
 			}
 			// Unknown action
 			else {
