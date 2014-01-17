@@ -583,9 +583,19 @@ public class FastmClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			}
 			// Submit a job
 			else if(cli.hasOption("email") && (cli.hasOption("sequence") || cli.getArgs().length > 0)) {
-				String dataOption = (cli.hasOption("sequence")) ? cli.getOptionValue("sequence") : cli.getArgs()[0];
-				client.submitJobFromCli(cli, new String(client
-						.loadData(dataOption)));
+				// Input sequence, data file or entry identifier.
+				String dataOption = (cli.hasOption("sequence")) ? cli
+						.getOptionValue("sequence") : cli.getArgs()[0];
+				// Multi-fasta like sequence input.
+				if (cli.hasOption("multifasta")) {
+					client.multifastaSubmitCli(dataOption, cli);
+				}
+				// Submit a job
+				else {
+					client.printDebugMessage("main", "Mode: sequence", 11);
+					client.submitJobFromCli(cli, new String(client
+							.loadData(dataOption)));
+				}
 			}
 			// Unknown action
 			else {

@@ -1,7 +1,7 @@
 /* $Id: MaxsproutClient.java 1816 2011-04-05 09:51:24Z hpm $
  * ======================================================================
  * 
- * Copyright 2012-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2012-2014 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.maxsprout.*;
 
 /** <p>JDispatcher MaxSprout (SOAP) web service Java client using Apache 
@@ -568,25 +564,11 @@ public class MaxsproutClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 						.getOptionValue("coordinates") : cli.getArgs()[0];
 				// Entry identifier list.
 				if (dataOption.startsWith("@")) {
-					client.printDebugMessage("main", "Mode: Id list", 11);
-					int numId = 0;
-					client.setIdentifierListFile(dataOption.substring(1));
-					// Loop over input sequences, submitting each one.
-					String id = null;
-					id = client.nextIdentifier();
-					while (id != null) {
-						numId++;
-						client.printProgressMessage("ID: " + id, 1);
-						client.submitJobFromCli(cli, id);
-						id = client.nextIdentifier();
-					}
-					client.closeIdentifierListFile();
-					client.printProgressMessage("Processed " + numId
-							+ " input identifiers", 2);
+					client.idlistSubmitCli(dataOption, cli);
 				}
 				// Submit a job
 				else {
-					client.printDebugMessage("main", "Mode: coordinates", 11);
+					client.printDebugMessage("main", "Mode: sequence", 11);
 					client.submitJobFromCli(cli, new String(client
 							.loadData(dataOption)));
 				}
