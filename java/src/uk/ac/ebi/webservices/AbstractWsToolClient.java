@@ -35,6 +35,8 @@ import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
+
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /** Abstract class defining common methods to all jDispatcher SOAP web 
@@ -226,11 +228,11 @@ public abstract class AbstractWsToolClient {
 	 * @param obj Object the get values from
 	 * @return String containing values and method names.
 	 */
-	// @SuppressWarnings("unchecked")
 	protected String objectFieldsToString(Object obj) {
 		printDebugMessage("ObjectFieldsToString", "Begin", 31);
 		StringBuilder strBuilder = new StringBuilder();
 		try {
+			@SuppressWarnings("rawtypes")
 			Class objType = obj.getClass();
 			printDebugMessage("ObjectFieldsToString", "objType: " + objType, 32);
 			java.lang.reflect.Method[] methods = objType.getMethods();
@@ -626,6 +628,37 @@ public abstract class AbstractWsToolClient {
 		this.fastaInputReader = null;
 	}
 	
+	/**
+	 * Submit a job using command-line information to construct the input.
+	 * 
+	 * @param cli
+	 *            Command-line parameters.
+	 * @param inputSeq
+	 *            Data input.
+	 * @throws ServiceException
+	 * @throws IOException
+	 */
+	abstract public void submitJobFromCli(CommandLine cli, String inputData)
+			throws ServiceException, IOException;
+
+	public void multifastaSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
+		this.printDebugMessage("multifastaSubmitCli", "Mode: multifasta", 11);
+		int numSeq = 0;
+		this.setFastaInputFile(dataOption);
+		// Loop over input sequences, submitting each one.
+		String fastaSeq = null;
+		fastaSeq = this.nextFastaSequence();
+		this.printDebugMessage("multifastaSubmitCli", "fastaSeq: " + fastaSeq, 12);
+		while (fastaSeq != null) {
+			numSeq++;
+			this.submitJobFromCli(cli, fastaSeq);
+			fastaSeq = this.nextFastaSequence();
+		}
+		this.closeFastaFile();
+		this.printProgressMessage("Processed " + numSeq
+				+ " input sequences", 2);
+	}
+	
 	/** Set the identifier list input file.
 	 *  
 	 * @param fileName Name of the identifier list file.
@@ -672,5 +705,23 @@ public abstract class AbstractWsToolClient {
 	public void closeIdentifierListFile() throws IOException {
 		this.identifierListReader.close();
 		this.identifierListReader = null;
+	}
+	
+	public void idlistSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
+		this.printDebugMessage("main", "Mode: Id list", 11);
+		int numId = 0;
+		this.setIdentifierListFile(dataOption.substring(1));
+		// Loop over input sequences, submitting each one.
+		String id = null;
+		id = this.nextIdentifier();
+		while (id != null) {
+			numId++;
+			this.printProgressMessage("ID: " + id, 1);
+			this.submitJobFromCli(cli, id);
+			id = this.nextIdentifier();
+		}
+		this.closeIdentifierListFile();
+		this.printProgressMessage("Processed " + numId
+				+ " input identifiers", 2);
 	}
 }
