@@ -90,7 +90,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			+ "  -x, --gapext        : int  : gap extension penalty\n"
 			+ "  -d, --dropoff       : int  : drop-off score\n"
 			+ "  -g, --gapalign      :      : optimise gapped alignments\n"
-			+ "      --compstats     : str  : Composition adjustment/statistics method, see " 
+			+ "      --compstats     : str  : Composition adjustment/statistics method, see \n" 
 			+ "                               --paramDetail compstats\n"
 			+ "  -L, --seqrange      : str  : region in query sequence to use for search\n"
 			+ "      --multifasta    :      : treat input as a set of fasta formatted sequences\n";
@@ -169,8 +169,6 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			Call call = super.createCall();
 			// Enable response compression.
 			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
-			// TEST: Enable request compression (requires service support)
-			//call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
 			return call;
 		}
 	}
