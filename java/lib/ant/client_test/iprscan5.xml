@@ -144,9 +144,10 @@
 			<arg value="${test.email}" />
 			<arg value="--nogoterms" />
 			<arg value="--outformat" />
-			<arg value="out" /> <!-- Signature matches -->
+			<arg value="tsv" /> <!-- Signature matches -->
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--quiet" />
 			<arg value="-" /> <!-- Query sequence from STDIN -->
 		</java>
 	</target>
@@ -159,7 +160,7 @@
 			<arg value="${test.email}" />
 			<arg value="--nogoterms" />
 			<arg value="--outformat" />
-			<arg value="out" /> <!-- Signature matches -->
+			<arg value="tsv" /> <!-- Signature matches -->
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
 			<arg value="@test_data/uniprot_id_list.txt" />
@@ -174,9 +175,10 @@
 			<arg value="${test.email}" />
 			<arg value="--nogoterms" />
 			<arg value="--outformat" />
-			<arg value="out" /> <!-- Signature matches -->
+			<arg value="tsv" /> <!-- Signature matches -->
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--quiet" />
 			<arg value="@-" /> <!-- Query ID list from STDIN -->
 		</java>
 	</target>
@@ -189,7 +191,7 @@
 			<arg value="${test.email}" />
 			<arg value="--nogoterms" />
 			<arg value="--outformat" />
-			<arg value="out" /> <!-- Signature matches -->
+			<arg value="tsv" /> <!-- Signature matches -->
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
 			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
@@ -205,9 +207,10 @@
 			<arg value="${test.email}" />
 			<arg value="--nogoterms" />
 			<arg value="--outformat" />
-			<arg value="out" /> <!-- Signature matches -->
+			<arg value="tsv" /> <!-- Signature matches -->
 			<arg value="--outfile" />
 			<arg value="-" /> <!-- Result output to STDOUT -->
+			<arg value="--quiet" />
 			<arg value="--multifasta" /> <!-- Multiple fasta sequence input -->
 			<arg value="-" /> <!-- Multiple fasta sequence from STDIN -->
 		</java>
