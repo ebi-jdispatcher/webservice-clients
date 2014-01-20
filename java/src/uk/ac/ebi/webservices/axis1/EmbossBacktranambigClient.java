@@ -355,7 +355,7 @@ public class EmbossBacktranambigClient extends uk.ac.ebi.webservices.AbstractWsT
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputSeq)
+	public String submitJobFromCli(CommandLine cli, String inputSeq)
 			throws ServiceException, IOException {
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
@@ -385,6 +385,7 @@ public class EmbossBacktranambigClient extends uk.ac.ebi.webservices.AbstractWsT
 				}
 			}
 		}
+		return jobid;
 	}
 
 	/** Entry point for running as an application.

@@ -486,7 +486,7 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputSeq)
+	public String submitJobFromCli(CommandLine cli, String inputSeq)
 			throws ServiceException, IOException {
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
@@ -516,6 +516,7 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				}
 			}
 		}
+		return jobid;
 	}
 
 	/**

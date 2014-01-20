@@ -464,7 +464,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputSeq)
+	public String submitJobFromCli(CommandLine cli, String inputSeq)
 			throws ServiceException, IOException {
 		printDebugMessage("submitJobFromCli", "Begin", 1);
 		// Create job submission parameters from command-line
@@ -495,7 +495,8 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 				}
 			}
 		}
-		printDebugMessage("submitJobFromCli", "Begin", 1);
+		printDebugMessage("submitJobFromCli", "End", 1);
+		return jobid;
 	}
 	
 	/** Entry point for running as an application.

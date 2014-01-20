@@ -305,7 +305,7 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				+ outfile + " outformat: " + outformat, 2);
 		String[] retVal = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
-		clientPoll(jobid); // Wait for job to finish
+		//clientPoll(jobid); // Wait for job to finish
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
@@ -424,8 +424,9 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputSeq)
+	public String submitJobFromCli(CommandLine cli, String inputSeq)
 			throws ServiceException, IOException {
+		this.printDebugMessage("submitJobFromCli", "Begin", 1);
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
 		params.setSequence(inputSeq);
@@ -436,24 +437,24 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (cli.hasOption("title"))
 			title = cli.getOptionValue("title");
 		String jobid = this.runApp(email, title, params);
-		// For asynchronous mode
+		// Asynchronous submission.
 		if (cli.hasOption("async")) {
 			System.out.println(jobid); // Output the job id.
 			System.err
 					.println("To get status: java -jar IPRScan5_Axis1.jar --status --jobid "
 							+ jobid);
-		} else {
-			// In synchronous mode try to get the results
-			this.printProgressMessage(jobid, 1);
-			String[] resultFilenames = this
-					.getResults(jobid, cli.getOptionValue("outfile"), cli
-							.getOptionValue("outformat"));
-			for (int i = 0; i < resultFilenames.length; i++) {
-				if (resultFilenames[i] != null) {
-					System.out.println("Wrote file: " + resultFilenames[i]);
-				}
-			}
 		}
+		//  Parallel submission mode.
+		else if(cli.hasOption("maxJobs") && Integer.parseInt(cli.getOptionValue("maxJobs")) > 1) {
+			this.printProgressMessage(jobid, 1);
+		}
+		// Simulate synchronous submission, serial mode.
+		else {
+			this.clientPoll(jobid);
+			this.getResults(jobid, cli);
+		}
+		this.printDebugMessage("submitJobFromCli", "End", 1);
+		return jobid;
 	}
 
 	/**
@@ -472,6 +473,10 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		addGenericOptions(options);
 		options.addOption("multifasta", "multifasta", false,
 				"Multiple fasta sequence input");
+		options.addOption("maxJobs", "maxJobs", true,
+				"Maximum number of concurrent jobs");
+		options.addOption("useSeqId", "useSeqId", false,
+				"Use sequence identifiers for file names");
 		// Application specific options
 		options.addOption("appl", "appl", true, "Signature methods");
 		options.addOption("app", "app", true, "Signature methods");
@@ -527,6 +532,7 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				String jobid = cli.getOptionValue("jobid");
 				// Get results for job
 				if (cli.hasOption("polljob")) {
+					client.clientPoll(jobid);
 					String[] resultFilenames = client.getResults(jobid, cli
 							.getOptionValue("outfile"), cli
 							.getOptionValue("outformat"));
@@ -550,6 +556,7 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				}
 				// Get result types for job
 				else if (cli.hasOption("resultTypes")) {
+					client.clientPoll(jobid);
 					client.printResultTypes(jobid);
 				}
 				// Unknown...

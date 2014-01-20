@@ -377,7 +377,7 @@ public class ClustalW2PhylogenyClient extends uk.ac.ebi.webservices.AbstractWsTo
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputData)
+	public String submitJobFromCli(CommandLine cli, String inputData)
 			throws ServiceException, IOException {
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
@@ -407,6 +407,7 @@ public class ClustalW2PhylogenyClient extends uk.ac.ebi.webservices.AbstractWsTo
 				}
 			}
 		}
+		return jobid;
 	}
 
 	/** Entry point for running as an application.

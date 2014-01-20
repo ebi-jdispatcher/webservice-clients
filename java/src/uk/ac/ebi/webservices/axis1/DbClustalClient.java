@@ -371,7 +371,7 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	public void submitJobFromCli(CommandLine cli, String inputData)
+	public String submitJobFromCli(CommandLine cli, String inputData)
 			throws ServiceException, IOException {
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
@@ -400,6 +400,7 @@ public class DbClustalClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 				}
 			}
 		}
+		return jobid;
 	}
 
 	/** Entry point for running as an application.

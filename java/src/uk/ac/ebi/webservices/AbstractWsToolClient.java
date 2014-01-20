@@ -34,6 +34,10 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.rpc.ServiceException;
 
 import org.apache.commons.cli.CommandLine;
@@ -47,6 +51,10 @@ import org.apache.commons.cli.Options;
  * <a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/java</a>
  */
 public abstract class AbstractWsToolClient {
+	/** Maximum number of errors to mark job as failed. */
+	private static final int MAX_ERROR_STATUS_COUNT = 3;
+	/** Pattern to extract entry identifier from fasta format sequence data. */
+	private static final Pattern FASTA_SEQID_PATTERN = Pattern.compile(">\\s*(\\S+)");
 	/** Output level. Controlled by the --verbose and --quiet options. */
 	protected int outputLevel = 1;
 	/** Debug level. Controlled by the --debugLevel option. */
@@ -567,6 +575,34 @@ public abstract class AbstractWsToolClient {
 	 * @throws javax.xml.rpc.ServiceException
 	 */
 	abstract public String[] getResults(String jobid, String outfile, String outformat) throws IOException, ServiceException;
+
+	protected void getResults(String jobId, CommandLine cli) throws IOException, ServiceException {
+		this.printDebugMessage("getResults", "Begin", 21);
+		this.getResults(jobId, cli, null);
+		this.printDebugMessage("getResults", "End", 21);
+	}
+	
+	private void getResults(String jobId, CommandLine cli, String entryId) throws IOException, ServiceException {
+		this.printDebugMessage("getResults", "Begin", 21);
+		this.printDebugMessage("getResults", "jobId: " + jobId, 21);
+		String[] resultFilenames;
+		if(cli.hasOption("outfile")) {
+			resultFilenames = this.getResults(jobId, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
+		}
+		else if(cli.hasOption("useSeqId") && entryId != null && entryId.length() > 0) {
+			String cleanEntryId = entryId.replaceAll("\\W", "_");
+			resultFilenames = this.getResults(jobId, cleanEntryId, cli.getOptionValue("outformat"));
+		}
+		else {
+			resultFilenames = this.getResults(jobId, (String)null, cli.getOptionValue("outformat"));
+		}
+		for (int i = 0; i < resultFilenames.length; i++) {
+			if (resultFilenames[i] != null) {
+				System.out.println("Wrote file: " + resultFilenames[i]);
+			}
+		}
+		this.printDebugMessage("getResults", "End", 21);
+	}
 	
 	/** Set input fasta format sequence data file.
 	 * 
@@ -602,7 +638,7 @@ public abstract class AbstractWsToolClient {
 		}
 		// Read fasta header line.
 		if(this.tmpFastaLine.startsWith(">")) {
-			this.printProgressMessage("Sequence: " + tmpFastaLine, 1);
+			this.printProgressMessage("Sequence: " + tmpFastaLine, 2);
 			StringBuffer tmpFastaSeq = new StringBuffer();
 			tmpFastaSeq.append(tmpFastaLine).append("\n");
 			// Read lines until EOF or a line begins with '>'.
@@ -638,7 +674,7 @@ public abstract class AbstractWsToolClient {
 	 * @throws ServiceException
 	 * @throws IOException
 	 */
-	abstract public void submitJobFromCli(CommandLine cli, String inputData)
+	abstract public String submitJobFromCli(CommandLine cli, String inputData)
 			throws ServiceException, IOException;
 
 	/** Submit a set of jobs using input containing multiple fasta format 
@@ -654,21 +690,46 @@ public abstract class AbstractWsToolClient {
 	 * @throws ServiceException
 	 */
 	public void multifastaSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
-		this.printDebugMessage("multifastaSubmitCli", "Mode: multifasta", 11);
-		int numSeq = 0;
+		this.printDebugMessage("multifastaSubmitCli", "Begin", 11);
+		int maxJobs = 1;
+		if(cli.hasOption("maxJobs")) {
+			maxJobs = Integer.parseInt(cli.getOptionValue("maxJobs"));
+		}
+		int jobNumber = 0;
+		ArrayList<String[]> jobInfoList = new ArrayList<String[]>();
 		this.setFastaInputFile(dataOption);
 		// Loop over input sequences, submitting each one.
 		String fastaSeq = null;
 		fastaSeq = this.nextFastaSequence();
-		this.printDebugMessage("multifastaSubmitCli", "fastaSeq: " + fastaSeq, 12);
 		while (fastaSeq != null) {
-			numSeq++;
-			this.submitJobFromCli(cli, fastaSeq);
+			this.printDebugMessage("multifastaSubmitCli", "fastaSeq: " + fastaSeq, 12);
+			jobNumber++;
+			String entryId = "";
+			Matcher fastaSeqIdMatch = FASTA_SEQID_PATTERN.matcher(fastaSeq);
+			if(fastaSeqIdMatch.find()) {
+				entryId = fastaSeqIdMatch.group(1);
+			}
+			this.printProgressMessage("ID: " + entryId, 1);
+			String jobId = this.submitJobFromCli(cli, fastaSeq);
+			// JobId, EntryId, errorCount, jobNumber
+			String[] jobInfo = {jobId, entryId, "0", String.valueOf(jobNumber)};
+			jobInfoList.add(jobInfo);
+			// Parallel mode... wait for job(s) to finish to free slots.
+			while(maxJobs > 1 && jobInfoList.size() >= maxJobs) {
+				pollJobList(jobInfoList, cli);
+				this.printDebugMessage("multifastaSubmitCli", "Remaining jobs: " + jobInfoList.size(), 11);
+			}
 			fastaSeq = this.nextFastaSequence();
 		}
 		this.closeFastaFile();
-		this.printProgressMessage("Processed " + numSeq
+		// Parallel mode... poll remaining jobs.
+		while(maxJobs > 1 && jobInfoList.size() > 0) {
+			pollJobList(jobInfoList, cli);
+			this.printDebugMessage("multifastaSubmitCli", "Remaining jobs: " + jobInfoList.size(), 11);
+		}
+		this.printProgressMessage("Processed " + jobNumber
 				+ " input sequences", 2);
+		this.printDebugMessage("multifastaSubmitCli", "End", 11);
 	}
 	
 	/** Set the identifier list input file.
@@ -726,22 +787,92 @@ public abstract class AbstractWsToolClient {
 	 * @throws IOException
 	 * @throws ServiceException
 	 */
-	public void idlistSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
-		this.printDebugMessage("main", "Mode: Id list", 11);
-		int numId = 0;
+	protected void idlistSubmitCli(String dataOption, CommandLine cli) throws IOException, ServiceException {
+		this.printDebugMessage("idlistSubmitCli", "Begin", 11);
+		int maxJobs = 1;
+		if(cli.hasOption("maxJobs")) {
+			maxJobs = Integer.parseInt(cli.getOptionValue("maxJobs"));
+		}
+		int jobNumber = 0;
+		ArrayList<String[]> jobInfoList = new ArrayList<String[]>();
 		// Trim initial '@' from filename.
 		this.setIdentifierListFile(dataOption.substring(1));
-		// Loop over input sequences, submitting each one.
-		String id = null;
-		id = this.nextIdentifier();
-		while (id != null) {
-			numId++;
-			this.printProgressMessage("ID: " + id, 1);
-			this.submitJobFromCli(cli, id);
-			id = this.nextIdentifier();
+		// Loop over input entries, submitting each one.
+		String entryId = null;
+		entryId = this.nextIdentifier();
+		while (entryId != null) {
+			jobNumber++;
+			this.printProgressMessage("ID: " + entryId, 1);
+			String jobId = this.submitJobFromCli(cli, entryId);
+			// JobId, EntryId, errorCount, jobNumber
+			String[] jobInfo = {jobId, entryId, "0", String.valueOf(jobNumber)};
+			jobInfoList.add(jobInfo);
+			// Parallel mode... wait for job(s) to finish to free slots.
+			while(maxJobs > 1 && jobInfoList.size() >= maxJobs) {
+				pollJobList(jobInfoList, cli);
+				this.printDebugMessage("idlistSubmitCli", "Remaining jobs: " + jobInfoList.size(), 11);
+			}
+			entryId = this.nextIdentifier();
 		}
 		this.closeIdentifierListFile();
-		this.printProgressMessage("Processed " + numId
+		// Parallel mode... poll remaining jobs.
+		while(maxJobs > 1 && jobInfoList.size() > 0) {
+			pollJobList(jobInfoList, cli);
+			this.printDebugMessage("idlistSubmitCli", "Remaining jobs: " + jobInfoList.size(), 11);
+		}
+		this.printProgressMessage("Processed " + jobNumber
 				+ " input identifiers", 2);
+		this.printDebugMessage("idlistSubmitCli", "End", 11);
+	}
+	
+	/** Poll the status of a set of jobs and retrieve results for those that have finished.
+	 * 
+	 * @param jobInfoList Set of submitted jobs to check status for. For each 
+	 * job an array is used to track: job Id, entry Id, error count, job 
+	 * number. Completed jobs are removed from the list. 
+	 * @param cli Command-line options for controlling output.
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	private void pollJobList(ArrayList<String[]> jobInfoList, CommandLine cli) throws IOException, ServiceException {
+		this.printDebugMessage("pollJobList", "Begin", 21);
+		// Poll a list of jobs.
+		for(int jobNum = 0; jobNum < jobInfoList.size(); jobNum++) {
+			long startTime = System.currentTimeMillis();
+			String jobId = jobInfoList.get(jobNum)[0];
+			String jobStatus = this.checkStatus(jobId);
+			int jobErrorCount = Integer.parseInt(jobInfoList.get(jobNum)[2]);
+			if(!(jobStatus.equals("RUNNING") || jobStatus.equals("PENDING") 
+					|| (jobStatus.equals("ERROR") && jobErrorCount < MAX_ERROR_STATUS_COUNT))) {
+				// Report job failure.
+				if(jobStatus.equals("ERROR") || jobStatus.equals("FAILURE")) {
+					this.printProgressMessage("Warning: job " + jobId + " failed for sequence " + jobInfoList.get(jobNum)[3] + ": " + jobInfoList.get(jobNum)[1], 0);
+				}
+				// Get results for finished job.
+				this.getResults(jobId, cli, jobInfoList.get(jobNum)[1]);
+				// Remove job from tracking list.
+				jobInfoList.remove(jobNum);
+			}
+			else {
+				// Track error status count.
+				if(jobStatus.equals("ERROR")) {
+					jobErrorCount++;
+				}
+				else if(jobErrorCount > 0) {
+					jobErrorCount--;
+				}
+				jobInfoList.get(jobNum)[2] = String.valueOf(jobErrorCount);
+			}
+			// Ensure each poll takes a minimum of 1s.
+			long endTime = System.currentTimeMillis();
+			long duration = endTime - startTime;
+			if(duration < 1000)
+				try {
+					Thread.sleep((1000 - duration));
+				} catch (InterruptedException e) {
+					// Ignore interrupted sleep.
+				}
+		}
+		this.printDebugMessage("pollJobList", "End", 21);
 	}
 }
