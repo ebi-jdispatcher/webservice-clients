@@ -533,17 +533,7 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				// Get results for job
 				if (cli.hasOption("polljob")) {
 					client.clientPoll(jobid);
-					String[] resultFilenames = client.getResults(jobid, cli
-							.getOptionValue("outfile"), cli
-							.getOptionValue("outformat"));
-					boolean resultContainContent = false;
-					for (int i = 0; i < resultFilenames.length; i++) {
-						if (resultFilenames[i] != null) {
-							System.out.println("Wrote file: "
-									+ resultFilenames[i]);
-							resultContainContent = true;
-						}
-					}
+					boolean resultContainContent = client.getResults(jobid, cli);
 					if (resultContainContent == false) {
 						System.err.println("Error: requested result type "
 								+ cli.getOptionValue("outformat")

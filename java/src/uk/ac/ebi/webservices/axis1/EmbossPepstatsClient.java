@@ -264,7 +264,7 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 		printDebugMessage("getResults", "jobid: " + jobid + " outfile: " + outfile + " outformat: " + outformat, 2);
 		String[] retVal = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
-		clientPoll(jobid); // Wait for job to finish
+		//clientPoll(jobid); // Wait for job to finish
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
@@ -366,6 +366,7 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 	 */
 	public String submitJobFromCli(CommandLine cli, String inputSeq)
 			throws ServiceException, IOException {
+		this.printDebugMessage("submitJobFromCli", "Begin", 1);
 		// Create job submission parameters from command-line
 		InputParameters params = this.loadParams(cli);
 		params.setSequence(inputSeq);
@@ -376,24 +377,23 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 		if (cli.hasOption("title"))
 			title = cli.getOptionValue("title");
 		String jobid = this.runApp(email, title, params);
-		// For asynchronous mode
+		// Asynchronous submission.
 		if (cli.hasOption("async")) {
 			System.out.println(jobid); // Output the job id.
 			System.err
 					.println("To get status: java -jar EmbossPepstats_Axis1.jar --status --jobid "
 							+ jobid);
-		} else {
-			// In synchronous mode try to get the results
-			this.printProgressMessage(jobid, 1);
-			String[] resultFilenames = this
-					.getResults(jobid, cli.getOptionValue("outfile"), cli
-							.getOptionValue("outformat"));
-			for (int i = 0; i < resultFilenames.length; i++) {
-				if (resultFilenames[i] != null) {
-					System.out.println("Wrote file: " + resultFilenames[i]);
-				}
-			}
 		}
+		//  Parallel submission mode.
+		else if(cli.hasOption("maxJobs") && Integer.parseInt(cli.getOptionValue("maxJobs")) > 1) {
+			this.printProgressMessage(jobid, 1);
+		}
+		// Simulate synchronous submission, serial mode.
+		else {
+			this.clientPoll(jobid);
+			this.getResults(jobid, cli);
+		}
+		this.printDebugMessage("submitJobFromCli", "End", 1);
 		return jobid;
 	}
 
@@ -411,6 +411,10 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 		addGenericOptions(options);
 		options.addOption("multifasta", "multifasta", false,
 				"Multiple fasta sequence input");
+		options.addOption("maxJobs", "maxJobs", true,
+				"Maximum number of concurrent jobs");
+		options.addOption("useSeqId", "useSeqId", false,
+				"Use sequence identifiers for file names");
 		// Application specific options
 		options.addOption("termini", false, "Include charge at N and C terminus");
 		options.addOption("notermini", false, "Not include charge at N and C terminus");
@@ -457,15 +461,9 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 			else if(cli.hasOption("jobid")) {
 				String jobid = cli.getOptionValue("jobid");
 				// Get results for job
-				if(cli.hasOption("polljob")) {                
-					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-					boolean resultContainContent = false;
-					for(int i = 0; i < resultFilenames.length; i++) {
-						if(resultFilenames[i] != null) {
-							System.out.println("Wrote file: " + resultFilenames[i]);
-							resultContainContent = true;
-						}
-					}
+				if(cli.hasOption("polljob")) {
+					client.clientPoll(jobid);
+					boolean resultContainContent = client.getResults(jobid, cli);
 					if (resultContainContent == false) {
 						System.err.println("Error: requested result type " + cli.getOptionValue("outformat") + " not available!");
 					}
@@ -476,6 +474,7 @@ public class EmbossPepstatsClient extends uk.ac.ebi.webservices.AbstractWsToolCl
 				}
 				// Get result types for job
 				else if(cli.hasOption("resultTypes")) {
+					client.clientPoll(jobid);
 					client.printResultTypes(jobid);
 				}
 				// Unknown...
