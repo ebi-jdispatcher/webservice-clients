@@ -1,7 +1,7 @@
 /* $Id$
  * ======================================================================
  * 
- * Copyright 2008-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2008-2014 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.rpc.ServiceException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
@@ -576,15 +574,17 @@ public abstract class AbstractWsToolClient {
 	 */
 	abstract public String[] getResults(String jobid, String outfile, String outformat) throws IOException, ServiceException;
 
-	protected void getResults(String jobId, CommandLine cli) throws IOException, ServiceException {
+	protected boolean getResults(String jobId, CommandLine cli) throws IOException, ServiceException {
 		this.printDebugMessage("getResults", "Begin", 21);
-		this.getResults(jobId, cli, null);
+		boolean resultsContainContent = this.getResults(jobId, cli, null);
 		this.printDebugMessage("getResults", "End", 21);
+		return resultsContainContent;
 	}
 	
-	private void getResults(String jobId, CommandLine cli, String entryId) throws IOException, ServiceException {
+	private boolean getResults(String jobId, CommandLine cli, String entryId) throws IOException, ServiceException {
 		this.printDebugMessage("getResults", "Begin", 21);
 		this.printDebugMessage("getResults", "jobId: " + jobId, 21);
+		boolean resultsContainContent = false;
 		String[] resultFilenames;
 		if(cli.hasOption("outfile")) {
 			resultFilenames = this.getResults(jobId, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
@@ -599,9 +599,11 @@ public abstract class AbstractWsToolClient {
 		for (int i = 0; i < resultFilenames.length; i++) {
 			if (resultFilenames[i] != null) {
 				System.out.println("Wrote file: " + resultFilenames[i]);
+				resultsContainContent = true;
 			}
 		}
 		this.printDebugMessage("getResults", "End", 21);
+		return resultsContainContent;
 	}
 	
 	/** Set input fasta format sequence data file.
