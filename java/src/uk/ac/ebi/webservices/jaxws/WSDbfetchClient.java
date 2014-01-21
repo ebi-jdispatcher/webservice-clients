@@ -137,8 +137,8 @@ public class WSDbfetchClient {
 			}
 			// HTTP response compression.
 			httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
-			// TODO: HTTP request compression (requires server support).
-			//httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
+			// HTTP request compression (requires server support).
+			httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
 			// Add the headers to the context.
 			ctxt.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
 		}
