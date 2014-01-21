@@ -27,8 +27,11 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays; 
+import java.util.Map;
+
 import javax.xml.rpc.ServiceException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
@@ -96,14 +99,30 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		return clientUserAgent;
 	}
 
-	/** Set the HTTP User-Agent for web services requests via the JAX-WS service proxy.
+	/** Set the HTTP headers for web services requests via the JAX-WS service 
+	 * proxy to specify the User-Agent and HTTP compression support. 
 	 */
-	private void setJaxwsPortUserAgent() {
-		printDebugMessage("setJaxwsPortUserAgent", "Begin", 11);
-		((BindingProvider)this.srvProxy).getRequestContext().put(
-			MessageContext.HTTP_REQUEST_HEADERS,
-		    Collections.singletonMap("User-Agent",Collections.singletonList(getClientUserAgentString())));
-		printDebugMessage("setJaxwsPortUserAgent", "End", 11);
+	private void setPortHttpHeaders() {
+		printDebugMessage("setPortHttpHeaders", "Begin", 1);
+		if(this.srvProxy != null) {
+			Map<String, Object> ctxt = ((BindingProvider)this.srvProxy).getRequestContext();
+			@SuppressWarnings("unchecked")
+			Map<String, List<String>> httpHeaders = (Map<String, List<String>>)ctxt.get(MessageContext.HTTP_REQUEST_HEADERS);
+			if(httpHeaders == null) httpHeaders = new HashMap<String, List<String>>();
+
+			// Add custom HTTP headers.
+			// User-agent.
+			String clientUserAgent = getClientUserAgentString();
+			if(clientUserAgent != null && clientUserAgent.length() > 0) {
+				httpHeaders.put("User-Agent", Collections.singletonList(clientUserAgent));
+			}
+			// HTTP response compression.
+			httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
+			// Note: HTTP request compression not supported by the server.
+			// Add the headers to the context.
+			ctxt.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+		}
+		printDebugMessage("setPortHttpHeaders", "End", 1);
 	}
 
 	/** Print usage message. */
@@ -134,7 +153,7 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				service = new JDispatcherService_Service();
 			}
 			this.srvProxy = service.getJDispatcherServiceHttpPort();
-			this.setJaxwsPortUserAgent();
+			this.setPortHttpHeaders();
 		}
 		printDebugMessage("srvProxyConnect", "End", 11);
 	}
@@ -287,7 +306,7 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printDebugMessage("getResults", "jobid: " + jobid + " outfile: " + outfile + " outformat: " + outformat, 2);
 		String[] retVal = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
-		clientPoll(jobid); // Wait for job to finish
+		//clientPoll(jobid); // Wait for job to finish
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
@@ -418,25 +437,23 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (cli.hasOption("title"))
 			title = cli.getOptionValue("title");
 		String jobid = this.runApp(email, title, params);
-		// For asynchronous mode
+		// Asynchronous submission.
 		if (cli.hasOption("async")) {
 			System.out.println(jobid); // Output the job id.
 			System.err
-					.println("To get status: java -jar IPRScan_JAXWS.jar --status --jobid "
+					.println("To get status: java -jar IPRScan_Axis1.jar --status --jobid "
 							+ jobid);
-		} else {
-			// In synchronous mode try to get the results
-			this.printProgressMessage(jobid, 1);
-			String[] resultFilenames = this
-					.getResults(jobid, cli.getOptionValue("outfile"), cli
-							.getOptionValue("outformat"));
-			for (int i = 0; i < resultFilenames.length; i++) {
-				if (resultFilenames[i] != null) {
-					System.out.println("Wrote file: " + resultFilenames[i]);
-				}
-			}
 		}
-		printDebugMessage("submitJobFromCli", "End", 1);
+		//  Parallel submission mode.
+		else if(cli.hasOption("maxJobs") && Integer.parseInt(cli.getOptionValue("maxJobs")) > 1) {
+			this.printProgressMessage(jobid, 1);
+		}
+		// Simulate synchronous submission, serial mode.
+		else {
+			this.clientPoll(jobid);
+			this.getResults(jobid, cli);
+		}
+		this.printDebugMessage("submitJobFromCli", "End", 1);
 		return jobid;
 	}
 	
@@ -453,7 +470,11 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		// Common options for EBI clients
 		addGenericOptions(options);
 		options.addOption("multifasta", "multifasta", false,
-		"Multiple fasta sequence input");
+				"Multiple fasta sequence input");
+		options.addOption("maxJobs", "maxJobs", true,
+				"Maximum number of concurrent jobs");
+		options.addOption("useSeqId", "useSeqId", false,
+				"Use sequence identifiers for file names");
 		// Application specific options
 		options.addOption("appl", "appl", true, "Signature methods");
 		options.addOption("app", "app", true, "Signature methods");
@@ -504,15 +525,9 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			else if(cli.hasOption("jobid")) {
 				String jobid = cli.getOptionValue("jobid");
 				// Get results for job
-				if(cli.hasOption("polljob")) {                
-					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-					boolean resultContainContent = false;
-					for(int i = 0; i < resultFilenames.length; i++) {
-						if(resultFilenames[i] != null) {
-							System.out.println("Wrote file: " + resultFilenames[i]);
-							resultContainContent = true;
-						}
-					}
+				if(cli.hasOption("polljob")) {
+					client.clientPoll(jobid);
+					boolean resultContainContent = client.getResults(jobid, cli);
 					if (resultContainContent == false) {
 						System.err.println("Error: requested result type " + cli.getOptionValue("outformat") + " not available!");
 					}
@@ -523,6 +538,7 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 				}
 				// Get result types for job
 				else if(cli.hasOption("resultTypes")) {
+					client.clientPoll(jobid);
 					client.printResultTypes(jobid);
 				}
 				// Unknown...

@@ -85,7 +85,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "  -x, --gapext         : int  : gap extension penalty\n"
 		+ "  -d, --dropoff        : int  : drop-off score\n"
 		+ "  -g, --gapalign       :      : optimise gapped alignments\n"
-		+ "      --compstats      : str  : Composition adjustment/statistics method, see " 
+		+ "      --compstats      : str  : Composition adjustment/statistics method, see \n" 
 		+ "                                --paramDetail compstats\n"
 		+ "  -L, --seqrange       : str  : region in query sequence to use for search\n"
 		+ "      --multifasta     :      : treat input as a set of fasta formatted \n"
@@ -132,8 +132,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			}
 			// HTTP response compression.
 			httpHeaders.put("Accept-Encoding", Collections.singletonList("gzip"));
-			// TODO: HTTP request compression (requires server support).
-			//httpHeaders.put("Content-Encoding", Collections.singletonList("gzip"));
+			// Note: HTTP request compression not supported by the server.
 			// Add the headers to the context.
 			ctxt.put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
 		}
@@ -321,7 +320,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printDebugMessage("getResults", "jobid: " + jobid + " outfile: " + outfile + " outformat: " + outformat, 2);
 		String[] retVal = null;
 		this.srvProxyConnect(); // Ensure the service proxy exists
-		clientPoll(jobid); // Wait for job to finish
+		//clientPoll(jobid); // Wait for job to finish
 		// Set the base name for the output file.
 		String basename = (outfile != null) ? outfile : jobid;
 		// Get result types
@@ -477,25 +476,23 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		if (cli.hasOption("title"))
 			title = cli.getOptionValue("title");
 		String jobid = this.runApp(email, title, params);
-		// For asynchronous mode
+		// Asynchronous submission.
 		if (cli.hasOption("async")) {
 			System.out.println(jobid); // Output the job id.
 			System.err
 					.println("To get status: java -jar NCBIBlast_Axis1.jar --status --jobid "
 							+ jobid);
-		} else {
-			// In synchronous mode try to get the results
-			this.printProgressMessage(jobid, 1);
-			String[] resultFilenames = this
-					.getResults(jobid, cli.getOptionValue("outfile"), cli
-							.getOptionValue("outformat"));
-			for (int i = 0; i < resultFilenames.length; i++) {
-				if (resultFilenames[i] != null) {
-					System.out.println("Wrote file: " + resultFilenames[i]);
-				}
-			}
 		}
-		printDebugMessage("submitJobFromCli", "End", 1);
+		//  Parallel submission mode.
+		else if(cli.hasOption("maxJobs") && Integer.parseInt(cli.getOptionValue("maxJobs")) > 1) {
+			this.printProgressMessage(jobid, 1);
+		}
+		// Simulate synchronous submission, serial mode.
+		else {
+			this.clientPoll(jobid);
+			this.getResults(jobid, cli);
+		}
+		this.printDebugMessage("submitJobFromCli", "End", 1);
 		return jobid;
 	}
 	
@@ -512,7 +509,11 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		// Common options for EBI clients
 		addGenericOptions(options);
 		options.addOption("multifasta", "multifasta", false,
-		"Multiple fasta sequence input");
+				"Multiple fasta sequence input");
+		options.addOption("maxJobs", "maxJobs", true,
+				"Maximum number of concurrent jobs");
+		options.addOption("useSeqId", "useSeqId", false,
+				"Use sequence identifiers for file names");
 		// Application specific options
 		options.addOption("ids", "ids", false, "Get list of identifiers from result");
 		options.addOption("p", "program", true, "Program to use");
@@ -574,21 +575,16 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			else if(cli.hasOption("jobid")) {
 				String jobid = cli.getOptionValue("jobid");
 				// Get results for job
-				if(cli.hasOption("polljob")) {                
-					String[] resultFilenames = client.getResults(jobid, cli.getOptionValue("outfile"), cli.getOptionValue("outformat"));
-					boolean resultContainContent = false;
-					for(int i = 0; i < resultFilenames.length; i++) {
-						if(resultFilenames[i] != null) {
-							System.out.println("Wrote file: " + resultFilenames[i]);
-							resultContainContent = true;
-						}
-					}
+				if(cli.hasOption("polljob")) {
+					client.clientPoll(jobid);
+					boolean resultContainContent = client.getResults(jobid, cli);
 					if (resultContainContent == false) {
 						System.err.println("Error: requested result type " + cli.getOptionValue("outformat") + " not available!");
 					}
 				}
 				// Get entry Ids from result
 				else if(cli.hasOption("ids")) {
+					client.clientPoll(jobid);
 					client.getResults(jobid, "-", "ids");
 				}
 				// Get status of job
@@ -597,6 +593,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 				}
 				// Get result types for job
 				else if(cli.hasOption("resultTypes")) {
+					client.clientPoll(jobid);
 					client.printResultTypes(jobid);
 				}
 				// Unknown...
