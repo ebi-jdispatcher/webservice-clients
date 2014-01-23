@@ -489,7 +489,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalOClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/** client-config.wsdd">
+		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/ClustalOClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalOClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -497,7 +499,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/** client-config.wsdd">
+		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -505,7 +509,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/** client-config.wsdd">
+		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2PhylogenyClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -513,7 +519,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/DaliLite_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/DaliliteClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/** client-config.wsdd">
+		<jar destfile="${jar.dir}/DaliLite_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/DaliliteClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DaliliteClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -521,7 +529,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/DbClustal_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/DbClustalClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
+		<jar destfile="${jar.dir}/DbClustal_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/DbClustalClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DbClustalClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -819,7 +829,9 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/MView_Axis1.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/axis1/MViewClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/** client-config.wsdd">
+		<jar destfile="${jar.dir}/MView_Axis1.jar" 
+			basedir="${build.dir}" 
+			includes="uk/ac/ebi/webservices/axis1/MViewClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MViewClient"/>
 				<attribute name="Built-By" value="${user.name}"/>

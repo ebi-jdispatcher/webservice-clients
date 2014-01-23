@@ -153,8 +153,6 @@ public class SeqCksumClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			Call call = super.createCall();
 			// Enable response compression.
 			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
-			// TEST: Enable request compression (requires service support)
-			//call.setProperty(HTTPConstants.MC_GZIP_REQUEST, Boolean.TRUE);
 			return call;
 		}
 	}

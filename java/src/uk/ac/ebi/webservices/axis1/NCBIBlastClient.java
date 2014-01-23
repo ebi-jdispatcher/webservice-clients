@@ -128,8 +128,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		printGenericOptsUsage();
 	}
 
-	/**
-	 * Ensure that a service proxy is available to call the web service.
+	/** Ensure that a service proxy is available to call the web service.
 	 * 
 	 * @throws ServiceException
 	 */

@@ -26,7 +26,9 @@ package uk.ac.ebi.webservices.axis1;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.iprscan5.*;
 
@@ -113,15 +115,14 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		printGenericOptsUsage();
 	}
 
-	/**
-	 * Ensure that a service proxy is available to call the web service.
+	/** Ensure that a service proxy is available to call the web service.
 	 * 
 	 * @throws ServiceException
 	 */
 	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 11);
 		if (this.srvProxy == null) {
-			JDispatcherService_Service service = new JDispatcherService_ServiceLocator();
+			JDispatcherService_Service service = new JDispatcherService_ServiceLocatorExtended();
 			if (this.getServiceEndPoint() != null) {
 				try {
 					this.srvProxy = service
@@ -138,6 +139,24 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 11);
+	}
+	
+	/** Wrapper for JDispatcherService_ServiceLocator to enable HTTP 
+	 * compression.
+	 * 
+	 * Compression requires Commons HttpClient and a client-config.wsdd which 
+	 * specifies that Commons HttpClient should be used as the HTTP transport.
+	 * See http://wiki.apache.org/ws/FrontPage/Axis/GzipCompression.
+	 */
+	private class JDispatcherService_ServiceLocatorExtended extends JDispatcherService_ServiceLocator {
+		private static final long serialVersionUID = 1L;
+
+		public Call createCall() throws ServiceException {
+			Call call = super.createCall();
+			// Enable response compression.
+			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
+			return call;
+		}
 	}
 
 	/**

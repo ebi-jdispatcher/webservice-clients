@@ -26,7 +26,9 @@ package uk.ac.ebi.webservices.axis1;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.cli.*;
 import uk.ac.ebi.webservices.axis1.stubs.lalign.*;
 
@@ -106,23 +108,42 @@ public class LalignClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	 */
 	protected void srvProxyConnect() throws ServiceException {
 		printDebugMessage("srvProxyConnect", "Begin", 11);
-		if(this.srvProxy == null) {
-			JDispatcherService_Service service =  new JDispatcherService_ServiceLocator();
-			if(this.getServiceEndPoint() != null) {
+		if (this.srvProxy == null) {
+			JDispatcherService_Service service = new JDispatcherService_ServiceLocatorExtended();
+			if (this.getServiceEndPoint() != null) {
 				try {
-					this.srvProxy = service.getJDispatcherServiceHttpPort(new java.net.URL(this.getServiceEndPoint()));
-				}
-				catch(java.net.MalformedURLException ex) {
+					this.srvProxy = service
+							.getJDispatcherServiceHttpPort(new java.net.URL(
+									this.getServiceEndPoint()));
+				} catch (java.net.MalformedURLException ex) {
 					System.err.println(ex.getMessage());
-					System.err.println("Warning: problem with specified endpoint URL. Default endpoint used.");
-					this.srvProxy = service.getJDispatcherServiceHttpPort();					
+					System.err
+							.println("Warning: problem with specified endpoint URL. Default endpoint used.");
+					this.srvProxy = service.getJDispatcherServiceHttpPort();
 				}
-			}
-			else {
+			} else {
 				this.srvProxy = service.getJDispatcherServiceHttpPort();
 			}
 		}
 		printDebugMessage("srvProxyConnect", "End", 11);
+	}
+	
+	/** Wrapper for JDispatcherService_ServiceLocator to enable HTTP 
+	 * compression.
+	 * 
+	 * Compression requires Commons HttpClient and a client-config.wsdd which 
+	 * specifies that Commons HttpClient should be used as the HTTP transport.
+	 * See http://wiki.apache.org/ws/FrontPage/Axis/GzipCompression.
+	 */
+	private class JDispatcherService_ServiceLocatorExtended extends JDispatcherService_ServiceLocator {
+		private static final long serialVersionUID = 1L;
+
+		public Call createCall() throws ServiceException {
+			Call call = super.createCall();
+			// Enable response compression.
+			call.setProperty(HTTPConstants.MC_ACCEPT_GZIP, Boolean.TRUE);
+			return call;
+		}
 	}
 
 	/** Get the web service proxy so it can be called directly.
