@@ -121,7 +121,7 @@
 		<antcall target="test-clean-hmmer_hmmscan" />
 		<antcall target="test-clean-iprscan" />
 		<antcall target="test-clean-iprscan5" />
-		<!-- TODO antcall target="test-clean-pfamscan" / -->
+		<antcall target="test-clean-pfamscan" />
 		<antcall target="test-clean-phobius" />
 		<antcall target="test-clean-pratt" />
 		<antcall target="test-clean-ps_scan" />
@@ -197,7 +197,7 @@
 		<antcall target="axis1-test-hmmer_hmmscan" />
 		<antcall target="axis1-test-iprscan" />
 		<antcall target="axis1-test-iprscan5" />
-		<!-- TODO antcall target="axis1-test-pfamscan" -->
+		<antcall target="axis1-test-pfamscan" />
 		<antcall target="axis1-test-phobius" />
 		<antcall target="axis1-test-pratt" />
 		<antcall target="axis1-test-ps_scan" />
