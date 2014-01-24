@@ -50,7 +50,7 @@
 	<import file="${ant.import.lib.dir}/client_test/hmmer_hmmscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/iprscan5.xml" />
-	<!-- TODO import file="${ant.import.lib.dir}/client_test/pfamscan.xml" / -->
+	<import file="${ant.import.lib.dir}/client_test/pfamscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
 	<import file="${ant.import.lib.dir}/client_test/pratt.xml" />
 	<import file="${ant.import.lib.dir}/client_test/ps_scan.xml" />

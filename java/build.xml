@@ -491,7 +491,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/ClustalOClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/ClustalOClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalOClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -501,7 +501,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/ClustalW2Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/ClustalW2Client** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -511,7 +511,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2PhylogenyClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -521,7 +521,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/DaliLite_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/DaliliteClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/DaliliteClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DaliliteClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -531,7 +531,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/DbClustal_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/DbClustalClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/DbClustalClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DbClustalClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -551,7 +551,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossBacktranambig_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranambigClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranambig/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranambigClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranambig/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranambigClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -561,7 +561,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossBacktranseq_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranseq/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossBacktranseqClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/backtranseq/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossBacktranseqClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -571,7 +571,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossCpgplot_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossCpgplotClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/cpgplot/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossCpgplotClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/cpgplot/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossCpgplotClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -581,7 +581,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossIsochore_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossIsochoreClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/isochore/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossIsochoreClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/isochore/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossIsochoreClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -591,7 +591,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossMatcher_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossMatcherClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/matcher/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossMatcherClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/matcher/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossMatcherClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -601,7 +601,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossNeedle_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossNeedleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/needle/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossNeedleClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/needle/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossNeedleClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -611,7 +611,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossNewcpgreport_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossNewcpgreportClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/newcpgreport/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossNewcpgreportClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/newcpgreport/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossNewcpgreportClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -621,7 +621,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossPepinfo_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossPepinfoClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepinfo/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepinfoClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepinfo/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepinfoClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -631,7 +631,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossPepstats_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossPepstatsClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepstats/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepstatsClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepstats/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepstatsClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -641,7 +641,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossPepwindow_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossPepwindowClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepwindow/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossPepwindowClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/pepwindow/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossPepwindowClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -651,7 +651,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossSeqret_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossSeqretClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/seqret/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossSeqretClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/seqret/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossSeqretClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -661,7 +661,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossSixpack_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossSixpackClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/sixpack/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossSixpackClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/sixpack/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossSixpackClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -671,7 +671,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossStretcher_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossStretcherClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/stretcher/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossStretcherClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/stretcher/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossStretcherClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -681,7 +681,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossTranseq_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossTranseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/transeq/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossTranseqClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/transeq/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossTranseqClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -691,7 +691,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/EmbossWater_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EmbossWaterClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/water/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/EmbossWaterClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/emboss/water/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EmbossWaterClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -701,7 +701,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Fasta_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/FastaClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/FastaClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fasta/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FastaClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -711,7 +711,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Fastm_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/FastmClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fastm/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/FastmClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fastm/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FastmClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -721,7 +721,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/FingerPRINTScan_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/FingerPRINTScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fingerprintscan/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/FingerPRINTScanClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/fingerprintscan/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.FingerPRINTScanClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -731,7 +731,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/GeneWise_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/GeneWiseClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/genewise/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/GeneWiseClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/genewise/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.GeneWiseClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -741,7 +741,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/HmmerHmmscan_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/HmmerHmmscanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/hmmer/hmmscan/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/HmmerHmmscanClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/hmmer/hmmscan/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.HmmerHmmscanClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -751,7 +751,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/IPRScan_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/IPRScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/IPRScanClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.IPRScanClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -761,7 +761,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/IPRScan5_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/IPRScan5Client.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan5/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/IPRScan5Client** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/iprscan5/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.IPRScan5Client"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -771,7 +771,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Kalign_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/KalignClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/kalign/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/KalignClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/kalign/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.KalignClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -781,7 +781,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Lalign_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/LalignClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/lalign/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/LalignClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/lalign/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.LalignClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -791,7 +791,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Mafft_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/MafftClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mafft/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/MafftClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mafft/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MafftClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -801,7 +801,7 @@
 		</jar>
 		<!-- jar destfile="${jar.dir}/MapMi_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/MapMiClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mapmi/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/MapMiClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mapmi/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MapMiClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -811,7 +811,7 @@
 		</jar -->
 		<jar destfile="${jar.dir}/Maxsprout_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/MaxsproutClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/maxsprout/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/MaxsproutClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/maxsprout/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MaxsproutClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -821,7 +821,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Muscle_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/MuscleClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/muscle/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/MuscleClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/muscle/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MuscleClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -831,7 +831,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/MView_Axis1.jar" 
 			basedir="${build.dir}" 
-			includes="uk/ac/ebi/webservices/axis1/MViewClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/MViewClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MViewClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -849,10 +849,19 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<!-- TODO PfamScan -->
+		<jar destfile="${jar.dir}/PfamScan_Axis1.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/axis1/PfamScanClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/pfamscan/** client-config.wsdd">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PfamScanClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
 		<jar destfile="${jar.dir}/Phobius_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PhobiusClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/phobius/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PhobiusClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/phobius/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PhobiusClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -863,7 +872,7 @@
 		<!-- TODO PRANK -->
 		<jar destfile="${jar.dir}/Pratt_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PrattClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/pratt/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PrattClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/pratt/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PrattClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -873,7 +882,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/PromoterWise_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PromoterWiseClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/promoterwise/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PromoterWiseClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/promoterwise/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PromoterWiseClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -883,7 +892,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/PSIBlast_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PSIBlastClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psiblast/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PSIBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -893,7 +902,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/PSISearch_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PSISearchClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psisearch/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PSISearchClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/psisearch/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PSISearchClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -903,7 +912,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/PsScan_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/PsScanClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ps_scan/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/PsScanClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/ps_scan/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.PsScanClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -913,7 +922,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Radar_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/RadarClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/radar/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/RadarClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/radar/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.RadarClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -923,7 +932,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Readseq_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/ReadseqClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/readseq/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/ReadseqClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/readseq/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ReadseqClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -933,7 +942,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Saps_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/SapsClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/saps/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/SapsClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/saps/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.SapsClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -953,7 +962,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Tcoffee_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/TcoffeeClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/tcoffee/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/TcoffeeClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/tcoffee/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.TcoffeeClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -963,7 +972,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/Wise2DBA_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/Wise2DBAClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wise2dba/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/Wise2DBAClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wise2dba/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.Wise2DBAClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
@@ -983,7 +992,7 @@
 		</jar>
 		<jar destfile="${jar.dir}/WUBlast_Axis1.jar"
 			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/WUBlastClient.** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/** client-config.wsdd">
+			includes="uk/ac/ebi/webservices/axis1/WUBlastClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/wublast/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.WUBlastClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
