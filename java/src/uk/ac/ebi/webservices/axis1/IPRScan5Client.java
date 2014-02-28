@@ -415,10 +415,10 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		InputParameters params = new InputParameters();
 		// Tool specific options
 		if (line.hasOption("appl")) {
-			String[] dbList = line.getOptionValue("appl").split(" ,+");
+			String[] dbList = line.getOptionValue("appl").split(",|\\+");
 			params.setAppl(dbList);
 		} else if (line.hasOption("app")) {
-			String[] dbList = line.getOptionValue("app").split(" ,+");
+			String[] dbList = line.getOptionValue("app").split(",|\\+");
 			params.setAppl(dbList);
 		}
 		if (line.hasOption("goterms"))

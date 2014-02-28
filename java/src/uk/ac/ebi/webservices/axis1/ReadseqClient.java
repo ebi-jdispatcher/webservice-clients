@@ -389,7 +389,7 @@ public class ReadseqClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		else if (line.hasOption("noreverse")) params.setReverse(Boolean.FALSE);
 
 		if (line.hasOption("feature")) {
-			String[] optList = line.getOptionValue("feature").split(" +");
+			String[] optList = line.getOptionValue("feature").split(",|\\+");
 			params.setFeature(optList);
 		}
 

@@ -486,7 +486,7 @@ public class FastaClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("filter"))
 			params.setFilter(line.getOptionValue("filter"));
 		if (line.hasOption("database")) {
-			String[] dbList = line.getOptionValue("database").split(" +");
+			String[] dbList = line.getOptionValue("database").split(",|\\+");
 			params.setDatabase(dbList);
 		}
 		if (line.hasOption("k"))

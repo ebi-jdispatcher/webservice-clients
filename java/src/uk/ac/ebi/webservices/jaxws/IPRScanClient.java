@@ -387,13 +387,13 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		InputParameters params = objFactory.createInputParameters();
 		// Tool specific options
 		if (line.hasOption("appl")) {
-			List<String> applList = Arrays.asList(line.getOptionValue("appl").split(" +"));
+			List<String> applList = Arrays.asList(line.getOptionValue("appl").split(",|\\+"));
 			ArrayOfString applArray = objFactory.createArrayOfString();
 			applArray.getString().addAll(applList);
 			params.setAppl(objFactory.createInputParametersAppl(applArray));
 		}
 		else if (line.hasOption("app")) {
-			List<String> applList = Arrays.asList(line.getOptionValue("app").split(" +"));
+			List<String> applList = Arrays.asList(line.getOptionValue("app").split(",|\\+"));
 			ArrayOfString applArray = objFactory.createArrayOfString();
 			applArray.getString().addAll(applList);
 			params.setAppl(objFactory.createInputParametersAppl(applArray));

@@ -404,7 +404,7 @@ public class NCBIBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		else params.setStype("protein");
 		if (line.hasOption("p")) params.setProgram(line.getOptionValue("p"));
 		if (line.hasOption("D")) {
-			List<String> dbList = Arrays.asList(line.getOptionValue("D").split(" +"));
+			List<String> dbList = Arrays.asList(line.getOptionValue("D").split(",|\\+"));
 			ArrayOfString dbArray = objFactory.createArrayOfString();
 			dbArray.getString().addAll(dbList);
 			params.setDatabase(dbArray);
