@@ -432,7 +432,7 @@ public class WUBlastClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		if (line.hasOption("p"))
 			params.setProgram(line.getOptionValue("p"));
 		if (line.hasOption("D")) {
-			String[] dbList = line.getOptionValue("D").split(",|\\+");
+			String[] dbList = line.getOptionValue("D").split(" ");
 			params.setDatabase(dbList);
 		}
 		if (line.hasOption("m"))

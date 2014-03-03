@@ -73,8 +73,8 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "\n"
 			+ "[Optional]\n"
 			+ "\n"
-			+ "      --appl         : str  : Comma separated list of signature methods to run,\n"
-			+ "                              see --paramDetail appl. \n"
+			+ "      --appl         : str  : list of signature methods to run, comma, space or "
+			+ "								 plus sign separated: see --paramDetail appl. \n"
 			+ "      --goterms      :      : enable retrieval of GO terms\n"
 			+ "      --nogoterms    :      : disable retrieval of GO terms\n"
 			+ "      --pathways     :      : enable retrieval of pathway terms\n"
@@ -415,10 +415,12 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		InputParameters params = new InputParameters();
 		// Tool specific options
 		if (line.hasOption("appl")) {
-			String[] dbList = line.getOptionValue("appl").split(",|\\+");
+			String tmpVal = line.getOptionValue("appl").replace(',', ' ').replace('+', ' ').replaceAll("\\s+", " ");
+			String[] dbList = tmpVal.split(" ");
 			params.setAppl(dbList);
 		} else if (line.hasOption("app")) {
-			String[] dbList = line.getOptionValue("app").split(",|\\+");
+			String tmpVal = line.getOptionValue("app").replace(',', ' ').replace('+', ' ').replaceAll("\\s+", " ");
+			String[] dbList = tmpVal.split(" ");
 			params.setAppl(dbList);
 		}
 		if (line.hasOption("goterms"))

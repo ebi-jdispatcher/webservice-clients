@@ -70,7 +70,8 @@ public class ReadseqClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		+ "      --degap          : str  : symbols to remove from sequence\n"
 		+ "      --transymbol     : str  : pairs of symbols to replace, see --paramDetail \n"
 		+ "                                transymbol\n"
-		+ "      --feature        : str  : list of features to select, see --paramDetail \n"
+		+ "      --feature        : str  : list of features to select, comma, space or plus"
+		+ "								   sign separated: see --paramDetail \n"
 		+ "                                feature\n"
 		+ "      --fthandle       : str  : action to perform on selected features, see \n"
 		+ "                                --paramDetail fthandle\n"
@@ -389,7 +390,8 @@ public class ReadseqClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 		else if (line.hasOption("noreverse")) params.setReverse(Boolean.FALSE);
 
 		if (line.hasOption("feature")) {
-			String[] optList = line.getOptionValue("feature").split(",|\\+");
+			String tmpVal = line.getOptionValue("feature").replace(',', ' ').replace('+', ' ').replaceAll("\\s+", " ");
+			String[] optList = tmpVal.split(" ");
 			params.setFeature(optList);
 		}
 

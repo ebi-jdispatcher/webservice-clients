@@ -65,7 +65,7 @@ public class FingerPRINTScanClient extends uk.ac.ebi.webservices.AbstractWsToolC
 		+ "                                see --paramDetail evalue\n"
 		+ "  --distdev            : int  : distance deviation, \n" 
 		+ "                                see --paramDetail distdev\n"
-		+ "  --resultviews        : str  : output result views, \n" 
+		+ "  --resultviews        : str  : output result views, comma, space or plus sign separated\n" 
 		+ "                                see --paramDetail resultviews\n"
 		+ "  --multifasta         :      : treat input as a set of fasta formatted sequences\n";
 	
@@ -372,7 +372,8 @@ public class FingerPRINTScanClient extends uk.ac.ebi.webservices.AbstractWsToolC
 		if (line.hasOption("evalue")) params.setEvalue(new Double(line.getOptionValue("evalue")));
 		if (line.hasOption("distdev")) params.setDistdev(new Integer(line.getOptionValue("distdev")));
 		if (line.hasOption("resultviews")) {
-			String[] resultViewList = line.getOptionValue("resultviews").split(",|\\+");
+			String tmpVal = line.getOptionValue("resultviews").replace(',', ' ').replace('+', ' ').replaceAll("\\s+", " ");
+			String[] resultViewList = tmpVal.split(" ");
 			params.setResultviews(resultViewList);
 		} 
 		printDebugMessage("loadParams", "End", 1);
