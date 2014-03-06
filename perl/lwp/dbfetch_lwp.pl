@@ -76,9 +76,11 @@ use File::Basename;
 use YAML::Syck;
 use Data::Dumper;
 
+# Maximum size for identifier list chunks.
+use constant MAX_CHUNK_SIZE => 100;
+
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
-
 # Output level
 my $outputLevel = 1;
 
@@ -648,31 +650,58 @@ sub print_fetch_batch {
 	my $formatName = shift || 'default';
 	my $styleName  = shift || 'raw';
 
-	# Read identifiers from file?
-	if ( $idListStr eq '-' || $idListStr =~ m/^@/ ) {
+	# Read identifiers from STDIN or file?
+	if ( $idListStr eq '-' || $idListStr =~ m/^@/) {
 		my $tmpIdListStr = '';
 		my $FH;
 		my $filename = $idListStr;
 		$filename =~ s/^@//;
-		if ( $filename eq '-' ) {
+		if($filename eq '-') {
 			$FH = *STDIN;
 		}
 		else {
-			open( $FH, '<', $filename )
-			  or die "Error: unable to open file $filename ($!)";
+			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
 		}
-		while (<$FH>) {
+		my $id_counter = 0;
+		while(<$FH>) {
 			chomp;
-			$tmpIdListStr .= ',' if ( length($tmpIdListStr) > 0 );
-			$tmpIdListStr .= $_;
+			if($_ ne '') {
+				$tmpIdListStr .= ',' if(length($tmpIdListStr) > 0);
+				$tmpIdListStr .= $_;
+				$id_counter++;
+			}
+			if($id_counter >= MAX_CHUNK_SIZE) {
+				&_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
+				$id_counter = 0; # Reset counter.
+				$tmpIdListStr = ''; # Clear identifier list.
+			}
 		}
-		$idListStr = $tmpIdListStr;
-		close($FH) unless ( $filename eq '-' );
+		close($FH) unless($filename eq '-');
+		if($id_counter > 0) {
+			&_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
+		}
 	}
-	my $entriesStr =
-	  &rest_fetch_batch( $dbName, $idListStr, $formatName, $styleName );
-	print $entriesStr, "\n" if ($entriesStr);
+	# Direct specification of identifiers.
+	else {
+		&_print_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+	}
 	print_debug_message( 'print_fetch_batch', 'End', 1 );
+}
+
+sub _print_fetch_batch {
+	print_debug_message( '_print_fetch_batch', 'Begin', 11 );
+	my $dbName = shift;
+	my $idListStr = shift;
+	my $formatName = shift;
+	my $styleName = shift;
+	$idListStr =~ s/[ \t\n\r;]+/,/g;    # Id list should be comma seperated
+	$idListStr =~ s/,+/,/g;             # Remove any empty items
+	my $entriesStr = &rest_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+	if(length($entriesStr) > 0) {
+		print $entriesStr;
+		print "\n" if($entriesStr !~ m/[\r\n]$/);
+	}
+	print_debug_message( '_print_fetch_batch', 'End', 11 );
 }
 
 ### Service actions and utility functions ###
