@@ -78,6 +78,8 @@ use Data::Dumper;
 
 # Maximum connection retries.
 use constant MAX_RETRIES => 3;
+# Maximum size for identifier list chunks.
+use constant MAX_CHUNK_SIZE => 100;
 
 # WSDL URL for service
 my $WSDL = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl';
@@ -208,15 +210,6 @@ elsif ( $ARGV[0] eq 'fetchData' && $numOpts > 1 && $numOpts < 5 ) {
 elsif ( $ARGV[0] eq 'fetchBatch' && $numOpts > 1 && $numOpts < 6 ) {
 	my $dbName = $ARGV[1];
 	my $idListStr = $ARGV[2];
-	if ( $idListStr eq '-' ) {    # Read from STDIN
-		my $buffer;
-		$idListStr = '';
-		while ( sysread( STDIN, $buffer, 1024 ) ) {
-			$idListStr .= $buffer;
-		}
-	}
-	$idListStr =~ s/[ \t\n\r;]+/,/g;    # Id list should be comma seperated
-	$idListStr =~ s/,+/,/g;             # Remove any empty items
 	my $formatName = defined( $ARGV[3] ) ? $ARGV[3] : 'default';
 	my $styleName  = defined( $ARGV[4] ) ? $ARGV[4] : 'raw';
 	&print_fetch_batch($dbName, $idListStr, $formatName, $styleName);
@@ -505,6 +498,10 @@ sub soap_fetch_batch {
 	my $idListStr = shift;
 	my $formatName = shift;
 	my $styleName = shift;
+	print_debug_message( 'soap_fetch_batch', "db=$dbName", 12 );
+	print_debug_message( 'soap_fetch_batch', "ids=$idListStr", 12 );
+	print_debug_message( 'soap_fetch_batch', "format=$formatName", 12 );
+	print_debug_message( 'soap_fetch_batch', "style=$styleName", 12 );
 	my $result_xml = $soap->fetchBatch(
 		SOAP::Data->name( 'db' => $dbName ),
 		SOAP::Data->name( 'ids' => $idListStr ),
@@ -512,6 +509,7 @@ sub soap_fetch_batch {
 		SOAP::Data->name( 'style' => $styleName )
 	);
 	my $entriesStr = $result_xml->valueof('//fetchBatchReturn');
+	print_debug_message( 'soap_fetch_batch', "entriesStr:\n$entriesStr", 12 );
 	print_debug_message( 'soap_fetch_batch', 'End', 1 );
 	return $entriesStr;
 }
@@ -530,7 +528,7 @@ sub print_fetch_batch {
 	my $idListStr = shift;
 	my $formatName = shift;
 	my $styleName = shift;
-	# Read identifiers from file?
+	# Read identifiers from STDIN or file?
 	if ( $idListStr eq '-' || $idListStr =~ m/^@/) {
 		my $tmpIdListStr = '';
 		my $FH;
@@ -542,17 +540,46 @@ sub print_fetch_batch {
 		else {
 			open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
 		}
+		my $id_counter = 0;
 		while(<$FH>) {
 			chomp;
-			$tmpIdListStr .= ',' if(length($tmpIdListStr) > 0);
-			$tmpIdListStr .= $_;
+			if($_ ne '') {
+				$tmpIdListStr .= ',' if(length($tmpIdListStr) > 0);
+				$tmpIdListStr .= $_;
+				$id_counter++;
+			}
+			if($id_counter >= MAX_CHUNK_SIZE) {
+				&_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
+				$id_counter = 0; # Reset counter.
+				$tmpIdListStr = ''; # Clear identifier list.
+			}
 		}
-		$idListStr = $tmpIdListStr;
 		close($FH) unless($filename eq '-');
+		if($id_counter > 0) {
+			&_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
+		}
 	}
-	my $entriesStr = &soap_fetch_batch($dbName, $idListStr, $formatName, $styleName);
-	print $entriesStr, "\n" if($entriesStr);
+	# Direct specification of identifiers.
+	else {
+		&_print_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+	}
 	print_debug_message( 'print_fetch_batch', 'End', 1 );
+}
+
+sub _print_fetch_batch {
+	print_debug_message( '_print_fetch_batch', 'Begin', 11 );
+	my $dbName = shift;
+	my $idListStr = shift;
+	my $formatName = shift;
+	my $styleName = shift;
+	$idListStr =~ s/[ \t\n\r;]+/,/g;    # Id list should be comma seperated
+	$idListStr =~ s/,+/,/g;             # Remove any empty items
+	my $entriesStr = &soap_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+	if(length($entriesStr) > 0) {
+		print $entriesStr;
+		print "\n" if($entriesStr !~ m/[\r\n]$/);
+	}
+	print_debug_message( '_print_fetch_batch', 'End', 11 );
 }
 
 ### Service actions and utility functions ###
