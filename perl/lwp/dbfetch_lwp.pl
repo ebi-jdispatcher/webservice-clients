@@ -753,7 +753,9 @@ Fetching an entry: fetchData
 
   $scriptName fetchData <dbName:id> [format [style]]
 
-  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT)
+  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT), 
+             use \@fileName to read identifiers from a file or \@- to read 
+             identifiers from STDIN.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
