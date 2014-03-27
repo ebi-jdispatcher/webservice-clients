@@ -88,7 +88,10 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params = (
+	'debugLevel' => 0,
+	'maxJobs' => 1
+);
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
