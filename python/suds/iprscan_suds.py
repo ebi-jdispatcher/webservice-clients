@@ -36,6 +36,13 @@ from suds import WebFault
 from suds.client import Client
 from optparse import OptionParser
 
+print >>sys.stderr, """
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+"""
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
