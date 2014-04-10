@@ -63,7 +63,7 @@ public class IPRScan5Client extends uk.ac.ebi.webservices.AbstractWsToolClient {
 			+ "Identify protein family, domain and signal signatures in a protein sequence.\n"
 			+ "\n"
 			+ "For information see:\n"
-			+ "- http://www.ebi.ac.uk/Tools/pfa/iprscan5\n"
+			+ "- http://www.ebi.ac.uk/interpro/\n"
 			+ "- http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_soap\n"
 			+ "\n"
 			+ "[Required]\n"
