@@ -89,7 +89,6 @@ tcoffee_clean
 pfa: \
 fingerprintscan \
 hmmer_hmmscan \
-iprscan \
 iprscan5 \
 pfamscan \
 phobius \
@@ -100,7 +99,6 @@ radar
 pfa_clean: \
 fingerprintscan_clean \
 hmmer_hmmscan_clean \
-iprscan_clean \
 iprscan5_clean \
 pfamscan_clean \
 phobius_clean \
@@ -1006,42 +1004,6 @@ hmmer_hmmscan_multifasta_file_stdin_stdout: test_data
 
 hmmer_hmmscan_clean:
 	rm -f hmmer_hmmscan-*
-
-# InterProScan
-iprscan: iprscan_params iprscan_param_detail \
-iprscan_file iprscan_dbid iprscan_stdin_stdout \
-iprscan_id_list_file iprscan_id_list_file_stdin_stdout \
-iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
-
-iprscan_params:
-	${PERL} iprscan_lwp.pl --params
-
-iprscan_param_detail:
-	${PERL} iprscan_lwp.pl --paramDetail appl
-
-iprscan_file: test_data
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
-
-iprscan_dbid:
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms 'UNIPROT:ABCC9_HUMAN'
-
-iprscan_stdin_stdout: test_data
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --quiet --outformat out --outfile - - > iprscan-blah.txt
-
-iprscan_id_list_file: test_data
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - @../test_data/uniprot_id_list.txt
-
-iprscan_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --sequence @- > iprscan-idfile.txt
-
-iprscan_multifasta_file: test_data
-	${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
-
-iprscan_multifasta_file_stdin_stdout: test_data
-	cat ../test_data/multi_prot.tfa | ${PERL} iprscan_lwp.pl --email ${EMAIL} --crc --nogoterms --outformat out --outfile - --multifasta --sequence - > iprscan-file.txt
-
-iprscan_clean:
-	rm -f iprscan-*
 
 # InterProScan 5
 iprscan5: iprscan5_params iprscan5_param_detail \
