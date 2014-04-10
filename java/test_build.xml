@@ -48,7 +48,7 @@
 	<!-- Protein Function Analysis (PFA) -->
 	<import file="${ant.import.lib.dir}/client_test/fingerprintscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/hmmer_hmmscan.xml" />
-	<import file="${ant.import.lib.dir}/client_test/iprscan.xml" />
+	<!-- import file="${ant.import.lib.dir}/client_test/iprscan.xml" / --> <!-- Obsolete -->
 	<import file="${ant.import.lib.dir}/client_test/iprscan5.xml" />
 	<import file="${ant.import.lib.dir}/client_test/pfamscan.xml" />
 	<import file="${ant.import.lib.dir}/client_test/phobius.xml" />
@@ -119,7 +119,7 @@
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="test-clean-fingerprintscan" />
 		<antcall target="test-clean-hmmer_hmmscan" />
-		<antcall target="test-clean-iprscan" />
+		<!-- antcall target="test-clean-iprscan" / --> <!-- Obsolete -->
 		<antcall target="test-clean-iprscan5" />
 		<antcall target="test-clean-pfamscan" />
 		<antcall target="test-clean-phobius" />
@@ -195,7 +195,7 @@
 		<!-- Protein Function Analysis (PFA) -->
 		<antcall target="axis1-test-fingerprintscan" />
 		<antcall target="axis1-test-hmmer_hmmscan" />
-		<antcall target="axis1-test-iprscan" />
+		<!-- antcall target="axis1-test-iprscan" / --> <!-- Obsolete -->
 		<antcall target="axis1-test-iprscan5" />
 		<antcall target="axis1-test-pfamscan" />
 		<antcall target="axis1-test-phobius" />
@@ -241,7 +241,7 @@
 		<antcall target="jaxws-test-wsdbfetch" />
 		<antcall target="jaxws-test-ebeye" />
 		<!-- Protein Function Analysis (PFA) -->
-		<antcall target="jaxws-test-iprscan" />
+		<!-- antcall target="jaxws-test-iprscan" / --> <!-- Obsolete -->
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="jaxws-test-ncbiblast" />
 	</target>
