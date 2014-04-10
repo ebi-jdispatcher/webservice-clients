@@ -55,6 +55,14 @@ $Id$
 =cut
 
 # ======================================================================
+print STDERR <<EOF
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+EOF
+;
+# ======================================================================
 # Enable Perl warnings
 use strict;
 use warnings;
