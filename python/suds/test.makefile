@@ -1,7 +1,7 @@
 # $Id$
 # ======================================================================
 # 
-# Copyright 2008-2013 EMBL - European Bioinformatics Institute
+# Copyright 2008-2014 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,13 +36,13 @@ TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 all: \
 dbfetch \
 ebeye \
-iprscan \
+iprscan5 \
 ncbiblast
 
 clean: \
 dbfetch_clean \
 ebeye_clean \
-iprscan_clean \
+iprscan5_clean \
 ncbiblast_clean
 
 # Fetch/update test data.
@@ -166,37 +166,37 @@ ebeye_getFacets:
 ebeye_clean:
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
+iprscan5: iprscan5_params iprscan5_param_detail iprscan5_file iprscan5_dbid iprscan5_stdin_stdout iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout iprscan5_multifasta_file iprscan5_multifasta_file_stdin_stdout
 
-iprscan_params:
-	${PYTHON} iprscan_suds.py --params
+iprscan5_params:
+	${PYTHON} iprscan5_suds.py --params
 
-iprscan_param_detail:
-	${PYTHON} iprscan_suds.py --paramDetail appl
+iprscan5_param_detail:
+	${PYTHON} iprscan5_suds.py --paramDetail appl
 
-iprscan_file: test_data
-	${PYTHON} iprscan_suds.py --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+iprscan5_file: test_data
+	${PYTHON} iprscan5_suds.py --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-iprscan_dbid:
-	${PYTHON} iprscan_suds.py --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+iprscan5_dbid:
+	${PYTHON} iprscan5_suds.py --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
 
-iprscan_stdin_stdout: test_data
+iprscan5_stdin_stdout: test_data
 	echo 'TODO:' $@
 
-iprscan_id_list_file: test_data
+iprscan5_id_list_file: test_data
 	echo 'TODO:' $@
 
-iprscan_id_list_file_stdin_stdout: test_data
+iprscan5_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
-iprscan_multifasta_file: test_data
+iprscan5_multifasta_file: test_data
 	echo 'TODO:' $@
 
-iprscan_multifasta_file_stdin_stdout: test_data
+iprscan5_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
-iprscan_clean:
-	rm -f iprscan-*
+iprscan5_clean:
+	rm -f iprscan5-*
 
 # NCBI BLAST or NCBI BLAST+
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
