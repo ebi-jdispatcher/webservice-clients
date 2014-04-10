@@ -94,7 +94,6 @@ tcoffee_clean
 pfa: \
 fingerprintscan \
 hmmer_hmmscan \
-iprscan \
 iprscan5 \
 phobius \
 pratt \
@@ -104,7 +103,6 @@ radar
 pfa_clean: \
 fingerprintscan_clean \
 hmmer_hmmscan_clean \
-iprscan_clean \
 iprscan5_clean \
 phobius_clean \
 pratt_clean \
@@ -1093,43 +1091,7 @@ hmmer_hmmscan_multifasta_file_stdin_stdout: test_data
 hmmer_hmmscan_clean:
 	rm -f hmmer_hmmscan-*
 
-# InterProScan
-iprscan: iprscan_params iprscan_param_detail \
-iprscan_file iprscan_dbid iprscan_stdin_stdout \
-iprscan_id_list_file iprscan_id_list_file_stdin_stdout \
-iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
-
-iprscan_params:
-	${PERL} iprscan_soaplite.pl --params ${JDispatcher_params_suffix}
-
-iprscan_param_detail:
-	${PERL} iprscan_soaplite.pl --paramDetail appl
-
-iprscan_file: test_data
-	${PERL} iprscan_soaplite.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
-
-iprscan_dbid:
-	${PERL} iprscan_soaplite.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
-
-iprscan_stdin_stdout: test_data
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_soaplite.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan-blah.txt
-
-iprscan_id_list_file: test_data
-	${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
-
-iprscan_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --sequence @- > iprscan-idfile.txt
-
-iprscan_multifasta_file: test_data
-	${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
-
-iprscan_multifasta_file_stdin_stdout: test_data
-	cat ../test_data/multi_prot.tfa | ${PERL} iprscan_soaplite.pl --email ${EMAIL} --outformat out --outfile - --multifasta --sequence - > iprscan-file.txt
-
-iprscan_clean:
-	rm -f iprscan-*
-
-# TODO: InterProScan 5
+# InterProScan 5
 iprscan5: iprscan5_params iprscan5_param_detail \
 iprscan5_file iprscan5_dbid iprscan5_stdin_stdout \
 iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout \
