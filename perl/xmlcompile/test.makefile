@@ -38,13 +38,13 @@ TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 all: \
 dbfetch \
 ebeye \
-iprscan \
+iprscan5 \
 ncbiblast
 
 clean: \
 dbfetch_clean \
 ebeye_clean \
-iprscan_clean \
+iprscan5_clean \
 ncbiblast_clean
 
 # Fetch/update test data.
@@ -168,37 +168,40 @@ ebeye_getFacets:
 ebeye_clean:
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
+iprscan5: iprscan5_params iprscan5_param_detail \
+iprscan5_file iprscan5_dbid iprscan5_stdin_stdout \
+iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout \
+iprscan5_multifasta_file iprscan5_multifasta_file_stdin_stdout
 
-iprscan_params:
-	${PERL} iprscan_xmlcompile.pl --params
+iprscan5_params:
+	${PERL} iprscan5_xmlcompile.pl --params
 
-iprscan_param_detail:
-	${PERL} iprscan_xmlcompile.pl --paramDetail appl
+iprscan5_param_detail:
+	${PERL} iprscan5_xmlcompile.pl --paramDetail appl
 
-iprscan_file: test_data
-	${PERL} iprscan_xmlcompile.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+iprscan5_file: test_data
+	${PERL} iprscan5_xmlcompile.pl --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-iprscan_dbid:
-	${PERL} iprscan_xmlcompile.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+iprscan5_dbid:
+	${PERL} iprscan5_xmlcompile.pl --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
 
-iprscan_stdin_stdout: test_data
-	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan_xmlcompile.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan-blah.txt
+iprscan5_stdin_stdout: test_data
+	cat ../test_data/SWISSPROT_ABCC9_HUMAN.fasta | ${PERL} iprscan5_xmlcompile.pl --email ${EMAIL} --quiet --outformat out --outfile - - > iprscan5-blah.txt
 
-iprscan_id_list_file: test_data
-	${PERL} iprscan_xmlcompile.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
+iprscan5_id_list_file: test_data
+	${PERL} iprscan5_xmlcompile.pl --email ${EMAIL} --outformat out --outfile - @../test_data/uniprot_id_list.txt
 
-iprscan_id_list_file_stdin_stdout: test_data
+iprscan5_id_list_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
-iprscan_multifasta_file: test_data
-	${PERL} iprscan_xmlcompile.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
+iprscan5_multifasta_file: test_data
+	${PERL} iprscan5_xmlcompile.pl --email ${EMAIL} --outformat out --outfile - --multifasta  ../test_data/multi_prot.tfa
 
-iprscan_multifasta_file_stdin_stdout: test_data
+iprscan5_multifasta_file_stdin_stdout: test_data
 	echo 'TODO:' $@
 
-iprscan_clean:
-	rm -f iprscan-*
+iprscan5_clean:
+	rm -f iprscan5-*
 
 # NCBI BLAST
 ncbiblast: ncbiblast_params ncbiblast_param_detail ncbiblast_file ncbiblast_dbid ncbiblast_stdin_stdout ncbiblast_id_list_file ncbiblast_id_list_file_stdin_stdout ncbiblast_multifasta_file ncbiblast_multifasta_file_stdin_stdout
