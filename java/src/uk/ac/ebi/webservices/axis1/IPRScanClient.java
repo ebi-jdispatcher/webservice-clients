@@ -52,6 +52,11 @@ import uk.ac.ebi.webservices.axis1.stubs.iprscan.*;
  * </ul>
  */
 public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
+	private static final String retirementNotice = 
+			"=============================================================================\n"
+			+ "NB: the service used by this client was decommissioned on Wednesday 9th April\n" 
+			+ "2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.\n"
+			+ "=============================================================================\n";
 	/** Service proxy */
 	private JDispatcherService_PortType srvProxy = null;
 	/** Client version/revision */
@@ -485,6 +490,7 @@ public class IPRScanClient extends uk.ac.ebi.webservices.AbstractWsToolClient {
 	 *            list of command-line options
 	 */
 	public static void main(String[] args) {
+		System.err.println(retirementNotice);
 		int exitVal = 0; // Exit value
 		int argsLength = args.length; // Number of command-line arguments
 
