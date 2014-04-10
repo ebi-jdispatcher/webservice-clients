@@ -314,7 +314,8 @@
 	<target name="axis1-stubs-iprscan" description="Axis 1.x: generate stubs for InterProScan (SOAP)">
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.iprscan" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
+			<!-- param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" / -->
+			<param name="wsdlUrl" value="https://www.biocatalogue.org/soap_services/2684/latest_wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-iprscan5" description="Axis 1.x: generate stubs for InterProScan 5 (SOAP)">
@@ -1598,7 +1599,8 @@
 	<target name="jaxws-stubs-iprscan" description="JAX-WS RI: generate stubs for InterProScan (SOAP)">
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.iprscan" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" />
+			<!-- param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl" / -->
+			<param name="wsdlUrl" value="https://www.biocatalogue.org/soap_services/2684/latest_wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-iprscan5" description="JAX-WS RI: generate stubs for InterProScan 5 (SOAP)">
