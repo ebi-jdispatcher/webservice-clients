@@ -189,7 +189,7 @@ namespace EbiWS
 
 		// Implementation of abstract method (AbsractWsClient.SubmitJob()).
 		/// <summary>Submit a job to the service</summary>
-		public override void SubmitJob()
+		public override string SubmitJob()
 		{
 			PrintDebugMessage("SubmitJob", "Begin", 1);
 			if(this.Email == null || this.Email.Length < 1) {
@@ -200,6 +200,7 @@ namespace EbiWS
 			// Simulate sync mode
 			if (!Async) GetResults();
 			PrintDebugMessage("SubmitJob", "End", 1);
+			return JobId;
 		}
 
 		/// <summary>Submit a job to the service</summary>

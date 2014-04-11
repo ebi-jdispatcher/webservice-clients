@@ -830,7 +830,7 @@ limitations under the License.
 		/// <summary>
 		/// Submit a job using the current client state.
 		/// </summary>
-		public abstract void SubmitJob();
+		public abstract string SubmitJob();
 		
 		/// <summary>
 		/// Get the status of a submitted job.

@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <AssemblyName>EbiWS</AssemblyName>
     <RootNamespace>EbiWS</RootNamespace>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <newfilesearch>OnLoad</newfilesearch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -20,8 +19,6 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
-    <OutputType>Library</OutputType>
-    <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,9 +27,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputType>Library</OutputType>
     <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>EbiWS</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
