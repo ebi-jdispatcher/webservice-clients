@@ -28,8 +28,8 @@
 #   PHP 5.3.10 (Ubuntu 12.04 LTS)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/iprscan5_soap
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/iprscan5_rest
+# http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_soap
+# http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
 // Load library
