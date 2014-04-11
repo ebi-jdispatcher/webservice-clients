@@ -33,6 +33,14 @@
 # Load InterProScan client library
 require_once('iprscan_lib_php_soap.php');
 
+print <<<EOF
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+
+EOF;
+
 // Extend client class
 class IPRScanCliClient extends IPRScanClient {
   // Print list of tool parameters
@@ -351,7 +359,7 @@ function parseCommandLine($argList) {
 
 // Print usage message
 function printUsage() {
-  $scriptName = 'ncbiblast_php5_cli.php';
+  $scriptName = 'iprscan_cli_php_soap.php';
   print <<<EOF
 InterProScan
 ============
