@@ -36,6 +36,13 @@ baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/iprscan'
 import platform, os, re, sys, time, urllib, urllib2, xmltramp
 from optparse import OptionParser
 
+print >>sys.stderr, """
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+"""
+
 # Set interval for checking status
 checkInterval = 10
 # Output level
