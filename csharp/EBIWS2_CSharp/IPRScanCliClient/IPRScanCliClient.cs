@@ -26,6 +26,11 @@ namespace EbiWS
 {
 	class IPRScanCliClient : EbiWS.IPRScanClient
 	{
+		private static string retirementNotice = @"=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+";
 		/// <summary>Tool specific usage</summary>
 		private string usageMsg = @"InterProScan
 ============
@@ -59,6 +64,7 @@ For more information see:
 		public static int Main(string[] args)
 		{
 			int retVal = 0; // Return value
+			Console.Write(retirementNotice);
 			// Create an instance of the wrapper object
 			IPRScanCliClient wsApp = new IPRScanCliClient();
 			// If no arguments print usage and return
