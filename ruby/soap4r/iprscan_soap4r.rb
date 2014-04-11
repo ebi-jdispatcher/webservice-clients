@@ -36,6 +36,13 @@ require 'getoptlong' # Command-line option handling
 require 'base64' # Unpack encoded data
 require 'iprscanDriver.rb' # Generated stubs
 
+$stderr.puts <<END_OF_STRING
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+END_OF_STRING
+
 # Usage message
 def printUsage(returnCode)
   scriptName = 'iprscan_soap4r.rb'
