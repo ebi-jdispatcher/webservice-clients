@@ -253,6 +253,9 @@ EOF
 
 <h1 align="center">InterProScan (SOAP)</h1>
 <hr />
+<p><b>NB</b>: the service used by this client was decommissioned on Wednesday 9th April 2014. See <a href="http://www.ebi.ac.uk/Tools/webservices/">http://www.ebi.ac.uk/Tools/webservices/</a> for replacement services.
+</p>
+<hr />
 
 <?php
 // No refresh.
