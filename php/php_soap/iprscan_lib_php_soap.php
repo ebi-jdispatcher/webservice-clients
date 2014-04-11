@@ -27,6 +27,9 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/php
 # ======================================================================
+# NB: the service used by this client was decommissioned on Wednesday 9th April 
+# 2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+# ======================================================================
 
 class IPRScanClient {
   // Service WSDL
