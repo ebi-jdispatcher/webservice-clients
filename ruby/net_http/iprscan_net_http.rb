@@ -34,6 +34,13 @@ require 'uri' # URI parsing
 require 'cgi' # CGI module to escape post data
 require 'rexml/document' # XML parsing
 
+$stderr.puts <<END_OF_STRING
+=============================================================================
+NB: the service used by this client was decommissioned on Wednesday 9th April 
+2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
+=============================================================================
+END_OF_STRING
+
 # Usage message
 def printUsage(returnCode)
   scriptName = 'iprscan_net_http.rb'
