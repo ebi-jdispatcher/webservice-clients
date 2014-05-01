@@ -293,7 +293,7 @@ Get the user agent string for the client.
 sub get_agent_string {
 	print_debug_message( 'get_agent_string', 'Begin', 11 );
 	my $clientVersion = '0';
-	if('$Revision: 2706 $' =~ m/(\d+)/) { # SCM revision tag.
+	if('$Revision$' =~ m/(\d+)/) { # SCM revision tag.
 		$clientVersion = $1;
 	}
 	my $agent_str = "EBI-Sample-Client/$clientVersion ($scriptName; $OSNAME) ";
