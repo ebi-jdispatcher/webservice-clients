@@ -986,32 +986,6 @@ this function only provides additional processing required from some options.
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
 	
-	# --excludeLoop vs. --includeLoop
-	if ( $params{'noexcludecan'} ) {
-		$tool_params{'excludecan'} = 'false';
-	}
-	elsif ( $params{'excludecan'} ) {
-		$tool_params{'excludecan'} = 'true';
-	}
-
-	# ensembl Species to use.
-	if ( defined( $params{'ensembl_species'} ) ) {
-		my (@ensemblSpeciesList) = split /[ ,]/, $params{'ensembl_species'};
-		for ( my $i = 0 ; $i < scalar(@ensemblSpeciesList) ; $i++ ) {
-			$tool_params{'ensembl_species'}[$i] =
-		  		SOAP::Data->type( 'string' => $ensemblSpeciesList[$i] )->name('string');
-		}
-	}
-
-	# ensembl Metazoa Species to use.
-	if ( defined( $params{'metazoa_species'} ) ) {
-		my (@ensemblMetazoaSpeciesList) = split /[ ,]/, $params{'metazoa_species'};
-		for ( my $i = 0 ; $i < scalar(@ensemblMetazoaSpeciesList) ; $i++ ) {
-			$tool_params{'metazoa_species'}[$i] =
-		  		SOAP::Data->type( 'string' => $ensemblMetazoaSpeciesList[$i] )->name('string');
-		}
-	}
-
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
