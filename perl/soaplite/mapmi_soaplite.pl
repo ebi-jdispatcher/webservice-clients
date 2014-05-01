@@ -100,17 +100,17 @@ GetOptions(
 	# Tool specific options
 	'ensembl_species=s' => \$params{'ensembl_species'},  # Ensembl Species
 	'metazoa_species=s' => \$params{'metazoa_species'},  # Ensembl Metazoa Species
-	'scorethr=i'        => \$params{'scorethr'},         # Score threshold
-	'longext=i'         => \$params{'longext'},          # Long match extentio
-	'shortext=i'        => \$params{'shortext'},         # Short match extention
-	'maxmis=i'          => \$params{'maxmis'},           # Maximum mature mismatches
-	'mismatchpen=i'     => \$params{'mismatchpen'},      # Mature mismatch penalty
-	'bowtie=i'          => \$params{'bowtie'},           # Maximum matches per genome
+	'scorethr=i'        => \$tool_params{'scorethr'},    # Score threshold
+	'longext=i'         => \$tool_params{'longext'},     # Long match extentio
+	'shortext=i'        => \$tool_params{'shortext'},    # Short match extention
+	'maxmis=i'          => \$tool_params{'maxmis'},      # Maximum mature mismatches
+	'mismatchpen=i'     => \$tool_params{'mismatchpen'}, # Mature mismatch penalty
+	'bowtie=i'          => \$tool_params{'bowtie'},      # Maximum matches per genome
 	'excludecan'        => \$params{'excludecan'},       # Exclude candidates
 	'noexcludecan'      => \$params{'noexcludecan'},     # Include candidates
-	'maxloop=i'         => \$params{'maxloop'},          # Maximum loop overlap
+	'maxloop=i'         => \$tool_params{'maxloop'},     # Maximum loop overlap
 	'sequence=s'        => \$params{'sequence'},         # Input sequence(s)
-	'multifasta'        => \$params{'multifasta'},    # Multiple fasta input
+	'multifasta'        => \$params{'multifasta'},       # Multiple fasta input
 	
 	# Generic options
 	'email=s'       => \$params{'email'},          # User e-mail address
@@ -1223,7 +1223,7 @@ Print program usage.
 
 sub usage {
 	print STDERR <<EOF
-InterProScan
+MapMi
 ============
 
 MapMi, a tool for mapping and analysis of miRNA sequences.
