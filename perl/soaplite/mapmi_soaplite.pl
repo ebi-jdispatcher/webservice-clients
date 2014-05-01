@@ -1233,13 +1233,13 @@ http://www.ebi.ac.uk/Tools/rna/mapmi
 
 [Required]
 
-  seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
+      --ensembl_species  : str  : Ensembl Species
+      --metazoa_species  : str  : Ensembl Metazoa Species
+      seqFile            : file : query sequence ("-" for STDIN, \@filename for
+                                  identifier list file)
 
 [Optional]
 
-      --ensembl_species  : str  : Ensembl Species
-      --metazoa_species  : str  : Ensembl Metazoa Species
       --scorethr         : int  : Score threshold
       --longext          : int  : Long match extentio
       --shortext         : int  : Short match extention
