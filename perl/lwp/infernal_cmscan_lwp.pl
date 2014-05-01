@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: Infernal cmscan_lwp.pl 2785 2014-05-01 11:26:11Z wli $
+$Id$
 
 =cut
 
@@ -256,7 +256,7 @@ sub rest_user_agent() {
 
 	# Set 'User-Agent' HTTP header to identifiy the client.
 	my $revisionNumber = 0;	
-	$revisionNumber = $1 if('$Revision: 2785 $' =~ m/(\d+)/);	
+	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);	
 	$ua->agent( "EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent() );
 
 	# Configure HTTP proxy support from environment.
