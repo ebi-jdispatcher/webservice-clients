@@ -364,6 +364,7 @@ sub soap_run {
 	my $email  = shift;
 	my $title  = shift;
 	my $params = shift;
+	$email = '' if(!$email);
 	print_debug_message( 'soap_run', 'email: ' . $email, 1 );
 	if ( defined($title) ) {
 		print_debug_message( 'soap_run', 'title: ' . $title, 1 );
