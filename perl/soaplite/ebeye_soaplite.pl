@@ -1490,10 +1490,16 @@ sub print_list_fields_information {
 	print_debug_message( 'print_list_fields_information', 'Begin', 1 );
 	my $domain = shift;
 	my (@field_info_list) = soap_list_fields_information($domain);
+	#print "#Id\tName\tDescription\tSearchable\tRetrievable\n";
 	foreach my $field_info (@field_info_list) {
 		#print Dumper($field_info);
 		print $field_info->{'id'}, "\t", $field_info->{'name'}, "\t";
-		print $field_info->{'description'} if(defined($field_info->{'description'}));
+		if(defined($field_info->{'description'})) {
+			my $field_des =  $field_info->{'description'};
+			$field_des =~ s/^\s+//; # Trim leading whitespace.
+			$field_des =~ s/\s+$//; # Trim trailing whitespace.
+			print $field_des;
+		}
 		print "\t", $field_info->{'searchable'}, "\t", $field_info->{'retrievable'};
 		print "\n";
 	}
