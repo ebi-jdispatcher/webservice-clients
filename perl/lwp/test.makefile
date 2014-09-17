@@ -1532,7 +1532,7 @@ seqcksum_id_list_file seqcksum_id_list_file_stdin_stdout \
 seqcksum_multifasta_file seqcksum_multifasta_file_stdin_stdout
 
 seqcksum_params:
-	${PERL} wublast_lwp.pl --params
+	${PERL} seqcksum_lwp.pl --params
 
 seqcksum_param_detail:
 	${PERL} seqcksum_lwp.pl --paramDetail cksmethod
