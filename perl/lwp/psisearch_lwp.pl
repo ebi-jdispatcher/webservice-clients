@@ -103,6 +103,8 @@ GetOptions(
 	'mask'             => \$tool_params{'mask'},          # PSSM region masking
 	'hsps'            => \$params{'hsps'},               # Enable HSPs
 	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+        'annotfeats'      => \$params{'annotfeats'},         # Enable annotation features 
+        'noannotfeats'    => \$params{'noannotfeats'},       # Disable annotation features
 	'scoreformat=s'  => \$tool_params{'scoreformat'},  # Scores table format.
 	'sequence|i=s'     => \$params{'sequence'},           # Query sequence
 	'previousjobid=s'  => \$tool_params{'previousjobid'}, # Job Id for last iteration
@@ -859,11 +861,19 @@ sub load_params {
 
 	# HSPs in output
 	if ( $params{'hsps'} ) {
-		$tool_params{'hsps'} = 1;
+		$tool_params{'hsps'} = 'true';
 	}
 	elsif ( $params{'nohsps'} ) {
-		$tool_params{'hsps'} = 0;
+		$tool_params{'hsps'} = 'false';
 	}
+
+	# Annoation feature
+        if ( $params{'annotfeats'} ) {
+                $tool_params{'annotfeats'} = 'true';
+        }
+        elsif ( $params{'noannotfeats'} ) {
+                $tool_params{'annotfeats'} = 'false';
+        }
 
 	# Compatability options, old command-line
 	if(!$tool_params{'gapopen'} && $params{'opengap'}) {
@@ -1132,6 +1142,10 @@ Rapid sequence database search programs utilizing the PSI-Search algorithm.
                                --paramDetail hsps
       --nohsps        :      : disable multiple alignments per-hit, see 
                                --paramDetail hsps
+      --annotfeats   :      : enable annotation features, see 
+                              --paramDetail annotfeats
+      --noannotfeats :      : disable annotation features, see 
+                              --paramDetail annotfeats
       --scoreformat   : str  : score table format for FASTA output
       --previousjobid : str  : Job Id for last iteration
       --selectedHits  : file : Selected hits from last iteration for building 
