@@ -107,6 +107,8 @@ GetOptions(
 	'gapext|g=i'      => \$tool_params{'gapext'},        # Gap extension penalty
 	'hsps'            => \$params{'hsps'},               # Enable HSPs
 	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+        'annotfeats'      => \$params{'annotfeats'},         # Enable annotation features 
+        'noannotfeats'    => \$params{'noannotfeats'},       # Disable annotation features
 	'expupperlim|E=f' => \$tool_params{'expupperlim'},   # Upper E-value
 	'explowlim|F=f'   => \$tool_params{'explowlim'},     # Lower E-value
 	'strand=s' =>
@@ -1034,6 +1036,14 @@ sub load_params {
 		$tool_params{'hsps'} = 0;
 	}
 
+	# Annoation feature
+        if ( $params{'annotfeats'} ) {
+                $tool_params{'annotfeats'} = 1;
+        }
+        elsif ( $params{'noannotfeats'} ) {
+                $tool_params{'annotfeats'} = 0;
+        }
+
 	# Compatability options, old command-line
 	if(!$tool_params{'stype'}) {
 		$tool_params{'stype'} = 'dna' if($params{'nucleotide'});
@@ -1277,6 +1287,10 @@ Fast protein comparison or fast nucleotide comparison
                               --paramDetail hsps
       --nohsps       :      : disable multiple alignments per-hit, see 
                               --paramDetail hsps
+      --annotfeats   :      : enable annotation features, see 
+                              --paramDetail annotfeats
+      --noannotfeats :      : disable annotation features, see 
+                              --paramDetail annotfeats
   -E, --expupperlim  : real : E-value upper limit for hit display
   -F, --explowlim    : real : E-value lower limit for hit display
       --strand       : str  : query strand to use for search (DNA only)
