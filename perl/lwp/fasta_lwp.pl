@@ -106,6 +106,8 @@ GetOptions(
 	'gapext|g=i'      => \$tool_params{'gapext'},        # Gap extension penalty
 	'hsps'            => \$params{'hsps'},               # Enable HSPs
 	'nohsps'          => \$params{'nohsps'},             # Disable HSPs
+        'annotfeats'      => \$params{'annotfeats'},         # Enable Annotation Feature
+        'noannotfeats'    => \$params{'noannotfeats'},       # Disable Annotation Feature
 	'expupperlim|E=f' => \$tool_params{'expupperlim'},   # Upper E-value
 	'explowlim|F=f'   => \$tool_params{'explowlim'},     # Lower E-value
 	'strand=s' =>
@@ -1024,11 +1026,19 @@ sub load_params {
 
 	# HSPs in output
 	if ( $params{'hsps'} ) {
-		$tool_params{'hsps'} = 1;
+		$tool_params{'hsps'} = 'true';
 	}
 	elsif ( $params{'nohsps'} ) {
-		$tool_params{'hsps'} = 0;
+		$tool_params{'hsps'} = 'false';
 	}
+
+	# Annoation feature
+        if ( $params{'annotfeats'} ) {
+                $tool_params{'annotfeats'} = 'true';
+        }
+        elsif ( $params{'noannotfeats'} ) {
+                $tool_params{'annotfeats'} = 'false';
+        }
 
 	# Compatability options, old command-line
 	if ( !$tool_params{'stype'} ) {
@@ -1271,6 +1281,10 @@ Fast protein comparison or fast nucleotide comparison
                               --paramDetail hsps
       --nohsps       :      : disable multiple alignments per-hit, see 
                               --paramDetail hsps
+      --annotfeats   :      : enable annotation features, see 
+                              --paramDetail annotfeats
+      --noannotfeats :      : disable annotation features, see 
+                              --paramDetail annotfeats
   -E, --expupperlim  : real : E-value upper limit for hit display
   -F, --explowlim    : real : E-value lower limit for hit display
       --strand       : str  : query strand to use for search (DNA only)
