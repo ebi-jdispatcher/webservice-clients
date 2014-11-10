@@ -75,6 +75,10 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		+ "                               --paramDetail hsps\n"
 		+ "      --nohsps        :      : disable multiple alignments per-hit, see \n"
 		+ "                               --paramDetail hsps\n"
+		+ "      --annotfeats          :      : enable annotation features, see \n"
+		+ "                               --paramDetail annotfeats\n"
+		+ "      --noannotfeats        :      : disable annotation features, see \n"
+		+ "                               --paramDetail annotfeats\n"
 		+ "      --previousjobid : str  : Job Id for last iteration\n"
 		+ "      --selectedHits  : file : Selected hits from last iteration for building\n" 
 		+ "                               search profile (PSSM)\n"
@@ -424,6 +428,10 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 			params.setHsps(new Boolean(true));
 		else if(line.hasOption("nohsps"))
 			params.setHsps(new Boolean(false));
+		if(line.hasOption("annotfeats"))
+			params.setAnnotfeats(new Boolean(true));
+		else if(line.hasOption("noannotfeats"))
+			params.setAnnotfeats(new Boolean(false));
 		if (line.hasOption("scoreformat"))
 			params.setScoreformat(line.getOptionValue("scoreformat"));
 		if(line.hasOption("previousjobid")) params.setPreviousjobid(line.getOptionValue("previousjobid"));
@@ -502,6 +510,8 @@ public class PSISearchClient extends uk.ac.ebi.webservices.AbstractWsToolClient 
 		options.addOption("i", "sequence", true, "Query sequence");
 		options.addOption("hsps", false, "Enable HSPs");
 		options.addOption("nohsps", false, "Disable HSPs");
+		options.addOption("annotfeats", false, "Enable annotation features");
+		options.addOption("noannotfeats", false, "Disable annotation features");
 		options.addOption("scoreformat", true, "Score table format");
 		options.addOption("previousjobid", true, "Job identifier for previous iteration");
 		options.addOption("selectedHits", true, "Selected hits for building PSSM");
