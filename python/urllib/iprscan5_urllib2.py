@@ -273,11 +273,11 @@ def printGetResultTypes(jobId):
     printDebugMessage('printGetResultTypes', 'End', 1)
 
 # Get result
-def serviceGetResult(jobId, type):
+def serviceGetResult(jobId, type_):
     printDebugMessage('serviceGetResult', 'Begin', 1)
     printDebugMessage('serviceGetResult', 'jobId: ' + jobId, 2)
-    printDebugMessage('serviceGetResult', 'type: ' + type, 2)
-    requestUrl = baseUrl + '/result/' + jobId + '/' + type
+    printDebugMessage('serviceGetResult', 'type_: ' + type_, 2)
+    requestUrl = baseUrl + '/result/' + jobId + '/' + type_
     result = restRequest(requestUrl)
     printDebugMessage('serviceGetResult', 'End', 1)
     return result
