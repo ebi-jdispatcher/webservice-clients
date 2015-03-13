@@ -59,7 +59,7 @@ version = "$Id: dbfetch_urllib2.py 2468 2013-01-25 14:01:01Z hpm $"
 parser = OptionParser(usage=usage, description=description, version=version)
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
+parser.add_option('--baseUrl', default=baseUrl, help='base URL for EBI Search')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
 (options, args) = parser.parse_args()
 

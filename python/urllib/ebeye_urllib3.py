@@ -17,8 +17,8 @@
 # limitations under the License.
 # 
 # ======================================================================
-# EB-eye (REST) using urllib2 and xmltramp 
-# (http://www.aaronsw.com/2002/xmltramp/).
+# EB-eye (REST) Python-3 client using urllib3 and xmltramp2 
+# (https://pypi.python.org/pypi/xmltramp2/).
 #
 # Tested with:
 #  Python 3.4.3
@@ -35,12 +35,7 @@ import platform, os, sys, io, gzip, urllib
 from optparse import OptionParser
 from gzip import GzipFile
 from xmltramp2 import xmltramp
-
-try:
-    import urllib.request as urllib2
-except ImportError:
-    import urllib2
-
+import urllib.request as urllib2
 
 # Output level
 outputLevel = 1
@@ -76,7 +71,7 @@ parser.add_option('--facetfields', help='field ids associated with facets to ret
 
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
+parser.add_option('--baseUrl', default=baseUrl, help='base URL for EBI Search')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
 (options, args) = parser.parse_args()
 
