@@ -8,8 +8,8 @@
 #  Python 3.4.3
 #
 # See:
-# http://www.ebi.edu.au/tools/webservices/services/sss/ncbi_blast_rest
-# http://www.ebi.edu.au/tools/webservices/tutorials/python
+# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
+# http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Base URL for service
 baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
@@ -33,8 +33,8 @@ numOpts = len(sys.argv)
 usage = "Usage: %prog [options...] [seqFile]"
 description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
 on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
-epilog = """For further information about the NCBI BLAST (SOAP) web service, see 
-http://www.ebi.edu.au/tools/webservices/services/sss/ncbi_blast_soap."""
+epilog = """For further information about the NCBI BLAST (REST) web service, see 
+http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest."""
 version = "$Id: ncbiblast_urllib3.py 2106 2012-05-01 17:00:40Z hpm $"
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
