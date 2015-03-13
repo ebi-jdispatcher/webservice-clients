@@ -24,6 +24,7 @@
 # Python installation to use (each installation contains different versions
 # of the required libraries).
 PYTHON=python
+PYTHON3=python3
 
 # User e-mail address to use for the requests.
 #EMAIL = email@example.org
@@ -41,7 +42,11 @@ ncbiblast
 clean: \
 dbfetch_clean \
 iprscan_clean \
-ncbiblast_clean
+ncbiblast_clean \
+psiblast_clean \
+psisearch_clean \
+iprscan5_clean \
+clustalo_clean
 
 # Fetch/update test data.
 test_data:
@@ -155,3 +160,93 @@ ncbiblast_multifasta_file_stdin_stdout: test_data
 
 ncbiblast_clean:
 	rm -f ncbiblast-*
+	
+	
+# NCBI BLAST (python3)
+ncbiblast.py3: ncbiblast_params.py3 ncbiblast_param_detail.py3 ncbiblast_file.py3 ncbiblast_dbid.py3
+
+ncbiblast_params.py3:
+	${PYTHON3} ncbiblast_urllib3.py --params
+
+ncbiblast_param_detail.py3:
+	${PYTHON3} ncbiblast_urllib3.py --paramDetail program
+
+ncbiblast_file.py3: #test_data
+	${PYTHON3} ncbiblast_urllib3.py --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+ncbiblast_dbid.py3:
+	${PYTHON3} ncbiblast_urllib3.py --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
+
+
+# PSIBLAST
+psiblast.py3: psiblast_params.py3 psiblast_param_detail.py3 psiblast_file.py3 psiblast_dbid.py3
+
+psiblast_params.py3:
+	${PYTHON3} psiblast_urllib3.py --params
+
+psiblast_param_detail.py3:
+	${PYTHON3} psiblast_urllib3.py --paramDetail matrix
+
+psiblast_file.py3: #test_data
+	${PYTHON3} psiblast_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+psiblast_dbid.py3:
+	${PYTHON3} psiblast_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
+
+psiblast_clean:
+	rm -f psiblast-*
+	
+
+# PSISEARCH
+psisearch.py3: psisearch_params.py3 psisearch_param_detail.py3 psisearch_file.py3 psisearch_dbid.py3
+
+psisearch_params.py3:
+	${PYTHON3} psisearch_urllib3.py --params
+
+psisearch_param_detail.py3:
+	${PYTHON3} psisearch_urllib3.py --paramDetail matrix
+
+psisearch_file.py3: #test_data
+	${PYTHON3} psisearch_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+psisearch_dbid.py3:
+	${PYTHON3} psisearch_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
+
+psisearch_clean:
+	rm -f psisearch-*
+
+
+# IPRSCAN5
+iprscan5.py3: iprscan5_params.py3 iprscan5_param_detail.py3 iprscan5_file.py3 iprscan5_dbid.py3
+
+iprscan5_params.py3:
+	${PYTHON3} iprscan5_urllib3.py --params
+
+iprscan5_param_detail.py3:
+	${PYTHON3} iprscan5_urllib3.py --paramDetail goterms
+
+iprscan5_file.py3: #test_data
+	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+
+iprscan5_dbid.py3:
+	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+
+iprscan5_clean:
+	rm -f iprscan5-*
+		
+
+# CLUSTALO
+clustalo.py3: clustalo_params.py3 clustalo_param_detail.py3 clustalo_file.py3
+
+clustalo_params.py3:
+	${PYTHON3} clustalo_urllib3.py --params
+
+clustalo_param_detail.py3:
+	${PYTHON3} clustalo_urllib3.py --paramDetail outfmt
+
+clustalo_file.py3: #test_data
+	${PYTHON3} clustalo_urllib3.py --email ${EMAIL} ../test_data/multi_prot.tfa
+
+
+clustalo_clean:
+	rm -f clustalo-*

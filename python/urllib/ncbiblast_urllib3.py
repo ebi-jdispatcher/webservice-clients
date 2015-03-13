@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-# $Id: clustalo_urllib3.py 2106 2012-05-01 17:00:40Z hpm $
+# $Id: ncbiblast_urllib3.py 2106 2012-05-01 17:00:40Z hpm $
 # ======================================================================
-# Clustal Omega(REST) Python-3 client using urllib3 and 
+# NCBI BLAST (REST) Python client using urllib3 and 
 # xmltramp2 (https://pypi.python.org/pypi/xmltramp2/).
 #
 # Tested with:
 #  Python 3.4.3
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/msa/clustalo_rest
-# http://www.ebi.ac.uk/Tools/webservices/tutorials/python
+# http://www.ebi.edu.au/tools/webservices/services/sss/ncbi_blast_rest
+# http://www.ebi.edu.au/tools/webservices/tutorials/python
 # ======================================================================
 # Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
 
 # Load libraries
-import platform, os, sys, time, urllib
+import platform, os, re, sys, time, urllib
 from optparse import OptionParser
 from xmltramp2 import xmltramp
 import urllib.request as urllib2
@@ -31,28 +31,28 @@ numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
-description = """Multiple sequence alignment using Clustal Omega"""
-epilog = """For further information about the Clustal Omega web service, see 
-http://www.ebi.ac.uk/tools/webservices/services/msa/clustalo_rest."""
-version = "$Id: clustalo_urllib3.py 2106 2012-05-01 17:00:40Z hpm $"
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
+epilog = """For further information about the NCBI BLAST (SOAP) web service, see 
+http://www.ebi.edu.au/tools/webservices/services/sss/ncbi_blast_soap."""
+version = "$Id: ncbiblast_urllib3.py 2106 2012-05-01 17:00:40Z hpm $"
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 # Tool specific options
-parser.add_option('--guidetreeout', help='Enable output guide tree')
-parser.add_option('--noguidetreeout', help='Disable output guide tree')
-parser.add_option('--dismatout', help='Enable output distance matrix')
-parser.add_option('--nodismatout', help='Disable output distance matrix')
-parser.add_option('--dealign', help='Dealign input sequences')
-parser.add_option('--nodealign', help='Not dealign input sequences')
-parser.add_option('--mbed', help='Mbed-like clustering guide-tree')
-parser.add_option('--nombed', help='No Mbed-like clustering guide-tree')
-parser.add_option('--mbediteration', help='Mbed-like clustering iteration')
-parser.add_option('--nombediteration', help='No Mbed-like clustering iteration')
-parser.add_option('--iterations', help='Number of iterations')
-parser.add_option('--gtiterations', help='Maximum guild tree iterations')
-parser.add_option('--hmmiterations', help='Maximum HMM iterations')
-parser.add_option('--outfmt', help='Output alignment format')
-parser.add_option('--stype', default='protein', help='Input sequence type')
+parser.add_option('-p', '--program', help='program to run')
+parser.add_option('-D', '--database', help='database to search')
+parser.add_option('--stype', default='protein', help='query sequence type')
+parser.add_option('-m', '--matrix', help='scoring matrix')
+parser.add_option('-E', '--exp', help='E-value threshold')
+parser.add_option('-f', '--filter', action="store_true", help='low complexity sequence filter')
+parser.add_option('-n', '--alignments', type='int', help='maximum number of alignments')
+parser.add_option('-s', '--scores', type='int', help='maximum number of scores')
+parser.add_option('-d', '--dropoff', type='int', help='dropoff score')
+parser.add_option('--match_score', help='match/missmatch score')
+parser.add_option('-o', '--gapopen', type='int', help='open gap penalty')
+parser.add_option('-x', '--gapext', type='int', help='extend gap penalty')
+parser.add_option('-g', '--gapalign', action="store_true", help='optimise gap alignments')
+parser.add_option('--seqrange', help='region within input to use as query')
 parser.add_option('--sequence', help='input sequence file name')
 # General options
 parser.add_option('--email', help='e-mail address')
@@ -122,10 +122,13 @@ def restRequest(url):
         reqH = urllib2.urlopen(req)
         resp = reqH.read();
         contenttype = reqH.getheader("Content-Type")
-                
+        
+        print(contenttype)
+        
+        print("len(resp) = " + str(len(resp)))
+        
         if(len(resp)>0 and contenttype!="image/png;charset=UTF-8"
-            and contenttype!="image/jpeg;charset=UTF-8"
-            and contenttype!="application/gzip;charset=UTF-8"):
+            and contenttype!="image/jpeg;charset=UTF-8"):
             result = str(resp, 'utf-8')
         else:
             result = resp;
@@ -194,10 +197,17 @@ def serviceRun(email, title, params):
         params['title'] = title
     requestUrl = baseUrl + '/run/'
     printDebugMessage('serviceRun', 'requestUrl: ' + requestUrl, 2)
-
+    # Database requires special handling, so extract from params
+    databaseList = params['database']
+    del params['database']
+    # Build the database data options
+    databaseData = ''
+    for db in databaseList:
+        databaseData += '&database=' + db
     # Get the data for the other options
     requestData = urllib.parse.urlencode(params)
-
+    # Concatenate the two parts.
+    requestData += databaseData
     printDebugMessage('serviceRun', 'requestData: ' + requestData, 2)
     # Errors are indicated by HTTP status codes.
     try:
@@ -302,9 +312,7 @@ def getResult(jobId):
         if not options.outformat or options.outformat == str(resultType['identifier']):
             # Get the result
             result = serviceGetResult(jobId, str(resultType['identifier']))
-            if(str(resultType['mediaType']) == "image/png"
-                or str(resultType['mediaType']) == "image/jpeg"
-                or str(resultType['mediaType']) == "application/gzip"):
+            if(str(resultType['mediaType']) == "image/png" or str(resultType['mediaType']) == "image/jpeg"):
                 fmode= 'wb'
             else:
                 fmode='w'
@@ -348,38 +356,35 @@ elif options.email and not options.jobid:
         else: # Argument is a sequence id
             params['sequence'] = options.sequence
     # Booleans need to be represented as 1/0 rather than True/False
-    if options.guidetreeout:
-        params['guidetreeout'] = True
+    if options.gapalign:
+        params['gapalign'] = True
     else:
-        params['guidetreeout'] = False
-    if options.dismatout:
-        params['dismatout'] = True
-    else:
-        params['dismatout'] = False
-    if options.dealign:
-        params['dealign'] = True
-    else:
-        params['dealign'] = False
-    if options.mbed:
-        params['mbed'] = True
-    else:
-        params['mbed'] = False
-    if options.mbediteration:
-        params['mbediteration'] = True
-    else:
-        params['mbediteration'] = False
-
+        params['gapalign'] = False
     # Add the other options (if defined)
+    if options.program:
+        params['program'] = options.program
+    if options.database:
+        params['database'] = re.split('[ \t\n,;]+', options.database)
     if options.stype:
         params['stype'] = options.stype
-    if options.iterations:
-        params['iterations'] = options.iterations
-    if options.gtiterations:
-        params['gtiterations'] = options.gtiterations
-    if options.hmmiterations:
-        params['hmmiterations'] = options.hmmiterations
-    if options.outfmt:
-        params['outfmt'] = options.outfmt
+    if options.matrix:
+        params['matrix'] = options.matrix
+    if options.exp:
+        params['exp'] = options.exp
+    if options.filter:
+        params['filter'] = options.filter
+    if options.alignments:
+        params['alignments'] = options.alignments
+    if options.scores:
+        params['scores'] = options.scores
+    if options.dropoff:
+        params['dropoff'] = options.dropoff
+    if options.match_score:
+        params['match_score'] = options.match_score
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    if options.gapext:
+        params['gapext'] = options.gapext
     
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
