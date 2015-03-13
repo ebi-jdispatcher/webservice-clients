@@ -118,6 +118,8 @@ def getUserAgent():
 def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
+    url = urllib.request.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
+
     try:
         user_agent = getUserAgent()
         http_headers = {
