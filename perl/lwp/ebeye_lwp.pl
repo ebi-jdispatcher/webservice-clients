@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/eb-eye>
+L<http://www.ebi.ac.uk/Tools/webservices/services/eb-eye_rest>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
@@ -74,7 +74,7 @@ use File::Basename;
 use Data::Dumper;
 
 # Base URL for service
-my $baseUrl = 'http://wwwdev.ebi.ac.uk/ebisearch/ws/rest';
+my $baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest';
 
 # Output level
 my $outputLevel = 1;
@@ -86,13 +86,22 @@ my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 GetOptions(
+	'size=s'       => \$params{'size'},          # Number of entries to retrieve
+	'start=s'      => \$params{'start'},         # Index of the first entry in results
+	'fieldurl=s'   => \$params{'fieldurl'},      # whether field links are included
+	'viewurl=s'    => \$params{'viewurl'},       # whether view links are included
+	'sortfield=s'  => \$params{'sortfield'},     # Field id to sort
+	'order=s'      => \$params{'order'},         # Sort in ascending/descending order
+	'facetcount=s' => \$params{'facetcount'},    # Number of facet values to retrieve
+	'facetfields=s'=> \$params{'facetfields'},   # Field ids associated with facets to retrieve
+
 	'quiet'        => \$params{'quiet'},         # Decrease output level
 	'verbose'      => \$params{'verbose'},       # Increase output level
 	'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
 	'baseUrl=s'    => \$baseUrl,                 # Base URL for service.
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'$quiet'} )  { $outputLevel-- }
+if ( $params{'quiet'} )  { $outputLevel-- }
 
 # Debug mode: LWP version
 &print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,	1 );
@@ -129,32 +138,62 @@ elsif ( $method eq 'getDomainDetails' ) {
 
 # Get search results
 elsif ( $method eq 'getResults') {
-	&print_get_results(@ARGV);
+	if (scalar(@ARGV) < 3)  {
+		print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
+	}
+	else {
+		&print_get_results(@ARGV);
+	}
 }
 
 # Get search results with facets
 elsif ( $method eq 'getFacetedResults') {
-	&print_get_faceted_results(@ARGV);
+	if (scalar(@ARGV) < 3)  {
+		print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
+	}
+	else {
+		&print_get_faceted_results(@ARGV);
+	}
 }
 
 # Get entries
 elsif ( $method eq 'getEntries') {
-	&print_get_entries(@ARGV);
+	if (scalar(@ARGV) < 3)  {
+		print STDERR '[main()] ', 'domain, entries and fields should be given.', "\n";
+	}
+	else {
+		&print_get_entries(@ARGV);
+	}
 }
 
 # Get domain ids referenced in a domain
 elsif ( $method eq 'getDomainsReferencedInDomain') {
-	&print_get_domains_referenced_in_domain(@ARGV);
+	if (scalar(@ARGV) < 1)  {
+		print STDERR '[main()] ', 'domain should be given.', "\n";
+	}
+	else {
+		&print_get_domains_referenced_in_domain(@ARGV);
+	}
 }
 
 # Get domain ids referenced in an entry
 elsif ( $method eq 'getDomainsReferencedInEntry') {
-	&print_get_domains_referenced_in_entry(@ARGV);	
+	if (scalar(@ARGV) < 2)  {
+		print STDERR '[main()] ', 'domain and entry should be given.', "\n";
+	}
+	else {
+		&print_get_domains_referenced_in_entry(@ARGV);
+	}
 }
 
 # Get cross references
 elsif ( $method eq 'getReferencedEntries') {
-	&print_get_referenced_entries(@ARGV);
+	if (scalar(@ARGV) < 4)  {
+		print STDERR '[main()] ', 'domain, entries, reference domain and fields should be given.', "\n";
+	}
+	else {
+		&print_get_referenced_entries(@ARGV);
+	}
 }
 else {
 	&usage();
@@ -364,28 +403,30 @@ sub print_get_results {
 
 sub _print_entries {
 	my $entries = shift;
-	print_debug_message( '_print_enties', 'len($entires)=' . scalar(@{$entries}) ,1);
-	foreach my $entry (@{$entries}) {
-		foreach my $field (@{$entry->{'fields'}->{'field'}}) {
-			if (exists $field->{'values'}->{'value'}) {
-				foreach my $value (@{$field->{'values'}->{'value'}}) {
-					print $value, "\n";
+	if ( defined $entries) {
+		print_debug_message( '_print_enties', 'len($entires)=' . scalar(@{$entries}) ,1);
+		foreach my $entry (@{$entries}) {
+			foreach my $field (@{$entry->{'fields'}->{'field'}}) {
+				if (exists $field->{'values'}->{'value'}) {
+					foreach my $value (@{$field->{'values'}->{'value'}}) {
+						print $value, "\n";
+					}
+				}
+				else {
+					print "\n";
 				}
 			}
-			else {
-				print "\n";
+
+			foreach my $fieldurl (@{$entry->{'fieldURLs'}->{'fieldURL'}}) {
+				print $fieldurl, "\n";
 			}
-		}
 
-		foreach my $fieldurl (@{$entry->{'fieldURLs'}->{'fieldURL'}}) {
-			print $fieldurl, "\n";
+			foreach my $viewurl (@{$entry->{'viewURLs'}->{'viewURL'}}) {
+				print $viewurl->{'content'}, "\n";
+			}
+			print "\n";
 		}
-
-		foreach my $viewurl (@{$entry->{'viewURLs'}->{'viewURL'}}) {
-			print $viewurl->{'content'}, "\n";
-		}
-		print "\n";
-	}	
+	}
 }
 
 =head2
@@ -519,7 +560,7 @@ Get domain details
 sub rest_get_domain_details {
 	print_debug_message( 'rest_get_domain_details', 'Begin', 1 );
 	my $domainid = shift || 'allebi';
-	my $url                = $baseUrl . "/" .$domainid;
+	my $url = $baseUrl . "/" .$domainid;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_domain_details', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => []);
@@ -536,22 +577,17 @@ Get search results
 
 sub rest_get_results {
 	print_debug_message( 'rest_get_results', 'Begin', 1 );
+
 	my $domainid = shift;
 	my $query = shift;
-	my $fields = "";
-	$fields = shift if ( scalar(@_) > 0 );
-	my $size = "";
-	$size = shift if ( scalar(@_) > 0 );
-	my $start = "";
-	$start = shift if ( scalar(@_) > 0 );
-	my $fieldurl = "";
-	$fieldurl = shift if ( scalar(@_) > 0 );
-	my $viewurl = "";
-	$viewurl =shift if ( scalar(@_) > 0 );
-	my $sortfield = "";
-	$sortfield = shift if ( scalar(@_) > 0 );
-	my $order = "";
-	$order = shift if ( scalar(@_) > 0 );
+	my $fields = shift;
+
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
+	my $order = $params{'order'}? $params{'order'} : "" ;
 
 	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order ."&facetcount=0";
 	my $param_list_xml_str = &rest_request($url);
@@ -571,25 +607,18 @@ sub rest_get_faceted_results {
 	print_debug_message( 'rest_get_faceted_results', 'Begin', 1 );
 	my $domainid = shift;
 	my $query = shift;
-	my $fields = "";
-	$fields = shift if ( scalar(@_) > 0 );
-	my $size = "";
-	$size = shift if ( scalar(@_) > 0 );
-	my $start = "";
-	$start = shift if ( scalar(@_) > 0 );
-	my $fieldurl = "";
-	$fieldurl = shift if ( scalar(@_) > 0 );
-	my $viewurl = "";
-	$viewurl =shift if ( scalar(@_) > 0 );
-	my $sortfield = "";
-	$sortfield = shift if ( scalar(@_) > 0 );
-	my $order = "";
-	$order = shift if ( scalar(@_) > 0 );
-	my $facetcount = "10";
-	$facetcount = shift if ( scalar(@_) > 0 );
-	my $facetfields = "";
-	$facetfields = shift if ( scalar(@_) > 0 );
-	my $url                = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&facetcount=".$facetcount ."&facetfields=". $facetfields;
+	my $fields = shift;
+
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
+	my $order = $params{'order'}? $params{'order'} : "" ;
+	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
+	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
+
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&facetcount=".$facetcount ."&facetfields=". $facetfields;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_faceted_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue']);
@@ -607,12 +636,11 @@ sub rest_get_entries {
 	print_debug_message( 'rest_get_entries', 'Begin', 1 );
 	my $domainid = shift;
 	my $entryid = shift;
-	my $fields = "";
-	$fields = shift if ( scalar(@_) > 0 );
-	my $fieldurl = "";
-	$fieldurl = shift if ( scalar(@_) > 0 );
-	my $viewurl = "";
-	$viewurl =shift if ( scalar(@_) > 0 );
+	my $fields = shift;
+
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+
 	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "?fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_entries', 'End', 1 );
@@ -670,16 +698,13 @@ sub rest_get_referenced_entries {
 	my $domainid = shift;
 	my $entryids = shift;
 	my $referencedDomainId = shift;
-	my $fields = "";
-	$fields = shift if ( scalar(@_) > 0 );
-	my $size = "";
-	$size = shift if ( scalar(@_) > 0 );
-	my $start = "";
-	$start = shift if ( scalar(@_) > 0 );
-	my $fieldurl = "";
-	$fieldurl = shift if ( scalar(@_) > 0 );
-	my $viewurl = "";
-	$viewurl =shift if ( scalar(@_) > 0 );
+	my $fields = shift;
+
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+
 	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryids ."/xref/" . $referencedDomainId . "?fields=" .$fields . "&start=" . $start. "&size=" . $size. "&fieldurl=".$fieldurl . "&viewurl=".$viewurl;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_referenced_entries', 'End', 1 );
@@ -720,23 +745,23 @@ EB-eye
 ======
 
 Usage:
-  ebeye_lwp.pl <method> [arguments...] [--baseUrl <baseUrl>]
+  ebeye_lwp.pl <method> <arguments...> [Options]
 
 A number of methods are available:
 
 getDomainHierarchy
   Return the hierarchy of the domains availabe.
   
-getDomainDetails [<domain>]
+getDomainDetails <domain>
   Return the details of a particula domain.
 
-getResults <domain> <query> <fields> [<size> [<start> [<fieldurl> [<viewurl> [<sortfield> [<order>]]]]]]
+getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order]
   Executes a query and returns a list of results.
   
-getFacetedResults <domain> <query> [<fields> [<size> [<start> [<fieldurl> [<viewurl> [<sortfield> [<order> [<facetcount> [<facetfields>]]]]]]]]]
+getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order | --facetcount | --facetfields]
   Executes a query and returns a list of results including facets.
 
-getEntries <domain> <entryids> <fields> [<fieldurl> [<viewurl>]]
+getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viweurl]
   Search for entries in a domain and returns the values for some of the 
   fields of these entries.
 
@@ -748,10 +773,31 @@ getDomainsReferencedInEntry <domain> <entryid>
   Returns the list of domains with entries referenced in a particular domain 
   entry. These domains are indexed in the EB-eye.
 
-getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [<size> [<start> [<fieldurl> [<viewurl>]]]
+getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl]
   Returns the list of referenced entry identifiers from a domain referenced 
   in a particular domain entry. 
 
+Options:
+  --size=SIZE           number of entries to retrieve
+  --start=START         index of the first entry in results
+  --fieldurl=FIELDURL   whether field links are included
+  --viewurl=VIEWURL     whether view links are included
+  --sortfield=SORTFIELD
+                        field id to sort
+  --order=ORDER         sort in ascending/descending order
+  --facetcount=FACETCOUNT
+                        number of facet values to retrieve
+  --facetfields=FACETFIELDS
+                        field ids associated with facets to retrieve
+
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+  --quiet               decrease output level
+  --verbose             increase output level
+  --baseUrl=BASEURL     base URL for dbfetch
+  --debugLevel=DEBUGLEVEL
+                        debug output level
+  
 Support/Feedback:
 
   http://www.ebi.ac.uk/support/

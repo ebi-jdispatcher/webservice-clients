@@ -29,7 +29,7 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Service base URL
-baseUrl = 'http://wwwdev.ebi.ac.uk/ebisearch/ws/rest'
+baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
 import platform, os, sys, urllib2, xmltramp
@@ -203,7 +203,7 @@ def printDomainDetails(domainInfo):
             print (indexInfo('name') + ': ' + str(indexInfo))
         print
         fieldInfos = domainInfo['fieldInfos']['fieldInfo':]
-        print 'field_id\tsearchable\tretrievable\tsortable\tfacet'
+        print 'field_id\tsearchable\tretrievable\tsortable\tfacet\talias\tref_domain\tref_field\ttype'
         fieldStr = ''
         for fieldInfo in fieldInfos:
             fieldStr = fieldInfo('id') + '\t'
