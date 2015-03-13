@@ -47,14 +47,14 @@ usage = """
   %prog getDomainHierarchy
   %prog getDomainDetails  <domain>
 
-  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order] 
-  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order | --facetcount | --facetfields]
+  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
+  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields]
 
-  %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viweurl]
+  %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
   
   %prog getDomainsReferencedInDomain <domain>
   %prog getDomainsReferencedInEntry  <domain> <entryid>
-  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl]"""
+  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]"""
 description = """Search at EMBL-EBI in All results using the EB-eye search engine. For more information on EB-eye 
 refer to http://www.ebi.ac.uk/ebisearch/"""
 version = "$Id: dbfetch_urllib2.py 2468 2013-01-25 14:01:01Z hpm $"
