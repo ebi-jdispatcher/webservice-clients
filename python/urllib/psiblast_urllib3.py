@@ -403,6 +403,8 @@ elif options.email and not options.jobid:
         params['matrix'] = options.matrix
     if options.expthr:
         params['expthr'] = options.expthr
+    if options.previousjobid:
+        params['previousjobid'] = options.previousjobid
     if options.filter:
         params['filter'] = options.filter
     if options.alignments:
