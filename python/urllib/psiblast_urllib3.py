@@ -138,12 +138,9 @@ def restRequest(url):
         resp = reqH.read();
         contenttype = reqH.getheader("Content-Type")
         
-        print(contenttype)
-        
-        print("len(resp) = " + str(len(resp)))
-        
         if(len(resp)>0 and contenttype!="image/png;charset=UTF-8"
-            and contenttype!="image/jpeg;charset=UTF-8"):
+            and contenttype!="image/jpeg;charset=UTF-8"
+            and contenttype!="application/binary;charset=UTF-8"):
             result = str(resp, 'utf-8')
         else:
             result = resp;
@@ -327,7 +324,9 @@ def getResult(jobId):
         if not options.outformat or options.outformat == str(resultType['identifier']):
             # Get the result
             result = serviceGetResult(jobId, str(resultType['identifier']))
-            if(str(resultType['mediaType']) == "image/png" or str(resultType['mediaType']) == "image/jpeg"):
+            if(str(resultType['mediaType']) == "image/png"
+                or str(resultType['mediaType']) == "image/jpeg"
+                or str(resultType['mediaType']) == "application/binary"):
                 fmode= 'wb'
             else:
                 fmode='w'
