@@ -46,7 +46,6 @@ parser.add_option('-E', '--expthr', help='E-value threshold')
 parser.add_option('--psithr', help='E-value limit for inclusion in PSSM')
 parser.add_option('-n', '--alignments', type='int', help='maximum number of alignments')
 parser.add_option('-s', '--scores', type='int', help='maximum number of scores')
-parser.add_option('-d', '--dropoff', type='int', help='dropoff score')
 parser.add_option('-o', '--gapopen', type='int', help='open gap penalty')
 parser.add_option('-x', '--gapext', type='int', help='extend gap penalty')
 
@@ -60,10 +59,14 @@ parser.add_option('--noannotfeats', help='disable annotation features,\
                                           see --paramDetail annotfeats')
 
 parser.add_option('--scoreformat', help='score table format for FASTA output')
-parser.add_option('--previousjobid', help='score table format for FASTA output')
-parser.add_option('--selectedHits', help='score table format for FASTA output')
-parser.add_option('--cpfile', help='PSI-Search checkpoint from last iteration')
+parser.add_option('--previousjobid', help='Job Id for last iteration')
+parser.add_option('--selectedHits',
+                  help='Selected hits from last iteration for building\
+                   search profile (PSSM)');
 
+parser.add_option('--cpfile', help='PSI-Search checkpoint file from last iteration')
+parser.add_option('--bdrfile',
+                   help='Boundary file containing boundary information for pre-selected sequences')
 parser.add_option('--sequence', help='input sequence file name')
 # General options
 parser.add_option('--email', help='e-mail address')
@@ -135,7 +138,8 @@ def restRequest(url):
         contenttype = reqH.getheader("Content-Type")
                 
         if(len(resp)>0 and contenttype!="image/png;charset=UTF-8"
-            and contenttype!="image/jpeg;charset=UTF-8"):
+            and contenttype!="image/jpeg;charset=UTF-8"
+            and contenttype!="application/binary;charset=UTF-8"):
             result = str(resp, 'utf-8')
         else:
             result = resp;
@@ -319,7 +323,9 @@ def getResult(jobId):
         if not options.outformat or options.outformat == str(resultType['identifier']):
             # Get the result
             result = serviceGetResult(jobId, str(resultType['identifier']))
-            if(str(resultType['mediaType']) == "image/png" or str(resultType['mediaType']) == "image/jpeg"):
+            if(str(resultType['mediaType']) == "image/png"
+                or str(resultType['mediaType']) == "image/jpeg"
+                or str(resultType['mediaType']) == "application/binary"):
                 fmode= 'wb'
             else:
                 fmode='w'
@@ -362,6 +368,22 @@ elif options.email and not options.jobid:
             params['sequence'] = readFile(options.sequence)
         else: # Argument is a sequence id
             params['sequence'] = options.sequence
+
+    if options.selectedHits:
+        if os.access(options.selectedHits, os.R_OK): # Read file into content
+            params['selectedHits'] = readFile(options.selectedHits)
+        else: # Argument is a sequence id
+            print("not able to read selectedHits file: ",
+                   options.selectedHits, file=sys.stderr);
+
+    if options.cpfile:
+        if os.access(options.cpfile, os.R_OK): # Read file into content
+            params['cpfile'] = readFile(options.cpfile)
+        else: # Argument is a sequence id
+            print("not able to read checkpoint file: ",
+                   options.cpfile, file=sys.stderr);
+
+    
     # Booleans need to be represented as 1/0 rather than True/False
     if options.hsps:
         params['hsps'] = True
@@ -386,8 +408,8 @@ elif options.email and not options.jobid:
         params['alignments'] = options.alignments
     if options.scores:
         params['scores'] = options.scores
-    if options.dropoff:
-        params['dropoff'] = options.dropoff
+    if options.previousjobid:
+        params['previousjobid'] = options.previousjobid
     if options.scoreformat:
         params['scoreformat'] = options.scoreformat
     if options.gapopen:

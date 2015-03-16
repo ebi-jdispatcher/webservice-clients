@@ -36,8 +36,13 @@ TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 # Run all test sets
 all: \
 dbfetch \
-iprscan \
-ncbiblast
+iprscan5 \
+iprscan5.py3 \
+ncbiblast \
+ncbiblast.py3 \
+psisearch \
+psiblast
+
 
 clean: \
 dbfetch_clean \
@@ -96,19 +101,19 @@ dbfetch_clean:
 	rm -f dbfetch-*
 
 # InterProScan
-iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
+iprscan5: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout
 
 iprscan_params:
-	${PYTHON} iprscan_urllib2.py --params
+	${PYTHON} iprscan5_urllib2.py --params
 
 iprscan_param_detail:
-	${PYTHON} iprscan_urllib2.py --paramDetail appl
+	${PYTHON} iprscan5_urllib2.py --paramDetail appl
 
 iprscan_file: test_data
-	${PYTHON} iprscan_urllib2.py --email ${EMAIL} --crc --nogoterms ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PYTHON} iprscan5_urllib2.py --email ${EMAIL} --crc --nogoterms ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 iprscan_dbid:
-	${PYTHON} iprscan_urllib2.py --email ${EMAIL} --crc --nogoterms 'UNIPROT:ABCC9_HUMAN'
+	${PYTHON} iprscan5_urllib2.py --email ${EMAIL} --crc --nogoterms 'UNIPROT:ABCC9_HUMAN'
 
 iprscan_stdin_stdout: test_data
 	echo 'TODO:' $@
@@ -178,38 +183,38 @@ ncbiblast_dbid.py3:
 	${PYTHON3} ncbiblast_urllib3.py --email ${EMAIL} --program blastp --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
 
 
-# PSIBLAST
-psiblast.py3: psiblast_params.py3 psiblast_param_detail.py3 psiblast_file.py3 psiblast_dbid.py3
+# PSI-BLAST
+psiblast: psiblast_params psiblast_param_detail psiblast_file psiblast_dbid
 
-psiblast_params.py3:
+psiblast_params:
 	${PYTHON3} psiblast_urllib3.py --params
 
-psiblast_param_detail.py3:
+psiblast_param_detail:
 	${PYTHON3} psiblast_urllib3.py --paramDetail matrix
 
-psiblast_file.py3: #test_data
+psiblast_file: #test_data
 	${PYTHON3} psiblast_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-psiblast_dbid.py3:
+psiblast_dbid:
 	${PYTHON3} psiblast_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
 
 psiblast_clean:
 	rm -f psiblast-*
 	
 
-# PSISEARCH
-psisearch.py3: psisearch_params.py3 psisearch_param_detail.py3 psisearch_file.py3 psisearch_dbid.py3
+# PSI-Search
+psisearch: psisearch_params psisearch_param_detail psisearch_file psisearch_dbid
 
-psisearch_params.py3:
+psisearch_params:
 	${PYTHON3} psisearch_urllib3.py --params
 
-psisearch_param_detail.py3:
+psisearch_param_detail:
 	${PYTHON3} psisearch_urllib3.py --paramDetail matrix
 
-psisearch_file.py3: #test_data
+psisearch_file: #test_data
 	${PYTHON3} psisearch_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
-psisearch_dbid.py3:
+psisearch_dbid:
 	${PYTHON3} psisearch_urllib3.py --email ${EMAIL} --database uniprotkb_swissprot --scores 10 --alignments 10 --stype protein 'UNIPROT:ABCC9_HUMAN'
 
 psisearch_clean:
@@ -226,10 +231,10 @@ iprscan5_param_detail.py3:
 	${PYTHON3} iprscan5_urllib3.py --paramDetail goterms
 
 iprscan5_file.py3: #test_data
-	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
+	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} --crc --nogoterms ../test_data/SWISSPROT_ABCC9_HUMAN.fasta
 
 iprscan5_dbid.py3:
-	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} 'UNIPROT:ABCC9_HUMAN'
+	${PYTHON3} iprscan5_urllib3.py --email ${EMAIL} --crc --nogoterms 'UNIPROT:ABCC9_HUMAN'
 
 iprscan5_clean:
 	rm -f iprscan5-*
