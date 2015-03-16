@@ -366,9 +366,11 @@ elif args[0] == 'getFacetedResults':
         start = options.start if options.start else ''
         fieldurl = options.fieldurl if options.fieldurl else ''
         viewurl =  options.viewurl if  options.viewurl else ''
+        sortfield = options.sortfield if options.sortfield else ''
+        order = options.order if options.order else ''
         facetcount = options.facetcount if options.facetcount else ''
         facetfields = options.facetfields if options.facetfields else ''
-        getResults(args[1], args[2], args[3], options.size, start, fieldurl, viewurl, sortfield, order, facetcount, facetfields)
+        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, facetcount, facetfields)
 # Get entry details.
 elif args[0] == 'getEntries':
     if len(args) < 4:
