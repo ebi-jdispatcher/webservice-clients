@@ -8,7 +8,7 @@
 #  Python 3.4.3
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_rest
+# http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Base URL for service
