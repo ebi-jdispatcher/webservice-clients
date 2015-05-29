@@ -40,7 +40,9 @@
 	<import file="${ant.import.lib.dir}/axis1.xml" />
 	<!-- JAX-WS RI tasks -->
 	<import file="${ant.import.lib.dir}/jaxws-ri.xml" />
-
+	<!-- JAX-RS Client tasks -->
+	<import file="${ant.import.lib.dir}/jaxrs-client.xml" />
+	
 	<!-- Resolve library dependencies using Apache Ivy -->
 	<target name="resolve" description="Retrieve dependencies (Ivy)" depends="init-ivy">
 		<ivy:retrieve />
@@ -66,8 +68,8 @@
 	<!-- Build all -->
 	<target name="all" depends="axis1,jaxws" description="Build all targets." />
 	<target name="stubs" depends="axis1-stubs,jaxws-stubs" description="Generate all stubs." />
-	<target name="compile" depends="axis1-compile,jaxws-compile" description="Compile all clients." />
-	<target name="jar" depends="axis1-jar,jaxws-jar" description="Package clients into jars." />
+	<target name="compile" depends="axis1-compile,jaxws-compile,jaxrs-compile" description="Compile all clients." />
+	<target name="jar" depends="axis1-jar,jaxws-jar,jaxrs-jar" description="Package clients into jars." />
 
 	<!-- Tests -->
 	<import file="test_build.xml" />
@@ -83,11 +85,20 @@
 	<target name="distclean" depends="clean,clean-resolve,distclean-stubs" description="Remove downloaded, generated and compiled code, classes and jars">
 	</target>
 
+	<!-- stubs created by JAX-RS should not be deleted as they are not same as initial version -->
 	<target name="distclean-stubs" description="Delete generated stubs">
 		<antcall target="axis1-distclean-stubs" />
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
-
+	
+	<!-- Generate Axis 1.x stubs for each service -->
+	<target name="jaxrs-stubs-ebeye" description="JAX-RS Client: generate stubs for EBeye (REST)">
+		<antcall target="genJaxrsStubs">
+			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxrs.stubs.ebeye" />
+			<param name="wsdlUrl" value="https://www.ebi.ac.uk/ebisearch/ws/rest?_wadl" />
+		</antcall>
+	</target>
+	
 	<!-- Axis 1.x -->
 	<target name="axis1" depends="axis1-jar" description="Axis 1.x: generate stubs and build SOAP clients" />
 
@@ -1037,7 +1048,6 @@
 		<antcall target="axis1-distclean-stubs-kalign" />
 		<antcall target="axis1-distclean-stubs-lalign" />
 		<antcall target="axis1-distclean-stubs-mafft" />
-		<antcall target="axis1-distclean-stubs-mapmi" />
 		<antcall target="axis1-distclean-stubs-maxsprout"/>
 		<antcall target="axis1-distclean-stubs-muscle" />
 		<antcall target="axis1-distclean-stubs-mview" />
@@ -2237,4 +2247,57 @@
 	    </delete>
 	</target>
 
+	<!-- JAX-RS Client -->
+	<!-- <target name="jaxrs" depends="jaxrs-jar" description="JAX-RS Client: generate stubs and build REST clients" /> -->
+	
+	<!-- Generate JAX-RS stubs for all services -->
+	<!-- This can be used when starting developing a new client since stubs generated from WADL cann't be used directly. They require some modifications.-->
+	<target name="jaxrs-stubs" depends="resolve" description= "JAX-RS Client: generate code stubs for REST Clients" >
+		<antcall target="jaxrs-stubs-ebeye" />
+	</target>
+
+	<!-- Compile JAX-RS into classes -->
+	<target name="jaxrs-compile" description="JAX-RS Client: compile REST clients">
+		<copy file="${src.dir}/client-config.wsdd" todir="${build.dir}" />
+		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxrs/" />
+	</target>
+
+	<!-- Package JAX-RS jars -->
+	<target name="jaxrs-jar" depends="jaxrs-compile" description="JAX-RS Client: package clients into jars">
+		<tstamp>
+			<format property="TODAY" pattern="EEE, dd MMM yyyy HH:mm:ss z" />
+		</tstamp>
+		<jar destfile="${jar.dir}/EBeye_JAXRS.jar"
+			basedir="${build.dir}"
+			includes="uk/ac/ebi/webservices/jaxrs/EBeyeClient** uk/ac/ebi/webservices/jaxrs/stubs/ebeye/**">
+			<manifest>
+				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxrs.EBeyeClient"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/EBeye_JAXRS-source.jar"
+			basedir="${src.dir}"
+			includes="uk/ac/ebi/webservices/jaxrs/EBeyeClient.java uk/ac/ebi/webservices/jaxrs/stubs/ebeye/*.java">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Clean-up JAX-RS generate files -->
+	<target name="jaxrs-distclean-stubs" description="JAX-RS Client: remove generated stubs">
+		<antcall target="jaxrs-distclean-stubs-ebeye" />
+	</target>
+
+	<target name="jaxrs-distclean-stubs-ebeye" description="JAX-RS Client: remove EBeye (REST) stubs">
+	    <delete includeemptydirs="true" quiet="true">
+	        <fileset dir="${jaxrs.stubs.src.dir}/ebeye" includes="*/**" />
+	        <fileset dir="${jaxrs.stubs.src.dir}/" includes="ebeye" />
+	    </delete>
+	</target>
+	
 </project>

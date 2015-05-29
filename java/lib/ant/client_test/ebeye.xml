@@ -155,6 +155,38 @@
 		</antcall>
 	</target>
 
+	<!-- JAX-RS Client -->
+	<target name="jaxrs-test-ebeye" description="JAX-RS Client: EB-eye (REST) test">
+		<property name="client.jar.jaxrs" value="${jar.dir}/EBeye_JAXRS.jar" />
+		<antcall target="test-ebeye-help">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-rest-getResults">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-rest-getFacetedResults">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-rest-getEntries">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-getDomainsReferencedInDomain">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-getDomainsReferencedInEntry">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-rest-getReferencedEntries">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-getDomainsHierarchy">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+		<antcall target="test-ebeye-rest-getDomainDetails">
+			<param name="client.jar" value="${client.jar.jaxrs}" />
+		</antcall>
+	</target>
+	
 	<target name="test-ebeye-help">
 		<echo message="EB-eye (SOAP): usage/help message" />
 		<java fork="true" failonerror="true" jar="${client.jar}">
@@ -374,6 +406,81 @@
 			<arg value="--getFacets" />
 			<arg value="uniprot" />
 			<arg value="axr3" />
+		</java>
+	</target>
+
+	<target name="test-ebeye-rest-getResults">
+		<echo message="EB-eye (REST): getResults" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getResults" />
+			<arg value="uniprot" />
+			<arg value="azurin" />
+			<arg value="id,acc,name,status" />
+			<arg value="1" />
+			<arg value="10" />
+			<arg value="true" />
+			<arg value="true" />
+			<arg value="" />
+			<arg value="" />
+		</java>
+	</target>
+
+	<target name="test-ebeye-rest-getFacetedResults">
+		<echo message="EB-eye (REST): getFacetedResults" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getFacetedResults" />
+			<arg value="uniprot" />
+			<arg value="azurin" />
+			<arg value="id,acc,name,status" />
+			<arg value="1" />
+			<arg value="10" />
+			<arg value="true" />
+			<arg value="true" />
+			<arg value="" />
+			<arg value="" />
+			<arg value="3" />
+			<arg value="" />
+			<arg value="" />
+		</java>
+	</target>
+	
+	<target name="test-ebeye-rest-getEntries">
+		<echo message="EB-eye (REST): getEntries" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getEntries" />
+			<arg value="uniprot" />
+			<arg value="WAP_RAT,WAP_MOUSE" />
+			<arg value="id,acc,name,status" />
+			<arg value="true" />
+			<arg value="true" />
+		</java>
+	</target>
+
+	<target name="test-ebeye-rest-getReferencedEntries">
+		<echo message="EB-eye (SOAP): getReferencedEntries" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getReferencedEntries" />
+			<arg value="uniprot" />
+			<arg value="WAP_RAT" />
+			<arg value="interpro" />
+			<arg value="id,name" />
+			<arg value="1" />
+			<arg value="10" />
+			<arg value="true" />
+			<arg value="true" />
+		</java>
+	</target>
+
+	<target name="test-ebeye-rest-getDomainDetails">
+		<echo message="EB-eye (REST): getDomainDetails" />
+		<java fork="true" failonerror="true" jar="${client.jar}">
+			<jvmarg value="${jvm.extra.jars}" />
+			<arg value="--getDomainDetails" />
+			<arg value="uniprot" />
 		</java>
 	</target>
 

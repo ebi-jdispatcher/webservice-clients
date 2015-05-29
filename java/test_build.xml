@@ -99,7 +99,7 @@
 	<import file="${ant.import.lib.dir}/client_test/maxsprout.xml" />
 	
 	<!-- Run all tests -->
-	<target name="test" depends="axis1-test,jaxws-test" description="Run smoke tests for generated jars." />
+	<target name="test" depends="axis1-test,jaxws-test,jaxrs-test" description="Run smoke tests for generated jars." />
 	
 	<!-- Clean-up test output -->
 	<target name="test-clean" description="Clean-up test output">
@@ -244,6 +244,11 @@
 		<!-- antcall target="jaxws-test-iprscan" / --> <!-- Obsolete -->
 		<!-- Sequence Similarity Search (SSS) -->
 		<antcall target="jaxws-test-ncbiblast" />
+	</target>
+	
+	<!-- JAX-RS Client tests -->
+	<target name="jaxrs-test" description="JAX-RS Client: client smoke tests">
+		<antcall target="jaxrs-test-ebeye" />
 	</target>
 
 </project>

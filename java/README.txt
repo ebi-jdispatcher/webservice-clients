@@ -76,7 +76,7 @@ To run a client the required jars (lib/) need to be added to the classpath. A
 simple way to do this is to set the java.ext.dirs property to include the
 directory containing the jars. For example:
 
-  java -Djava.ext.dirs=lib/ -jar bin/WSDbfetch.jar
+  java -Djava.ext.dirs=lib/ -jar jar/WSDbfetch.jar
 
 For JAX-WS under Java 5, the JAX-WS libraries also need to be included in the
 path list specified for java.ext.dirs, since these are not provided as part 

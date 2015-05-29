@@ -41,7 +41,7 @@ import uk.ac.ebi.webservices.jaxws.stubs.ebeye.*;
  * Java EB-eye client using JAX-WS RI.
  * 
  * See:
- * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/ebeye">http://www.ebi.ac.uk/Tools/Webservices/services/ebeye</a>
+ * <a href="http://www.ebi.ac.uk/Tools/Webservices/services/eb-eye">http://www.ebi.ac.uk/Tools/Webservices/services/eb-eye</a>
  * <a href="http://www.ebi.ac.uk/Tools/Webservices/tutorials/java">http://www.ebi.ac.uk/Tools/Webservices/tutorials/java</a>
  */
 public class EBeyeClient {

@@ -41,7 +41,7 @@ import uk.ac.ebi.webservices.axis1.stubs.ebeye.*;
  * 
  * <p>See:</p>
  * <ul>
- * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/ebeye">http://www.ebi.ac.uk/Tools/webservices/services/ebeye</a></li>
+ * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/eb-eye">http://www.ebi.ac.uk/Tools/webservices/services/eb-eye</a></li>
  * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="http://ws.apache.org/axis/">http://ws.apache.org/axis/</a></li>
  * </ul>
