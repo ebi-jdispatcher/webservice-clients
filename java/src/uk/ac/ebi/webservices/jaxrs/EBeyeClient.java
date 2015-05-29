@@ -82,7 +82,7 @@ public class EBeyeClient {
 	                                              //+ "  Increase output messages.\n"
 	                                              //+ "\n"
 	                                              + "--debugLevel <level>\n"
-	                                              + "  Set debug output level.\n"
+	                                              + "  Set debug output level. (default: 0)\n"
 	                                              + "\n"
 	                                              + "--endpoint <endpoint>\n"
 	                                              + "  Override service endpoint used.\n"
@@ -111,7 +111,7 @@ public class EBeyeClient {
 	                                              + "  These domains are indexed in the EB-eye.\n" + "\n" + "--getDomainsReferencedInEntry <domain> <entry>\n"
 	                                              + "  Returns the list of domains with entries referenced in a particular domain\n"
 	                                              + "  entry. These domains are indexed in the EB-eye.\n" + "\n"
-	                                              + "--getReferencedEntries <domain> <entry> <referencedDomain> <fields> <start> <size> <fieldurl> <viewurl>\n"
+	                                              + "--getReferencedEntries <domain> <entries> <referencedDomain> <fields> <start> <size> <fieldurl> <viewurl>\n"
 	                                              + "  Returns the list of referenced entry identifiers from a domain referenced\n"
 	                                              + "  in a particular domain entry.\n" + "\n" + "Further information:\n" + "\n"
 	                                              + "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye\n"
@@ -451,6 +451,8 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainDetails", "End", 1);
 	}
 
+	String[] labels = { "searchable", "retrievable", "sortable", "facet", "alias", "referenced domain", "referenced field", "type" };
+
 	private void printDetailsInHierarchy(WsDomain domain) {
 		System.out.println(domain.getName() + " (" + domain.getId() + ")");
 		if (domain.getSubdomains() == null) {
@@ -462,18 +464,18 @@ public class EBeyeClient {
 			}
 
 			if (domain.getFieldInfos() != null) {
-				System.out.println("domain\tfield\tsearchable\tretrievable\tsortable\tfacet\talias");
+
+				System.out.println(getDomainDetailHeaders());
 				StringBuffer sb = null;
-				WsOption option = null;
+				String option = null;
 				for (WsFieldInfo fieldInfo : domain.getFieldInfos().getFieldInfo()) {
 					sb = new StringBuffer(domain.getId());
 					sb.append('\t');
 					sb.append(fieldInfo.getId());
-					int max = fieldInfo.getOptions().getOption().size() > 5 ? 5 : fieldInfo.getOptions().getOption().size();
-					for (int i = 0; i < max; i++) {
-						option = fieldInfo.getOptions().getOption().get(i);
+					for (int i = 0; i < labels.length; i++) {
+						option = findOptionValue(fieldInfo.getOptions().getOption(), labels[i]);
 						sb.append('\t');
-						sb.append(option.getValue());
+						sb.append(option);
 					}
 					System.out.println(sb.toString());
 				}
@@ -487,6 +489,27 @@ public class EBeyeClient {
 				printDetailsInHierarchy(subDomain);
 			}
 		}
+	}
+
+	private String getDomainDetailHeaders() {
+		StringBuffer sb = new StringBuffer("domain\tfield\t");
+		if (labels != null && labels.length > 0) {
+			sb.append(labels[0]);
+			for (int i = 1; i < labels.length; i++) {
+				sb.append('\t');
+				sb.append(labels[i]);
+			}
+		}
+		return sb.toString();
+	}
+
+	private String findOptionValue(List<WsOption> options, String name) {
+		for (WsOption option : options) {
+			if (option.getName().equals(name)) {
+				return option.getValue();
+			}
+		}
+		return "";
 	}
 
 	/**
@@ -510,21 +533,27 @@ public class EBeyeClient {
 	private void print(WsEntry entry) {
 		if (entry.getFields() != null) {
 			List<String> values = null;
-			for (WsField field : entry.getFields().getField()) {
-				values = field.getValues().getValue();
-				if (values.size() > 0) {
-					for (String value : values) {
-						System.out.println(value);
+			if (entry.getFields() != null) {
+				for (WsField field : entry.getFields().getField()) {
+					values = field.getValues().getValue();
+					if (values.size() > 0) {
+						for (String value : values) {
+							System.out.println(value);
+						}
 					}
 				}
 			}
 
-			for (Wsurl url : entry.getFieldURLs().getFieldURL()) {
-				System.out.println(url.getValue());
+			if (entry.getFieldURLs() != null) {
+				for (Wsurl url : entry.getFieldURLs().getFieldURL()) {
+					System.out.println(url.getValue());
+				}
 			}
 
-			for (Wsurl url : entry.getViewURLs().getViewURL()) {
-				System.out.println(url.getValue());
+			if (entry.getViewURLs() != null) {
+				for (Wsurl url : entry.getViewURLs().getViewURL()) {
+					System.out.println(url.getValue());
+				}
 			}
 		}
 		System.out.println();

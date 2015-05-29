@@ -2250,12 +2250,13 @@
 	<!-- JAX-RS Client -->
 	<!-- <target name="jaxrs" depends="jaxrs-jar" description="JAX-RS Client: generate stubs and build REST clients" /> -->
 	
-	<!-- Generate JAX-RS stubs for all services -->
-	<!-- This can be used when starting developing a new client since stubs generated from WADL cann't be used directly. They require some modifications.-->
+	<!-- Generate JAX-RS stubs for all services 
+		 This can be used when starting developing a new client since stubs generated from WADL cann't be used directly. They require some modifications.
 	<target name="jaxrs-stubs" depends="resolve" description= "JAX-RS Client: generate code stubs for REST Clients" >
 		<antcall target="jaxrs-stubs-ebeye" />
 	</target>
-
+	-->
+	
 	<!-- Compile JAX-RS into classes -->
 	<target name="jaxrs-compile" description="JAX-RS Client: compile REST clients">
 		<copy file="${src.dir}/client-config.wsdd" todir="${build.dir}" />
@@ -2288,7 +2289,7 @@
 		</jar>
 	</target>
 
-	<!-- Clean-up JAX-RS generate files -->
+	<!-- Clean-up JAX-RS generate files 
 	<target name="jaxrs-distclean-stubs" description="JAX-RS Client: remove generated stubs">
 		<antcall target="jaxrs-distclean-stubs-ebeye" />
 	</target>
@@ -2299,5 +2300,5 @@
 	        <fileset dir="${jaxrs.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
-	
+	-->
 </project>
