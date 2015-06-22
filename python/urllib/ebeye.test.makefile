@@ -40,7 +40,9 @@ getFacetedResults \
 getEntries \
 getDomainsReferencedInDomain \
 getDomainsReferencedInEntry \
-getReferencedEntries
+getReferencedEntries \
+getTopTerms \
+getMoreLikeThis
 
 getDomainHierarchy:
 	${PYTHON} ebeye_urllib2.py getDomainHierarchy
@@ -49,13 +51,13 @@ getDomainDetails:
 	${PYTHON} ebeye_urllib2.py getDomainDetails uniprot
 
 getResults:
-	${PYTHON} ebeye_urllib2.py getResults uniprot 'brca1 OR (breast cancer)' id,descRecName 5 5 true true length descending
+	${PYTHON} ebeye_urllib2.py getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
 
 getFacetedResults:
-	${PYTHON} ebeye_urllib2.py getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName 5 5 true true length descending 5 TAXONOMY,status
+	${PYTHON} ebeye_urllib2.py getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status --facets=status:Reviewed
 
 getEntries:
-	${PYTHON} ebeye_urllib2.py getEntries uniprot WAP_MOUSE,WAP_RAT id,descRecName true true
+	${PYTHON} ebeye_urllib2.py getEntries uniprot WAP_MOUSE,WAP_RAT id,descRecName --fieldurl=true --viewurl=true
 
 getDomainsReferencedInDomain:
 	${PYTHON} ebeye_urllib2.py getDomainsReferencedInDomain uniprot
@@ -64,11 +66,18 @@ getDomainsReferencedInEntry:
 	${PYTHON} ebeye_urllib2.py getDomainsReferencedInEntry uniprot WAP_MOUSE
 
 getReferencedEntries:
-	${PYTHON} ebeye_urllib2.py getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description 1 0 true true
+	${PYTHON} ebeye_urllib2.py getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description --size=1 --start=0 --fieldurl=true --viewurl=true
+
+getTopTerms:
+	${PYTHON} ebeye_urllib2.py getTopTerms pride description --size=30 --excludes=proteome --excludesets=omics_stopwords
+
+getMoreLikeThis:
+	${PYTHON} ebeye_urllib2.py getMoreLikeThis uniprot TPIS_HUMAN descRecName --size=20 --start=0 --fieldurl=true --viewurl=true --mltfields=descRecName --mintermfreq=1 --mindocfreq=5 --maxqueryterm=10 --excludes=state --excludesets=lucene_stopwords
 
 # EBI Search client for python3
 
-ebeye3: getDomainHierarchy3 \
+ebeye3: \
+getDomainHierarchy3 \
 getDomainDetails3 \
 getResults3 \
 getFacetedResults3 \
@@ -76,6 +85,8 @@ getEntries3 \
 getDomainsReferencedInDomain3 \
 getDomainsReferencedInEntry3 \
 getReferencedEntries3 \
+getTopTerms3 \
+getMoreLikeThis3
 
 getDomainHierarchy3:
 	${PYTHON3} ebeye_urllib3.py getDomainHierarchy
@@ -87,7 +98,7 @@ getResults3:
 	${PYTHON3} ebeye_urllib3.py getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
 
 getFacetedResults3:
-	${PYTHON3} ebeye_urllib3.py getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status
+	${PYTHON3} ebeye_urllib3.py getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status --facets=status:Reviewed
 
 getEntries3:
 	${PYTHON3} ebeye_urllib3.py getEntries uniprot WAP_MOUSE,WAP_RAT id,descRecName --fieldurl=true --viewurl=true
@@ -100,3 +111,9 @@ getDomainsReferencedInEntry3:
 
 getReferencedEntries3:
 	${PYTHON3} ebeye_urllib3.py getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description --size=1 --start=0 --fieldurl=true --viewurl=true
+
+getTopTerms3:
+	${PYTHON} ebeye_urllib2.py getTopTerms pride description --size=30 --excludes=proteome --excludesets=omics_stopwords
+
+getMoreLikeThis3:
+	${PYTHON} ebeye_urllib2.py getMoreLikeThis uniprot TPIS_HUMAN descRecName --size=20 --start=0 --fieldurl=true --viewurl=true --mltfields=descRecName --mintermfreq=1 --mindocfreq=5 --maxqueryterm=10 --excludes=state --excludesets=lucene_stopwords

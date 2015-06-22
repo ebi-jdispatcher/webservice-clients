@@ -48,13 +48,17 @@ usage = """
   %prog getDomainDetails  <domain>
 
   %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
-  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields]
+  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
 
   %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
   
   %prog getDomainsReferencedInDomain <domain>
   %prog getDomainsReferencedInEntry  <domain> <entryid>
-  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]"""
+  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
+  
+  %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
+  
+  %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
 description = """Search at EMBL-EBI in All results using the EB-eye search engine. For more information on EB-eye 
 refer to http://www.ebi.ac.uk/ebisearch/"""
 version = "$Id: dbfetch_urllib2.py 2468 2013-01-25 14:01:01Z hpm $"
@@ -68,6 +72,13 @@ parser.add_option('--sortfield', help='field id to sort')
 parser.add_option('--order', help='sort in ascending/descending order')
 parser.add_option('--facetcount', help='number of facet values to retrieve')
 parser.add_option('--facetfields', help='field ids associated with facets to retrieve')
+parser.add_option('--facets', help='list of selected facets')
+parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
+parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
+parser.add_option('--mindocfreq', help='frequency at which words will be ignored which do not occur in at least this many documents')
+parser.add_option('--maxqueryterm', help='maximum number of query terms that will be included in any generated query')
+parser.add_option('--excludes', help='terms to be excluded')
+parser.add_option('--excludesets', help='stop word sets to be excluded')
 
 parser.add_option('--quiet', action='store_true', help='decrease output level')
 parser.add_option('--verbose', action='store_true', help='increase output level')
@@ -245,11 +256,11 @@ def printEntries(entries):
             else:
                 print
         if hasFieldUrls(entry):
-           for fieldurl in entry['fieldURLs']['fieldURL':]:
-              print (str(fieldurl))
+            for fieldurl in entry['fieldURLs']['fieldURL':]:
+                print (str(fieldurl))
         if hasViewUrls(entry):
             for viewurl in entry['viewURLs']['viewURL':]:
-               print (str(viewurl))
+                print (str(viewurl))
     printDebugMessage('printEntries', 'End', 1)
 
 def hasFieldUrls(entry):
@@ -274,9 +285,9 @@ def printFacets(facets):
     printDebugMessage('printFacets', 'End', 1)
 
 # Get search results with facets
-def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', facetcount='10', facetfields=''):
+def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', facetcount='10', facetfields='', facets=''):
     printDebugMessage('getFacetedResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&facetcount=' + facetcount + '&facetfields=' + facetfields
+    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
     printDebugMessage('getFacetedResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -333,6 +344,36 @@ def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', st
         print
     printDebugMessage('getEntries', 'End', 1)
 
+# Get top terms
+def getTopTerms(domain, field, size='', excludes='', excludesets=''):
+    printDebugMessage('getTopTerms', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '/topterms/' + field +'?size=' +size + '&excludes=' + excludes + '&excludesets=' + excludesets
+    printDebugMessage('getTopTerms', requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    topterms = doc['topTerms']['term':]
+    for term in topterms:
+        printTerm(term)
+        print
+    printDebugMessage('getTopTerms', 'End', 1)
+
+def printTerm(term):
+    printDebugMessage('printTerm', 'Begin', 1)
+    print (str(term['text']) + ': ' + str(term['docFreq']))
+    print
+    printDebugMessage('printTerm', 'End', 1)
+
+# Get similar documents to a given one
+def getMoreLikeThis(domain, entryid, fields, size='', start='', fieldurl='', viewurl='', mltfields='', mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
+    printDebugMessage('getMoreLikeThis', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis'  +'?size=' +size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl  + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq  + '&mindocfreq=' + maxqueryterm  + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
+    printDebugMessage('getMoreLikeThis', requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    entries = doc['entries']['entry':]
+    printEntries(entries)
+    printDebugMessage('getMoreLikeThis', 'End', 1)
+
 # No arguments, print usage
 if len(args) < 1:
     parser.print_help()
@@ -370,7 +411,8 @@ elif args[0] == 'getFacetedResults':
         order = options.order if options.order else ''
         facetcount = options.facetcount if options.facetcount else ''
         facetfields = options.facetfields if options.facetfields else ''
-        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, facetcount, facetfields)
+        facets = options.facets if options.facets else ''
+        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, facetcount, facetfields, facets)
 # Get entry details.
 elif args[0] == 'getEntries':
     if len(args) < 4:
@@ -401,6 +443,31 @@ elif args[0] == 'getReferencedEntries':
         fieldurl = options.fieldurl if options.fieldurl else ''
         viewurl =  options.viewurl if  options.viewurl else ''
         getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl)
+# Get top terms
+elif args[0] == 'getTopTerms':
+    if len(args) < 3:
+        print ('domain and field should be given.')
+    else:
+        size = options.size if options.size else ''
+        excludes = options.excludes if options.excludes else ''
+        excludesets = options.excludesets if options.excludesets else ''        
+        getTopTerms(args[1], args[2], size, excludes, excludesets)
+# Get similar documents to a given one
+elif args[0] == 'getMoreLikeThis':
+    if len(args) < 4:
+        print ('domain, entryid and fields should be given.')
+    else:
+        size = options.size if options.size else ''
+        start = options.start if options.start else ''
+        fieldurl = options.fieldurl if options.fieldurl else ''
+        viewurl = options.viewurl if options.viewurl else ''
+        mltfields =  options.mltfields if  options.mltfields else ''
+        mintermfreq =  options.mintermfreq if  options.mintermfreq else ''
+        mindocfreq =  options.mindocfreq if  options.mindocfreq else ''
+        maxqueryterm =  options.maxqueryterm if  options.maxqueryterm else ''
+        excludes = options.excludes if options.excludes else ''
+        excludesets = options.excludesets if options.excludesets else ''
+        getMoreLikeThis(args[1], args[2], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
 # Unknown argument combination, display usage
 else:
     print ('Error: unrecognised argument combination')
