@@ -2259,8 +2259,7 @@
 	
 	<!-- Compile JAX-RS into classes -->
 	<target name="jaxrs-compile" description="JAX-RS Client: compile REST clients">
-		<copy file="${src.dir}/client-config.wsdd" todir="${build.dir}" />
-		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/jaxrs/" />
+		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/jaxrs/" />
 	</target>
 
 	<!-- Package JAX-RS jars -->

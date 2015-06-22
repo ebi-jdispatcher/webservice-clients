@@ -16,10 +16,10 @@
  * limitations under the License.
  * 
  * ======================================================================
- * EB-eye web service Java client using Jersey.
+ * EB-eye web service Java client using JAX-RS Client.
  * ----------------------------------------------------------------------
  * Tested with:
- *   Sun Java 1.7.0_60 with Jersey 2.7.
+ *   Sun Java 1.7.0_60 with JAX-RS Client.
  * ====================================================================== */
 package uk.ac.ebi.webservices.jaxrs;
 
@@ -47,6 +47,8 @@ import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFieldInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsIndexInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsOption;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTerm;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTopTerms;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.Wsurl;
 
 /** <p>EB-eye web service Java client using Apache HttpComponents.</p>
@@ -72,48 +74,70 @@ public class EBeyeClient {
 	private static final String usageMsg        = "EB-eye\n"
 	                                              + "======\n"
 	                                              + "\n"
-	                                              + "-h, --help\n"
-	                                              + "  This help/usage message.\n"
-	                                              + "\n"
-	                                              //+ "-q, --quiet\n"
-	                                              //+ "  Decrease output messages.\n"
-	                                              //+ "\n"
-	                                              //+ "-v, --verbose\n"
-	                                              //+ "  Increase output messages.\n"
-	                                              //+ "\n"
-	                                              + "--debugLevel <level>\n"
-	                                              + "  Set debug output level. (default: 0)\n"
-	                                              + "\n"
-	                                              + "--endpoint <endpoint>\n"
-	                                              + "  Override service endpoint used.\n"
-	                                              + "\n"
 	                                              + "--getDomainsHierarchy\n"
 	                                              + "  Returns the hierarchy of the domains available.\n"
 	                                              + "\n"
 	                                              + "--getDomainDetails <domain>\n"
 	                                              + "  Returns the list of fields that can be retrieved for a particular domain.\n"
 	                                              + "\n"
-	                                              + "--getResults <domain> <query> <fields> <start> <size> <fieldurl> <viewurl> <sortfield> <order>\n"
+	                                              + "--getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]\n"
 	                                              + "  Executes a query and returns a list of results. Each result contains the \n"
 	                                              + "  values for each field specified in the \"fields\" argument in the same order\n"
 	                                              + "  as they appear in the \"fields\" list.\n"
 	                                              + "\n"
-	                                              + "--getFacetedResults <domain> <query> <fields> <start> <size> <fieldurl> <viewurl> <sortfield> <order> <facetcount> <facetfield> <facets>\n"
+	                                              + "--getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]\n"
 	                                              + "  Executes a query and returns a list of results with facets. Each result contains the \n"
 	                                              + "  values for each field specified in the \"fields\" argument in the same order\n"
-	                                              + "  as they appear in the \"fields\" list.\n" + "\n"
-	                                              + "--getEntries <domain> <entries> <fields> <fieldurl> <viewurl>\n"
+	                                              + "  as they appear in the \"fields\" list.\n"
+	                                              + "\n"
+	                                              + "--getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]\n"
 	                                              + "  Search for entries in a domain and returns the values for some of the \n"
 	                                              + "  fields of these entries. The result contains the values for each field \n"
-	                                              + "  specified in the \"fields\" argument in the same order as they appear in the\n" + "  \"fields\" list.\n"
-	                                              + "\n" + "--getDomainsReferencedInDomain <domain>\n"
+	                                              + "  specified in the \"fields\" argument in the same order as they appear in the\n"
+	                                              + "  \"fields\" list.\n"
+	                                              + "\n"
+	                                              + "--getDomainsReferencedInDomain <domain>\n"
 	                                              + "  Returns the list of domains with entries referenced in a particular domain.\n"
-	                                              + "  These domains are indexed in the EB-eye.\n" + "\n" + "--getDomainsReferencedInEntry <domain> <entry>\n"
+	                                              + "  These domains are indexed in the EB-eye.\n"
+	                                              + "\n"
+	                                              + "--getDomainsReferencedInEntry <domain> <entry>\n"
 	                                              + "  Returns the list of domains with entries referenced in a particular domain\n"
-	                                              + "  entry. These domains are indexed in the EB-eye.\n" + "\n"
-	                                              + "--getReferencedEntries <domain> <entries> <referencedDomain> <fields> <start> <size> <fieldurl> <viewurl>\n"
+	                                              + "  entry. These domains are indexed in the EB-eye.\n"
+	                                              + "\n"
+	                                              + "--getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]\n"
 	                                              + "  Returns the list of referenced entry identifiers from a domain referenced\n"
-	                                              + "  in a particular domain entry.\n" + "\n" + "Further information:\n" + "\n"
+	                                              + "  in a particular domain entry.\n"
+	                                              + "\n"
+	                                              + "--getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]\n"
+	                                              + "  Returns the list of top N terms in a field\n"
+	                                              + "\n"
+	                                              + "--getMoreLikeThis <domain> <entryid> <fields> "
+	                                              + "                  [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]\n"
+	                                              + "  Returns the list of similar entries to a given one\n"
+	                                              + "\n"
+	                                              + "-h, --help\n"
+	                                              + "  This help/usage message.\n"
+	                                              + "\n"
+	                                              + "--debugLevel <level>\n"
+	                                              + "  Set debug output level. (default: 0)\n"
+	                                              + "\n"
+	                                              + "--endpoint <endpoint>\n"
+	                                              + "  Override service endpoint used.\n"
+	                                              + "\n"
+	                                              + "--size <size>\tnumber of entries to retrieve\n"
+	                                              + "--start <start>\tindex of the first entry in results.\n"
+	                                              + "--fieldurl <fieldurl>\twhether field links are included.\n"
+	                                              + "--viewurl <viewurl>\twhether view links are included.\n"
+	                                              + "--sortfield <sortfield>\tfield id to sort.\n"
+	                                              + "--order <order>\tsort in ascending/descending order.\n"
+	                                              + "--facetcount <facetcount>\tnumber of facet values to retrieve.\n"
+	                                              + "--facetfields <facetfields>\tfield ids associated with facets to retrieve.\n"
+	                                              + "--mltfields <mltfields>\tfield ids  to be used for generating a morelikethis query.\n"
+	                                              + "--mintermfreq <mintermfreq>\tfrequency below which terms will be ignored in the base document.\n"
+	                                              + "--mindocfreq <mindocfreq>\tfrequency at which words will be ignored which do not occur in at least this many documents.\n"
+	                                              + "--maxqueryterm <maxqueryterm>\tmaximum number of query terms that will be included in any generated query.\n"
+	                                              + "--excludes <excludes>\tterms to be excluded"
+	                                              + "--excludesets <excludesets>\tstop word sets to be excluded.\n" + "\n" + "Further information:\n" + "\n"
 	                                              + "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye\n"
 	                                              + "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n" + "\n" + "Support/Feedback:\n" + "\n"
 	                                              + "  http://www.ebi.ac.uk/support/\n" + "\n";
@@ -276,8 +300,9 @@ public class EBeyeClient {
 	 */
 	public WsResult getDomainDetails(String domain) {
 		printDebugMessage("getDomainDetails", "Begin", 1);
-
-		Invocation.Builder builder = getTarget().path(domain).request();
+		WebTarget t = getTarget().path(domain);
+		printDebugMessage("getDomainDetails", getURLString(t), 2);
+		Invocation.Builder builder = t.request();
 		WsResult result = builder.get(WsResult.class);
 
 		printDebugMessage("getDomainDetails", "End", 1);
@@ -405,6 +430,76 @@ public class EBeyeClient {
 
 		printDebugMessage("getReferencedEntries", "End", 1);
 		return result;
+	}
+
+	/**
+	 * Get entries like a given document
+	 * @param domain
+	 * @param entryid
+	 * @param fields
+	 * @param start
+	 * @param size
+	 * @param fieldurl
+	 * @param viewurl
+	 * @param mltfields
+	 * @param mintermfreq
+	 * @param mindocfreq
+	 * @param maxqueryterm
+	 * @param excludes
+	 * @param excludesets
+	 * @return
+	 */
+	private WsResult getMoreLikeThis(String domain, String entryid, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
+	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
+		printDebugMessage("getMoreLikeThis", "Begin", 1);
+
+		String path = domain + "/entry/" + entryid + "/morelikethis";
+
+		WebTarget t = getTarget().path(path).queryParam("fields", fields).queryParam("start", start).queryParam("size", size).queryParam("fieldurl", fieldurl).queryParam("viewurl",
+		                                                                                                                                                                  viewurl).queryParam("mltfields",
+		                                                                                                                                                                                      mltfields).queryParam("mintermfreq",
+		                                                                                                                                                                                                            mintermfreq).queryParam("mindocfreq",
+		                                                                                                                                                                                                                                    mindocfreq).queryParam("maxqueryterm",
+		                                                                                                                                                                                                                                                           maxqueryterm).queryParam("excludes",
+		                                                                                                                                                                                                                                                                                    excludes).queryParam("excludesets",
+		                                                                                                                                                                                                                                                                                                         excludesets);
+
+		printDebugMessage("getMoreLikeThis", getURLString(t), 2);
+		Invocation.Builder builder = t.request();
+		WsResult result = builder.get(WsResult.class);
+
+		printDebugMessage("getMoreLikeThis", "End", 1);
+		return result;
+	}
+
+	/**
+	 * Get top terms
+	 * 
+	 * @param domain
+	 * @param field
+	 * @param size
+	 * @param excludes
+	 * @param excludesets
+	 * @return
+	 */
+	public WsResult getTopTerms(String domain, String field, int size, String excludes, String excludesets) {
+		printDebugMessage("getTopTerms", "Begin", 1);
+
+		String path = domain + "/topterms/" + field;
+		WebTarget t = getTarget().path(path).queryParam("size", size).queryParam("excludes", excludes).queryParam("excludesets", excludesets);
+		printDebugMessage("getTopTerms", getURLString(t), 2);
+		Invocation.Builder builder = t.request();
+		WsResult result = builder.get(WsResult.class);
+
+		printDebugMessage("getTopTerms", "End", 1);
+		return result;
+	}
+
+	private String getURLString(WebTarget t) {
+		if (t.getUri().getQuery() == null || t.getUri().getQuery().isEmpty()) {
+			return t.getUri().getPath();
+		}
+		return t.getUri().getPath() + "?" + t.getUri().getQuery();
 	}
 
 	/**
@@ -693,6 +788,70 @@ public class EBeyeClient {
 		printDebugMessage("printGetReferencedEntries", "End", 1);
 	}
 
+	/**
+	 * Print found similar documents 
+	 * @param domain
+	 * @param entryid
+	 * @param fields
+	 * @param start
+	 * @param size
+	 * @param fieldurl
+	 * @param viewurl
+	 * @param mltfields
+	 * @param mintermfreq
+	 * @param mindocfreq
+	 * @param maxqueryterm
+	 * @param excludes
+	 * @param excludesets
+	 */
+	public void printGetMoreLikeThis(String domain, String entryid, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
+	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
+		printDebugMessage("printGetMoreLikeThis", "Begin", 1);
+
+		WsResult result = getMoreLikeThis(domain,
+		                                  entryid,
+		                                  fields,
+		                                  start,
+		                                  size,
+		                                  fieldurl,
+		                                  viewurl,
+		                                  mltfields,
+		                                  mintermfreq,
+		                                  mindocfreq,
+		                                  maxqueryterm,
+		                                  excludes,
+		                                  excludesets);
+
+		WsEntries entries = result.getEntries();
+		if (entries != null) {
+			for (WsEntry entry : entries.getEntry()) {
+				print(entry);
+			}
+		}
+
+		printDebugMessage("printGetMoreLikeThis", "End", 1);
+	}
+
+	/**
+	 * @param domain
+	 * @param field
+	 * @param size
+	 * @param excludes
+	 * @param excludesets
+	 */
+	public void printGetTopTerms(String domain, String field, int size, String excludes, String excludesets) {
+		printDebugMessage("printGetTopTerms", "Begin", 1);
+
+		WsResult result = getTopTerms(domain, field, size, excludes, excludesets);
+		WsTopTerms topTerms = result.getTopTerms();
+		if (topTerms != null && topTerms.getTerm() != null) {
+			for (WsTerm term : topTerms.getTerm()) {
+				System.out.println(term.getText() + ": " + term.getDocFreq());
+			}
+		}
+		printDebugMessage("printGetTopTerms", "End", 1);
+	}
+
 	private void printReference(WsEntry entry) {
 		System.out.println(entry.getId() + " " + entry.getReferenceCount());
 		if (entry.getReferences() != null) {
@@ -744,17 +903,17 @@ public class EBeyeClient {
 		// --getDomainDetails <domain>
 		options.addOption("getDomainDetails", true, "Get domain details");
 
-		// --getResults <domain> <query> <fields> <start> <size> <fieldurl> <viewurl> <sortfield> <order>
+		// --getResults  <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
 		options.addOption("getResults", true, "Get entries which match query");
-		options.getOption("getResults").setArgs(9);
+		options.getOption("getResults").setArgs(3);
 
-		// --getFacetedResults <domain> <query> <fields> <start> <size> <fieldurl> <viewurl> <sortfield> <order> <facetcount> <facetfield> <facets>
+		// --getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
 		options.addOption("getFacetedResults", true, "Get entries which match query with facets");
-		options.getOption("getFacetedResults").setArgs(12);
+		options.getOption("getFacetedResults").setArgs(3);
 
-		// --getEntries <domain> <entries> <fields> <fieldurl> <viewurl>
+		// --getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
 		options.addOption("getEntries", true, "Get data from a specific set of entries");
-		options.getOption("getEntries").setArgs(5);
+		options.getOption("getEntries").setArgs(3);
 
 		// --getDomainsReferencedInDomain <domain>
 		options.addOption("getDomainsReferencedInDomain", true, "Domains cross-referenced by domain");
@@ -763,10 +922,33 @@ public class EBeyeClient {
 		options.addOption("getDomainsReferencedInEntry", true, "Domains cross-referenced by entry");
 		options.getOption("getDomainsReferencedInEntry").setArgs(2);
 
-		// --getReferencedEntries <domain> <entry> <referencedDomain> <fields> <start> <size> <fieldurl> <viewurl>
+		// --getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
 		options.addOption("getReferencedEntries", true, "Entries referenced by an entry");
-		options.getOption("getReferencedEntries").setArgs(8);
+		options.getOption("getReferencedEntries").setArgs(4);
 
+		// --getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
+		options.addOption("getTopTerms", true, "Top Terms in a field");
+		options.getOption("getTopTerms").setArgs(2);
+
+		// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+		options.addOption("getMoreLikeThis", true, "Similar documents similar to a given entry");
+		options.getOption("getMoreLikeThis").setArgs(3);
+
+		// Optional arguments 
+		options.addOption("size", true, "number of entries to retrieve");
+		options.addOption("start", true, "index of the first entry in results");
+		options.addOption("fieldurl", true, "whether field links are included");
+		options.addOption("viewurl", true, "whether view links are included");
+		options.addOption("sortfield", true, "field id to sort");
+		options.addOption("order", true, "sort in ascending/descending order");
+		options.addOption("facetcount", true, "number of facet values to retrieve");
+		options.addOption("facetfields", true, "field ids associated with facets to retrieve");
+		options.addOption("mltfields", true, "field ids  to be used for generating a morelikethis query");
+		options.addOption("mintermfreq", true, "frequency below which terms will be ignored in the base document");
+		options.addOption("mindocfreq", true, "frequency at which words will be ignored which do not occur in at least this many documents");
+		options.addOption("maxqueryterm", true, "maximum number of query terms that will be included in any generated query");
+		options.addOption("excludes", true, "terms to be excluded");
+		options.addOption("excludesets", true, "stop word sets to be excluded");
 	}
 
 	/**
@@ -820,60 +1002,116 @@ public class EBeyeClient {
 			else if (cli.hasOption("getDomainDetails")) {
 				ebeye.printGetDomainDetails(cli.getOptionValue("getDomainDetails"));
 			}
-			// --getResults
+			// --getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
 			else if (cli.hasOption("getResults")) {
 				String[] vals = cli.getOptionValues("getResults");
+				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
+				String sortfield = cli.hasOption("sortfield") ? cli.getOptionValue("sortfield") : "";
+				String order = cli.hasOption("order") ? cli.getOptionValue("order") : "";
 				ebeye.printGetResults(vals[0],
 				                      vals[1],
 				                      vals[2],
-				                      Integer.parseInt(vals[3]),
-				                      Integer.parseInt(vals[4]),
-				                      Boolean.parseBoolean(vals[5]),
-				                      Boolean.parseBoolean(vals[6]),
-				                      vals[7],
-				                      vals[8]);
+				                      Integer.parseInt(start),
+				                      Integer.parseInt(size),
+				                      Boolean.parseBoolean(fieldurl),
+				                      Boolean.parseBoolean(viewurl),
+				                      sortfield,
+				                      order);
 			}
-			// --getFacetedResults
+			// --getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
 			else if (cli.hasOption("getFacetedResults")) {
 				String[] vals = cli.getOptionValues("getFacetedResults");
+				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
+				String sortfield = cli.hasOption("sortfield") ? cli.getOptionValue("sortfield") : "";
+				String order = cli.hasOption("order") ? cli.getOptionValue("order") : "";
+				String facetcount = cli.hasOption("facetcount") ? cli.getOptionValue("facetcount") : "10";
+				String facetfield = cli.hasOption("facetfield") ? cli.getOptionValue("facetfield") : "";
+				String facets = cli.hasOption("facets") ? cli.getOptionValue("facets") : "";
 				ebeye.printGetFacetedResults(vals[0],
 				                             vals[1],
 				                             vals[2],
-				                             Integer.parseInt(vals[3]),
-				                             Integer.parseInt(vals[4]),
-				                             Boolean.parseBoolean(vals[5]),
-				                             Boolean.parseBoolean(vals[6]),
-				                             vals[7],
-				                             vals[8],
-				                             Integer.parseInt(vals[9]),
-				                             vals[10],
-				                             vals[11]);
+				                             Integer.parseInt(start),
+				                             Integer.parseInt(size),
+				                             Boolean.parseBoolean(fieldurl),
+				                             Boolean.parseBoolean(viewurl),
+				                             sortfield,
+				                             order,
+				                             Integer.parseInt(facetcount),
+				                             facetfield,
+				                             facets);
 			}
-			// --getEntries
+			// --getEntries  <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
 			else if (cli.hasOption("getEntries")) {
 				String[] vals = cli.getOptionValues("getEntries");
-				ebeye.printGetEntries(vals[0], vals[1], vals[2], Boolean.parseBoolean(vals[3]), Boolean.parseBoolean(vals[4]));
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "";
+				ebeye.printGetEntries(vals[0], vals[1], vals[2], Boolean.parseBoolean(fieldurl), Boolean.parseBoolean(viewurl));
 			}
-			// --getDomainsReferencedInDomain
+			// --getDomainsReferencedInDomain <domain>
 			else if (cli.hasOption("getDomainsReferencedInDomain")) {
 				ebeye.printGetDomainsReferencedInDomain(cli.getOptionValue("getDomainsReferencedInDomain"));
 			}
-			// --getDomainsReferencedInEntry
+			// --getDomainsReferencedInEntry <domain> <entry>
 			else if (cli.hasOption("getDomainsReferencedInEntry")) {
 				String[] vals = cli.getOptionValues("getDomainsReferencedInEntry");
 				ebeye.printGetDomainsReferencedInEntry(vals[0], vals[1]);
 			}
-			// --getReferencedEntries <domain> <entry> <referencedDomain>
+			// --getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
 			else if (cli.hasOption("getReferencedEntries")) {
 				String[] vals = cli.getOptionValues("getReferencedEntries");
+				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
 				ebeye.printGetReferencedEntries(vals[0],
 				                                vals[1],
 				                                vals[2],
 				                                vals[3],
-				                                Integer.parseInt(vals[4]),
-				                                Integer.parseInt(vals[5]),
-				                                Boolean.parseBoolean(vals[6]),
-				                                Boolean.parseBoolean(vals[7]));
+				                                Integer.parseInt(start),
+				                                Integer.parseInt(size),
+				                                Boolean.parseBoolean(fieldurl),
+				                                Boolean.parseBoolean(viewurl));
+			}
+			// --getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
+			else if (cli.hasOption("getTopTerms")) {
+				String[] vals = cli.getOptionValues("getTopTerms");
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String excludes = cli.hasOption("excludes") ? cli.getOptionValue("excludes") : "";
+				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
+				ebeye.printGetTopTerms(vals[0], vals[1], Integer.parseInt(size), excludes, excludesets);
+			}
+			// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+			else if (cli.hasOption("getMoreLikeThis")) {
+				String[] vals = cli.getOptionValues("getMoreLikeThis");
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
+				String mltfields = cli.hasOption("mltfields") ? cli.getOptionValue("mltfields") : "";
+				String mintermfreq = cli.hasOption("mintermfreq") ? cli.getOptionValue("mintermfreq") : "1";
+				String mindocfreq = cli.hasOption("mindocfreq") ? cli.getOptionValue("mindocfreq") : "5";
+				String maxqueryterm = cli.hasOption("maxqueryterm") ? cli.getOptionValue("maxqueryterm") : "10";
+				String excludes = cli.hasOption("excludes") ? cli.getOptionValue("excludes") : "";
+				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
+				ebeye.printGetMoreLikeThis(vals[0],
+				                           vals[1],
+				                           vals[2],
+				                           Integer.parseInt(start),
+				                           Integer.parseInt(size),
+				                           Boolean.parseBoolean(fieldurl),
+				                           Boolean.parseBoolean(viewurl),
+				                           mltfields,
+				                           Integer.parseInt(mintermfreq),
+				                           Integer.parseInt(mindocfreq),
+				                           Integer.parseInt(maxqueryterm),
+				                           excludes,
+				                           excludesets);
 			}
 			else {
 				System.err.println("Error: unknown action, see --help");
@@ -888,5 +1126,4 @@ public class EBeyeClient {
 		}
 		System.exit(exitVal);
 	}
-
 }

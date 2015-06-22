@@ -69,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "result", propOrder = { "hitCount", "entries", "facets", "domains", "suggestions", "diagonostics" })
+@XmlType(name = "result", propOrder = { "hitCount", "entries", "facets", "domains", "suggestions", "diagonostics", "topTerms" })
 public class WsResult {
 
 	protected Integer       hitCount;
@@ -77,6 +77,7 @@ public class WsResult {
 	protected WsFacets      facets;
 	protected WsDomains     domains;
 	protected WsSuggestions suggestions;
+	protected WsTopTerms    topTerms;
 	protected WsDiagnostics diagonostics;
 
 	/**
@@ -197,6 +198,30 @@ public class WsResult {
 	 */
 	public void setSuggestions(WsSuggestions value) {
 		this.suggestions = value;
+	}
+
+	/**
+	 * Gets the value of the topTerms property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link WsTopTerms }
+	 *     
+	 */
+	public WsTopTerms getTopTerms() {
+		return topTerms;
+	}
+
+	/**
+	 * Sets the value of the topTerms property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link WsTopTerms }
+	 *     
+	 */
+	public void setTopTerms(WsTopTerms topTerms) {
+		this.topTerms = topTerms;
 	}
 
 	/**
