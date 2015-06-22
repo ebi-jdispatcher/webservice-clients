@@ -94,6 +94,14 @@ GetOptions(
 	'order=s'      => \$params{'order'},         # Sort in ascending/descending order
 	'facetcount=s' => \$params{'facetcount'},    # Number of facet values to retrieve
 	'facetfields=s'=> \$params{'facetfields'},   # Field ids associated with facets to retrieve
+	'facets=s'     => \$params{'facets'},		 # Selected facets
+	'mltfields=s'  => \$params{'mltfields'},     # Field ids to be used for generating a morelikethis query
+	'mintermfreq=s'=> \$params{'mintermfreq'},   # Frequency below which terms will be ignored in the base document
+	'mindocfreq=s' => \$params{'mindocfreq'},    # Frequency at which words will be ignored which do not occur in at least this many documents
+	'maxqueryterm=s'=> \$params{'maxqueryterm'}, # maximum number of query terms that will be included in any generated query
+	'excludes=s'   => \$params{'excludes'},      # Terms to be excluded
+	'excludesets=s'=> \$params{'excludesets'},   # stop word sets to be excluded
+
 
 	'quiet'        => \$params{'quiet'},         # Decrease output level
 	'verbose'      => \$params{'verbose'},       # Increase output level
@@ -195,6 +203,28 @@ elsif ( $method eq 'getReferencedEntries') {
 		&print_get_referenced_entries(@ARGV);
 	}
 }
+
+# Get top terms
+elsif ( $method eq 'getTopTerms' ) {
+		if (scalar(@ARGV) < 2)  {
+		print STDERR '[main()] ', 'domain and field should be given.', "\n";
+	}
+	else {
+		&print_get_top_terms(@ARGV);
+	}
+}
+
+# Get similar documents to a given one
+elsif ( $method eq 'getMoreLikeThis' ) {
+		if (scalar(@ARGV) < 2)  {
+		print STDERR '[main()] ', 'domain, entry and fields should be given.', "\n";
+	}
+	else {
+		&print_get_more_like_this(@ARGV);
+	}
+}
+
+
 else {
 	&usage();
 	exit(1);
@@ -433,7 +463,7 @@ sub _print_entries {
 
 Print search results with facets
 
-  &print_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields);
+  &print_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields, $facets);
 
 =cut
 
@@ -530,6 +560,37 @@ sub print_get_referenced_entries {
 }
 
 
+=head2
+
+Print top terms
+
+  &print_get_top_terms($domainid, $fieldid, $size, $excludes, $excludesets);
+
+=cut
+
+sub print_get_top_terms {
+	print_debug_message( 'print_get_top_terms', 'Begin', 1 );
+	my ($param_list_xml) = &rest_get_top_terms(@_);
+	foreach my $term (@{$param_list_xml->{'topTerms'}->{'term'}}) {
+		print $term->{'text'}, ": ", $term->{'docFreq'}, "\n";
+	}
+	print_debug_message( 'print_get_top_terms', 'End', 1 );
+}
+
+
+=head2
+Print similar docouments 
+
+  &print_get_more_like_this($domainid, $entry $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
+
+=cut
+
+sub print_get_more_like_this{
+	print_debug_message( 'print_get_more_like_this', 'Begin', 1 );
+	my ($param_list_xml) = &rest_get_more_like_this(@_);
+	&_print_entries($param_list_xml->{'entries'}->{'entry'});
+	print_debug_message( 'print_get_more_like_this', 'End', 1 );
+}
 
 
 =head2 rest_get_domain_hierarchy()
@@ -599,7 +660,7 @@ sub rest_get_results {
 
 Get search results with facets
 
-  my ($param_list_xml) = &rest_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields);
+  my ($param_list_xml) = &rest_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields, $facets);
 
 =cut
 
@@ -617,8 +678,8 @@ sub rest_get_faceted_results {
 	my $order = $params{'order'}? $params{'order'} : "" ;
 	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
 	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
-
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&facetcount=".$facetcount ."&facetfields=". $facetfields;
+	my $facets = $params{'facets'}? $params{'facets'} : "";
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets; 
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_faceted_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue']);
@@ -712,6 +773,61 @@ sub rest_get_referenced_entries {
 }
 
 
+=head2 rest_get_top_terms()
+
+Get Top terms
+  
+  my(@term_list) = &rest_get_top_terms($domainid, $fieldid, $size, $excludes, $excludesets);
+  
+=cut
+
+sub rest_get_top_terms{
+	print_debug_message( 'rest_get_top_terms', 'Begin', 1 );
+	my $domainid = shift;
+	my $fieldid = shift;
+
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
+	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+
+	my $url                = $baseUrl . "/" .$domainid . "/topterms/" . $fieldid . "?size=" . $size . "&excludes="  .$excludes . "&excludesets=" . $excludesets;
+	print_debug_message( 'rest_get_top_terms', $url, 2 );
+	my $param_list_xml_str = &rest_request($url);
+	print_debug_message( 'rest_get_top_terms', 'End', 1 );
+	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['term']);
+}
+
+=head2 rest_get_more_like_this()
+
+Get similar documents to a given one
+
+  my(@entry_list) = &rest_get_more_like_this($domainid, $entry $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
+
+=cut
+
+sub rest_get_more_like_this{
+	print_debug_message( 'rest_get_more_like_this', 'Begin', 1 );
+	my $domainid = shift;
+	my $entryid = shift;
+	my $fields = shift;
+	
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+	my $mltfields = $params{'mltfields'}? $params{'mltfields'} : "" ;
+	my $mintermfreq = $params{'mintermfreq'}? $params{'mintermfreq'} : "" ;
+	my $mindocfreq = $params{'mindocfreq'}? $params{'mindocfreq'} : "" ;
+	my $maxqueryterm = $params{'maxqueryterm'}? $params{'maxqueryterm'} : "" ;
+	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
+	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+
+	my $url = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "/morelikethis" . "?size=" . $size . "&start=" . $start . "&fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq  . '&mindocfreq=' . $maxqueryterm  . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
+	my $param_list_xml_str = &rest_request($url);
+	print_debug_message( 'rest_get_more_like_this', 'End', 1 );
+	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+}
+
 ### Service actions and utility functions ###
 
 =head2 print_debug_message()
@@ -758,7 +874,7 @@ getDomainDetails <domain>
 getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order]
   Executes a query and returns a list of results.
   
-getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order | --facetcount | --facetfields]
+getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order | --facetcount | --facetfields | --facets]
   Executes a query and returns a list of results including facets.
 
 getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viweurl]
@@ -776,6 +892,12 @@ getDomainsReferencedInEntry <domain> <entryid>
 getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl]
   Returns the list of referenced entry identifiers from a domain referenced 
   in a particular domain entry. 
+  
+getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
+  Returns the list of top N terms from a field.
+  
+getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+  Returns the list of similar documents to a given one.
 
 Options:
   --size=SIZE           number of entries to retrieve
@@ -789,6 +911,20 @@ Options:
                         number of facet values to retrieve
   --facetfields=FACETFIELDS
                         field ids associated with facets to retrieve
+  --facets=FACETS
+                        selected facets
+  --mltfields=MLTFIELDS
+                        field ids  to be used for generating a morelikethis query
+  --mintermfreq=MINTERMFREQ
+                        frequency below which terms will be ignored in the base document
+  --mindocfreq=MINDOCFREQ
+                        frequency at which words will be ignored which do not occur in at least this many documents
+  --maxqueryterm=MAXQUERYTERM
+                        maximum number of query terms that will be included in any generated query
+  --excludes=EXCLUDES
+                        terms to be excluded
+  --excludesets=EXCLUDESETS
+                        stop word sets to be excluded
 
   --version             show program's version number and exit
   -h, --help            show this help message and exit

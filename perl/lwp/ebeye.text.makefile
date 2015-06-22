@@ -42,6 +42,8 @@ getEntries \
 getDomainsReferencedInDomain \
 getDomainsReferencedInEntry \
 getReferencedEntries \
+getTopTerms \
+getMoreLikeThis
 
 getDomainHierarchy:
 	${PERL} ebeye_lwp.pl getDomainHierarchy
@@ -53,7 +55,7 @@ getResults:
 	${PERL} ebeye_lwp.pl getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
 
 getFacetedResults:
-	${PERL} ebeye_lwp.pl getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status
+	${PERL} ebeye_lwp.pl getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status --facets=status:Reviewed
 
 getEntries:
 	${PERL} ebeye_lwp.pl getEntries uniprot WAP_MOUSE,WAP_RAT id,descRecName --fieldurl=true --viewurl=true
@@ -66,3 +68,9 @@ getDomainsReferencedInEntry:
 
 getReferencedEntries:
 	${PERL} ebeye_lwp.pl getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description --size=1 --start=0 --fieldurl=true --viewurl=true
+
+getTopTerms:
+	${PERL} ebeye_lwp.pl getTopTerms pride description --size=30 --excludes=proteome --excludesets=omics_stopwords
+
+getMoreLikeThis:
+	${PERL} ebeye_lwp.pl getMoreLikeThis uniprot TPIS_HUMAN descRecName --size=20 --start=0 --fieldurl=true --viewurl=true --mltfields=descRecName --mintermfreq=1 --mindocfreq=5 --maxqueryterm=10 --excludes=state --excludesets=lucene_stopwords
