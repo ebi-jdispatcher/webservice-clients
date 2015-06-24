@@ -871,13 +871,13 @@ getDomainHierarchy
 getDomainDetails <domain>
   Return the details of a particula domain.
 
-getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order]
+getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]
   Executes a query and returns a list of results.
   
-getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl | --sortfield | --order | --facetcount | --facetfields | --facets]
+getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
   Executes a query and returns a list of results including facets.
 
-getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viweurl]
+getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
   Search for entries in a domain and returns the values for some of the 
   fields of these entries.
 
@@ -889,7 +889,7 @@ getDomainsReferencedInEntry <domain> <entryid>
   Returns the list of domains with entries referenced in a particular domain 
   entry. These domains are indexed in the EB-eye.
 
-getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viweurl]
+getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
   Returns the list of referenced entry identifiers from a domain referenced 
   in a particular domain entry. 
   
