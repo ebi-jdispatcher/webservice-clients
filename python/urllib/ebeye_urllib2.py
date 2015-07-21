@@ -32,7 +32,7 @@
 baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
-import platform, os, sys, urllib2, xmltramp
+import platform, os, sys, urllib2, xmltramp, urllib
 from optparse import OptionParser
 from gzip import GzipFile
 from StringIO import StringIO
@@ -129,7 +129,7 @@ def getUserAgent():
 def restRequest(url):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
-    url = urllib2.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
+    url = urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
 
     try:
         user_agent = getUserAgent()
