@@ -284,7 +284,7 @@ sub rest_error() {
 			$error_message = $1;
 		}
 		#  XML response.
-		elsif($contentdata =~ m/<description>([^<]+)<\/description>/) {
+		elsif($contentdata =~ m/<message>([^<]+)<\/message>/) {
 			$error_message = $1;
 		}
 		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
