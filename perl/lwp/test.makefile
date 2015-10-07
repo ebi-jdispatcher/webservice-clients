@@ -164,11 +164,9 @@ readseq_clean
 
 # Sequence Operations (SO)
 so: \
-censor \
 seqcksum
 
 so_clean: \
-censor_clean \
 seqcksum_clean
 
 # Sequence Similarity Search (SSS)
@@ -213,42 +211,6 @@ maxsprout_clean
 # Fetch/update test data.
 test_data:
 	-if [ -d ../test_data ]; then svn update ../test_data ; else svn co ${TEST_DATA_SVN} ../test_data ; fi
-
-# CENSOR
-censor: censor_params censor_param_detail \
-censor_file censor_dbid censor_stdin_stdout \
-censor_id_list_file censor_id_list_file_stdin_stdout \
-censor_multifasta_file censor_multifasta_file_stdin_stdout
-
-censor_params:
-	${PERL} censor_lwp.pl --params
-
-censor_param_detail:
-	${PERL} censor_lwp.pl --paramDetail database
-
-censor_file: test_data
-	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota ../test_data/EMBL_AB000204.fasta
-
-censor_dbid:
-	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota 'EMBL:AB000204' 
-
-censor_stdin_stdout: test_data
-	cat ../test_data/EMBL_AB000204.fasta | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --quiet --outformat out --outfile - - > censor-blah.txt
-
-censor_id_list_file: test_data
-	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - @../test_data/uniprot_id_list.txt
-
-censor_id_list_file_stdin_stdout: test_data
-	cat ../test_data/uniprot_id_list.txt | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --sequence @- > censor-idfile.txt
-
-censor_multifasta_file: test_data
-	${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --multifasta  ../test_data/multi_prot.tfa
-
-censor_multifasta_file_stdin_stdout: test_data
-	cat ../test_data/multi_prot.tfa | ${PERL} censor_lwp.pl --email ${EMAIL} --database Eukaryota --outformat masked --outfile - --multifasta --sequence - > censor-file.txt
-
-censor_clean:
-	rm -f censor-*
 
 # Clustal Omega
 clustalo: clustalo_params clustalo_param_detail \
