@@ -36,6 +36,7 @@ ebeye
 # EBI Search
 ebeye: getDomainHierarchy \
 getDomainDetails \
+getNumberOfResults \
 getResults \
 getFacetedResults \
 getEntries \
@@ -50,6 +51,9 @@ getDomainHierarchy:
 
 getDomainDetails:
 	${PERL} ebeye_lwp.pl getDomainDetails uniprot
+
+getNumberOfResults:
+	${PERL} ebeye_lwp.pl getNumberOfResults uniprot 
 
 getResults:
 	${PERL} ebeye_lwp.pl getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending

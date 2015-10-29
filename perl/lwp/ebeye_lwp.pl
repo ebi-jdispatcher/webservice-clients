@@ -144,6 +144,16 @@ elsif ( $method eq 'getDomainDetails' ) {
 	&print_get_domain_details(@ARGV);
 }
 
+# Get number of search results
+elsif ( $method eq 'getNumberOfResults') {
+	if (scalar(@ARGV) != 2)  {
+		print STDERR '[main()] ', 'domain and query should be given.', "\n";
+	}
+	else {
+		&print_get_number_of_results(@ARGV);
+	}
+}
+
 # Get search results
 elsif ( $method eq 'getResults') {
 	if (scalar(@ARGV) < 3)  {
@@ -418,6 +428,22 @@ sub _print_domain_details{
 
 =head2
 
+Print number of search results
+
+  &print_get_number_of_results($domainid, $query);
+
+=cut
+
+sub print_get_number_of_results {
+	print_debug_message( 'print_get_number_of_results', 'Begin', 1 );
+	my ($param_list_xml) = &rest_get_number_of_results(@_);
+	my $numberOfResult = $param_list_xml->{'hitCount'};
+	print $numberOfResult, "\n";
+	print_debug_message( 'print_get_number_of_results', 'End', 1 );
+}
+
+=head2
+
 Print search results
 
   &print_get_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order);
@@ -624,6 +650,26 @@ sub rest_get_domain_details {
 	my $url = $baseUrl . "/" .$domainid;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_domain_details', 'End', 1 );
+	return XMLin($param_list_xml_str, KeyAttr => []);
+}
+
+=head2 rest_get_number_of_results()
+
+Get number of search results
+
+  my ($param_list_xml) = &rest_get_number_of_results($domainid, $query);
+
+=cut
+
+sub rest_get_number_of_results {
+	print_debug_message( 'rest_get_number_of_results', 'Begin', 1 );
+
+	my $domainid = shift;
+	my $query = shift;
+
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&size=0";
+	my $param_list_xml_str = &rest_request($url);
+	print_debug_message( 'rest_get_number_of_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => []);
 }
 
@@ -870,6 +916,9 @@ getDomainHierarchy
   
 getDomainDetails <domain>
   Return the details of a particula domain.
+
+getNumberOfResults <domain> <query>
+  Return number of results.
 
 getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]
   Executes a query and returns a list of results.
