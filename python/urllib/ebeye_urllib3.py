@@ -47,6 +47,7 @@ usage = """
   %prog getDomainHierarchy
   %prog getDomainDetails  <domain>
 
+  %prog getNumberOfResults <domain> <query>
   %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
   %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
 
@@ -234,6 +235,22 @@ def printDomainDetails(domainInfo):
         print
     printDebugMessage('printDomainDetails', 'End', 1)
 
+# Get number of results
+def getNumberOfResults(domain, query):
+    printDebugMessage('getNumberOfResults', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&size=0'
+    printDebugMessage('getNumberOfResults', requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    numberOfResults = doc['hitCount']
+    printNumber(numberOfResults)
+    printDebugMessage('getNumberOfResults', 'End', 1)
+
+def printNumber(num):
+    printDebugMessage('printNumber', 'Begin', 1)
+    print(num);
+    printDebugMessage('printNumber', 'End', 1)
+
 # Get search results
 def getResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order=''):
     printDebugMessage('getResults', 'Begin', 1)
@@ -386,6 +403,14 @@ elif args[0] == 'getDomainDetails':
         print ('domain should be given.')
     else:
         getDomainDetails(args[1])
+
+# Get number of results
+elif args[0] == 'getNumberOfResults':
+    if len(args) != 3:
+        print ('domain and query should be given.')
+    else:
+        getNumberOfResults(args[1], args[2])
+
 # Get search results
 elif args[0] == 'getResults':
     if len(args) < 4:

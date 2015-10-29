@@ -35,6 +35,7 @@ ebeye3
 ebeye2: \
 getDomainHierarchy \
 getDomainDetails \
+getNumberOfResults \
 getResults \
 getFacetedResults \
 getEntries \
@@ -49,6 +50,9 @@ getDomainHierarchy:
 
 getDomainDetails:
 	${PYTHON} ebeye_urllib2.py getDomainDetails uniprot
+
+getNumberOfResults:
+	${PYTHON} ebeye_urllib2.py getNumberOfResults uniprot 'brca1 OR (breast cancer)'
 
 getResults:
 	${PYTHON} ebeye_urllib2.py getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
@@ -79,6 +83,7 @@ getMoreLikeThis:
 ebeye3: \
 getDomainHierarchy3 \
 getDomainDetails3 \
+getNumberOfResults3 \
 getResults3 \
 getFacetedResults3 \
 getEntries3 \
@@ -93,6 +98,9 @@ getDomainHierarchy3:
 
 getDomainDetails3:
 	${PYTHON3} ebeye_urllib3.py getDomainDetails uniprot
+
+getNumberOfResults3:
+	${PYTHON3} ebeye_urllib3.py getNumberOfResults uniprot 'brca1 OR (breast cancer)'
 
 getResults3:
 	${PYTHON3} ebeye_urllib3.py getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
