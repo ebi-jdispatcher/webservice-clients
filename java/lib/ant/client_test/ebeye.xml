@@ -161,6 +161,9 @@
 		<antcall target="test-ebeye-help">
 			<param name="client.jar" value="${client.jar.jaxrs}" />
 		</antcall>
+                <antcall target="test-ebeye-rest-getNumberOfResults">
+                        <param name="client.jar" value="${client.jar.jaxrs}" />
+                </antcall>
 		<antcall target="test-ebeye-rest-getResults">
 			<param name="client.jar" value="${client.jar.jaxrs}" />
 		</antcall>
@@ -408,6 +411,16 @@
 			<arg value="axr3" />
 		</java>
 	</target>
+
+        <target name="test-ebeye-rest-getNumberOfResults">
+                <echo message="EB-eye (REST): getNumberOfResults" />
+                <java fork="true" failonerror="true" jar="${client.jar}">
+                        <jvmarg value="${jvm.extra.jars}" />
+                        <arg value="--getNumberOfResults" />
+                        <arg value="uniprot" />
+                        <arg value="azurin" />
+                </java>
+        </target>
 
 	<target name="test-ebeye-rest-getResults">
 		<echo message="EB-eye (REST): getResults" />

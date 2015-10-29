@@ -80,6 +80,9 @@ public class EBeyeClient {
 	                                              + "--getDomainDetails <domain>\n"
 	                                              + "  Returns the list of fields that can be retrieved for a particular domain.\n"
 	                                              + "\n"
+	                                              + "--getNumberOfResults <domain> <query>\n"
+	                                              + "  Executes a query and returns number of results.\n"
+	                                              + "\n"
 	                                              + "--getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]\n"
 	                                              + "  Executes a query and returns a list of results. Each result contains the \n"
 	                                              + "  values for each field specified in the \"fields\" argument in the same order\n"
@@ -309,9 +312,23 @@ public class EBeyeClient {
 		return result;
 	}
 
+	/** Get number of search results.
+	 * 
+	 * @return
+	 */
+	public WsResult getNumberOfResults(String domain, String query) {
+		printDebugMessage("getNumberOfResults", "Begin", 1);
+
+		Invocation.Builder builder = getTarget().path(domain).queryParam("query", query).queryParam("size", "0").request();
+		WsResult result = builder.get(WsResult.class);
+
+		printDebugMessage("getNumberOfResults", "End", 1);
+		return result;
+	}
+
 	/** Get search results.
 	 * 
-	 * @return Domain description object tree.
+	 * @return
 	 */
 	public WsResult getResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField, String order) {
 		printDebugMessage("getResults", "Begin", 1);
@@ -330,7 +347,7 @@ public class EBeyeClient {
 
 	/** Get faceted search results.
 	 * 
-	 * @return Domain description object tree.
+	 * @return
 	 */
 	public WsResult getFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
 	                                  String order, int facetCount, String facetfields, String facets) {
@@ -605,6 +622,17 @@ public class EBeyeClient {
 			}
 		}
 		return "";
+	}
+
+	/**
+	 * Print number of search results.
+	 */
+	public void printGetNumberOfResults(String domain, String query) {
+		printDebugMessage("printGetNumberOfResults", "Begin", 1);
+
+		WsResult result = getNumberOfResults(domain, query);
+		System.out.println(result.getHitCount());
+		printDebugMessage("printGetNumberOfResults", "End", 1);
 	}
 
 	/**
@@ -903,6 +931,10 @@ public class EBeyeClient {
 		// --getDomainDetails <domain>
 		options.addOption("getDomainDetails", true, "Get domain details");
 
+		// --getNumberOfResults  <domain> <query> 
+		options.addOption("getNumberOfResults", true, "Get number of search results");
+		options.getOption("getNumberOfResults").setArgs(2);
+
 		// --getResults  <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
 		options.addOption("getResults", true, "Get entries which match query");
 		options.getOption("getResults").setArgs(3);
@@ -1001,6 +1033,11 @@ public class EBeyeClient {
 			// --getDomainDetails
 			else if (cli.hasOption("getDomainDetails")) {
 				ebeye.printGetDomainDetails(cli.getOptionValue("getDomainDetails"));
+			}
+			// --getNumberOfResults <domain> <query> 
+			else if (cli.hasOption("getNumberOfResults")) {
+				String[] vals = cli.getOptionValues("getNumberOfResults");
+				ebeye.printGetNumberOfResults(vals[0], vals[1]);
 			}
 			// --getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
 			else if (cli.hasOption("getResults")) {
