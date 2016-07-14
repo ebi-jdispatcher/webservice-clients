@@ -362,7 +362,7 @@ public class EBeyeClient {
 	 * @return
 	 */
 	public WsResult getFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
-	                                  String order, String sort, int facetCount, String facetfields, String facets) {
+	                                  String order, String sort, int facetCount, String facetfields, String facets, int facetsdepth) {
 		printDebugMessage("getResults", "Begin", 1);
 
 		Invocation.Builder builder = getTarget().path(domain)
@@ -377,7 +377,8 @@ public class EBeyeClient {
 				.queryParam("sort", sort)
 				.queryParam("facetcount", facetCount)
 				.queryParam("facetfields", facetfields)
-				.queryParam("facets", facets).request();
+				.queryParam("facets", facets)
+				.queryParam("facetsdepth", facetsdepth).request();
 
 		WsResult result = builder.get(WsResult.class);
 
@@ -745,10 +746,10 @@ public class EBeyeClient {
 	 * @param selectedfacets
 	 */
 	public void printGetFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
-	                                   String order, String sort, int facetCount, String facetfields, String selectedfacets) {
+	                                   String order, String sort, int facetCount, String facetfields, String selectedfacets, int facetsdepth) {
 		printDebugMessage("printGetFacetedResults", "Begin", 1);
 
-		WsResult result = getFacetedResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort, facetCount, facetfields, selectedfacets);
+		WsResult result = getFacetedResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort, facetCount, facetfields, selectedfacets, facetsdepth);
 		WsEntries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
@@ -1113,6 +1114,7 @@ public class EBeyeClient {
 		options.addOption("order", true, "sort in ascending/descending order");
 		options.addOption("sort", true, "comma separated value of sorting criteria");
 		options.addOption("facets", true, "comma separated value of selected facet values");
+		options.addOption("facetsdepth", true, "depth in hierarchical facet");
 		options.addOption("facetcount", true, "number of facet values to retrieve");
 		options.addOption("facetfields", true, "field ids associated with facets to retrieve");
 		options.addOption("mltfields", true, "field ids  to be used for generating a morelikethis query");
@@ -1214,6 +1216,7 @@ public class EBeyeClient {
 				String facetcount = cli.hasOption("facetcount") ? cli.getOptionValue("facetcount") : "10";
 				String facetfield = cli.hasOption("facetfield") ? cli.getOptionValue("facetfield") : "";
 				String facets = cli.hasOption("facets") ? cli.getOptionValue("facets") : "";
+				String facetsdepth = cli.hasOption("facetsdepth") ? cli.getOptionValue("facetsdepth") : "";
 
 				ebeye.printGetFacetedResults(vals[0],
 				                             vals[1],
@@ -1227,7 +1230,8 @@ public class EBeyeClient {
 				                             sort,
 				                             Integer.parseInt(facetcount),
 				                             facetfield,
-				                             facets);
+				                             facets,
+				                             Integer.parseInt(facetsdepth));
 			}
 			// --getEntries  <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
 			else if (cli.hasOption("getEntries")) {
