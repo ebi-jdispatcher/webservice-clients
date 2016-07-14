@@ -38,13 +38,16 @@ ebeye: getDomainHierarchy \
 getDomainDetails \
 getNumberOfResults \
 getResults \
+getResults2 \
 getFacetedResults \
 getEntries \
 getDomainsReferencedInDomain \
 getDomainsReferencedInEntry \
 getReferencedEntries \
 getTopTerms \
-getMoreLikeThis
+getMoreLikeThis \
+getExtendedMoreLikeThis \
+getAutoComplete
 
 getDomainHierarchy:
 	${PERL} ebeye_lwp.pl getDomainHierarchy
@@ -56,10 +59,13 @@ getNumberOfResults:
 	${PERL} ebeye_lwp.pl getNumberOfResults uniprot 
 
 getResults:
-	${PERL} ebeye_lwp.pl getResults uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending
+	${PERL} ebeye_lwp.pl getResults rnacentral 'hotair' id,name --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=boost --order=descending
+
+getResults2:
+	${PERL} ebeye_lwp.pl getResults rnacentral 'hotair' id,name --size=5 --start=5 --fieldurl=true --viewurl=true --sort=boost:descending
 
 getFacetedResults:
-	${PERL} ebeye_lwp.pl getFacetedResults  uniprot 'brca1 OR (breast cancer)' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=length --order=descending --facetcount=5 --facetfields=TAXONOMY,status --facets=status:Reviewed
+	${PERL} ebeye_lwp.pl getFacetedResults  rnacentral 'hotair' id,descRecName --size=5 --start=5 --fieldurl=true --viewurl=true --sortfield=boost --order=descending --facetcount=5 --facetfields=TAXONOMY --facets=active:Active
 
 getEntries:
 	${PERL} ebeye_lwp.pl getEntries uniprot WAP_MOUSE,WAP_RAT id,descRecName --fieldurl=true --viewurl=true
@@ -71,10 +77,17 @@ getDomainsReferencedInEntry:
 	${PERL} ebeye_lwp.pl getDomainsReferencedInEntry uniprot WAP_MOUSE
 
 getReferencedEntries:
-	${PERL} ebeye_lwp.pl getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description --size=1 --start=0 --fieldurl=true --viewurl=true
+	${PERL} ebeye_lwp.pl getReferencedEntries uniprot WAP_MOUSE,WAP_RAT interpro id,description --size=1 --start=0 --fieldurl=true --viewurl=true --facetcount=5
 
 getTopTerms:
 	${PERL} ebeye_lwp.pl getTopTerms pride description --size=30 --excludes=proteome --excludesets=omics_stopwords
 
 getMoreLikeThis:
 	${PERL} ebeye_lwp.pl getMoreLikeThis uniprot TPIS_HUMAN descRecName --size=20 --start=0 --fieldurl=true --viewurl=true --mltfields=descRecName --mintermfreq=1 --mindocfreq=5 --maxqueryterm=10 --excludes=state --excludesets=lucene_stopwords
+
+getExtendedMoreLikeThis:
+	${PERL} ebeye_lwp.pl getExtendedMoreLikeThis uniprot TPIS_HUMAN uniprot descRecName --size=20 --start=0 --fieldurl=true --viewurl=true --mltfields=descRecName --mintermfreq=1 --mindocfreq=5 --maxqueryterm=10 --excludes=state --excludesets=lucene_stopwords
+
+getAutoComplete:
+	${PERL} ebeye_lwp.pl getAutoComplete rnacentral hot
+	

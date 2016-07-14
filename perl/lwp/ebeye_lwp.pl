@@ -92,9 +92,11 @@ GetOptions(
 	'viewurl=s'    => \$params{'viewurl'},       # whether view links are included
 	'sortfield=s'  => \$params{'sortfield'},     # Field id to sort
 	'order=s'      => \$params{'order'},         # Sort in ascending/descending order
+	'sort=s'       => \$params{'sort'},          # comma separated value of sort criteria
 	'facetcount=s' => \$params{'facetcount'},    # Number of facet values to retrieve
 	'facetfields=s'=> \$params{'facetfields'},   # Field ids associated with facets to retrieve
 	'facets=s'     => \$params{'facets'},		 # Selected facets
+	'facetsdepth=s'=> \$params{'facetsdepth'},   # depth in hierarchical facets
 	'mltfields=s'  => \$params{'mltfields'},     # Field ids to be used for generating a morelikethis query
 	'mintermfreq=s'=> \$params{'mintermfreq'},   # Frequency below which terms will be ignored in the base document
 	'mindocfreq=s' => \$params{'mindocfreq'},    # Frequency at which words will be ignored which do not occur in at least this many documents
@@ -224,9 +226,9 @@ elsif ( $method eq 'getTopTerms' ) {
 	}
 }
 
-# Get similar documents to a given one
+# Get similar documents in a same domain
 elsif ( $method eq 'getMoreLikeThis' ) {
-		if (scalar(@ARGV) < 2)  {
+	if (scalar(@ARGV) < 3)  {
 		print STDERR '[main()] ', 'domain, entry and fields should be given.', "\n";
 	}
 	else {
@@ -234,6 +236,26 @@ elsif ( $method eq 'getMoreLikeThis' ) {
 	}
 }
 
+# Get similar documents in a different domain
+elsif ( $method eq 'getExtendedMoreLikeThis' ) {
+	if (scalar(@ARGV) < 4)  {
+		print STDERR '[main()] ', 'domain, entry, target domain and fields should be given.', "\n";
+	}
+	else {
+		&print_get_extended_more_like_this(@ARGV);
+	}
+}
+
+
+# Get suggestions
+elsif ( $method eq 'getAutoComplete' ) {
+	if (scalar(@ARGV) < 2) {
+		print STDERR '[main()] ', 'domain and term should be given.', "\n";
+	}
+	else {
+		&print_get_auto_complete(@ARGV);
+	}
+}
 
 else {
 	&usage();
@@ -446,7 +468,7 @@ sub print_get_number_of_results {
 
 Print search results
 
-  &print_get_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order);
+  &print_get_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort);
 
 =cut
 
@@ -489,7 +511,7 @@ sub _print_entries {
 
 Print search results with facets
 
-  &print_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields, $facets);
+  &print_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort, $facetcount, $facetfields, $facets, $facetsdepth);
 
 =cut
 
@@ -501,18 +523,31 @@ sub print_get_faceted_results {
 	print_debug_message( 'print_get_faceted_results', 'End', 1 );
 }
 
-
 sub _print_facets {
 	my $facets = shift;
-	
+
 	foreach my $facet (@{$facets}) {
 		print $facet->{'label'} . " (" .$facet->{'id'} . ") ", "\n";
 		foreach my $facetValue (@{$facet->{'facetValues'}->{'facetValue'}}) {
-			print $facetValue->{'label'} . " (" . $facetValue->{'value'}->[0] . ") " . $facetValue->{'count'}, "\n";
+			&_print_facetValue($facetValue, 0);
 		}
 
 		print "\n";
 	}	
+}
+
+sub _print_facetValue {
+	my $facetValue = shift;
+	my $depth = shift;
+	
+	for (my $i=0; $i < $depth; $i++) {
+   		print "\t";
+	}
+	print $facetValue->{'label'} . " (" . $facetValue->{'value'}->[0] . ") " . $facetValue->{'count'}, "\n";
+
+	foreach my $child (@{$facetValue->{'children'}->{'facetValue'}}) {
+		&_print_facetValue($child, $depth + 1);
+	}
 }
 
 =head2
@@ -572,7 +607,7 @@ sub print_get_domains_referenced_in_entry {
 
 Print cross references
 
-  &print_get_referenced_entries($domainid, $entryid, $referencedDomainId, $fields, $size, $start, $fieldurl, $viewurl);
+  &print_get_referenced_entries($domainid, $entryid, $referencedDomainId, $fields, $size, $start, $fieldurl, $viewurl, $facetcount, $facetfields, $facets);
 
 =cut
 
@@ -581,6 +616,10 @@ sub print_get_referenced_entries {
 	my ($param_list_xml) = &rest_get_referenced_entries(@_);
 	foreach my $entry (@{$param_list_xml->{'entries'}->{'entry'}}) {
 		&_print_entries($entry->{'references'}->{'reference'});
+
+		if (exists $entry->{'referenceFacets'}) {
+			&_print_facets($entry->{'referenceFacets'}->{'referenceFacet'});
+		}
 	}
 	print_debug_message( 'print_get_referenced_entries', 'End', 1 );
 }
@@ -605,9 +644,9 @@ sub print_get_top_terms {
 
 
 =head2
-Print similar docouments 
+Print similar documents 
 
-  &print_get_more_like_this($domainid, $entry $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
+  &print_get_more_like_this($domainid, $entry, $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
 
 =cut
 
@@ -617,6 +656,44 @@ sub print_get_more_like_this{
 	&_print_entries($param_list_xml->{'entries'}->{'entry'});
 	print_debug_message( 'print_get_more_like_this', 'End', 1 );
 }
+
+=head2
+Print similar documents 
+
+  &print_get_extended_more_like_this($domainid, $entry, $targetDomainid, $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
+
+=cut
+
+sub print_get_extended_more_like_this{
+	print_debug_message( 'print_get_extended_more_like_this', 'Begin', 1 );
+	my ($param_list_xml) = &rest_get_extended_more_like_this(@_);
+	&_print_entries($param_list_xml->{'entries'}->{'entry'});
+	print_debug_message( 'print_get_extended_more_like_this', 'End', 1 );
+}
+
+=head2
+Print suggestions
+
+  &print_get_auto_complete($domainid, $term);
+
+=cut
+
+sub print_get_auto_complete{
+	print_debug_message( 'print_get_auto_complete', 'Begin', 1 );
+	my ($param_list_xml) = &rest_get_auto_complete(@_);
+		
+	&_print_suggestions($param_list_xml->{'suggestions'}->{'suggestion'});
+	print_debug_message( 'print_get_auto_complete', 'End', 1 );
+}
+
+sub _print_suggestions{
+	my $suggestions = shift;
+
+	foreach my $sug (@{$suggestions}) {
+		print $sug->{'suggestion'} . "\n";
+	}
+}
+
 
 
 =head2 rest_get_domain_hierarchy()
@@ -678,7 +755,7 @@ sub rest_get_number_of_results {
 
 Get search results
 
-  my ($param_list_xml) = &rest_get_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order);
+  my ($param_list_xml) = &rest_get_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort);
 
 =cut
 
@@ -691,12 +768,13 @@ sub rest_get_results {
 
 	my $size = $params{'size'}? $params{'size'} : "" ;
 	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $sort = $params{'sort'}? $params{'sort'} : "" ;
 	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
 	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
 	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
 	my $order = $params{'order'}? $params{'order'} : "" ;
 
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order ."&facetcount=0";
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order ."&facetcount=0&sort=". $sort ;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
@@ -706,7 +784,7 @@ sub rest_get_results {
 
 Get search results with facets
 
-  my ($param_list_xml) = &rest_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $facetcount, $facetfields, $facets);
+  my ($param_list_xml) = &rest_get_faceted_results($domainid, $query, $fields, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort, $facetcount, $facetfields, $facets, $facetsdepth);
 
 =cut
 
@@ -722,10 +800,12 @@ sub rest_get_faceted_results {
 	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
 	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
 	my $order = $params{'order'}? $params{'order'} : "" ;
+	my $sort = $params{'sort'}? $params{'sort'} : "" ;
 	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
 	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
 	my $facets = $params{'facets'}? $params{'facets'} : "";
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets; 
+	my $facetsdepth = $params{'facetsdepth'}? $params{'facetsdepth'} : "";
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&sort=". $sort . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth; 
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_faceted_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue']);
@@ -796,7 +876,7 @@ sub rest_get_domains_referenced_in_entry {
 
 Get cross references
 
-  my (@domain_list) = &rest_get_referenced_entries($domainid, $entryids, $referencedDomainId, $fields, $size, $start, $fieldurl, $viewurl);
+  my (@domain_list) = &rest_get_referenced_entries($domainid, $entryids, $referencedDomainId, $fields, $size, $start, $fieldurl, $viewurl, $facetcount, $facetfields, $facets);
 
 =cut
 
@@ -811,11 +891,15 @@ sub rest_get_referenced_entries {
 	my $start = $params{'start'}? $params{'start'} : "" ;
 	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
 	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
+	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
+	my $facets = $params{'facets'}? $params{'facets'} : "";
 
-	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryids ."/xref/" . $referencedDomainId . "?fields=" .$fields . "&start=" . $start. "&size=" . $size. "&fieldurl=".$fieldurl . "&viewurl=".$viewurl;
+	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryids ."/xref/" . $referencedDomainId . "?fields=" .$fields . "&start=" . $start. "&size=" . $size. "&fieldurl=".$fieldurl . "&viewurl=".$viewurl ."&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" .$facets;
 	my $param_list_xml_str = &rest_request($url);
+	
 	print_debug_message( 'rest_get_referenced_entries', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'reference', 'value', 'field', 'fieldURL', 'viewURL']);
+	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'reference', 'referenceFacet', 'value', 'field', 'fieldURL', 'viewURL', 'facetValue']);
 }
 
 
@@ -874,6 +958,60 @@ sub rest_get_more_like_this{
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
 }
 
+=head2 rest_get_extended_more_like_this()
+
+Get similar documents to a given one
+
+  my(@entry_list) = &rest_get_extended_more_like_this($domainid, $entry, $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
+
+=cut
+
+sub rest_get_extended_more_like_this{
+	print_debug_message( 'rest_get_extended_more_like_this', 'Begin', 1 );
+	my $domainid = shift;
+	my $entryid = shift;
+	my $targetDomainid = shift;
+	my $fields = shift;
+	
+	my $size = $params{'size'}? $params{'size'} : "" ;
+	my $start = $params{'start'}? $params{'start'} : "" ;
+	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
+	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+	my $mltfields = $params{'mltfields'}? $params{'mltfields'} : "" ;
+	my $mintermfreq = $params{'mintermfreq'}? $params{'mintermfreq'} : "" ;
+	my $mindocfreq = $params{'mindocfreq'}? $params{'mindocfreq'} : "" ;
+	my $maxqueryterm = $params{'maxqueryterm'}? $params{'maxqueryterm'} : "" ;
+	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
+	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+
+	my $url = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "/morelikethis/" . "$targetDomainid" . "?size=" . $size . "&start=" . $start . "&fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq  . '&mindocfreq=' . $maxqueryterm  . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
+	my $param_list_xml_str = &rest_request($url);
+	print_debug_message( 'rest_get_extended_more_like_this', 'End', 1 );
+	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+}
+
+=head2 rest_get_auto_complete()
+
+Get similar documents to a given one
+
+  my(@suggestion_list) = &rest_get_auto_complete($domainid, $term);
+
+=cut
+
+sub rest_get_auto_complete{
+	print_debug_message( 'rest_get_auto_complete', 'Begin', 1 );
+	my $domainid = shift;
+	my $term = shift;
+
+	my $url = $baseUrl . "/" .$domainid . "/autocomplete?term=" . $term;
+	
+	my $param_list_xml_str = &rest_request($url);
+	print_debug_message( 'rest_get_auto_complete', 'End', 1 );
+	
+	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['suggetion']);
+}
+
+
 ### Service actions and utility functions ###
 
 =head2 print_debug_message()
@@ -920,10 +1058,10 @@ getDomainDetails <domain>
 getNumberOfResults <domain> <query>
   Return number of results.
 
-getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]
+getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]
   Executes a query and returns a list of results.
   
-getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
+getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets ]
   Executes a query and returns a list of results including facets.
 
 getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
@@ -938,7 +1076,7 @@ getDomainsReferencedInEntry <domain> <entryid>
   Returns the list of domains with entries referenced in a particular domain 
   entry. These domains are indexed in the EB-eye.
 
-getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
+getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets ]
   Returns the list of referenced entry identifiers from a domain referenced 
   in a particular domain entry. 
   
@@ -946,7 +1084,13 @@ getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
   Returns the list of top N terms from a field.
   
 getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
-  Returns the list of similar documents to a given one.
+  Returns the list of similar documents.
+
+getExtendedMoreLikeThis <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+  Returns the list of similar documents in a different domain.
+
+getAutoComplete <domain> <term>
+  Returns suggested words from a given term.
 
 Options:
   --size=SIZE           number of entries to retrieve
@@ -956,12 +1100,15 @@ Options:
   --sortfield=SORTFIELD
                         field id to sort
   --order=ORDER         sort in ascending/descending order
+  --sort=SORT			sorting criteria
   --facetcount=FACETCOUNT
                         number of facet values to retrieve
   --facetfields=FACETFIELDS
                         field ids associated with facets to retrieve
   --facets=FACETS
                         selected facets
+  --facetsdepth=FACETSDEPTH
+                        depth in hierarchical facets
   --mltfields=MLTFIELDS
                         field ids  to be used for generating a morelikethis query
   --mintermfreq=MINTERMFREQ
