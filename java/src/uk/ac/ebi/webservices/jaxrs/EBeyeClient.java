@@ -116,7 +116,11 @@ public class EBeyeClient {
 	                                              + "--getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]\n"
 	                                              + "  Returns the list of top N terms in a field\n"
 	                                              + "\n"
-	                                              + "--getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> "
+	                                              + "--getMoreLikeThis <domain> <entryid> <fields> "
+	                                              + "                  [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]\n"
+	                                              + "  Returns the list of similar entries to a given one\n"
+	                                              + "\n"
+	                                              + "--getExtendedMoreLikeThis <domain> <entryid> <targetDomain> <fields> "
 	                                              + "                  [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]\n"
 	                                              + "  Returns the list of similar entries to a given one\n"
 	                                              + "\n"
@@ -363,7 +367,7 @@ public class EBeyeClient {
 	 */
 	public WsResult getFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
 	                                  String order, String sort, int facetCount, String facetfields, String facets, int facetsdepth) {
-		printDebugMessage("getResults", "Begin", 1);
+		printDebugMessage("getFacetedResults", "Begin", 1);
 
 		Invocation.Builder builder = getTarget().path(domain)
 				.queryParam("query", query)
@@ -382,7 +386,7 @@ public class EBeyeClient {
 
 		WsResult result = builder.get(WsResult.class);
 
-		printDebugMessage("getResults", "End", 1);
+		printDebugMessage("getFacetedResults", "End", 1);
 		return result;
 	}
 
@@ -1097,9 +1101,13 @@ public class EBeyeClient {
 		options.addOption("getTopTerms", true, "Top Terms in a field");
 		options.getOption("getTopTerms").setArgs(2);
 
-		// --getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+		// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
 		options.addOption("getMoreLikeThis", true, "Similar documents similar to a given entry");
-		options.getOption("getMoreLikeThis").setArgs(4);
+		options.getOption("getMoreLikeThis").setArgs(3);
+
+		// --getExtendedMoreLikeThis <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+		options.addOption("getExtendedMoreLikeThis", true, "Similar documents similar to a given entry");
+		options.getOption("getExtendedMoreLikeThis").setArgs(4);
 		
 		// --getAutoComplete <domain> <term>
 		options.addOption("getAutoComplete", true, "Get suggstions of a given term");
@@ -1280,7 +1288,7 @@ public class EBeyeClient {
 				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
 				ebeye.printGetTopTerms(vals[0], vals[1], Integer.parseInt(size), excludes, excludesets);
 			}
-			// --getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+			// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
 			else if (cli.hasOption("getMoreLikeThis")) {
 				String[] vals = cli.getOptionValues("getMoreLikeThis");
 				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
@@ -1293,39 +1301,51 @@ public class EBeyeClient {
 				String maxqueryterm = cli.hasOption("maxqueryterm") ? cli.getOptionValue("maxqueryterm") : "10";
 				String excludes = cli.hasOption("excludes") ? cli.getOptionValue("excludes") : "";
 				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
-				
-				if (vals.length == 3) {
-   				ebeye.printGetMoreLikeThis(vals[0],
-   				                           vals[1],
-   				                           vals[2],
-   				                           Integer.parseInt(start),
-   				                           Integer.parseInt(size),
-   				                           Boolean.parseBoolean(fieldurl),
-   				                           Boolean.parseBoolean(viewurl),
-   				                           mltfields,
-   				                           Integer.parseInt(mintermfreq),
-   				                           Integer.parseInt(mindocfreq),
-   				                           Integer.parseInt(maxqueryterm),
-   				                           excludes,
-   				                           excludesets);
-				}
-				else if (vals.length == 4) {
-   				ebeye.printGetMoreLikeThis(vals[0],
-   				                           vals[1],
-   				                           vals[2],
-   				                           vals[3],
-   				                           Integer.parseInt(start),
-   				                           Integer.parseInt(size),
-   				                           Boolean.parseBoolean(fieldurl),
-   				                           Boolean.parseBoolean(viewurl),
-   				                           mltfields,
-   				                           Integer.parseInt(mintermfreq),
-   				                           Integer.parseInt(mindocfreq),
-   				                           Integer.parseInt(maxqueryterm),
-   				                           excludes,
-   				                           excludesets);
-				}
+  				ebeye.printGetMoreLikeThis(vals[0],
+				                           vals[1],
+				                           vals[2],
+				                           Integer.parseInt(start),
+				                           Integer.parseInt(size),
+				                           Boolean.parseBoolean(fieldurl),
+				                           Boolean.parseBoolean(viewurl),
+				                           mltfields,
+				                           Integer.parseInt(mintermfreq),
+				                           Integer.parseInt(mindocfreq),
+				                           Integer.parseInt(maxqueryterm),
+				                           excludes,
+				                           excludesets);
 			}
+			// --getExtendedMoreLikeThis <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+			else if (cli.hasOption("getExtendedMoreLikeThis")) {
+				String[] vals = cli.getOptionValues("getExtendedMoreLikeThis");
+				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
+				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
+				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
+				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
+				String mltfields = cli.hasOption("mltfields") ? cli.getOptionValue("mltfields") : "";
+				String mintermfreq = cli.hasOption("mintermfreq") ? cli.getOptionValue("mintermfreq") : "1";
+				String mindocfreq = cli.hasOption("mindocfreq") ? cli.getOptionValue("mindocfreq") : "5";
+				String maxqueryterm = cli.hasOption("maxqueryterm") ? cli.getOptionValue("maxqueryterm") : "10";
+				String excludes = cli.hasOption("excludes") ? cli.getOptionValue("excludes") : "";
+				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
+
+				ebeye.printGetMoreLikeThis(vals[0],
+				                           vals[1],
+				                           vals[2],
+				                           vals[3],
+				                           Integer.parseInt(start),
+				                           Integer.parseInt(size),
+				                           Boolean.parseBoolean(fieldurl),
+				                           Boolean.parseBoolean(viewurl),
+				                           mltfields,
+				                           Integer.parseInt(mintermfreq),
+				                           Integer.parseInt(mindocfreq),
+				                           Integer.parseInt(maxqueryterm),
+				                           excludes,
+				                           excludesets);
+		
+			}
+			
 			// --getAutoComplete <domain> <term>
 			else if (cli.hasOption("getAutoComplete")) {
 				String[] vals = cli.getOptionValues("getAutoComplete");

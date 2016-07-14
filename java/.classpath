@@ -71,5 +71,14 @@
 	<classpathentry kind="lib" path="lib/wsdl4j-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/xml-resolver-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/xmlschema-core-2.2.1.jar"/>
+	<classpathentry kind="lib" path="/net/isilonP/public/rw/homes/wp-02/.m2/repository/uk/ac/ebi/ebinocle/client/eb-eye-client/1.0/eb-eye-client-1.0.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="uk.ac.ebi.ebinocle.client"/>
+			<attribute name="maven.artifactId" value="eb-eye-client"/>
+			<attribute name="maven.version" value="1.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
