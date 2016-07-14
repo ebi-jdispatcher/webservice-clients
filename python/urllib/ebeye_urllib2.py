@@ -48,18 +48,21 @@ usage = """
   %prog getDomainDetails  <domain>
 
   %prog getNumberOfResults <domain> <query>
-  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
-  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
+  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ] 
+  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth ]
 
   %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
   
   %prog getDomainsReferencedInDomain <domain>
   %prog getDomainsReferencedInEntry  <domain> <entryid>
-  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
+  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets]
   
   %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
   
-  %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
+  %prog getAutoComplete   <domain> <term>
+
+  %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+  %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
 
 description = """Search at EMBL-EBI in All results using the EB-eye search engine. For more information on EB-eye 
 refer to http://www.ebi.ac.uk/ebisearch/"""
@@ -72,9 +75,11 @@ parser.add_option('--fieldurl', help='whether field links are included')
 parser.add_option('--viewurl', help='whether view links are included')
 parser.add_option('--sortfield', help='field id to sort')
 parser.add_option('--order', help='sort in ascending/descending order')
+parser.add_option('--sort', help='sort criteria')
 parser.add_option('--facetcount', help='number of facet values to retrieve')
 parser.add_option('--facetfields', help='field ids associated with facets to retrieve')
 parser.add_option('--facets', help='list of selected facets')
+parser.add_option('--facetsdepth', help='depth in hierarchical facet')
 parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
 parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
 parser.add_option('--mindocfreq', help='frequency at which words will be ignored which do not occur in at least this many documents')
@@ -258,9 +263,9 @@ def printNumber(num):
     printDebugMessage('printNumber', 'End', 1)
 
 # Get search results
-def getResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order=''):
+def getResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', sort=''):
     printDebugMessage('getResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order
+    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort
     printDebugMessage('getResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -284,6 +289,7 @@ def printEntries(entries):
         if hasViewUrls(entry):
             for viewurl in entry['viewURLs']['viewURL':]:
                print (str(viewurl))
+    print
     printDebugMessage('printEntries', 'End', 1)
 
 def hasFieldUrls(entry):
@@ -303,14 +309,31 @@ def printFacets(facets):
     for facet in facets:
         print facet('label') + ': ' + facet('id')
         for facetValue in facet['facetValues']['facetValue':]:
-            print str(facetValue['label']) + ' (' + str(facetValue['value']) + '): ' + str(facetValue['count'])
+            printFacetValue(facetValue, 0)
         print
     printDebugMessage('printFacets', 'End', 1)
 
+def printFacetValue(facetValue, depth=0):
+    printDebugMessage('printFacetValue', 'Begin', 1)
+
+    print '\t' * depth + str(facetValue['label']) + ' (' + str(facetValue['value']) + '): ' + str(facetValue['count'])
+
+    if hasFacetValueChildren(facetValue):
+        for child in facetValue['children']['facetValue':]:
+            printFacetValue(child, depth + 1)
+
+    printDebugMessage('printFacetValue', 'End', 1)
+
+def hasFacetValueChildren(facetValue):
+    for dir in facetValue._dir:
+        if dir._name == 'children':
+            return True
+    return False
+
 # Get search results with facets
-def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', facetcount='10', facetfields='', facets=''):
+def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', sort='', facetcount='10', facetfields='', facets='', facetsdepth=''):
     printDebugMessage('getFacetedResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
+    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets + '&facetsdepth=' + facetsdepth
     printDebugMessage('getFacetedResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -355,17 +378,25 @@ def getDomainsReferencedInEntry(domain, entryid):
     printDebugMessage('getDomainsReferencedInEntry', 'End', 1)
 
 # Get cross-references
-def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', start='', fieldurl='', viewurl=''):
+def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', start='', fieldurl='', viewurl='', facetcount='', facetfields='', facets=''):
     printDebugMessage('getReferencedEntries', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain +'?fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain +'?fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
     printDebugMessage('getReferencedEntries', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
     entries = doc['entries']['entry':]
     for entry in entries:
         printEntries(entry['references']['reference':])
-        print
-    printDebugMessage('getEntries', 'End', 1)
+        if hasReferenceFacet(entry):
+            printFacets(entry['referenceFacets']['referenceFacet':])
+            print
+    printDebugMessage('getReferencedEntries', 'End', 1)
+
+def hasReferenceFacet(entry):
+    for dir in entry._dir:
+        if dir._name == 'referenceFacets':
+            return True
+    return False
 
 # Get top terms
 def getTopTerms(domain, field, size='', excludes='', excludesets=''):
@@ -385,15 +416,33 @@ def printTerm(term):
     printDebugMessage('printTerm', 'End', 1)
 
 # Get similar documents to a given one
-def getMoreLikeThis(domain, entryid, fields, size='', start='', fieldurl='', viewurl='', mltfields='', mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
+def getMoreLikeThis(domain, entryid, targetDomain, fields, size='', start='', fieldurl='', viewurl='', mltfields='', mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
     printDebugMessage('getMoreLikeThis', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis'  +'?size=' +size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl  + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq  + '&mindocfreq=' + maxqueryterm  + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis/' + targetDomain +'?size=' +size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl  + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq  + '&mindocfreq=' + maxqueryterm  + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
     printDebugMessage('getMoreLikeThis', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
     entries = doc['entries']['entry':]
     printEntries(entries)
     printDebugMessage('getMoreLikeThis', 'End', 1)
+   
+# Get suggestions
+def getAutoComplete(domain, term):
+    printDebugMessage('getAutoComplete', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '/autocomplete?term=' + term
+    printDebugMessage('getAutoComplete', requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    suggestions = doc['suggestions']['suggestion':]
+    printSuggestions(suggestions)
+    printDebugMessage('getAutoComplete', 'End', 1)
+
+def printSuggestions(suggestions):
+    printDebugMessage('printSuggestions', 'Begin', 1)
+    for suggetion in suggestions:
+        print suggetion['suggestion']
+    print
+    printDebugMessage('printSuggestions', 'End', 1)
 
 # No arguments, print usage
 if len(args) < 1:
@@ -424,14 +473,16 @@ elif args[0] == 'getResults':
         viewurl = ''
         sortfield = ''
         order = ''
+        sort = ''
 
         if options.start:       start = options.start
         if options.size:        size = options.size
+        if options.sort:        sort = options.sort
         if options.fieldurl:    fieldurl = options.fieldurl
         if options.viewurl:     viewurl = options.viewurl
         if options.sortfield:   sortfield = options.sortfield
         if options.order:       order = options.order
-        getResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order)
+        getResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort)
 # Get search results with facets
 elif args[0] == 'getFacetedResults':
     if len(args) < 4:
@@ -443,9 +494,11 @@ elif args[0] == 'getFacetedResults':
         viewurl = ''
         sortfield = ''
         order = ''
+        sort = ''
         facetcount = ''
         facetfields = ''
         facets = ''
+        facetdepths = ''
         
         if options.start:       start = options.start
         if options.size:        size = options.size
@@ -453,10 +506,12 @@ elif args[0] == 'getFacetedResults':
         if options.viewurl:     viewurl = options.viewurl
         if options.sortfield:   sortfield = options.sortfield
         if options.order:       order = options.order
+        if options.sort:        sort = options.sort
         if options.facetcount:  facetcount = options.facetcount
         if options.facetfields: facetfields = options.facetfields
         if options.facets:      facets = options.facets
-        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, facetcount, facetfields, facets)
+        if options.facetsdepth: facetdepths = options.facetsdepth
+        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort, facetcount, facetfields, facets, facetdepths)
 # Get entry details.
 elif args[0] == 'getEntries':
     if len(args) < 4:
@@ -489,12 +544,19 @@ elif args[0] == 'getReferencedEntries':
         size = ''
         fieldurl = ''
         viewurl = ''
+        facetcount = ''
+        facetfields = ''
+        facets = ''
 
         if options.start:       start = options.start
         if options.size:        size = options.size
         if options.fieldurl:    fieldurl = options.fieldurl
         if options.viewurl:     viewurl = options.viewurl
-        getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl)
+        if options.facetcount:  facetcount = options.facetcount
+        if options.facetfields: facetfields = options.facetfields
+        if options.facets:      facets = options.facets
+
+        getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount, facetfields, facets)
 # Get top terms
 elif args[0] == 'getTopTerms':
     if len(args) < 3:
@@ -536,7 +598,42 @@ elif args[0] == 'getMoreLikeThis':
         if options.maxqueryterm: maxqueryterm = options.maxqueryterm
         if options.excludes: excludes = options.excludes
         if options.excludesets: excludesets = options.excludesets
-        getMoreLikeThis(args[1], args[2], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+        getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+# Get similar documents to a given one
+elif args[0] == 'getExtendedMoreLikeThis':
+    if len(args) < 5:
+        print ('domain, entryid, targetDomain and fields should be given.')
+    else:
+        start = ''
+        size = ''
+        fieldurl = ''
+        viewurl = ''
+        mltfields = ''
+        mintermfreq = ''
+        mindocfreq = ''
+        maxqueryterm = ''
+        mindocfreq = ''
+        maxqueryterm = ''
+        excludes = ''
+        excludesets = ''
+
+        if options.start:       start = options.start
+        if options.size:        size = options.size
+        if options.fieldurl:    fieldurl = options.fieldurl
+        if options.viewurl:     viewurl = options.viewurl        
+        if options.mltfields: mltfields = options.mltfields
+        if options.mintermfreq: mintermfreq = options.mintermfreq
+        if options.mindocfreq: mindocfreq = options.mindocfreq
+        if options.maxqueryterm: maxqueryterm = options.maxqueryterm
+        if options.excludes: excludes = options.excludes
+        if options.excludesets: excludesets = options.excludesets
+        getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+
+elif args[0] == 'getAutoComplete':
+    if len(args) < 3:
+        print ('domain and term should be given.')
+    else:
+        getAutoComplete(args[1], args[2])
 # Unknown argument combination, display usage
 else:
     print 'Error: unrecognised argument combination'
