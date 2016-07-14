@@ -29,37 +29,37 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "wsSuggestion", propOrder = {
-    "suggest",
+    "suggestion",
     "formatted"
 })
 public class WsSuggestion {
 
     @XmlElement(required = true)
-    protected String suggest;
+    protected String suggestion;
     protected String formatted;
 
     /**
-     * Gets the value of the suggest property.
+     * Gets the value of the suggestion property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSuggest() {
-        return suggest;
+    public String getSuggestion() {
+        return suggestion;
     }
 
     /**
-     * Sets the value of the suggest property.
+     * Sets the value of the suggestion property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSuggest(String value) {
-        this.suggest = value;
+    public void setSuggestion(String value) {
+        this.suggestion = value;
     }
 
     /**

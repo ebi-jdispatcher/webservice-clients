@@ -47,6 +47,8 @@ import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFieldInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsIndexInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsOption;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsSuggestion;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsSuggestions;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTerm;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTopTerms;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.Wsurl;
@@ -83,12 +85,12 @@ public class EBeyeClient {
 	                                              + "--getNumberOfResults <domain> <query>\n"
 	                                              + "  Executes a query and returns number of results.\n"
 	                                              + "\n"
-	                                              + "--getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order]\n"
+	                                              + "--getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]\n"
 	                                              + "  Executes a query and returns a list of results. Each result contains the \n"
 	                                              + "  values for each field specified in the \"fields\" argument in the same order\n"
 	                                              + "  as they appear in the \"fields\" list.\n"
 	                                              + "\n"
-	                                              + "--getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]\n"
+	                                              + "--getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets ]\n"
 	                                              + "  Executes a query and returns a list of results with facets. Each result contains the \n"
 	                                              + "  values for each field specified in the \"fields\" argument in the same order\n"
 	                                              + "  as they appear in the \"fields\" list.\n"
@@ -107,16 +109,19 @@ public class EBeyeClient {
 	                                              + "  Returns the list of domains with entries referenced in a particular domain\n"
 	                                              + "  entry. These domains are indexed in the EB-eye.\n"
 	                                              + "\n"
-	                                              + "--getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]\n"
+	                                              + "--getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets ]\n"
 	                                              + "  Returns the list of referenced entry identifiers from a domain referenced\n"
 	                                              + "  in a particular domain entry.\n"
 	                                              + "\n"
 	                                              + "--getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]\n"
 	                                              + "  Returns the list of top N terms in a field\n"
 	                                              + "\n"
-	                                              + "--getMoreLikeThis <domain> <entryid> <fields> "
+	                                              + "--getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> "
 	                                              + "                  [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]\n"
 	                                              + "  Returns the list of similar entries to a given one\n"
+	                                              + "\n"
+	                                              + "--getAutoComplete <domain> <term>\n"
+	                                              + "  Returns suggested words from a given term \n"
 	                                              + "\n"
 	                                              + "-h, --help\n"
 	                                              + "  This help/usage message.\n"
@@ -133,6 +138,8 @@ public class EBeyeClient {
 	                                              + "--viewurl <viewurl>\twhether view links are included.\n"
 	                                              + "--sortfield <sortfield>\tfield id to sort.\n"
 	                                              + "--order <order>\tsort in ascending/descending order.\n"
+	                                              + "--sort <sort>\tcomma separated value of sorting criteria.\n"
+	                                              + "--facets <facets>\tcomma separated value of selected facet values.\n"
 	                                              + "--facetcount <facetcount>\tnumber of facet values to retrieve.\n"
 	                                              + "--facetfields <facetfields>\tfield ids associated with facets to retrieve.\n"
 	                                              + "--mltfields <mltfields>\tfield ids  to be used for generating a morelikethis query.\n"
@@ -330,15 +337,20 @@ public class EBeyeClient {
 	 * 
 	 * @return
 	 */
-	public WsResult getResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField, String order) {
+	public WsResult getResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField, String order, String sort) {
 		printDebugMessage("getResults", "Begin", 1);
 
-		Invocation.Builder builder = getTarget().path(domain).queryParam("query", query).queryParam("fields", fields).queryParam("start", start).queryParam("size",
-		                                                                                                                                                    size).queryParam("fieldurl",
-		                                                                                                                                                                     fieldurl).queryParam("viewurl",
-		                                                                                                                                                                                          viewurl).queryParam("sortfield",
-		                                                                                                                                                                                                              sortField).queryParam("order",
-		                                                                                                                                                                                                                                    order).request();
+		Invocation.Builder builder = getTarget().path(domain)
+				.queryParam("query", query)
+				.queryParam("fields", fields)
+				.queryParam("start", start)
+				.queryParam("size", size)
+				.queryParam("fieldurl", fieldurl)
+				.queryParam("viewurl", viewurl)
+				.queryParam("sortfield", sortField)
+				.queryParam("order", order)
+				.queryParam("sort", sort).request();
+
 		WsResult result = builder.get(WsResult.class);
 
 		printDebugMessage("getResults", "End", 1);
@@ -350,18 +362,22 @@ public class EBeyeClient {
 	 * @return
 	 */
 	public WsResult getFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
-	                                  String order, int facetCount, String facetfields, String facets) {
+	                                  String order, String sort, int facetCount, String facetfields, String facets) {
 		printDebugMessage("getResults", "Begin", 1);
 
-		Invocation.Builder builder = getTarget().path(domain).queryParam("query", query).queryParam("fields", fields).queryParam("start", start).queryParam("size",
-		                                                                                                                                                    size).queryParam("fieldurl",
-		                                                                                                                                                                     fieldurl).queryParam("viewurl",
-		                                                                                                                                                                                          viewurl).queryParam("sortfield",
-		                                                                                                                                                                                                              sortField).queryParam("order",
-		                                                                                                                                                                                                                                    order).queryParam("facetcount",
-		                                                                                                                                                                                                                                                      facetCount).queryParam("facetfields",
-		                                                                                                                                                                                                                                                                             facetfields).queryParam("facets",
-		                                                                                                                                                                                                                                                                                                     facets).request();
+		Invocation.Builder builder = getTarget().path(domain)
+				.queryParam("query", query)
+				.queryParam("fields", fields)
+				.queryParam("start", start)
+				.queryParam("size", size)
+				.queryParam("fieldurl", fieldurl)
+				.queryParam("viewurl", viewurl)
+				.queryParam("sortfield", sortField)
+				.queryParam("order", order)
+				.queryParam("sort", sort)
+				.queryParam("facetcount", facetCount)
+				.queryParam("facetfields", facetfields)
+				.queryParam("facets", facets).request();
 
 		WsResult result = builder.get(WsResult.class);
 
@@ -435,14 +451,23 @@ public class EBeyeClient {
 	 * @return
 	 */
 	public WsResult getReferencedEntries(String domain, String entries, String referencedDomain, String fields, int start, int size, boolean fieldurl,
-	                                     boolean viewurl) {
+	                                     boolean viewurl, int facetCount, String facetfields, String facets) {
 		printDebugMessage("getReferencedEntries", "Begin", 1);
-
+		
 		String path = domain + "/entry/" + entries + "/xref/" + referencedDomain;
-		Invocation.Builder builder = getTarget().path(path).queryParam("fields", fields).queryParam("start", start).queryParam("size", size).queryParam("fieldurl",
-		                                                                                                                                                fieldurl).queryParam("viewurl",
-		                                                                                                                                                                     viewurl).request();
-
+		
+		WebTarget t =  getTarget().path(path)
+				.queryParam("fields", fields)
+				.queryParam("start", start)
+				.queryParam("size", size)
+				.queryParam("fieldurl", fieldurl)
+				.queryParam("viewurl", viewurl)
+				.queryParam("facetcount", facetCount)
+				.queryParam("facetfields", facetfields)
+				.queryParam("facets", facets);
+		
+		printDebugMessage("getReferencedEntries", getURLString(t), 2);
+		Invocation.Builder builder = t.request();
 		WsResult result = builder.get(WsResult.class);
 
 		printDebugMessage("getReferencedEntries", "End", 1);
@@ -466,11 +491,11 @@ public class EBeyeClient {
 	 * @param excludesets
 	 * @return
 	 */
-	private WsResult getMoreLikeThis(String domain, String entryid, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
+	private WsResult getMoreLikeThis(String domain, String entryid, String targetDomain, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
 	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
 		printDebugMessage("getMoreLikeThis", "Begin", 1);
 
-		String path = domain + "/entry/" + entryid + "/morelikethis";
+		String path = domain + "/entry/" + entryid + "/morelikethis/" + targetDomain;
 
 		WebTarget t = getTarget().path(path).queryParam("fields", fields).queryParam("start", start).queryParam("size", size).queryParam("fieldurl", fieldurl).queryParam("viewurl",
 		                                                                                                                                                                  viewurl).queryParam("mltfields",
@@ -486,6 +511,28 @@ public class EBeyeClient {
 		WsResult result = builder.get(WsResult.class);
 
 		printDebugMessage("getMoreLikeThis", "End", 1);
+		return result;
+	}
+	
+	/**
+	 * Get suggestions of a given term
+	 * @param domain
+	 * @param term
+	 * @return
+	 */
+	private WsResult getAutoComplete(String domain, String term) {
+		printDebugMessage("getAutoComplete", "Begin", 1);
+
+		String path = domain + "/autocomplete";
+
+		WebTarget t = getTarget().path(path).queryParam("term", term);
+
+		printDebugMessage("getAutoComplete", getURLString(t), 2);
+
+		Invocation.Builder builder = t.request();
+		WsResult result = builder.get(WsResult.class);
+
+		printDebugMessage("getAutoComplete", "End", 1);
 		return result;
 	}
 
@@ -639,10 +686,10 @@ public class EBeyeClient {
 	 * Print search results.
 	 */
 	public void printGetResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
-	                            String order) {
+	                            String order, String sort) {
 		printDebugMessage("printGetResults", "Begin", 1);
 
-		WsResult result = getResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order);
+		WsResult result = getResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort);
 		WsEntries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
@@ -698,10 +745,10 @@ public class EBeyeClient {
 	 * @param selectedfacets
 	 */
 	public void printGetFacetedResults(String domain, String query, String fields, int start, int size, boolean fieldurl, boolean viewurl, String sortField,
-	                                   String order, int facetCount, String facetfields, String selectedfacets) {
+	                                   String order, String sort, int facetCount, String facetfields, String selectedfacets) {
 		printDebugMessage("printGetFacetedResults", "Begin", 1);
 
-		WsResult result = getFacetedResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, facetCount, facetfields, selectedfacets);
+		WsResult result = getFacetedResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort, facetCount, facetfields, selectedfacets);
 		WsEntries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
@@ -724,9 +771,24 @@ public class EBeyeClient {
 	private void print(WsFacet facet) {
 		System.out.println(facet.getLabel() + " (" + facet.getId() + ")");
 		for (WsFacetValue value : facet.getFacetValues().getFacetValue()) {
-			System.out.println(value.getLabel() + " (" + value.getValue() + ") " + value.getCount());
+			print(value, 0);
 		}
 		System.out.println();
+	}
+
+	private void print (WsFacetValue value, int depth) {
+		
+		for (int i=0; i< depth ; i++) {
+			System.out.print("\t");
+		}
+
+		System.out.println(value.getLabel() + " (" + value.getValue() + ") " + value.getCount());
+		
+		if (value.getChildren() != null && !value.getChildren().getFacetValue().isEmpty()) {
+			for ( int i =0; i < value.getChildren().getFacetValue().size(); i ++ ) {
+				print (value.getChildren().getFacetValue().get(i), depth+1);
+			}
+		}
 	}
 
 	/**
@@ -802,10 +864,10 @@ public class EBeyeClient {
 	 * @param viewurl
 	 */
 	public void printGetReferencedEntries(String domain, String entryIds, String referencedDomain, String fields, int start, int size, boolean fieldurl,
-	                                      boolean viewurl) {
+	                                      boolean viewurl, int facetCount, String facetfields, String selectedfacets) {
 		printDebugMessage("printGetReferencedEntries", "Begin", 1);
 
-		WsResult result = getReferencedEntries(domain, entryIds, referencedDomain, fields, start, size, fieldurl, viewurl);
+		WsResult result = getReferencedEntries(domain, entryIds, referencedDomain, fields, start, size, fieldurl, viewurl, facetCount, facetfields, selectedfacets);
 		WsEntries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
@@ -814,70 +876,6 @@ public class EBeyeClient {
 		}
 
 		printDebugMessage("printGetReferencedEntries", "End", 1);
-	}
-
-	/**
-	 * Print found similar documents 
-	 * @param domain
-	 * @param entryid
-	 * @param fields
-	 * @param start
-	 * @param size
-	 * @param fieldurl
-	 * @param viewurl
-	 * @param mltfields
-	 * @param mintermfreq
-	 * @param mindocfreq
-	 * @param maxqueryterm
-	 * @param excludes
-	 * @param excludesets
-	 */
-	public void printGetMoreLikeThis(String domain, String entryid, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
-	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
-		printDebugMessage("printGetMoreLikeThis", "Begin", 1);
-
-		WsResult result = getMoreLikeThis(domain,
-		                                  entryid,
-		                                  fields,
-		                                  start,
-		                                  size,
-		                                  fieldurl,
-		                                  viewurl,
-		                                  mltfields,
-		                                  mintermfreq,
-		                                  mindocfreq,
-		                                  maxqueryterm,
-		                                  excludes,
-		                                  excludesets);
-
-		WsEntries entries = result.getEntries();
-		if (entries != null) {
-			for (WsEntry entry : entries.getEntry()) {
-				print(entry);
-			}
-		}
-
-		printDebugMessage("printGetMoreLikeThis", "End", 1);
-	}
-
-	/**
-	 * @param domain
-	 * @param field
-	 * @param size
-	 * @param excludes
-	 * @param excludesets
-	 */
-	public void printGetTopTerms(String domain, String field, int size, String excludes, String excludesets) {
-		printDebugMessage("printGetTopTerms", "Begin", 1);
-
-		WsResult result = getTopTerms(domain, field, size, excludes, excludesets);
-		WsTopTerms topTerms = result.getTopTerms();
-		if (topTerms != null && topTerms.getTerm() != null) {
-			for (WsTerm term : topTerms.getTerm()) {
-				System.out.println(term.getText() + ": " + term.getDocFreq());
-			}
-		}
-		printDebugMessage("printGetTopTerms", "End", 1);
 	}
 
 	private void printReference(WsEntry entry) {
@@ -905,6 +903,142 @@ public class EBeyeClient {
 			}
 		}
 		System.out.println();
+		
+		if (entry.getReferenceFacets() != null) {
+			for (WsFacet facet : entry.getReferenceFacets().getReferenceFacets()) {
+				print(facet);
+			}
+		}
+	}
+
+	/**
+	 * Print found similar documents in a same domain
+	 * @param domain
+	 * @param entryid
+	 * @param fields
+	 * @param start
+	 * @param size
+	 * @param fieldurl
+	 * @param viewurl
+	 * @param mltfields
+	 * @param mintermfreq
+	 * @param mindocfreq
+	 * @param maxqueryterm
+	 * @param excludes
+	 * @param excludesets
+	 */
+	public void printGetMoreLikeThis(String domain, String entryid, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
+	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
+		printDebugMessage("printGetMoreLikeThis", "Begin", 1);
+
+		WsResult result = getMoreLikeThis(domain,
+		                                  entryid,
+		                                  domain,
+		                                  fields,
+		                                  start,
+		                                  size,
+		                                  fieldurl,
+		                                  viewurl,
+		                                  mltfields,
+		                                  mintermfreq,
+		                                  mindocfreq,
+		                                  maxqueryterm,
+		                                  excludes,
+		                                  excludesets);
+
+		WsEntries entries = result.getEntries();
+		if (entries != null) {
+			for (WsEntry entry : entries.getEntry()) {
+				print(entry);
+			}
+		}
+
+		printDebugMessage("printGetMoreLikeThis", "End", 1);
+	}
+	
+	/**
+	 * Print found similar documents in a specific domain
+	 * @param domain
+	 * @param entryid
+	 * @param fields
+	 * @param start
+	 * @param size
+	 * @param fieldurl
+	 * @param viewurl
+	 * @param mltfields
+	 * @param mintermfreq
+	 * @param mindocfreq
+	 * @param maxqueryterm
+	 * @param excludes
+	 * @param excludesets
+	 */
+	public void printGetMoreLikeThis(String domain, String entryid, String targetDomain, String fields, int start, int size, boolean fieldurl, boolean viewurl, String mltfields,
+	                                 int mintermfreq, int mindocfreq, int maxqueryterm, String excludes, String excludesets) {
+		printDebugMessage("printGetMoreLikeThis", "Begin", 1);
+
+		WsResult result = getMoreLikeThis(domain,
+		                                  entryid,
+		                                  targetDomain,
+		                                  fields,
+		                                  start,
+		                                  size,
+		                                  fieldurl,
+		                                  viewurl,
+		                                  mltfields,
+		                                  mintermfreq,
+		                                  mindocfreq,
+		                                  maxqueryterm,
+		                                  excludes,
+		                                  excludesets);
+
+		WsEntries entries = result.getEntries();
+		if (entries != null) {
+			for (WsEntry entry : entries.getEntry()) {
+				print(entry);
+			}
+		}
+
+		printDebugMessage("printGetMoreLikeThis", "End", 1);
+	}
+	
+	/**
+	 * Print found suggested terms
+	 * @param domain
+	 * @param term
+	 */
+	public void printGetAutoComplete(String domain, String term) {
+		printDebugMessage("printGetAutoComplete", "Begin", 1);
+
+		WsResult result = getAutoComplete(domain, term);
+
+		WsSuggestions suggestions = result.getSuggestions();
+		if (suggestions != null) {
+			for (WsSuggestion suggestion : suggestions.getSuggestion()) {
+				System.out.println(suggestion.getSuggestion());
+			}
+		}
+
+		printDebugMessage("printGetAutoComplete", "End", 1);
+	}
+
+	/**
+	 * @param domain
+	 * @param field
+	 * @param size
+	 * @param excludes
+	 * @param excludesets
+	 */
+	public void printGetTopTerms(String domain, String field, int size, String excludes, String excludesets) {
+		printDebugMessage("printGetTopTerms", "Begin", 1);
+
+		WsResult result = getTopTerms(domain, field, size, excludes, excludesets);
+		WsTopTerms topTerms = result.getTopTerms();
+		if (topTerms != null && topTerms.getTerm() != null) {
+			for (WsTerm term : topTerms.getTerm()) {
+				System.out.println(term.getText() + ": " + term.getDocFreq());
+			}
+		}
+		printDebugMessage("printGetTopTerms", "End", 1);
 	}
 
 	/**
@@ -962,10 +1096,14 @@ public class EBeyeClient {
 		options.addOption("getTopTerms", true, "Top Terms in a field");
 		options.getOption("getTopTerms").setArgs(2);
 
-		// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+		// --getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
 		options.addOption("getMoreLikeThis", true, "Similar documents similar to a given entry");
-		options.getOption("getMoreLikeThis").setArgs(3);
-
+		options.getOption("getMoreLikeThis").setArgs(4);
+		
+		// --getAutoComplete <domain> <term>
+		options.addOption("getAutoComplete", true, "Get suggstions of a given term");
+		options.getOption("getAutoComplete").setArgs(2);
+		
 		// Optional arguments 
 		options.addOption("size", true, "number of entries to retrieve");
 		options.addOption("start", true, "index of the first entry in results");
@@ -973,6 +1111,8 @@ public class EBeyeClient {
 		options.addOption("viewurl", true, "whether view links are included");
 		options.addOption("sortfield", true, "field id to sort");
 		options.addOption("order", true, "sort in ascending/descending order");
+		options.addOption("sort", true, "comma separated value of sorting criteria");
+		options.addOption("facets", true, "comma separated value of selected facet values");
 		options.addOption("facetcount", true, "number of facet values to retrieve");
 		options.addOption("facetfields", true, "field ids associated with facets to retrieve");
 		options.addOption("mltfields", true, "field ids  to be used for generating a morelikethis query");
@@ -1039,7 +1179,7 @@ public class EBeyeClient {
 				String[] vals = cli.getOptionValues("getNumberOfResults");
 				ebeye.printGetNumberOfResults(vals[0], vals[1]);
 			}
-			// --getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order] 
+			// --getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ] 
 			else if (cli.hasOption("getResults")) {
 				String[] vals = cli.getOptionValues("getResults");
 				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
@@ -1048,6 +1188,8 @@ public class EBeyeClient {
 				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
 				String sortfield = cli.hasOption("sortfield") ? cli.getOptionValue("sortfield") : "";
 				String order = cli.hasOption("order") ? cli.getOptionValue("order") : "";
+				String sort = cli.hasOption("sort") ? cli.getOptionValue("sort") : "";
+				
 				ebeye.printGetResults(vals[0],
 				                      vals[1],
 				                      vals[2],
@@ -1056,7 +1198,8 @@ public class EBeyeClient {
 				                      Boolean.parseBoolean(fieldurl),
 				                      Boolean.parseBoolean(viewurl),
 				                      sortfield,
-				                      order);
+				                      order,
+				                      sort);
 			}
 			// --getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --facetcount | --facetfields | --facets]
 			else if (cli.hasOption("getFacetedResults")) {
@@ -1067,9 +1210,11 @@ public class EBeyeClient {
 				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
 				String sortfield = cli.hasOption("sortfield") ? cli.getOptionValue("sortfield") : "";
 				String order = cli.hasOption("order") ? cli.getOptionValue("order") : "";
+				String sort = cli.hasOption("sort") ? cli.getOptionValue("sort") : "";
 				String facetcount = cli.hasOption("facetcount") ? cli.getOptionValue("facetcount") : "10";
 				String facetfield = cli.hasOption("facetfield") ? cli.getOptionValue("facetfield") : "";
 				String facets = cli.hasOption("facets") ? cli.getOptionValue("facets") : "";
+
 				ebeye.printGetFacetedResults(vals[0],
 				                             vals[1],
 				                             vals[2],
@@ -1079,6 +1224,7 @@ public class EBeyeClient {
 				                             Boolean.parseBoolean(viewurl),
 				                             sortfield,
 				                             order,
+				                             sort,
 				                             Integer.parseInt(facetcount),
 				                             facetfield,
 				                             facets);
@@ -1099,13 +1245,17 @@ public class EBeyeClient {
 				String[] vals = cli.getOptionValues("getDomainsReferencedInEntry");
 				ebeye.printGetDomainsReferencedInEntry(vals[0], vals[1]);
 			}
-			// --getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl]
+			// --getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets ]
 			else if (cli.hasOption("getReferencedEntries")) {
 				String[] vals = cli.getOptionValues("getReferencedEntries");
 				String start = cli.hasOption("start") ? cli.getOptionValue("start") : "0";
 				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
 				String fieldurl = cli.hasOption("fieldurl") ? cli.getOptionValue("fieldurl") : "false";
 				String viewurl = cli.hasOption("viewurl") ? cli.getOptionValue("viewurl") : "false";
+				String facetcount = cli.hasOption("facetcount") ? cli.getOptionValue("facetcount") : "10";
+				String facetfield = cli.hasOption("facetfield") ? cli.getOptionValue("facetfield") : "";
+				String facets = cli.hasOption("facets") ? cli.getOptionValue("facets") : "";
+
 				ebeye.printGetReferencedEntries(vals[0],
 				                                vals[1],
 				                                vals[2],
@@ -1113,7 +1263,10 @@ public class EBeyeClient {
 				                                Integer.parseInt(start),
 				                                Integer.parseInt(size),
 				                                Boolean.parseBoolean(fieldurl),
-				                                Boolean.parseBoolean(viewurl));
+				                                Boolean.parseBoolean(viewurl),
+				                                Integer.parseInt(facetcount),
+					                             facetfield,
+					                             facets);
 			}
 			// --getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
 			else if (cli.hasOption("getTopTerms")) {
@@ -1123,7 +1276,7 @@ public class EBeyeClient {
 				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
 				ebeye.printGetTopTerms(vals[0], vals[1], Integer.parseInt(size), excludes, excludesets);
 			}
-			// --getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+			// --getMoreLikeThis <domain> <entryid> [<targetDomain>] <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
 			else if (cli.hasOption("getMoreLikeThis")) {
 				String[] vals = cli.getOptionValues("getMoreLikeThis");
 				String size = cli.hasOption("size") ? cli.getOptionValue("size") : "15";
@@ -1136,19 +1289,43 @@ public class EBeyeClient {
 				String maxqueryterm = cli.hasOption("maxqueryterm") ? cli.getOptionValue("maxqueryterm") : "10";
 				String excludes = cli.hasOption("excludes") ? cli.getOptionValue("excludes") : "";
 				String excludesets = cli.hasOption("excludesets") ? cli.getOptionValue("excludesets") : "";
-				ebeye.printGetMoreLikeThis(vals[0],
-				                           vals[1],
-				                           vals[2],
-				                           Integer.parseInt(start),
-				                           Integer.parseInt(size),
-				                           Boolean.parseBoolean(fieldurl),
-				                           Boolean.parseBoolean(viewurl),
-				                           mltfields,
-				                           Integer.parseInt(mintermfreq),
-				                           Integer.parseInt(mindocfreq),
-				                           Integer.parseInt(maxqueryterm),
-				                           excludes,
-				                           excludesets);
+				
+				if (vals.length == 3) {
+   				ebeye.printGetMoreLikeThis(vals[0],
+   				                           vals[1],
+   				                           vals[2],
+   				                           Integer.parseInt(start),
+   				                           Integer.parseInt(size),
+   				                           Boolean.parseBoolean(fieldurl),
+   				                           Boolean.parseBoolean(viewurl),
+   				                           mltfields,
+   				                           Integer.parseInt(mintermfreq),
+   				                           Integer.parseInt(mindocfreq),
+   				                           Integer.parseInt(maxqueryterm),
+   				                           excludes,
+   				                           excludesets);
+				}
+				else if (vals.length == 4) {
+   				ebeye.printGetMoreLikeThis(vals[0],
+   				                           vals[1],
+   				                           vals[2],
+   				                           vals[3],
+   				                           Integer.parseInt(start),
+   				                           Integer.parseInt(size),
+   				                           Boolean.parseBoolean(fieldurl),
+   				                           Boolean.parseBoolean(viewurl),
+   				                           mltfields,
+   				                           Integer.parseInt(mintermfreq),
+   				                           Integer.parseInt(mindocfreq),
+   				                           Integer.parseInt(maxqueryterm),
+   				                           excludes,
+   				                           excludesets);
+				}
+			}
+			// --getAutoComplete <domain> <term>
+			else if (cli.hasOption("getAutoComplete")) {
+				String[] vals = cli.getOptionValues("getAutoComplete");
+				ebeye.printGetAutoComplete(vals[0], vals[1]);
 			}
 			else {
 				System.err.println("Error: unknown action, see --help");

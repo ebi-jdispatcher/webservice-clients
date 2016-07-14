@@ -188,6 +188,15 @@
 		<antcall target="test-ebeye-rest-getDomainDetails">
 			<param name="client.jar" value="${client.jar.jaxrs}" />
 		</antcall>
+                <antcall target="test-ebeye-rest-getAutoComplete">
+                        <param name="client.jar" value="${client.jar.jaxrs}" />
+                </antcall>
+                <antcall target="test-ebeye-rest-getMoreLikeThis">
+                        <param name="client.jar" value="${client.jar.jaxrs}" />
+                </antcall>
+                <antcall target="test-ebeye-rest-getTopTerms">
+                        <param name="client.jar" value="${client.jar.jaxrs}" />
+                </antcall>
 	</target>
 	
 	<target name="test-ebeye-help">
@@ -430,12 +439,14 @@
 			<arg value="uniprot" />
 			<arg value="azurin" />
 			<arg value="id,acc,name,status" />
+                        <arg value="--start" />
 			<arg value="1" />
+                        <arg value="--size" />
 			<arg value="10" />
+                        <arg value="--fieldurl" />
 			<arg value="true" />
+                        <arg value="--viewurl" />
 			<arg value="true" />
-			<arg value="" />
-			<arg value="" />
 		</java>
 	</target>
 
@@ -447,15 +458,16 @@
 			<arg value="uniprot" />
 			<arg value="azurin" />
 			<arg value="id,acc,name,status" />
+			<arg value="--start" />
 			<arg value="1" />
+			<arg value="--size" />
 			<arg value="10" />
+			<arg value="--fieldurl" />
 			<arg value="true" />
+                        <arg value="--viewurl" />
 			<arg value="true" />
-			<arg value="" />
-			<arg value="" />
+			<arg value="--facetcount" />
 			<arg value="3" />
-			<arg value="" />
-			<arg value="" />
 		</java>
 	</target>
 	
@@ -467,13 +479,15 @@
 			<arg value="uniprot" />
 			<arg value="WAP_RAT,WAP_MOUSE" />
 			<arg value="id,acc,name,status" />
+			<arg value="--fieldurl" />
 			<arg value="true" />
+			<arg value="--viewurl" />
 			<arg value="true" />
 		</java>
 	</target>
 
 	<target name="test-ebeye-rest-getReferencedEntries">
-		<echo message="EB-eye (SOAP): getReferencedEntries" />
+		<echo message="EB-eye (REST): getReferencedEntries" />
 		<java fork="true" failonerror="true" jar="${client.jar}">
 			<jvmarg value="${jvm.extra.jars}" />
 			<arg value="--getReferencedEntries" />
@@ -481,9 +495,13 @@
 			<arg value="WAP_RAT" />
 			<arg value="interpro" />
 			<arg value="id,name" />
+			<arg value="--start" />
 			<arg value="1" />
+			<arg value="--size" />
 			<arg value="10" />
+			<arg value="--fieldurl" />
 			<arg value="true" />
+			<arg value="--viewurl" />
 			<arg value="true" />
 		</java>
 	</target>
@@ -496,6 +514,39 @@
 			<arg value="uniprot" />
 		</java>
 	</target>
+	
+        <target name="test-ebeye-rest-getAutoComplete">
+                <echo message="EB-eye (REST): getAutoComplete" />
+                <java fork="true" failonerror="true" jar="${client.jar}">
+                        <jvmarg value="${jvm.extra.jars}" />
+                        <arg value="--getAutoComplete" />
+                        <arg value="rnacentral" />
+			<arg value="hota" />
+                </java>
+        </target>
+
+        <target name="test-ebeye-rest-getMoreLikeThis">
+                <echo message="EB-eye (REST): getMoreLikeThis" />
+                <java fork="true" failonerror="true" jar="${client.jar}">
+                        <jvmarg value="${jvm.extra.jars}" />
+                        <arg value="--getMoreLikeThis" />
+                        <arg value="pride" />
+                        <arg value="PXD001279" />
+			<arg value="id,name" />
+                </java>
+        </target>
+
+        <target name="test-ebeye-rest-getTopTerms">
+                <echo message="EB-eye (REST): getTopTerms" />
+                <java fork="true" failonerror="true" jar="${client.jar}">
+                        <jvmarg value="${jvm.extra.jars}" />
+                        <arg value="--getTopTerms" />
+                        <arg value="pride" />
+                        <arg value="description" />
+			<arg value="--size" />
+			<arg value="5" />
+                </java>
+        </target>
 
 	<!-- Clean-up -->
 	<target name="test-clean-ebeye" description="EB-eye (SOAP) test clean">

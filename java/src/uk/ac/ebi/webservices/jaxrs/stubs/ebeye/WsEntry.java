@@ -72,7 +72,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "wsEntry", propOrder = { "fields", "fieldURLs", "viewURLs", "referenceCount", "references" })
+@XmlType(name = "wsEntry", propOrder = { "fields", "fieldURLs", "viewURLs", "referenceCount", "references", "referenceFacets" })
 public class WsEntry {
 
 	protected WsFields     fields;
@@ -80,6 +80,7 @@ public class WsEntry {
 	protected WsViewURLs   viewURLs;
 	protected Integer      referenceCount;
 	protected WsReferences references;
+	protected WsReferenceFacets referenceFacets;
 	@XmlAttribute(name = "id", required = true)
 	protected String       id;
 	@XmlAttribute(name = "source", required = true)
@@ -205,6 +206,30 @@ public class WsEntry {
 	 */
 	public void setReferences(WsReferences value) {
 		this.references = value;
+	}
+
+	/**
+	 * Gets the value of the referenceFacets property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link WsReferenceFacets }
+	 *     
+	 */
+	public WsReferenceFacets getReferenceFacets() {
+		return referenceFacets;
+	}
+
+	/**
+	 * Sets the value of the referenceFacets property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link WsReferenceFacets }
+	 *     
+	 */
+	public void setReferenceFacet(WsReferenceFacets value) {
+		this.referenceFacets = value;
 	}
 
 	/**
