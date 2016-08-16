@@ -40,6 +40,10 @@ or
 
   ant compile
 
+If compilation fails it might have happened that one of the webservices was retired, in such case:
+ - we did not generate correct stub for the tool
+ - we need to remobe classes of the tool and references to it in build.xml
+
 To compile just the code for one of the SOAP libraries, e.g. Apache Axis 1.x:
 
   ant axis1-compile
