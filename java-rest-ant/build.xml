@@ -5,14 +5,244 @@
 
     <property name="src.dir" location="src"/>
     <property name="build.dir" location="bin"/>
+    <property name="resources.dir" location="resources"/>
     <property name="dist.dir" location="dist"/>
     <property name="dist.lib.dir" location="dist/lib"/>
     <property name="lib.dir" value="lib"/>
 
+    <!-- Add new tool HERE -->
+    <target name="jar" depends="compile, copy-dependencies" description="package, output to JAR">
+
+        <copy file="src/logback.xml" tofile="${build.dir}/logback.xml"></copy>
+
+        <antcall target="jar-templ">
+            <param name="client" value="ncbiblast"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="iprscan5"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="blast_formatter"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="clustalo"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="clustalw2"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="dalilite"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="dbclustal"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_backtranambig"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_backtranseq"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_cpgplot"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_isochore"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_matcher"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_needle"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_newcpgreport"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_pepinfo"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_pepstats"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_pepwindow"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_seqret"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_sixpack"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_stretcher"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_transeq"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="emboss_water"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="fasta"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="fastm"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="fingerprintscan"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="genewise"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="hmmer_hmmscan"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="infernal_cmscan"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="kalign"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="lalign"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="mafft"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="mafft_addseq"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="mapmi"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="maxsprout"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="muscle"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="mview"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="ncbiblast_plus"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="pfamscan"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="phobius"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="prank"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="pratt"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="predcomp"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="promoterwise"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="ps_scan"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="psiblast"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="psisearch"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="psisearch2"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="radar"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="raxml_epa"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="readseq"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="saps"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="seqcksum"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="tcoffee"/>
+        </antcall>
+
+        <antcall target="jar-templ">
+            <param name="client" value="wise2dba"/>
+        </antcall>
+    </target>
+
+    <!-- Package project files with sources -->
+    <target name="sources">
+        <zip destfile="${dist.lib.dir}/rest-sources.zip"
+             basedir="."
+             excludes="bin/**, dist/**, output/**, resources/**, target/**, java-rest-ant.iml"
+        />
+    </target>
 
     <!-- ivy start -->
     <!-- ivy to get dependencies and copy to project lib folder -->
-    <target name="resolve" description="retrieve dependencies with ivy">
+    <target name="resolve" depends="ivy" description="retrieve dependencies with ivy">
         <ivy:retrieve/>
     </target>
 
@@ -24,8 +254,16 @@
     </target>
     <!-- ivy end -->
 
-    <target name="init">
+    <target name="init-dirs" depends="resolve">
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${resources.dir}"/>
+
+    </target>
+
+    <target name="python-init" depends="init-dirs">
+        <exec dir="scripts" executable="python">
+            <arg line='downloadToolParameters.py' />
+        </exec>
     </target>
 
     <path id="classpath">
@@ -35,7 +273,7 @@
     </path>
 
     <!-- Need classpath to run this -->
-    <target name="compile" depends="init" description="compile the source ">
+    <target name="compile" depends="python-init" description="compile the source ">
         <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath"/>
     </target>
 
@@ -43,7 +281,6 @@
     <target name="copy-dependencies">
 
         <mkdir dir="${dist.lib.dir}"/>
-
         <jar jarfile="${dist.lib.dir}/dependencies-all.jar">
             <zipgroupfileset dir="${lib.dir}">
                 <include name="**/*.jar"/>
@@ -52,19 +289,18 @@
 
     </target>
 
-    <!-- jar it, and declares the ext libraries in manifest.mf file -->
-    <target name="jar" depends="compile, copy-dependencies" description="package, output to JAR">
-        <antcall target="jar-templ"><param name="client" value="IPRScan5Client"/></antcall>
-        <antcall target="jar-templ"><param name="client" value="NcbiBlastClient"/></antcall>
-    </target>
 
     <!-- A template to generate a Jar file -->
     <target name="jar-templ">
+        <copy file="resources/${client}.info" tofile="${build.dir}/files/tool.info" overwrite="true"></copy>
+        <copy file="resources/${client}_optional.txt" toFile="${build.dir}/files/optional.txt" overwrite="true"></copy>
+        <copy file="resources/${client}_required.txt" toFile="${build.dir}/files/required.txt" overwrite="true"></copy>
+
         <jar jarfile="${dist.dir}/${client}.jar"
              basedir="${build.dir}"
-             includes="uk/ac/ebi/restclient/Abstract** uk/ac/ebi/restclient/stubs/** uk/ac/ebi/restclient/${client}**">
+             includes="logback.xml files/** uk/ac/ebi/restclient/** uk/ac/ebi/restclient/stubs/**">
             <manifest>
-                <attribute name="Main-Class" value="uk.ac.ebi.restclient.${client}"/>
+                <attribute name="Main-Class" value="uk.ac.ebi.restclient.RestClient"/>
             </manifest>
             <zipfileset src="${dist.lib.dir}/dependencies-all.jar" excludes="META-INF/*.SF"/>
         </jar>
@@ -76,6 +312,6 @@
     </target>
 
     <!-- Default, run this -->
-    <target name="main" depends="clean, compile, jar"/>
+    <target name="main" depends="clean, compile, jar, sources"/>
 
 </project>

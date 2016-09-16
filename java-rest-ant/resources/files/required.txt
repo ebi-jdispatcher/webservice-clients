@@ -1,0 +1,2 @@
+--sequence 	string 	Path to a sequence file or the sequence string.
+--email    	string 	User email address

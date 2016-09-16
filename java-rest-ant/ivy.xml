@@ -9,7 +9,6 @@
 
 
 	<dependencies>
-
         <!-- Used to parse commandline options -->
 		<!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
 		<dependency org="commons-cli" name="commons-cli" rev="1.2"/>
@@ -26,5 +25,13 @@
         <!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-core -->
         <dependency org="com.sun.jersey" name="jersey-core" rev="1.19.1"/>
 
-	</dependencies>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.7.21"/>
+
+        <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.13"/>
+
+        <!-- Guava library to read resource into String -->
+        <dependency org="com.google.guava" name="guava" rev="19.0"/>
+
+    </dependencies>
 </ivy-module>

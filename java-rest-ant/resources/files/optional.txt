@@ -1,0 +1,4 @@
+--title    	string        	A title to identify the analysis job
+--goterms  	boolean       	GO terms [Switch on look-up of corresponding Gene Ontology annotations]
+--pathways 	boolean       	Pathways [Switch on look-up of corresponding pathway annotations]
+--appl     	ArrayOfString 	Applications [A number of different protein sequence applications are launched. These applications search against specific databases and have preconfigured cut off thresholds.]
