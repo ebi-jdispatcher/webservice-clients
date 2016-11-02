@@ -45,7 +45,7 @@
 	<classpathentry kind="lib" path="lib/geronimo-osgi-locator-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/geronimo-osgi-registry-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/javax.annotation-api-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.ws.rs-api-2.0.1.jar" sourcepath="/net/isilonP/public/rw/homes/wp-02/.m2/repository/javax/ws/rs/javax.ws.rs-api/2.0.1/javax.ws.rs-api-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-core-2.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-xjc-2.2.11.jar"/>

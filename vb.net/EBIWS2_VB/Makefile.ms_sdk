@@ -11,16 +11,12 @@
 # ======================================================================
 
 all: EbiWS \
-EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
 NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
 WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe \
 
 EbiWS\bin\Release\EbiWS.dll:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk
-
-EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
 
 IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -33,14 +29,12 @@ WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe: EbiWS\bin\Release\EbiWS.d
 
 clean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk clean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk clean
 
 distclean:
 	cd EbiWS && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk distclean

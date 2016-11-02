@@ -13,9 +13,9 @@ EMAIL = support@ebi.ac.uk
 TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 
 # Run all test sets
-all: dbfetch ebeye iprscan ncbiblast
+all: dbfetch iprscan ncbiblast
 
-clean: dbfetch_clean ebeye_clean iprscan_clean ncbiblast_clean
+clean: dbfetch_clean iprscan_clean ncbiblast_clean
 
 # Fetch/update test data.
 test_data:
@@ -68,76 +68,6 @@ dbfetch_fetchBatch_stdin: test_data
 
 dbfetch_clean:
 	del /f dbfetch-*
-
-# EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
-ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation
-
-ebeye_listDomains:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listDomains
-
-ebeye_getNumberOfResults:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getNumberOfResults uniprot "azurin"
-
-ebeye_getResultsIds:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResultsIds uniprot "azurin" 1 10
-
-ebeye_getAllResultsIds:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getAllResultsIds uniprot "azurin"
-
-ebeye_listFields:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listFields uniprot
-
-ebeye_getResults:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getResults uniprot "azurin" "id,acc,name,status" 1 10
-
-ebeye_getEntry:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntry uniprot "WAP_RAT" "id,acc,name,status"
-
-ebeye_getEntries:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntries uniprot "WAP_RAT,WAP_MOUSE" "id,acc,name,status"
-
-ebeye_getEntryFieldUrls:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntryFieldUrls uniprot "WAP_RAT" "id"
-
-ebeye_getEntriesFieldUrls:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getEntriesFieldUrls uniprot "WAP_RAT,WAP_MOUSE" "id"
-
-ebeye_getDomainsReferencedInDomain:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsReferencedInDomain uniprot
-
-ebeye_getDomainsReferencedInEntry:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsReferencedInEntry uniprot "WAP_RAT"
-
-ebeye_listAdditionalReferenceFields:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listAdditionalReferenceFields uniprot
-
-ebeye_getReferencedEntries:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntries uniprot "WAP_RAT" interpro
-
-ebeye_getReferencedEntriesSet:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesSet uniprot "WAP_RAT,WAP_MOUSE" interpro "id,name"
-
-ebeye_getReferencedEntriesFlatSet:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getReferencedEntriesFlatSet uniprot "WAP_RAT,WAP_MOUSE" interpro "id,name"
-
-ebeye_getDomainsHierarchy:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDomainsHierarchy
-
-ebeye_getDetailledNumberOfResults: ebeye_getDetailledNumberOfResults_flat ebeye_getDetailledNumberOfResults_tree
-
-ebeye_getDetailledNumberOfResults_flat:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi "azurin" true
-
-ebeye_getDetailledNumberOfResults_tree:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --getDetailledNumberOfResults allebi "azurin" false
-
-ebeye_listFieldsInformation:
-	 EBeyeCliClient\bin\Release\EBeyeCliClient.exe --listFieldsInformation uniprot
-
-ebeye_clean:
 
 # InterProScan
 iprscan: iprscan_params iprscan_param_detail iprscan_file iprscan_dbid iprscan_stdin_stdout iprscan_id_list_file iprscan_id_list_file_stdin_stdout iprscan_multifasta_file iprscan_multifasta_file_stdin_stdout

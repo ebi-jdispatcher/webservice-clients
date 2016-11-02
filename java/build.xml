@@ -110,7 +110,6 @@
 		<antcall target="axis1-stubs-clustalw2phylogeny" />
 		<antcall target="axis1-stubs-dalilite"/>
 		<antcall target="axis1-stubs-dbclustal" />
-		<antcall target="axis1-stubs-ebeye" />
 		<antcall target="axis1-stubs-emboss_backtranambig" />
 		<antcall target="axis1-stubs-emboss_backtranseq" />
 		<antcall target="axis1-stubs-emboss_cpgplot" />
@@ -194,12 +193,6 @@
 		<antcall target="genAxis1Stubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.dbclustal" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dbclustal?wsdl" />
-		</antcall>
-	</target>
-	<target name="axis1-stubs-ebeye" description="Axis 1.x: generate stubs for EB-eye">
-		<antcall target="genAxis1Stubs">
-			<param name="stubPkg" value="uk.ac.ebi.webservices.axis1.stubs.ebeye" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
 	<target name="axis1-stubs-emboss_backtranseq" description="Axis 1.x: generate stubs for EMBOSS backtranseq (SOAP)">
@@ -546,16 +539,6 @@
 			includes="uk/ac/ebi/webservices/axis1/DbClustalClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DbClustalClient"/>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Date" value="${TODAY}"/>
-				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
-			</manifest>
-		</jar>
-		<jar destfile="${jar.dir}/EBeye_Axis1.jar"
-			basedir="${build.dir}"
-			includes="uk/ac/ebi/webservices/axis1/EBeyeClient** uk/ac/ebi/webservices/axis1/stubs/ebeye/** client-config.wsdd">
-			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.EBeyeClient"/>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
@@ -1022,7 +1005,6 @@
 		<antcall target="axis1-distclean-stubs-clustalw2phylogeny" />
 		<antcall target="axis1-distclean-stubs-dalilite" />
 		<antcall target="axis1-distclean-stubs-dbclustal" />
-		<antcall target="axis1-distclean-stubs-ebeye" />
 		<antcall target="axis1-distclean-stubs-emboss_backtranambig" />
 		<antcall target="axis1-distclean-stubs-emboss_backtranseq" />
 		<antcall target="axis1-distclean-stubs-emboss_cpgplot" />
@@ -1104,12 +1086,6 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${axis1.stubs.src.dir}/dbclustal" includes="*/**" />
 	        <fileset dir="${axis1.stubs.src.dir}/" includes="dbclustal" />
-	    </delete>
-	</target>
-	<target name="axis1-distclean-stubs-ebeye" description="Axis 1.x: remove EB-eye stubs">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${axis1.stubs.src.dir}/ebeye" includes="*/**" />
-	        <fileset dir="${axis1.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
 	<target name="axis1-distclean-stubs-emboss_backtranambig" description="Axis 1.x: remove EMBOSS backtranambig stubs">
@@ -1394,7 +1370,6 @@
 		<antcall target="jaxws-stubs-clustalw2phylogeny" />
 		<antcall target="jaxws-stubs-dalilite" />
 		<antcall target="jaxws-stubs-dbclustal" />
-		<antcall target="jaxws-stubs-ebeye" />
 		<antcall target="jaxws-stubs-emboss_backtranambig" />
 		<antcall target="jaxws-stubs-emboss_backtranseq" />
 		<antcall target="jaxws-stubs-emboss_cpgplot" />
@@ -1478,12 +1453,6 @@
 		<antcall target="genJaxwsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.dbclustal" />
 			<param name="wsdlUrl" value="http://www.ebi.ac.uk/Tools/services/soap/dbclustal?wsdl" />
-		</antcall>
-	</target>
-	<target name="jaxws-stubs-ebeye" description="JAX-WS RI: generate stubs for EB-eye">
-		<antcall target="genJaxwsStubs">
-			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxws.stubs.ebeye" />
-			<param name="wsdlUrl" value="http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl" />
 		</antcall>
 	</target>
 	<target name="jaxws-stubs-emboss_backtranambig" description="JAX-WS RI: generate stubs for EMBOSS backtranambig (SOAP)">
@@ -1780,14 +1749,6 @@
 		<!-- TODO: ClustalW2 Phylogeny -->
 		<!-- TODO: DaliLite -->
 		<!-- TODO: DbClustal -->
-		<jar destfile="${jar.dir}/EBeye_JAXWS.jar" basedir="${build.dir}" includes="uk/ac/ebi/webservices/jaxws/EBeyeClient.** uk/ac/ebi/webservices/jaxws/stubs/ebeye/**">
-			<manifest>
-				<attribute name="Main-Class" value="uk.ac.ebi.webservices.jaxws.EBeyeClient"/>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Date" value="${TODAY}"/>
-				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
-			</manifest>
-		</jar>
 		<!-- TODO: EMBOSS backtranambig -->
 		<!-- TODO: EMBOSS backtranseq -->
 		<!-- TODO: EMBOSS cpgplot -->
@@ -1879,7 +1840,6 @@
 		<antcall target="jaxws-distclean-stubs-clustalw2phylogeny" />
 		<antcall target="jaxws-distclean-stubs-dalilite" />
 		<antcall target="jaxws-distclean-stubs-dbclustal" />
-		<antcall target="jaxws-distclean-stubs-ebeye" />
 		<antcall target="jaxws-distclean-stubs-emboss_backtranambig" />
 		<antcall target="jaxws-distclean-stubs-emboss_backtranseq" />
 		<antcall target="jaxws-distclean-stubs-emboss_cpgplot" />
@@ -1962,12 +1922,6 @@
 	    <delete includeemptydirs="true" quiet="true">
 	        <fileset dir="${jaxws.stubs.src.dir}/dbclustal" includes="*/**" />
 	        <fileset dir="${jaxws.stubs.src.dir}/" includes="dbclustal" />
-	    </delete>
-	</target>
-	<target name="jaxws-distclean-stubs-ebeye" description="JAX-WS RI: remove EB-eye stubs">
-	    <delete includeemptydirs="true" quiet="true">
-	        <fileset dir="${jaxws.stubs.src.dir}/ebeye" includes="*/**" />
-	        <fileset dir="${jaxws.stubs.src.dir}/" includes="ebeye" />
 	    </delete>
 	</target>
 	<target name="jaxws-distclean-stubs-emboss_backtranambig" description="JAX-WS RI: remove EMBOSS backtranambig (SOAP) stubs">

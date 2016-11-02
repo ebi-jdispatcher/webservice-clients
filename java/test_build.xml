@@ -172,7 +172,6 @@
 	<target name="axis1-test" description="Axis 1.x: client smoke tests">
 		<!-- Misc. -->
 		<antcall target="axis1-test-wsdbfetch" />
-		<antcall target="axis1-test-ebeye" />
 		<!-- Multiple Sequence Alignment (MSA) -->
 		<antcall target="axis1-test-clustalo" />
 		<antcall target="axis1-test-clustalw2" />
@@ -239,7 +238,6 @@
 	<target name="jaxws-test" description="JAX-WS RI: client smoke tests">
 		<!-- Misc. -->
 		<antcall target="jaxws-test-wsdbfetch" />
-		<antcall target="jaxws-test-ebeye" />
 		<!-- Protein Function Analysis (PFA) -->
 		<!-- antcall target="jaxws-test-iprscan" / --> <!-- Obsolete -->
 		<!-- Sequence Similarity Search (SSS) -->

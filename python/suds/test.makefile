@@ -35,13 +35,11 @@ TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 # Run all test sets
 all: \
 dbfetch \
-ebeye \
 iprscan5 \
 ncbiblast
 
 clean: \
 dbfetch_clean \
-ebeye_clean \
 iprscan5_clean \
 ncbiblast_clean
 
@@ -91,79 +89,6 @@ dbfetch_fetchBatch_stdin: test_data
 
 dbfetch_clean:
 	rm -f dbfetch-*
-
-# EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
-ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults ebeye_listFieldsInformation ebeye_getFacets
-
-ebeye_listDomains:
-	${PYTHON} ebeye_suds.py --listDomains
-
-ebeye_getNumberOfResults:
-	${PYTHON} ebeye_suds.py --getNumberOfResults uniprot 'azurin'
-
-ebeye_getResultsIds:
-	${PYTHON} ebeye_suds.py --getResultsIds uniprot 'azurin' 1 10
-
-ebeye_getAllResultsIds:
-	${PYTHON} ebeye_suds.py --getAllResultsIds uniprot 'azurin'
-
-ebeye_listFields:
-	${PYTHON} ebeye_suds.py --listFields uniprot
-
-ebeye_getResults:
-	${PYTHON} ebeye_suds.py --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
-
-ebeye_getEntry:
-	${PYTHON} ebeye_suds.py --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
-
-ebeye_getEntries:
-	${PYTHON} ebeye_suds.py --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
-
-ebeye_getEntryFieldUrls:
-	${PYTHON} ebeye_suds.py --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
-
-ebeye_getEntriesFieldUrls:
-	${PYTHON} ebeye_suds.py --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
-
-ebeye_getDomainsReferencedInDomain:
-	${PYTHON} ebeye_suds.py --getDomainsReferencedInDomain uniprot
-
-ebeye_getDomainsReferencedInEntry:
-	${PYTHON} ebeye_suds.py --getDomainsReferencedInEntry uniprot 'WAP_RAT'
-
-ebeye_listAdditionalReferenceFields:
-	${PYTHON} ebeye_suds.py --listAdditionalReferenceFields uniprot
-
-ebeye_getReferencedEntries:
-	${PYTHON} ebeye_suds.py --getReferencedEntries uniprot 'WAP_RAT' interpro
-
-ebeye_getReferencedEntriesSet:
-	${PYTHON} ebeye_suds.py --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getReferencedEntriesFlatSet:
-	${PYTHON} ebeye_suds.py --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getDomainsHierarchy:
-	${PYTHON} ebeye_suds.py --getDomainsHierarchy
-
-ebeye_getDetailledNumberOfResults: ebeye_getDetailledNumberOfResults_flat ebeye_getDetailledNumberOfResults_tree
-
-ebeye_getDetailledNumberOfResults_flat:
-	${PYTHON} ebeye_suds.py --getDetailledNumberOfResults allebi 'azurin' true
-
-ebeye_getDetailledNumberOfResults_tree:
-	${PYTHON} ebeye_suds.py --getDetailledNumberOfResults allebi 'azurin' false
-
-ebeye_listFieldsInformation:
-	${PYTHON} ebeye_suds.py --listFieldsInformation uniprot
-
-ebeye_getFacets:
-	${PYTHON} ebeye_suds.py --getFacets uniprot axr3
-
-ebeye_clean:
 
 # InterProScan
 iprscan5: iprscan5_params iprscan5_param_detail iprscan5_file iprscan5_dbid iprscan5_stdin_stdout iprscan5_id_list_file iprscan5_id_list_file_stdin_stdout iprscan5_multifasta_file iprscan5_multifasta_file_stdin_stdout

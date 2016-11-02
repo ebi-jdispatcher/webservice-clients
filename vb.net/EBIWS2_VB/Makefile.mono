@@ -10,16 +10,12 @@ all: build
 ### Build ###
 build: \
 build-EbiWS \
-build-EBeyeCliClient \
 build-IPRScanCliClient \
 build-NcbiBlastCliClient \
 build-WSDbfetchCliClient \
 
 build-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono
-
-build-EBeyeCliClient: build-EbiWS
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
 
 build-IPRScanCliClient: build-EbiWS
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono
@@ -34,16 +30,12 @@ build-WSDbfetchCliClient: build-EbiWS
 
 clean: \
 clean-EbiWS \
-clean-EBeyeCliClient \
 clean-IPRScanCliClient \
 clean-NcbiBlastCliClient \
 clean-WSDbfetchCliClient \
 
 clean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono clean
-
-clean-EBeyeCliClient:
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono clean
@@ -58,16 +50,12 @@ clean-WSDbfetchCliClient:
 
 distclean: \
 distclean-EbiWS \
-distclean-EBeyeCliClient \
 distclean-IPRScanCliClient \
 distclean-NcbiBlastCliClient \
 distclean-WSDbfetchCliClient \
 
 distclean-EbiWS:
 	cd EbiWS && $(MAKE) -f Makefile.mono distclean
-
-distclean-EBeyeCliClient:
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-IPRScanCliClient:
 	cd IPRScanCliClient && $(MAKE) -f Makefile.mono distclean

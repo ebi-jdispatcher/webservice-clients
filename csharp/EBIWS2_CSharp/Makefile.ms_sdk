@@ -33,7 +33,6 @@ ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
 ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
 DaliliteCliClient\bin\Release\DaliliteCliClient.exe \
 DbClustalCliClient\bin\Release\DbClustalCliClient.exe \
-EBeyeCliClient\bin\Release\EBeyeCliClient.exe \
 EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe \
 EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe \
 EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
@@ -96,9 +95,6 @@ DaliliteCliClient\bin\Release\DaliliteCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 
 DbClustalCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk
-
-EBeyeCliClient\bin\Release\EBeyeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk
 
 EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
 	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk
@@ -231,7 +227,6 @@ clean:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk clean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk clean
 	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
@@ -282,7 +277,6 @@ distclean:
 	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk distclean
-	cd EBeyeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk distclean
 	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean

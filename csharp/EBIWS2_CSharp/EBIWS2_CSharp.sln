@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DaliliteCliClient", "Dalili
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbClustalCliClient", "DbClustalCliClient\DbClustalCliClient.csproj", "{9DBBB654-E36B-4849-84BA-1E4CBD1616EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBeyeCliClient", "EBeyeCliClient\EBeyeCliClient.csproj", "{3346535B-FAF4-4D17-AE64-9B681139FD73}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranambigCliClient", "EmbossBacktranambigCliClient\EmbossBacktranambigCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF30DC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbossBacktranseqCliClient", "EmbossBacktranseqCliClient\EmbossBacktranseqCliClient.csproj", "{BCD61FE3-428F-461B-86F9-328923BF3BDC}"

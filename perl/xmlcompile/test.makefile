@@ -37,13 +37,11 @@ TEST_DATA_SVN=https://svn.ebi.ac.uk/webservices/webservices-2.0/trunk/test_data/
 # Run all test sets
 all: \
 dbfetch \
-ebeye \
 iprscan5 \
 ncbiblast
 
 clean: \
 dbfetch_clean \
-ebeye_clean \
 iprscan5_clean \
 ncbiblast_clean
 
@@ -93,79 +91,6 @@ dbfetch_fetchBatch_stdin: test_data
 
 dbfetch_clean:
 	rm -f dbfetch-*
-
-# EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds ebeye_listFields ebeye_getResults ebeye_getEntry \
-ebeye_getEntries ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResult ebeye_listFieldsInformation ebeye_getFacets
-
-ebeye_listDomains:
-	${PERL} ebeye_xmlcompile.pl --listDomains
-
-ebeye_getNumberOfResults:
-	${PERL} ebeye_xmlcompile.pl --getNumberOfResults uniprot 'azurin'
-
-ebeye_getResultsIds:
-	${PERL} ebeye_xmlcompile.pl --getResultsIds uniprot 'azurin' 1 10
-
-ebeye_getAllResultsIds:
-	${PERL} ebeye_xmlcompile.pl --getAllResultsIds uniprot 'azurin'
-
-ebeye_listFields:
-	${PERL} ebeye_xmlcompile.pl --listFields uniprot
-
-ebeye_getResults:
-	${PERL} ebeye_xmlcompile.pl --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
-
-ebeye_getEntry:
-	${PERL} ebeye_xmlcompile.pl --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
-
-ebeye_getEntries:
-	${PERL} ebeye_xmlcompile.pl --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
-
-ebeye_getEntryFieldUrls:
-	${PERL} ebeye_xmlcompile.pl --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
-
-ebeye_getEntriesFieldUrls:
-	${PERL} ebeye_xmlcompile.pl --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
-
-ebeye_getDomainsReferencedInDomain:
-	${PERL} ebeye_xmlcompile.pl --getDomainsReferencedInDomain uniprot
-
-ebeye_getDomainsReferencedInEntry:
-	${PERL} ebeye_xmlcompile.pl --getDomainsReferencedInEntry uniprot 'WAP_RAT'
-
-ebeye_listAdditionalReferenceFields:
-	${PERL} ebeye_xmlcompile.pl --listAdditionalReferenceFields uniprot
-
-ebeye_getReferencedEntries:
-	${PERL} ebeye_xmlcompile.pl --getReferencedEntries uniprot 'WAP_RAT' interpro
-
-ebeye_getReferencedEntriesSet:
-	${PERL} ebeye_xmlcompile.pl --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getReferencedEntriesFlatSet:
-	${PERL} ebeye_xmlcompile.pl --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getDomainsHierarchy:
-	${PERL} ebeye_xmlcompile.pl --getDomainsHierarchy
-
-ebeye_getDetailledNumberOfResult: ebeye_getDetailledNumberOfResult_flat ebeye_getDetailledNumberOfResult_tree
-
-ebeye_getDetailledNumberOfResult_flat:
-	${PERL} ebeye_xmlcompile.pl --getDetailledNumberOfResult allebi 'azurin' true
-
-ebeye_getDetailledNumberOfResult_tree:
-	${PERL} ebeye_xmlcompile.pl --getDetailledNumberOfResult allebi 'azurin' false
-
-ebeye_listFieldsInformation:
-	${PERL} ebeye_xmlcompile.pl --listFieldsInformation uniprot
-
-ebeye_getFacets:
-	${PERL} ebeye_xmlcompile.pl --getFacets uniprot axr3
-
-ebeye_clean:
 
 # InterProScan
 iprscan5: iprscan5_params iprscan5_param_detail \

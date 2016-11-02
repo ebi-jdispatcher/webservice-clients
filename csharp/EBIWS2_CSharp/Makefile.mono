@@ -32,7 +32,6 @@ build-ClustalW2CliClient \
 build-ClustalW2PhylogenyCliClient \
 build-DaliliteCliClient \
 build-DbClustalCliClient \
-build-EBeyeCliClient \
 build-EmbossBacktranambigCliClient \
 build-EmbossBacktranseqCliClient \
 build-EmbossCpgplotCliClient \
@@ -98,9 +97,6 @@ build-DaliliteCliClient: build-EbiWS
 
 build-DbClustalCliClient: build-EbiWS
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono
-
-build-EBeyeCliClient: build-EbiWS
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono
 
 build-EmbossBacktranambigCliClient: build-EbiWS
 	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono
@@ -243,7 +239,6 @@ clean-ClustalOCliClient \
 clean-ClustalW2CliClient \
 clean-ClustalW2PhylogenyCliClient \
 clean-DbClustalCliClient \
-clean-EBeyeCliClient \
 clean-EmbossBacktranambigCliClient \
 clean-EmbossBacktranseqCliClient \
 clean-EmbossCpgplotCliClient \
@@ -309,9 +304,6 @@ clean-DaliliteCliClient:
 
 clean-DbClustalCliClient:
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono clean
-
-clean-EBeyeCliClient:
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono clean
 
 clean-EmbossBacktranambigCliClient:
 	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono clean
@@ -455,7 +447,6 @@ distclean-ClustalW2CliClient \
 distclean-ClustalW2PhylogenyCliClient \
 distclean-DaliliteCliClient \
 distclean-DbClustalCliClient \
-distclean-EBeyeCliClient \
 distclean-EmbossBacktranambigCliClient \
 distclean-EmbossBacktranseqCliClient \
 distclean-EmbossCpgplotCliClient \
@@ -521,9 +512,6 @@ distclean-DaliliteCliClient:
 
 distclean-DbClustalCliClient:
 	cd DbClustalCliClient && $(MAKE) -f Makefile.mono distclean
-
-distclean-EBeyeCliClient:
-	cd EBeyeCliClient && $(MAKE) -f Makefile.mono distclean
 
 distclean-EmbossBacktranambigCliClient:
 	cd EmbossBacktranambigCliClient && $(MAKE) -f Makefile.mono distclean

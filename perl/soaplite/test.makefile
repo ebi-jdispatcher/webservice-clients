@@ -41,7 +41,6 @@ JDispatcher_params_suffix=|| true
 # Run all test sets
 all: \
 dbfetch \
-ebeye \
 msa \
 pfa \
 phylogeny \
@@ -55,7 +54,6 @@ structure
 
 clean: \
 dbfetch_clean \
-ebeye_clean \
 msa_clean \
 pfa_clean \
 phylogeny_clean \
@@ -391,83 +389,6 @@ dbfetch_fetchBatch_stdin: test_data
 
 dbfetch_clean:
 	rm -f dbfetch-*
-
-# EB-eye
-ebeye: ebeye_listDomains ebeye_getNumberOfResults ebeye_getResultsIds ebeye_getAllResultsIds \
-ebeye_listFields ebeye_getResults ebeye_getEntry ebeye_getEntries \
-ebeye_getEntryFieldUrls ebeye_getEntriesFieldUrls \
-ebeye_getDomainsReferencedInDomain ebeye_getDomainsReferencedInEntry \
-ebeye_listAdditionalReferenceFields \
-ebeye_getReferencedEntries ebeye_getReferencedEntriesSet ebeye_getReferencedEntriesFlatSet \
-ebeye_getDomainsHierarchy ebeye_getDetailledNumberOfResults \
-ebeye_listFieldsInformation ebeye_getFacets
-
-ebeye_listDomains:
-	${PERL} ebeye_soaplite.pl --listDomains
-
-ebeye_getNumberOfResults:
-	${PERL} ebeye_soaplite.pl --getNumberOfResults uniprot 'azurin'
-
-ebeye_getResultsIds:
-	${PERL} ebeye_soaplite.pl --getResultsIds uniprot 'azurin' 1 10
-
-ebeye_getAllResultsIds:
-	${PERL} ebeye_soaplite.pl --getAllResultsIds uniprot 'azurin'
-
-ebeye_listFields:
-	${PERL} ebeye_soaplite.pl --listFields uniprot
-
-ebeye_getResults:
-	${PERL} ebeye_soaplite.pl --getResults uniprot 'azurin' 'id,acc,name,status' 1 10
-
-ebeye_getEntry:
-	${PERL} ebeye_soaplite.pl --getEntry uniprot 'WAP_RAT' 'id,acc,name,status'
-
-ebeye_getEntries:
-	${PERL} ebeye_soaplite.pl --getEntries uniprot 'WAP_RAT,WAP_MOUSE' 'id,acc,name,status'
-
-ebeye_getEntryFieldUrls:
-	${PERL} ebeye_soaplite.pl --getEntryFieldUrls uniprot 'WAP_RAT' 'id'
-
-ebeye_getEntriesFieldUrls:
-	${PERL} ebeye_soaplite.pl --getEntriesFieldUrls uniprot 'WAP_RAT,WAP_MOUSE' 'id'
-
-ebeye_getDomainsReferencedInDomain:
-	${PERL} ebeye_soaplite.pl --getDomainsReferencedInDomain uniprot
-
-ebeye_getDomainsReferencedInEntry:
-	${PERL} ebeye_soaplite.pl --getDomainsReferencedInEntry uniprot 'WAP_RAT'
-
-ebeye_listAdditionalReferenceFields:
-	${PERL} ebeye_soaplite.pl --listAdditionalReferenceFields uniprot
-
-ebeye_getReferencedEntries:
-	${PERL} ebeye_soaplite.pl --getReferencedEntries uniprot 'WAP_RAT' interpro
-
-ebeye_getReferencedEntriesSet:
-	${PERL} ebeye_soaplite.pl --getReferencedEntriesSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getReferencedEntriesFlatSet:
-	${PERL} ebeye_soaplite.pl --getReferencedEntriesFlatSet uniprot 'WAP_RAT,WAP_MOUSE' interpro 'id,name'
-
-ebeye_getDomainsHierarchy:
-	${PERL} ebeye_soaplite.pl --getDomainsHierarchy
-
-ebeye_getDetailledNumberOfResults: ebeye_getDetailledNumberOfResults_flat ebeye_getDetailledNumberOfResults_tree
-
-ebeye_getDetailledNumberOfResults_flat:
-	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResults allebi 'azurin' true
-
-ebeye_getDetailledNumberOfResults_tree:
-	${PERL} ebeye_soaplite.pl --getDetailledNumberOfResults allebi 'azurin' false
-
-ebeye_listFieldsInformation:
-	${PERL} ebeye_soaplite.pl --listFieldsInformation uniprot
-
-ebeye_getFacets:
-	${PERL} ebeye_soaplite.pl --getFacets uniprot axr3
-
-ebeye_clean:
 
 # EMBOSS backtranambig
 emboss_backtranambig: emboss_backtranambig_params emboss_backtranambig_param_detail \

@@ -41,13 +41,11 @@ $(RELEASEBINDIR): $(BINDIR)
 EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
 
 coreSrc = AbstractWsClient.vb \
-EBeyeClient.vb \
 IPRScanClient.vb \
 NcbiBlastClient.vb \
 WSDbfetchClient.vb
 
 stubSrc = \
-$(STUBSRCDIR)\EBeyeWs\Reference.vb \
 $(STUBSRCDIR)\IPRScanWs\Reference.vb \
 $(STUBSRCDIR)\NcbiBlastWs\Reference.vb \
 $(STUBSRCDIR)\WSDbfetchWs\Reference.vb
@@ -64,9 +62,6 @@ $(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
 
 # Collation target to generate stubs, but not compile.
 stubs: $(stubSrc)
-
-$(STUBSRCDIR)\EBeyeWs\Reference.vb:
-	$(WSDL2VB) $(WSDL2VBFLAGS).EBeyeWs /out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
 
 $(STUBSRCDIR)\IPRScanWs\Reference.vb:
 	$(WSDL2VB) $(WSDL2VBFLAGS).IPRScanWs /out:$@ "$(WSDLBASE)/iprscan?wsdl"
