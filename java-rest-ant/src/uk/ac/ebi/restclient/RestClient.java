@@ -27,26 +27,36 @@ import java.util.List;
  */
 public class RestClient {
 
+    static {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "INFO");
+    }
+
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClient.class);
 
     private String revision = "$Revision$";
-    private Client client = null;
-    private String serviceEndPoint = "http://www.ebi.ac.uk/Tools/services/rest/";
-    private String toolId;
-    private String toolName;
-    private String toolDescription;
+    private Client client;
+    private final String currentJar;
+    private final String defaultHost = "www.ebi.ac.uk";
+    private final String defaultProtocol = "http";
+    private final String defaultUrlPath = "/Tools/services/rest/";
+    private String customHost;
+//    private String serviceEndPoint = "http://www.ebi.ac.uk/Tools/services/rest/";
+    private final String toolId;
+    private final String toolName;
+    private final String toolDescription;
 
-    private String resourcesDir = "files/";
-    private Options allOptions = new Options();
-    private Options generalOptions = new Options();
-    private Options requiredOptions = new Options();
-    private Options optionalOptions = new Options();
+    private final String resourcesDir = "files/";
+    private final Options allOptions = new Options();
+    private final Options generalOptions = new Options();
+    private final Options requiredOptions = new Options();
+    private final Options optionalOptions = new Options();
 
     private String requiredParametersMessage;
     private String optionalParametersMessage;
     private final String generalParametersMessage =
             "[General]\n"
                     + " --help                          prints help\n"
+                    + " --host          string          override default host (www.ebi.ac.uk)\n"
                     + " --params                        list tool parameters\n"
                     + " --paramDetails  string          information about a parameter\n"
                     + " --sync                          Run job as synchronous task (default: asynchronous)\n"
@@ -108,6 +118,12 @@ public class RestClient {
      */
     private RestClient() throws IOException {
 
+        currentJar = new java.io.File(RestClient.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath())
+                .getName();
+
         URL url = Resources.getResource(resourcesDir + "tool.info");
         String[] toolInfo = Resources.toString(url, Charset.defaultCharset()).split("\n");
 
@@ -115,15 +131,25 @@ public class RestClient {
         toolName = toolInfo[1];
         toolDescription = toolInfo[2];
 
-        serviceEndPoint = serviceEndPoint + toolId;
 
-        log.debug("Tool id: {}", toolId);
-        log.debug("Tool name: {}", toolName);
-//        log.debug("Tool description: {}", toolDescription);
-        log.debug("Service endpoint: {}", serviceEndPoint);
+//        serviceEndPoint = serviceEndPoint + toolId;
+
+        log.info("Tool id: {}", toolId);
+        log.info("Tool name: {}", toolName);
+//        Here we do not know service endpoint yet, it depends on program arguments
+//        log.info("Service endpoint: {}", getServiceEndpoint());
 
         setUserAgent();
     }
+
+    private String getServiceEndpoint(){
+        return new StringBuilder(defaultProtocol)
+                .append("://")
+                .append(customHost == null ? defaultHost : customHost)
+                .append(defaultUrlPath)
+                .append(toolId).toString();
+    }
+
 
 
     /**
@@ -161,7 +187,7 @@ public class RestClient {
      * Print usage message
      */
     public void printUsage() {
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder("\n\n");
 
         sb.append(toolName).append('\n');
         sb.append(toolDescription).append("\n\n");
@@ -171,6 +197,19 @@ public class RestClient {
         sb.append(optionalParametersMessage).append("\n\n");
         sb.append(generalParametersMessage);
         sb.append(usageInfo);
+
+        log.info("{}", sb.toString());
+    }
+
+    /**
+     * Print usage message
+     */
+    public void printUsageShort() {
+        StringBuilder sb = new StringBuilder("\n\n");
+
+        sb.append(toolName).append('\n');
+        sb.append(toolDescription).append("\n\n");
+        sb.append("java -jar " + currentJar + " --help\n");
 
         log.info("{}", sb.toString());
     }
@@ -218,6 +257,7 @@ public class RestClient {
         generalOptions.addOption("resultTypes", "", false, "Get list of output formats");
         generalOptions.addOption("polljob", "", false, "Get results for the job");
         generalOptions.addOption("outformat", "", true, "Output format");
+        generalOptions.addOption("host", "", true, "Custom host");
         generalOptions.addOption("help", "", false, "Print this help text");
     }
 
@@ -228,7 +268,7 @@ public class RestClient {
      * @return
      */
     public WsParameters getParams() {
-        ClientResponse response = getClient().resource(this.serviceEndPoint + "/parameters")
+        ClientResponse response = getClient().resource(getServiceEndpoint() + "/parameters")
                 .get(ClientResponse.class);
 
         ClientUtils.checkResponseStatusCode(response, 200);
@@ -243,7 +283,7 @@ public class RestClient {
      * @return
      */
     public WsParameter getParam(String paramDetail) {
-        ClientResponse response = getClient().resource(this.serviceEndPoint + "/parameterdetails/" + paramDetail)
+        ClientResponse response = getClient().resource(getServiceEndpoint() + "/parameterdetails/" + paramDetail)
                 .get(ClientResponse.class);
 
         ClientUtils.checkResponseStatusCode(response, 200);
@@ -267,7 +307,8 @@ public class RestClient {
      */
     public String checkStatus(String jobid) throws IOException, ServiceException {
 
-        ClientResponse response = getClient().resource(this.serviceEndPoint + "/status/" + jobid)
+        final String url = getServiceEndpoint() + "/status/" + jobid;
+        ClientResponse response = getClient().resource(url)
                 .get(ClientResponse.class);
         ClientUtils.checkResponseStatusCode(response, 200);
         return response.getEntity(String.class);
@@ -282,7 +323,7 @@ public class RestClient {
      */
     public WsResultTypes getResultTypesForJobId(String jobId) {
 
-        ClientResponse response = getClient().resource(this.serviceEndPoint + "/resulttypes/" + jobId)
+        ClientResponse response = getClient().resource(getServiceEndpoint() + "/resulttypes/" + jobId)
                 .get(ClientResponse.class);
         ClientUtils.checkResponseStatusCode(response, 200);
         return response.getEntity(WsResultTypes.class);
@@ -306,11 +347,20 @@ public class RestClient {
             CommandLine cli = cliParser.parse(allOptions, args);
 
             // Print just basic info
-            if (args.length == 0 || cli.hasOption("help")) {
+            if (args.length == 0) {
+                printUsageShort();
+                return;
+            }
+            if (cli.hasOption("help")) {
                 printUsage();
+                return;
+            }
 
-                // List parameters
-            } else if (cli.hasOption("params")) {
+            if (cli.hasOption("host")){
+                customHost = cli.getOptionValue("host");
+            }
+
+            if (cli.hasOption("params")) {
                 ClientUtils.marshallToXML(getParams());
             }
             // Details of selected parameter
@@ -332,7 +382,9 @@ public class RestClient {
                     // Asynchronous (default) execution
                 } else {
                     log.info("You can check status of your job with:\n" +
-                            "java -jar <jarfile> --status --jobid {}", jobid);
+                            "java -jar " + currentJar + " --status --jobid {}", jobid);
+                    log.info("When job status is FINISHED you can download results with:\n" +
+                            "java -jar " + currentJar + " --polljob --jobid {}", jobid);
                 }
             }
 
@@ -391,7 +443,7 @@ public class RestClient {
             String fileSuffix = resultType.getFileSuffix();
             String outputFile = jobid + "-" + identifier + "." + fileSuffix;
             ClientResponse response = getClient()
-                    .resource(serviceEndPoint + "/result/" + jobid + "/" + identifier)
+                    .resource(getServiceEndpoint() + "/result/" + jobid + "/" + identifier)
                     .get(ClientResponse.class);
 
             ClientUtils.checkResponseStatusCode(response, 200);
@@ -415,7 +467,7 @@ public class RestClient {
     private String submitJob(CommandLine cli, String inputSeq)
             throws ServiceException, IOException {
 
-        WebResource target = getClient().resource(serviceEndPoint + "/run");
+        WebResource target = getClient().resource(getServiceEndpoint() + "/run");
 
         Form form = new Form();
         form.putSingle("sequence", inputSeq);

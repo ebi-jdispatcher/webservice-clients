@@ -36,6 +36,10 @@
         </antcall>
 
         <antcall target="jar-templ">
+            <param name="client" value="simple_phylogeny"/>
+        </antcall>
+
+        <antcall target="jar-templ">
             <param name="client" value="dalilite"/>
         </antcall>
 

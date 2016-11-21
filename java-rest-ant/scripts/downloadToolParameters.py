@@ -2,10 +2,8 @@ import urllib2
 import xml.etree.ElementTree as ET
 import glob
 
-# jdispatcherUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/'
-jdispatcherUrl = 'http://ashdev-2:31110/Tools/services/rest/'
+jdispatcherUrl = 'http://www.ebi.ac.uk/Tools/services/rest/'
 resourcesPath = '../resources/'
-# resourcesPath = '/Users/chojnasm/IdeaProjects/webservices-2.0/java-rest-ant/resources/'
 
 
 def format_string(input):
@@ -61,7 +59,11 @@ def process_wadl(tool):
     reqout = resourcesPath + tool + '_required.txt'
     optout = resourcesPath + tool + '_optional.txt'
 
-    tree = ET.parse(input)
+    try:
+        tree = ET.parse(input)
+    except ET.ParseError:
+        print "Can not parse tool: " + tool
+        return
 
     required = []
     optional = []
@@ -119,7 +121,6 @@ def process_all_wadl_files():
 
 def download_all_tool_info():
     """ Download tools.xml and generate <toolName>.info file for each tool with its id, name and description """
-
     tools_as_xml = urllib2.urlopen(jdispatcherUrl + "/tools").read()
     with open(resourcesPath + "tools.xml", "w") as xml_file:
         xml_file.write(tools_as_xml)
@@ -130,8 +131,10 @@ def download_all_tool_info():
         tool_id = tool.find('id').text
         tool_name = tool.find('name').text
         tool_desc = tool.find('description').text
+        # Download wadl
+        download_wadl(tool_id)
 
-        f = open(resourcesPath + '/' + tool_id + ".info", "w")
+        f = open(resourcesPath + tool_id + ".info", "w")
         f.write(tool_id + '\n' + tool_name + '\n' + tool_desc)
         f.close()
 
@@ -140,9 +143,6 @@ if __name__ == '__main__':
     download_all_tool_info()
     process_all_wadl_files()
 
-    # for fname in glob.glob(resourcesPath + "*.txt"):
-    #     print '\n------------\n' + fname + "\n"
-    #     with open(fname, 'r') as fin:
-    #         print fin.read()
+
 
 
