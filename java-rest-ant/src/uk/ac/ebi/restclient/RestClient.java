@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Created by Szymon Chojnacki on 22/08/2016.
  */
@@ -33,14 +34,15 @@ public class RestClient {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClient.class);
 
-    private String revision = "$Revision$";
+    private String revision = "";
     private Client client;
     private final String currentJar;
     private final String defaultHost = "www.ebi.ac.uk";
+    private final String defaultPort = "80";
     private final String defaultProtocol = "http";
     private final String defaultUrlPath = "/Tools/services/rest/";
     private String customHost;
-//    private String serviceEndPoint = "http://www.ebi.ac.uk/Tools/services/rest/";
+    private String customPort;
     private final String toolId;
     private final String toolName;
     private final String toolDescription;
@@ -57,6 +59,7 @@ public class RestClient {
             "[General]\n"
                     + " --help                          prints help\n"
                     + " --host          string          override default host (www.ebi.ac.uk)\n"
+                    + " --port          string          override default port (80)\n"
                     + " --params                        list tool parameters\n"
                     + " --paramDetails  string          information about a parameter\n"
                     + " --sync                          Run job as synchronous task (default: asynchronous)\n"
@@ -73,13 +76,13 @@ public class RestClient {
                     + "Synchronous job:\n"
                     + "\n"
                     + "  Program checks in interval for the results and collects them when ready.\n"
-                    + "  Usage: java -jar <jarFile> --sync --email <your@email> [allOptions...] sequence\n"
+                    + "  Usage: java -jar <jarFile> --sync --email <your@email> [Options...] --sequence <your-sequence>\n"
                     + "\n"
                     + "Asynchronous (default execution) job:\n"
                     + "\n"
                     + "  The results \n"
                     + "  are stored for up to 7 days.\n"
-                    + "  Usage: java -jar <jarFile> --email <your@email> [allOptions...] sequence\n"
+                    + "  Usage: java -jar <jarFile> --email <your@email> [Options...] --sequence <your-sequence>\n"
                     + "  Returns: jobid\n"
                     + "\n"
                     + "  Use the jobid to query for the status of the job.\n"
@@ -130,26 +133,20 @@ public class RestClient {
         toolId = toolInfo[0];
         toolName = toolInfo[1];
         toolDescription = toolInfo[2];
-
-
-//        serviceEndPoint = serviceEndPoint + toolId;
-
         log.info("Tool id: {}", toolId);
         log.info("Tool name: {}", toolName);
-//        Here we do not know service endpoint yet, it depends on program arguments
-//        log.info("Service endpoint: {}", getServiceEndpoint());
-
         setUserAgent();
     }
 
-    private String getServiceEndpoint(){
+    private String getServiceEndpoint() {
         return new StringBuilder(defaultProtocol)
                 .append("://")
                 .append(customHost == null ? defaultHost : customHost)
+                .append(":")
+                .append(customPort == null ? defaultPort : customPort)
                 .append(defaultUrlPath)
                 .append(toolId).toString();
     }
-
 
 
     /**
@@ -191,12 +188,19 @@ public class RestClient {
 
         sb.append(toolName).append('\n');
         sb.append(toolDescription).append("\n\n");
-        sb.append("[Required]").append("\n");
+        sb.append("Parameters:\n");
+        sb.append("===========\n\n");
+        sb.append("[Required for new submission]").append("\n");
         sb.append(requiredParametersMessage).append("\n\n");
         sb.append("[Optional]").append("\n");
         sb.append(optionalParametersMessage).append("\n\n");
         sb.append(generalParametersMessage);
+        sb.append("\nExamples:\n");
+        sb.append("=========\n");
         sb.append(usageInfo);
+        sb.append("\nSyntax example:");
+        sb.append("\n---------------\n");
+        sb.append("java -jar " + currentJar + " --email test@ebi.ac.uk --sequence XXX --sync\n");
 
         log.info("{}", sb.toString());
     }
@@ -209,7 +213,7 @@ public class RestClient {
 
         sb.append(toolName).append('\n');
         sb.append(toolDescription).append("\n\n");
-        sb.append("java -jar " + currentJar + " --help\n");
+        sb.append("More info: \njava -jar " + currentJar + " --help\n");
 
         log.info("{}", sb.toString());
     }
@@ -258,6 +262,7 @@ public class RestClient {
         generalOptions.addOption("polljob", "", false, "Get results for the job");
         generalOptions.addOption("outformat", "", true, "Output format");
         generalOptions.addOption("host", "", true, "Custom host");
+        generalOptions.addOption("port", "", true, "Custom port");
         generalOptions.addOption("help", "", false, "Print this help text");
     }
 
@@ -268,11 +273,12 @@ public class RestClient {
      * @return
      */
     public WsParameters getParams() {
-        ClientResponse response = getClient().resource(getServiceEndpoint() + "/parameters")
-                .get(ClientResponse.class);
+        ClientResponse response = getResponse("/parameters", RequestType.GET, null);
 
-        ClientUtils.checkResponseStatusCode(response, 200);
-        return response.getEntity(WsParameters.class);
+        if (ClientUtils.isResponseCorrect(response)) {
+            return response.getEntity(WsParameters.class);
+        }
+        return null;
     }
 
 
@@ -283,11 +289,12 @@ public class RestClient {
      * @return
      */
     public WsParameter getParam(String paramDetail) {
-        ClientResponse response = getClient().resource(getServiceEndpoint() + "/parameterdetails/" + paramDetail)
-                .get(ClientResponse.class);
+        ClientResponse response = getResponse("/parameterdetails/" + paramDetail, RequestType.GET, null);
 
-        ClientUtils.checkResponseStatusCode(response, 200);
-        return response.getEntity(WsParameter.class);
+        if (ClientUtils.isResponseCorrect(response)) {
+            return response.getEntity(WsParameter.class);
+        }
+        return null;
     }
 
 
@@ -307,11 +314,11 @@ public class RestClient {
      */
     public String checkStatus(String jobid) throws IOException, ServiceException {
 
-        final String url = getServiceEndpoint() + "/status/" + jobid;
-        ClientResponse response = getClient().resource(url)
-                .get(ClientResponse.class);
-        ClientUtils.checkResponseStatusCode(response, 200);
-        return response.getEntity(String.class);
+        ClientResponse response = getResponse("/status/" + jobid, RequestType.GET, null);
+        if (ClientUtils.isResponseCorrect(response)) {
+            return response.getEntity(String.class);
+        }
+        return null;
     }
 
 
@@ -323,10 +330,11 @@ public class RestClient {
      */
     public WsResultTypes getResultTypesForJobId(String jobId) {
 
-        ClientResponse response = getClient().resource(getServiceEndpoint() + "/resulttypes/" + jobId)
-                .get(ClientResponse.class);
-        ClientUtils.checkResponseStatusCode(response, 200);
-        return response.getEntity(WsResultTypes.class);
+        ClientResponse response = getResponse("/resulttypes/" + jobId, RequestType.GET, null);
+        if (ClientUtils.isResponseCorrect(response)) {
+            return response.getEntity(WsResultTypes.class);
+        }
+        return null;
     }
 
 
@@ -335,15 +343,13 @@ public class RestClient {
      *
      * @param args
      */
-    public void run(String[] args) throws IOException, ServiceException, InterruptedException, JAXBException {
+    public void run(String[] args) {
 
         addGeneralOptions();
-        loadToolSpecificOptions();
-
-
         CommandLineParser cliParser = new GnuParser();
 
         try {
+            loadToolSpecificOptions();
             CommandLine cli = cliParser.parse(allOptions, args);
 
             // Print just basic info
@@ -351,21 +357,49 @@ public class RestClient {
                 printUsageShort();
                 return;
             }
+
             if (cli.hasOption("help")) {
                 printUsage();
                 return;
             }
 
-            if (cli.hasOption("host")){
+            if (cli.hasOption("host")) {
                 customHost = cli.getOptionValue("host");
             }
 
+            if (cli.hasOption("port")) {
+                customPort = cli.getOptionValue("port");
+            }
+
             if (cli.hasOption("params")) {
-                ClientUtils.marshallToXML(getParams());
+                WsParameters params = getParams();
+
+                if (params != null) {
+                    log.info("Tool specific parameters: " + params.getIds().toString());
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n\nTo learn more about selected parameter run:\n")
+                            .append("java -jar ").append(currentJar)
+                            .append(" --paramDetails <parameter-name>")
+                            .append(params.getIds().size() > 0 ? "\n\nFor example:\njava -jar " + currentJar + " --paramDetails " + params.getIds().get(0) : "");
+
+                    log.info(sb.toString());
+                } else {
+                    log.error("Returned WsParameters object is null");
+                }
+
             }
             // Details of selected parameter
             else if (cli.hasOption("paramDetails")) {
-                ClientUtils.marshallToXML(getParam(cli.getOptionValue("paramDetails")));
+
+                WsParameter parameter = getParam(cli.getOptionValue("paramDetails"));
+                if (parameter != null) {
+
+                    log.info("Simplified view");
+                    ClientUtils.marshallToXML(parameter);
+                } else {
+                    log.error("Returned WsParameter object is null");
+                }
             }
 
             // Submit new job
@@ -373,18 +407,25 @@ public class RestClient {
                 String jobid = submitJob(cli, ClientUtils
                         .loadData(cli.getOptionValue("sequence")));
 
-                // Synchronous execution
-                if (cli.hasOption("sync")) {
-                    log.info("JobId: {}", jobid);
-                    ClientUtils.getStatusInIntervals(this, jobid, 5000L);
-                    downloadResults(cli, jobid);
+                if (jobid != null) {
+                    // Synchronous execution
+                    if (cli.hasOption("sync")) {
+                        log.info("JobId: {}", jobid);
 
-                    // Asynchronous (default) execution
+                        if (ClientUtils.getStatusInIntervals(this, jobid, 5000L)) {
+                            downloadResults(cli, jobid);
+                        } else {
+                            log.error("Job failed.");
+                        }
+
+
+                        // Asynchronous (default) execution
+                    } else {
+                        log.info("You can check status of your job with:\n" +
+                                "java -jar " + currentJar + " --status --jobid {}\n", jobid);
+                    }
                 } else {
-                    log.info("You can check status of your job with:\n" +
-                            "java -jar " + currentJar + " --status --jobid {}", jobid);
-                    log.info("When job status is FINISHED you can download results with:\n" +
-                            "java -jar " + currentJar + " --polljob --jobid {}", jobid);
+                    log.error("Job submission failed");
                 }
             }
 
@@ -394,7 +435,18 @@ public class RestClient {
 
                 // Check status
                 if (cli.hasOption("status")) {
-                    log.info(checkStatus(jobid));
+                    final String status = checkStatus(jobid);
+
+                    if (status.equals("FINISHED")) {
+                        log.info("Status: " + status + "\n\nYou can see available result types with:\n" +
+                                "java -jar " + currentJar + " --resultTypes --jobid {}\n\n" +
+                                "Or download all results at once with:\n" +
+                                "java -jar " + currentJar + " --polljob --jobid {}" +
+                                "\n\nOr next time submit job with --sync option to download results when they are ready.", jobid, jobid);
+
+                    } else {
+                        log.info(status + "\n");
+                    }
 
                     // Check available result types
                 } else if (cli.hasOption("resultTypes")) {
@@ -406,13 +458,21 @@ public class RestClient {
 
                     downloadResults(cli, jobid);
                 } else {
-                    log.warn("Please specify one of following parameters: status, resultTypes, polljob.");
+                    log.error("Please specify one of following parameters: --status, --resultTypes, --polljob.");
                 }
             } else {
-                log.warn("Your parameters are not correct. Please run jar without any parameters to learn more.");
+                log.error("\n\nYou either have to specify both --email and --sequence or a --jobid value. \n\nTo learn more run: java -jar " + currentJar + " --help");
             }
         } catch (ParseException e) {
-            log.warn(e.getMessage());
+            log.error(e.getMessage());
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+        } catch (JAXBException e) {
+            log.error(e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
         }
 
     }
@@ -442,11 +502,7 @@ public class RestClient {
             String identifier = resultType.getIdentifier();
             String fileSuffix = resultType.getFileSuffix();
             String outputFile = jobid + "-" + identifier + "." + fileSuffix;
-            ClientResponse response = getClient()
-                    .resource(getServiceEndpoint() + "/result/" + jobid + "/" + identifier)
-                    .get(ClientResponse.class);
-
-            ClientUtils.checkResponseStatusCode(response, 200);
+            ClientResponse response = getResponse("/result/" + jobid + "/" + identifier, RequestType.GET, null);
 
             InputStream inputStream = response.getEntity(InputStream.class);
             Files.copy(inputStream, Paths.get(outputFile));
@@ -466,8 +522,6 @@ public class RestClient {
      */
     private String submitJob(CommandLine cli, String inputSeq)
             throws ServiceException, IOException {
-
-        WebResource target = getClient().resource(getServiceEndpoint() + "/run");
 
         Form form = new Form();
         form.putSingle("sequence", inputSeq);
@@ -507,9 +561,48 @@ public class RestClient {
             }
         }
 
-        ClientResponse response = target.post(ClientResponse.class, form);
-        ClientUtils.checkResponseStatusCode(response, 200);
+        ClientResponse response = getResponse("/run", RequestType.POST, form);
 
-        return response.getEntity(String.class);
+        if (ClientUtils.isResponseCorrect(response)) {
+            return response.getEntity(String.class);
+        }
+        return null;
     }
+
+    private ClientResponse getResponse(String urlSuffix, RequestType requestType, Form form) {
+        WebResource target = getClient()
+                .resource(getServiceEndpoint() + urlSuffix);
+
+        log.info(requestType + " " + target.toString());
+
+        try {
+            if (requestType == RequestType.GET) {
+                return target.get(ClientResponse.class);
+
+            } else if (requestType == RequestType.POST) {
+
+                System.out.println("POST parameters:");
+                form.keySet().stream().forEach(s -> {
+                    String parameters = form.get(s).toString();
+
+                    if (parameters.length() > 20) {
+                        parameters = parameters.substring(0, 20) + " ...";
+                    }
+
+                    System.out.println(s + "\t" + parameters);
+                });
+
+                System.out.println();
+                return target.post(ClientResponse.class, form);
+            } else {
+                log.error("Unsupported RequestType");
+            }
+        } catch (Exception e) {
+            log.error("Problem with Internet connection");
+            log.error(e.getMessage());
+        }
+        return null;
+    }
+
+    public enum RequestType {GET, POST}
 }
