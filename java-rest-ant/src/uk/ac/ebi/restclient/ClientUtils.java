@@ -5,6 +5,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ebi.restclient.stubs.WsError;
 import uk.ac.ebi.restclient.stubs.WsResultType;
 
 import javax.xml.bind.JAXBContext;
@@ -19,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-
 /**
  * Created by chojnasm on 17/08/2016.
  */
@@ -33,13 +32,19 @@ public class ClientUtils {
      * Check if Http response code is as expected
      *
      * @param response
-     * @param expectedStatusCode
      */
-    public static void checkResponseStatusCode(ClientResponse response, int expectedStatusCode) {
-        if (response.getStatus() != expectedStatusCode) {
-            throw new RuntimeException("Failed : HTTP error code is: "
-                    + response.getStatus()+", expected code is: " + expectedStatusCode);
+    public static boolean isResponseCorrect(ClientResponse response) {
+        if (response == null) {
+            return false;
+        } else if (response.getStatus() != 200) {
+
+            log.error(response.toString());
+            WsError wsError = response.getEntity(WsError.class);
+            log.error(wsError.getError() + "\n");
+
+            return false;
         }
+        return true;
     }
 
     /**
@@ -50,10 +55,10 @@ public class ClientUtils {
      */
     public static <T> void marshallToXML(T result) throws JAXBException {
 
-            JAXBContext jc = JAXBContext.newInstance(result.getClass());
-            Marshaller marshaller = jc.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(result, System.out);
+        JAXBContext jc = JAXBContext.newInstance(result.getClass());
+        Marshaller marshaller = jc.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(result, System.out);
     }
 
     public static List<WsResultType> processUserOutputFormats(String cli, List<WsResultType> allResultTypes) {
@@ -69,7 +74,11 @@ public class ClientUtils {
             if (suffix != null) {
                 resultType.setFileSuffix(ClientUtils.getSuffixFor(identifier, allResultTypes));
             } else {
-                throw new RuntimeException("Incorrect output format identifier: " + identifier);
+                log.error("Incorrect output format identifier: " + identifier);
+                log.info("Correct identifiers: ");
+                allResultTypes.stream().forEach(ws -> System.out.println(ws.getIdentifier()));
+
+                System.exit(1);
             }
 
             resultTypes.add(resultType);
@@ -88,18 +97,24 @@ public class ClientUtils {
      * @throws IOException
      * @throws ServiceException
      */
-    public static void getStatusInIntervals(RestClient client, String jobid, Long interval) throws InterruptedException, IOException, ServiceException {
+    public static boolean getStatusInIntervals(RestClient client, String jobid, Long interval) throws InterruptedException, IOException, ServiceException {
 
         String status = null;
-        log.info("Refresh rate: {} seconds.", interval/1000);
+        log.info("Refresh rate: {} seconds.", interval / 1000);
 
         while (status == null || !status.equals("FINISHED")) {
             Thread.sleep(interval);
             status = client.checkStatus(jobid);
-            log.info(status);
+            log.info("Status: " + status);
+            if (status.equals("FAILURE")) {
+                return false;
+            }
+
         }
 
         log.info("Synchronous job execution has finished");
+
+        return true;
     }
 
 
@@ -112,9 +127,9 @@ public class ClientUtils {
      */
     public static String loadData(String sequence) throws IOException {
         Path path = Paths.get(sequence);
-        if(Files.exists(path)){
+        if (Files.exists(path)) {
             return new String(Files.readAllBytes(Paths.get(sequence)));
-        }else{
+        } else {
             return sequence;
         }
     }
@@ -145,9 +160,9 @@ public class ClientUtils {
      */
     public static void parseOptionsFromFormattedString(Options options, String optionalParametersMessage) {
 
-        for(String line : optionalParametersMessage.split("\n")){
+        for (String line : optionalParametersMessage.split("\n")) {
             String[] fields = line.split("\t");
-            options.addOption(fields[0].replace("--","").trim(),fields[1].trim(),true, fields[2].trim());
+            options.addOption(fields[0].replace("--", "").trim(), fields[1].trim(), true, fields[2].trim());
         }
     }
 }

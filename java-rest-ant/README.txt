@@ -13,7 +13,7 @@ Run selected client (e.g. InterProScan5)
 Requirements
 ============
 
-* Java 7
+* Java 8
 * Python 2.7
 
 
@@ -62,3 +62,7 @@ Test new tool
 [4] java -jar dist/IPRScan5Client.jar --polljob --jobid <yourjobid>
 
     // Result files are being downloaded to current directory
+
+Distribute JARS
+===============
+es_adm@ves-ebi-24:/nfs/web-hx/es/http/www/Tools/webservices/download_clients/uploaded
