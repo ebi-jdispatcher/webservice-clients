@@ -57,7 +57,7 @@ import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.Wsurl;
  * 
  * <p>See:</p>
  * <ul>
- * <li><a href="http://www.ebi.ac.uk/Tools/webservices/services/eb-eye_rest">http://www.ebi.ac.uk/Tools/webservices/services/eb-eye_rest</a></li>
+ * <li><a href="http://www.ebi.ac.uk/ebisearch/swagger.ebi">http://www.ebi.ac.uk/ebisearch/swagger.ebi</a></li>
  * <li><a href="http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java">http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/java</a></li>
  * <li><a href="https://jersey.java.net/">https://jersey.java.net/</a></li>
  * </ul>
@@ -150,9 +150,9 @@ public class EBeyeClient {
 	                                              + "--mintermfreq <mintermfreq>\tfrequency below which terms will be ignored in the base document.\n"
 	                                              + "--mindocfreq <mindocfreq>\tfrequency at which words will be ignored which do not occur in at least this many documents.\n"
 	                                              + "--maxqueryterm <maxqueryterm>\tmaximum number of query terms that will be included in any generated query.\n"
-	                                              + "--excludes <excludes>\tterms to be excluded"
+	                                              + "--excludes <excludes>\tterms to be excluded.\n"
 	                                              + "--excludesets <excludesets>\tstop word sets to be excluded.\n" + "\n" + "Further information:\n" + "\n"
-	                                              + "  http://www.ebi.ac.uk/Tools/webservices/services/eb-eye\n"
+	                                              + "  http://www.ebi.ac.uk/ebisearch/swagger.ebi\n"
 	                                              + "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n" + "\n" + "Support/Feedback:\n" + "\n"
 	                                              + "  http://www.ebi.ac.uk/support/\n" + "\n";
 

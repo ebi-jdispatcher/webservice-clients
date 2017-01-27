@@ -24,7 +24,7 @@
 #  Python 3.4.3
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/eb-eye_rest
+# http://www.ebi.ac.uk/ebisearch/swagger.ebi
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Service base URL

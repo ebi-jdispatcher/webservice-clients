@@ -31,7 +31,7 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/eb-eye_rest>
+L<http://www.ebi.ac.uk/ebisearch/swagger.ebi>
 
 =item *
 L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>

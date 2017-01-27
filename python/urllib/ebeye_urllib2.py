@@ -25,7 +25,7 @@
 #  Python 2.6.5 (Ubuntu 10.04 LTS)
 #
 # See:
-# http://www.ebi.ac.uk/Tools/webservices/services/eb-eye
+# http://www.ebi.ac.uk/ebisearch/swagger.ebi
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Service base URL
