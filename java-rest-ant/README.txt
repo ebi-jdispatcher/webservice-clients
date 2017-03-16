@@ -66,3 +66,11 @@ Test new tool
 Distribute JARS
 ===============
 es_adm@ves-ebi-24:/nfs/web-hx/es/http/www/Tools/webservices/download_clients/uploaded
+
+
+Setup IntelliJ
+==============
+
+* Create new module 'java-rest-ant' (File > New > Module ... (Java))
+* Set modules SDK as Java *
+* Add lib/ to module dependencies
