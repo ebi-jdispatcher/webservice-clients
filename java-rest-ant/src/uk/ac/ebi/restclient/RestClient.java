@@ -133,8 +133,8 @@ public class RestClient {
         toolId = toolInfo[0];
         toolName = toolInfo[1];
         toolDescription = toolInfo[2];
-        log.info("Tool id: {}", toolId);
-        log.info("Tool name: {}", toolName);
+        log.debug("Tool id: {}", toolId);
+        log.debug("Tool name: {}", toolName);
         setUserAgent();
     }
 
@@ -442,7 +442,7 @@ public class RestClient {
                                 "java -jar " + currentJar + " --resultTypes --jobid {}\n\n" +
                                 "Or download all results at once with:\n" +
                                 "java -jar " + currentJar + " --polljob --jobid {}" +
-                                "\n\nOr next time submit job with --sync option to download results when they are ready.", jobid, jobid);
+                                "\n\nOr next time submit job with --sync option to automatically download results when they are ready.", jobid, jobid);
 
                     } else {
                         log.info(status + "\n");
@@ -506,7 +506,7 @@ public class RestClient {
 
             InputStream inputStream = response.getEntity(InputStream.class);
             Files.copy(inputStream, Paths.get(outputFile));
-            log.info("Downloaded: {}", outputFile);
+            log.info("Download: {}", outputFile);
         }
     }
 
@@ -573,7 +573,7 @@ public class RestClient {
         WebResource target = getClient()
                 .resource(getServiceEndpoint() + urlSuffix);
 
-        log.info(requestType + " " + target.toString());
+        log.debug(requestType + " " + target.toString());
 
         try {
             if (requestType == RequestType.GET) {
@@ -581,7 +581,7 @@ public class RestClient {
 
             } else if (requestType == RequestType.POST) {
 
-                System.out.println("POST parameters:");
+                log.debug("POST parameters:");
                 form.keySet().stream().forEach(s -> {
                     String parameters = form.get(s).toString();
 
@@ -589,7 +589,7 @@ public class RestClient {
                         parameters = parameters.substring(0, 20) + " ...";
                     }
 
-                    System.out.println(s + "\t" + parameters);
+                    log.debug(s + "\t" + parameters);
                 });
 
                 System.out.println();

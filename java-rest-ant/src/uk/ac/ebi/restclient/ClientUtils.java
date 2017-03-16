@@ -76,7 +76,7 @@ public class ClientUtils {
             } else {
                 log.error("Incorrect output format identifier: " + identifier);
                 log.info("Correct identifiers: ");
-                allResultTypes.stream().forEach(ws -> System.out.println(ws.getIdentifier()));
+                allResultTypes.stream().forEach(ws -> log.info(ws.getIdentifier()));
 
                 System.exit(1);
             }
@@ -100,7 +100,7 @@ public class ClientUtils {
     public static boolean getStatusInIntervals(RestClient client, String jobid, Long interval) throws InterruptedException, IOException, ServiceException {
 
         String status = null;
-        log.info("Refresh rate: {} seconds.", interval / 1000);
+        log.info("Update status: every {} seconds.", interval / 1000);
 
         while (status == null || !status.equals("FINISHED")) {
             Thread.sleep(interval);
@@ -112,7 +112,7 @@ public class ClientUtils {
 
         }
 
-        log.info("Synchronous job execution has finished");
+        log.info("Synchronous job execution has finished. ");
 
         return true;
     }
