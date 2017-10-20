@@ -35,3 +35,7 @@ Contact
 If you have any problems, suggestions or comments for our services please 
 contact us via EBI Support 
 (http://www.ebi.ac.uk/support/index.php?query=WebServices).
+
+Move folder to new repository
+-----------------------------
+https://help.github.com/articles/splitting-a-subfolder-out-into-a-new-repository/
