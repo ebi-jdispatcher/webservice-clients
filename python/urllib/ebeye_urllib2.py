@@ -29,10 +29,11 @@
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
 # Service base URL
-baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest'
+baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
-import platform, os, sys, urllib2, xmltramp, urllib
+import platform, os, sys, urllib2, urllib
+from xmltramp2 import xmltramp
 from optparse import OptionParser
 from gzip import GzipFile
 from StringIO import StringIO
