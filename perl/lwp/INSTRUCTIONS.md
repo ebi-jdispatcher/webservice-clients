@@ -25,6 +25,12 @@ Run selected client. For example NCBI Blast:
 
 ```cd webservice-clients/perl/lwp```
 
+With one sequence:
+
+```perl ncbiblast_lwp.pl --email test@ebi.ac.uk --stype protein --program blastp --database mpro sp:wap_pig```
+
+With multifasta file:
+
 ```perl ncbiblast_lwp.pl --email test@ebi.ac.uk --stype protein --program blastp --database mpro --multifasta --maxJobs 5 test_seq.txt```
 
 For example Clustal Omega:
@@ -36,6 +42,11 @@ For example Simple Phylogeny:
 ```perl simple_phylogeny_lwp.pl --email test@ebi.ac.uk test_alig.txt```
 
 For example Fasta:
+With one sequence:
+
+```perl fasta_lwp.pl --email test@ebi.ac.uk --stype protein --program fasta --database uniprotkb sp:wap_pig```
+
+With multifasta file:
 
 ```perl fasta_lwp.pl --email test@ebi.ac.uk --stype protein --program fasta --database uniprotkb --multifasta --maxJobs 5 test_seq.txt```
 
