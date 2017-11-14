@@ -10,10 +10,13 @@ Clone the repository:
 ```cd webservice-clients```
 
 Install dependencies:
+
 In Linux:
+
 ```sudo apt install imagemagick```
 
 In Perl:
+
 ```sudo cpan install -r perlrequeriments.txt```
 
 ### Test the results
