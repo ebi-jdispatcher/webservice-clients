@@ -31,6 +31,10 @@ For example Clustal Omega:
 
 ```perl clustalo_lwp.pl --email test@ebi.ac.uk sp:wap_rat,sp:wap_pig,sp:wap_mouse```
 
+For example Simple Phylogeny:
+
+```perl simple_phylogeny_lwp.pl --email afoix@ebi.ac.uk test_alig.txt```
+
 
 If you have no root access to your machine you might need to use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
 
