@@ -37,7 +37,7 @@ For example Simple Phylogeny:
 
 For example Fasta:
 
-```perl fasta_lwp.pl --email afoix@ebi.ac.uk --program fasta --database uniprotkb --stype protein  sp:wap_pig```
+```perl fasta_lwp.pl --email test@ebi.ac.uk --stype protein --program fasta --database uniprotkb --multifasta --maxJobs 5 test_seq.txt```
 
 
 If you have no root access to your machine you might need to use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
