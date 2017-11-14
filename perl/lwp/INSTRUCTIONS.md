@@ -21,27 +21,29 @@ In Perl:
 
 ### Test the results
 
-Run selected client. For example NCBI Blast:
+Run selected client. 
+
+# For example NCBI Blast:
 
 ```cd webservice-clients/perl/lwp```
 
-With one sequence:
+With one sequence
 
 ```perl ncbiblast_lwp.pl --email test@ebi.ac.uk --stype protein --program blastp --database mpro sp:wap_pig```
 
-With multifasta file:
+With multifasta file
 
 ```perl ncbiblast_lwp.pl --email test@ebi.ac.uk --stype protein --program blastp --database mpro --multifasta --maxJobs 5 test_seq.txt```
 
-For example Clustal Omega:
+# For example Clustal Omega:
 
 ```perl clustalo_lwp.pl --email test@ebi.ac.uk sp:wap_rat,sp:wap_pig,sp:wap_mouse```
 
-For example Simple Phylogeny:
+# For example Simple Phylogeny:
 
 ```perl simple_phylogeny_lwp.pl --email test@ebi.ac.uk test_alig.txt```
 
-For example Fasta:
+# For example Fasta:
 
 With one sequence:
 
