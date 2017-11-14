@@ -42,6 +42,7 @@ For example Simple Phylogeny:
 ```perl simple_phylogeny_lwp.pl --email test@ebi.ac.uk test_alig.txt```
 
 For example Fasta:
+
 With one sequence:
 
 ```perl fasta_lwp.pl --email test@ebi.ac.uk --stype protein --program fasta --database uniprotkb sp:wap_pig```
