@@ -33,7 +33,7 @@ For example Clustal Omega:
 
 For example Simple Phylogeny:
 
-```perl simple_phylogeny_lwp.pl --email afoix@ebi.ac.uk test_alig.txt```
+```perl simple_phylogeny_lwp.pl --email test@ebi.ac.uk test_alig.txt```
 
 
 If you have no root access to your machine you might need to use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
