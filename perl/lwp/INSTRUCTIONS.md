@@ -22,7 +22,9 @@ In Linux:
 In Perl:
 
 ```sudo cpan install LWP```
+
 ```sudo cpan install XML::Simple```
+
 ```sudo cpan install YAML::Syck```
 
 ## Test the results
