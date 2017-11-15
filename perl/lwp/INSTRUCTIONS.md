@@ -17,9 +17,13 @@ In Linux:
 
 ```sudo apt install imagemagick```
 
+```sudo apt install cpan```
+
 In Perl:
 
-```sudo cpan install -r perlrequeriments.txt```
+```sudo cpan install LWP```
+```sudo cpan install XML::Simple```
+```sudo cpan install YAML::Syck```
 
 ## Test the results
 
