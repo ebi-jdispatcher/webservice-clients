@@ -91,7 +91,7 @@
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
 	
-	<!-- Generate Axis 1.x stubs for each service -->
+	<!-- Generate JAX-RS stubs for ebeye -->
 	<target name="jaxrs-stubs-ebeye" description="JAX-RS Client: generate stubs for EBeye (REST)">
 		<antcall target="genJaxrsStubs">
 			<param name="stubPkg" value="uk.ac.ebi.webservices.jaxrs.stubs.ebeye" />
