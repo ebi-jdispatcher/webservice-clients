@@ -68,7 +68,7 @@ public class EBeyeClient {
 	/** Debug level. Controlled by the --debugLevel option. */
 	private int                 debugLevel      = 0;
 	/** URL for service endpoint. */
-	private String              serviceEndPoint = "http://www.ebi.ac.uk/ebisearch/ws/rest";
+	private String              serviceEndPoint = "https://www.ebi.ac.uk/ebisearch/ws/rest";
 	/** Client version/revision */
 	private String              revision        = "$Revision: 2640 $";
 	private Client              client          = null;
@@ -152,9 +152,9 @@ public class EBeyeClient {
 	                                              + "--maxqueryterm <maxqueryterm>\tmaximum number of query terms that will be included in any generated query.\n"
 	                                              + "--excludes <excludes>\tterms to be excluded.\n"
 	                                              + "--excludesets <excludesets>\tstop word sets to be excluded.\n" + "\n" + "Further information:\n" + "\n"
-	                                              + "  http://www.ebi.ac.uk/ebisearch/swagger.ebi\n"
-	                                              + "  http://www.ebi.ac.uk/Tools/webservices/tutorials/java\n" + "\n" + "Support/Feedback:\n" + "\n"
-	                                              + "  http://www.ebi.ac.uk/support/\n" + "\n";
+	                                              + "  https://www.ebi.ac.uk/ebisearch/swagger.ebi\n"
+	                                              + "  https://www.ebi.ac.uk/Tools/webservices/tutorials/java\n" + "\n" + "Support/Feedback:\n" + "\n"
+	                                              + "  https://www.ebi.ac.uk/support/\n" + "\n";
 
 	/** Default constructor.
 	 */
