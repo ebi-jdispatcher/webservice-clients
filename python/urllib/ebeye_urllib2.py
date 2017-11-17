@@ -33,8 +33,8 @@ baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
 import platform, os, sys, urllib2, urllib
-from xmltramp2 import xmltramp
 from optparse import OptionParser
+from xmltramp2 import xmltramp
 from gzip import GzipFile
 from StringIO import StringIO
 

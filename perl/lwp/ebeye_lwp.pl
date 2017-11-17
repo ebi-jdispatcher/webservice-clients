@@ -74,7 +74,7 @@ use File::Basename;
 use Data::Dumper;
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest';
+my $baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest';
 
 # Output level
 my $outputLevel = 1;
