@@ -22,14 +22,6 @@ To run the clients you need to install (please double check if you have already 
 
 ```pip install gzip```
 
-
-NOTA BENE
-
-You might need to install additional operative system dependencies.
-
-```sudo apt-get install libnet-ssleay-perl libio-socket-ssl-perl```
-
-
 ## Test the results
 
 Run selected client.
@@ -38,7 +30,7 @@ For instance:
 
 ```cd webservice-clients/python/urllib```
 
-### Example: EBI Search Python 2
+### Example: EBI Search
 
 Case 1: EBI Search Python 2 client to get domain details about 'uniprot':
 
@@ -48,7 +40,7 @@ Case 2: EBI Search Python 2 client to get all the results of the query 'human' f
 
 ```python ebeye_urllib2.py getResults hgnc human id,name --start 0 --size 3```
 
-Case 3:EBI Search Python 2 client to get the fields 'id' and 'acc' from domain 'uniprot' for the entry with id 'P01174':
+Case 3: EBI Search Python 2 client to get the fields 'id' and 'acc' from domain 'uniprot' for the entry with id 'P01174':
 
 ```python ebeye_urllib2.py getEntries uniprot P01174 id,acc```
 

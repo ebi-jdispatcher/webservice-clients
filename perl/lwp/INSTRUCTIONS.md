@@ -33,6 +33,7 @@ In Perl:
 
 
 NOTA BENE
+
 You might need to install additional operative system dependencies:
 
 ```sudo apt-get install libnet-ssleay-perl libio-socket-ssl-perl```
@@ -43,7 +44,15 @@ You might need to install additional operative system dependencies:
 Run the selected clients.
 
 For instance:
+
 ```cd webservice-clients/perl/lwp```
+
+### Example: EBI Search
+
+Get details about the domain 'hgnc':
+
+```perl ebeye_lwp.pl getDomainDetails hgnc```
+
 
 ### Example: NCBI Blast
 
