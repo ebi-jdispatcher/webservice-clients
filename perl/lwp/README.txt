@@ -17,6 +17,8 @@ Requirements
 - XML::Simple
 - YAML::Syck
 
+* See also INSTRUCTIONS.md.
+
 Tests
 -----
 

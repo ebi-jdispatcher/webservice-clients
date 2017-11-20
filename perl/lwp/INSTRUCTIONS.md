@@ -1,7 +1,8 @@
-# Perl webservice Clients
-Tool to use REST interface in Perl
+# Perl webservice clients
 
-## How to use it
+Notes on how to use RESTful clients in Perl (LWP).
+
+## How to start
 
 Clone the repository:
 
@@ -19,6 +20,7 @@ In Linux:
 
 ```sudo apt install cpan```
 
+
 In Perl:
 
 ```sudo cpan install LWP```
@@ -27,13 +29,23 @@ In Perl:
 
 ```sudo cpan install YAML::Syck```
 
+```sudo cpan LWP::Protocol::https```
+
+
+NOTA BENE
+You might need to install additional operative system dependencies:
+
+```sudo apt-get install libnet-ssleay-perl libio-socket-ssl-perl```
+
+
 ## Test the results
 
-Run selected client. 
+Run the selected clients.
 
-### For example NCBI Blast
-
+For instance:
 ```cd webservice-clients/perl/lwp```
+
+### Example: NCBI Blast
 
 With one sequence
 
@@ -43,15 +55,15 @@ With multifasta file
 
 ```perl ncbiblast_lwp.pl --email test@ebi.ac.uk --stype protein --program blastp --database mpro --multifasta --maxJobs 5 test_seq.txt```
 
-### For example Clustal Omega
+###  Example: Clustal Omega
 
 ```perl clustalo_lwp.pl --email test@ebi.ac.uk sp:wap_rat,sp:wap_pig,sp:wap_mouse```
 
-### For example Simple Phylogeny
+###  Example: Simple Phylogeny
 
 ```perl simple_phylogeny_lwp.pl --email test@ebi.ac.uk test_alig.txt```
 
-### For example Fasta
+###  Example: Fasta
 
 With one sequence:
 
@@ -66,4 +78,4 @@ If you have no root access to your machine you might need to use [virtualenv](ht
 
 ## Documentation
 
-More documnetation about the tools in [EBI Tools](https://www.ebi.ac.uk/seqdb/confluence/display/WEBSERVICES/EMBL-EBI+Web+Services)
+More documnetation about the tools in [EBI Tools](https://www.ebi.ac.uk/seqdb/confluence/display/WEBSERVICES/EMBL-EBI+Web+Services).
