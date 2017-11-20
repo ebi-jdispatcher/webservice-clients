@@ -10,6 +10,4 @@ soappy/       Clients for SOAP services using SOAPpy.
 zsi20/        Clients for SOAP services using ZSI 2.0.
 suds/         Clients for SOAP services using SUDS.
 
-* See also INSTRUCTIONS.md.
-
 See https://www.ebi.ac.uk/Tools/webservices/ for more details.

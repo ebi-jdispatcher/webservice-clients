@@ -8,7 +8,10 @@ To run tests for tools:
 To run tests for eb-eye:
 	
 	become ebinocle
-	make -f ebeye.test.makefile 
+	make -f ebeye.test.makefile
+
+
+* See also INSTRUCTIONS.md.
 
 
 See http://www.ebi.ac.uk/Tools/webservices/ for more details.

@@ -32,15 +32,15 @@ For instance:
 
 ### Example: EBI Search
 
-Case 1: EBI Search Python 2 client to get domain details about 'uniprot':
+Case 1: get domain details about 'uniprot':
 
 ```python ebeye_urllib2.py getDomainDetails uniprot```
 
-Case 2: EBI Search Python 2 client to get all the results of the query 'human' from domain 'hgnc' retrieving the fields 'id' and 'name' with the 'start' parameter '0' and 'size' (number of results) '3':
+Case 2: get all the results of the query 'human' from domain 'hgnc' retrieving the fields 'id' and 'name' with the 'start' parameter '0' and 'size' (number of results) '3':
 
 ```python ebeye_urllib2.py getResults hgnc human id,name --start 0 --size 3```
 
-Case 3: EBI Search Python 2 client to get the fields 'id' and 'acc' from domain 'uniprot' for the entry with id 'P01174':
+Case 3: get the fields 'id' and 'acc' from domain 'uniprot' for the entry with id 'P01174':
 
 ```python ebeye_urllib2.py getEntries uniprot P01174 id,acc```
 
