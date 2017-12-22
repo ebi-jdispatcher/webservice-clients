@@ -496,7 +496,7 @@ sub _print_entries {
 			}
 
 			foreach my $fieldurl (@{$entry->{'fieldURLs'}->{'fieldURL'}}) {
-				print $fieldurl, "\n";
+				print $fieldurl->{'content'}, "\n";
 			}
 
 			foreach my $viewurl (@{$entry->{'viewURLs'}->{'viewURL'}}) {
