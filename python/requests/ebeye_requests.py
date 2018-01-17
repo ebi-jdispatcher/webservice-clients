@@ -139,7 +139,7 @@ def printDomainDetails(domainInfo):
         indexInfos = domainInfo['indexInfos']
         for indexInfo in indexInfos:
             print(indexInfo['name'] + ': ' + indexInfo['value'])
-        print('')
+        print()
         fieldInfos = domainInfo['fieldInfos']
         print('field_id\tsearchable\tretrievable\tsortable\tfacet\talias\tref_domain\tref_field\ttype')
         fieldStr = ''
@@ -149,7 +149,7 @@ def printDomainDetails(domainInfo):
             for option in options:
                 fieldStr += option['value'] + '\t'
             print(fieldStr)
-        print('')
+        print()
     printDebugMessage('printDomainDetails', 'End', 1)
 
 
@@ -213,7 +213,7 @@ def printFacets(facets):
         print(facet['label'] + ': ' + facet['id'])
         for facetValue in facet['facetValues']:
             printFacetValue(facetValue, 0)
-        print('')
+        print()
     printDebugMessage('printFacets', 'End', 1)
 
 
@@ -249,7 +249,7 @@ def getFacetedResults(domain, query, fields, size='', start='', fieldurl='',
     printDebugMessage('getFacetedResults', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     printEntries(jsonRes['entries'])
-    print('')
+    print()
     printFacets(jsonRes['facets'])
     printDebugMessage('getFacetedResults', 'End', 1)
 
@@ -361,7 +361,7 @@ def printSuggestions(suggestions):
     printDebugMessage('printSuggestions', 'Begin', 1)
     for suggetion in suggestions:
         print(suggetion['suggestion'])
-    print('')
+    print()
     printDebugMessage('printSuggestions', 'End', 1)
 
 
