@@ -165,9 +165,13 @@ def getNumberOfResults(domain, query):
 
 
 # Get search results
-def getResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', sort=''):
+def getResults(domain, query, fields, size='', start='', fieldurl='',
+               viewurl='', sortfield='', order='', sort=''):
     printDebugMessage('getResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort
+    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + \
+                 '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + \
+                 '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + \
+                 order + '&sort=' + sort
     printDebugMessage('getResults', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     entries = jsonRes['entries']
@@ -215,7 +219,8 @@ def printFacets(facets):
 
 def printFacetValue(facetValue, depth=0):
     printDebugMessage('printFacetValue', 'Begin', 1)
-    print('\t' * depth + facetValue['label'] + ' (' + facetValue['value'] + '): ' + str(facetValue['count']))
+    print('\t' * depth + facetValue['label'] + ' (' +
+          facetValue['value'] + '): ' + str(facetValue['count']))
 
     if hasFacetValueChildren(facetValue):
         for child in facetValue['children']:
@@ -231,10 +236,16 @@ def hasFacetValueChildren(facetValue):
 
 
 # Get search results with facets
-def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='',
-                      sort='', facetcount='10', facetfields='', facets='', facetsdepth=''):
+def getFacetedResults(domain, query, fields, size='', start='', fieldurl='',
+                      viewurl='', sortfield='', order='', sort='', facetcount='10',
+                      facetfields='', facets='', facetsdepth=''):
     printDebugMessage('getFacetedResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets + '&facetsdepth=' + facetsdepth
+    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + \
+                 '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + \
+                 '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + \
+                 '&sort=' + sort + '&facetcount=' + facetcount + \
+                 '&facetfields=' + facetfields + '&facets=' + facets + \
+                 '&facetsdepth=' + facetsdepth
     printDebugMessage('getFacetedResults', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     printEntries(jsonRes['entries'])
@@ -246,7 +257,8 @@ def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', vie
 # Get entry details
 def getEntries(domain, entryids, fields, fieldurl='', viewurl=''):
     printDebugMessage('getEntries', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '?fields=' + fields + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '?fields=' + fields + \
+                 '&fieldurl=' + fieldurl + '&viewurl=' + viewurl
     printDebugMessage('getEntries', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     printEntries(jsonRes['entries'])
@@ -276,10 +288,14 @@ def getDomainsReferencedInEntry(domain, entryid):
 
 
 # Get cross-references
-def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', start='', fieldurl='', viewurl='',
-                         facetcount='', facetfields='', facets=''):
+def getReferencedEntries(domain, entryids, referenceddomain, fields, size='',
+                         start='', fieldurl='', viewurl='', facetcount='',
+                         facetfields='', facets=''):
     printDebugMessage('getReferencedEntries', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain + '?fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain + \
+                 '?fields=' + fields + '&size=' + size + '&start=' + start + \
+                 '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + \
+                 '&facetfields=' + facetfields + '&facets=' + facets
     printDebugMessage('getReferencedEntries', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     for entry in jsonRes['entries']:
@@ -299,7 +315,8 @@ def hasReferenceFacet(entry):
 # Get top terms
 def getTopTerms(domain, field, size='', excludes='', excludesets=''):
     printDebugMessage('getTopTerms', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/topterms/' + field + '?size=' + size + '&excludes=' + excludes + '&excludesets=' + excludesets
+    requestUrl = baseUrl + '/' + domain + '/topterms/' + field + '?size=' + size + \
+                 '&excludes=' + excludes + '&excludesets=' + excludesets
     printDebugMessage('getTopTerms', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     for term in jsonRes['topTerms']:
@@ -314,10 +331,15 @@ def printTerm(term):
 
 
 # Get similar documents to a given one
-def getMoreLikeThis(domain, entryid, targetDomain, fields, size='', start='', fieldurl='', viewurl='', mltfields='',
-                    mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
+def getMoreLikeThis(domain, entryid, targetDomain, fields, size='', start='',
+                    fieldurl='', viewurl='', mltfields='', mintermfreq='',
+                    mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
     printDebugMessage('getMoreLikeThis', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis/' + targetDomain + '?size=' + size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq + '&mindocfreq=' + maxqueryterm + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis/' + targetDomain + \
+                 '?size=' + size + '&start=' + start + '&fields=' + fields + \
+                 '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&mltfields=' + mltfields + \
+                 '&mintermfreq=' + mintermfreq + '&mindocfreq=' + maxqueryterm + \
+                 '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
     printDebugMessage('getMoreLikeThis', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     entries = jsonRes['entries']
@@ -362,9 +384,11 @@ def main(baseUrl, outputLevel, debugLevel, usage):
     parser.add_option('--facets', help='list of selected facets')
     parser.add_option('--facetsdepth', help='depth in hierarchical facet')
     parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
-    parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
+    parser.add_option('--mintermfreq', help=('frequency below which terms will be '
+                                             'ignored in the base document'))
     parser.add_option('--mindocfreq',
-                      help='frequency at which words will be ignored which do not occur in at least this many documents')
+                      help=('frequency at which words will be ignored which do not '
+                            'occur in at least this many documents'))
     parser.add_option('--maxqueryterm',
                       help='maximum number of query terms that will be included in any generated query')
     parser.add_option('--excludes', help='terms to be excluded')
@@ -423,7 +447,8 @@ def main(baseUrl, outputLevel, debugLevel, usage):
             sortfield = options.sortfield if options.sortfield else ''
             order = options.order if options.order else ''
             sort = options.sort if options.sort else ''
-            getResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort)
+            getResults(args[1], args[2], args[3], size, start, fieldurl,
+                       viewurl, sortfield, order, sort)
     # Get search results with facets
     elif args[0] == 'getFacetedResults':
         if len(args) < 4:
@@ -440,7 +465,8 @@ def main(baseUrl, outputLevel, debugLevel, usage):
             facetfields = options.facetfields if options.facetfields else ''
             facets = options.facets if options.facets else ''
             facetsdepth = options.facetsdepth if options.facetsdepth else ''
-            getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort,
+            getFacetedResults(args[1], args[2], args[3], size, start, fieldurl,
+                              viewurl, sortfield, order, sort,
                               facetcount, facetfields, facets, facetsdepth)
     # Get entry details.
     elif args[0] == 'getEntries':
@@ -474,8 +500,8 @@ def main(baseUrl, outputLevel, debugLevel, usage):
             facetcount = options.facetcount if options.facetcount else ''
             facetfields = options.facetfields if options.facetfields else ''
             facets = options.facets if options.facets else ''
-            getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount,
-                                 facetfields, facets)
+            getReferencedEntries(args[1], args[2], args[3], args[4], size, start,
+                                 fieldurl, viewurl, facetcount, facetfields, facets)
     # Get top terms
     elif args[0] == 'getTopTerms':
         if len(args) < 3:
@@ -500,7 +526,8 @@ def main(baseUrl, outputLevel, debugLevel, usage):
             maxqueryterm = options.maxqueryterm if options.maxqueryterm else ''
             excludes = options.excludes if options.excludes else ''
             excludesets = options.excludesets if options.excludesets else ''
-            getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+            getMoreLikeThis(args[1], args[2], args[1], args[3], size, start,
+                            fieldurl, viewurl, mltfields, mintermfreq,
                             mindocfreq, maxqueryterm, excludes, excludesets)
     # Get similar documents to a given one
     elif args[0] == 'getExtendedMoreLikeThis':
@@ -517,7 +544,8 @@ def main(baseUrl, outputLevel, debugLevel, usage):
             maxqueryterm = options.maxqueryterm if options.maxqueryterm else ''
             excludes = options.excludes if options.excludes else ''
             excludesets = options.excludesets if options.excludesets else ''
-            getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+            getMoreLikeThis(args[1], args[2], args[3], args[4], size, start,
+                            fieldurl, viewurl, mltfields, mintermfreq,
                             mindocfreq, maxqueryterm, excludes, excludesets)
 
     elif args[0] == 'getAutoComplete':
