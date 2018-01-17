@@ -25,81 +25,6 @@
 import platform, requests, os, json
 from optparse import OptionParser
 
-# Service base URL
-baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
-
-# Output level
-outputLevel = 1
-
-# Debug level
-debugLevel = 0
-
-# Usage message
-usage = """
-  %prog getDomainHierarchy
-  %prog getDomainDetails  <domain>
-
-  %prog getNumberOfResults <domain> <query>
-  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]
-  %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth ]
-
-  %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
-
-  %prog getDomainsReferencedInDomain <domain>
-  %prog getDomainsReferencedInEntry  <domain> <entryid>
-  %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets]
-
-  %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
-
-  %prog getAutoComplete   <domain> <term>
-
-  %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
-  %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
-
-description = """Search at EMBL-EBI in All results using the EBI search engine. For more information on EBI Search refer to https://www.ebi.ac.uk/ebisearch/"""
-
-# Process command-line options
-parser = OptionParser(usage=usage, description=description)
-parser.add_option('--size', help='number of entries to retrieve')
-parser.add_option('--start', help='index of the first entry in results')
-parser.add_option('--fieldurl', help='whether field links are included')
-parser.add_option('--viewurl', help='whether view links are included')
-parser.add_option('--sortfield', help='field id to sort')
-parser.add_option('--order', help='sort in ascending/descending order')
-parser.add_option('--sort', help='sort criteria')
-parser.add_option('--facetcount', help='number of facet values to retrieve')
-parser.add_option('--facetfields', help='field ids associated with facets to retrieve')
-parser.add_option('--facets', help='list of selected facets')
-parser.add_option('--facetsdepth', help='depth in hierarchical facet')
-parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
-parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
-parser.add_option('--mindocfreq', help='frequency at which words will be ignored which do not occur in at least this many documents')
-parser.add_option('--maxqueryterm', help='maximum number of query terms that will be included in any generated query')
-parser.add_option('--excludes', help='terms to be excluded')
-parser.add_option('--excludesets', help='stop word sets to be excluded')
-
-parser.add_option('--quiet', action='store_true', help='decrease output level')
-parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseUrl', default=baseUrl, help='base URL for EBI Search')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
-(options, args) = parser.parse_args()
-
-# Increase output level.
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level.
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level.
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-# Base URL for service.
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -386,137 +311,228 @@ def printSuggestions(suggestions):
     printDebugMessage('printSuggestions', 'End', 1)
 
 
-# No arguments, print usage
-if len(args) < 1:
-    parser.print_help()
-# Get domain hierarchy
-elif args[0] == 'getDomainHierarchy':
-    getDomainHierarchy()
-# Get domain details
-elif args[0] == 'getDomainDetails':
-    if len(args) < 2:
-        print ('domain should be given.')
-    else:
-        getDomainDetails(args[1])
+def main(baseUrl, outputLevel, debugLevel, usage):
+    """
+    Main caller method that sets the CLI.
+    """
 
-# Get number of results
-elif args[0] == 'getNumberOfResults':
-    if len(args) != 3:
-        print ('domain and query should be given.')
-    else:
-        getNumberOfResults(args[1], args[2])
+    # Process command-line options
+    parser = OptionParser(usage=usage, description=description)
+    parser.add_option('--size', help='number of entries to retrieve')
+    parser.add_option('--start', help='index of the first entry in results')
+    parser.add_option('--fieldurl', help='whether field links are included')
+    parser.add_option('--viewurl', help='whether view links are included')
+    parser.add_option('--sortfield', help='field id to sort')
+    parser.add_option('--order', help='sort in ascending/descending order')
+    parser.add_option('--sort', help='sort criteria')
+    parser.add_option('--facetcount', help='number of facet values to retrieve')
+    parser.add_option('--facetfields', help='field ids associated with facets to retrieve')
+    parser.add_option('--facets', help='list of selected facets')
+    parser.add_option('--facetsdepth', help='depth in hierarchical facet')
+    parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
+    parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
+    parser.add_option('--mindocfreq',
+                      help='frequency at which words will be ignored which do not occur in at least this many documents')
+    parser.add_option('--maxqueryterm',
+                      help='maximum number of query terms that will be included in any generated query')
+    parser.add_option('--excludes', help='terms to be excluded')
+    parser.add_option('--excludesets', help='stop word sets to be excluded')
 
-# Get search results
-elif args[0] == 'getResults':
-    if len(args) < 4:
-        print ('domain, query and fields should be given.')
-    else:
-        size = options.size if options.size else ''
-        start = options.start if options.start else ''
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl =  options.viewurl if  options.viewurl else ''
-        sortfield = options.sortfield if options.sortfield else ''
-        order = options.order if options.order else ''
-        sort = options.sort if options.sort else ''
-        getResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort)
-# Get search results with facets
-elif args[0] == 'getFacetedResults':
-    if len(args) < 4:
-        print ('domain, query and fields should be given.')
-    else:
-        size = options.size if options.size else ''
-        start = options.start if options.start else ''
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl =  options.viewurl if  options.viewurl else ''
-        sortfield = options.sortfield if options.sortfield else ''
-        order = options.order if options.order else ''
-        sort = options.sort if options.sort else ''
-        facetcount = options.facetcount if options.facetcount else ''
-        facetfields = options.facetfields if options.facetfields else ''
-        facets = options.facets if options.facets else ''
-        facetsdepth = options.facetsdepth if options.facetsdepth else ''
-        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort, facetcount, facetfields, facets, facetsdepth)
-# Get entry details.
-elif args[0] == 'getEntries':
-    if len(args) < 4:
-        print ('domain, entry ids and fields should be given.')
-    else:
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl =  options.viewurl if  options.viewurl else ''
-        getEntries(args[1], args[2], args[3], fieldurl, viewurl)
-# Get domain ids referenced in a domain
-elif args[0] == 'getDomainsReferencedInDomain':
-    if len(args) < 2:
-        print ('domain sholud be given.')
-    else:
-        getDomainsReferencedInDomain(args[1])
-# Get domain ids referenced in an entry
-elif args[0] == 'getDomainsReferencedInEntry':
-    if len(args) < 3:
-        print ('domain and entry id should be given.')
-    else:
-        getDomainsReferencedInEntry(args[1], args[2])
-# Get cross-references
-elif args[0] == 'getReferencedEntries':
-    if len(args) < 5:
-        print ('domain, entryids, referencedDomain and fields should be given.')
-    else:
-        size = options.size if options.size else ''
-        start = options.start if options.start else ''
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl =  options.viewurl if  options.viewurl else ''
-        facetcount = options.facetcount if options.facetcount else ''
-        facetfields = options.facetfields if options.facetfields else ''
-        facets = options.facets if options.facets else ''
-        getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount, facetfields, facets)
-# Get top terms
-elif args[0] == 'getTopTerms':
-    if len(args) < 3:
-        print ('domain and field should be given.')
-    else:
-        size = options.size if options.size else ''
-        excludes = options.excludes if options.excludes else ''
-        excludesets = options.excludesets if options.excludesets else ''
-        getTopTerms(args[1], args[2], size, excludes, excludesets)
-# Get similar documents to a given one
-elif args[0] == 'getMoreLikeThis':
-    if len(args) < 4:
-        print ('domain, entryid and fields should be given.')
-    else:
-        size = options.size if options.size else ''
-        start = options.start if options.start else ''
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl = options.viewurl if options.viewurl else ''
-        mltfields =  options.mltfields if  options.mltfields else ''
-        mintermfreq =  options.mintermfreq if  options.mintermfreq else ''
-        mindocfreq =  options.mindocfreq if  options.mindocfreq else ''
-        maxqueryterm =  options.maxqueryterm if  options.maxqueryterm else ''
-        excludes = options.excludes if options.excludes else ''
-        excludesets = options.excludesets if options.excludesets else ''
-        getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
-# Get similar documents to a given one
-elif args[0] == 'getExtendedMoreLikeThis':
-    if len(args) < 5:
-        print ('domain, entryid, targetDomain and fields should be given.')
-    else:
-        size = options.size if options.size else ''
-        start = options.start if options.start else ''
-        fieldurl = options.fieldurl if options.fieldurl else ''
-        viewurl = options.viewurl if options.viewurl else ''
-        mltfields =  options.mltfields if  options.mltfields else ''
-        mintermfreq =  options.mintermfreq if  options.mintermfreq else ''
-        mindocfreq =  options.mindocfreq if  options.mindocfreq else ''
-        maxqueryterm =  options.maxqueryterm if  options.maxqueryterm else ''
-        excludes = options.excludes if options.excludes else ''
-        excludesets = options.excludesets if options.excludesets else ''
-        getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+    parser.add_option('--quiet', action='store_true', help='decrease output level')
+    parser.add_option('--verbose', action='store_true', help='increase output level')
+    parser.add_option('--baseUrl', default=baseUrl, help='base URL for EBI Search')
+    parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+    (options, args) = parser.parse_args()
 
-elif args[0] == 'getAutoComplete':
-    if len(args) < 3:
-        print ('domain and term should be given.')
+    # Increase output level.
+    if options.verbose:
+        outputLevel += 1
+
+    # Decrease output level.
+    if options.quiet:
+        outputLevel -= 1
+
+    # Debug level.
+    if options.debugLevel:
+        debugLevel = options.debugLevel
+
+    # Base URL for service.
+    if options.baseUrl:
+        baseUrl = options.baseUrl
+    # No arguments, print usage
+    if len(args) < 1:
+        parser.print_help()
+    # Get domain hierarchy
+    elif args[0] == 'getDomainHierarchy':
+        getDomainHierarchy()
+    # Get domain details
+    elif args[0] == 'getDomainDetails':
+        if len(args) < 2:
+            print('domain should be given.')
+        else:
+            getDomainDetails(args[1])
+
+    # Get number of results
+    elif args[0] == 'getNumberOfResults':
+        if len(args) != 3:
+            print('domain and query should be given.')
+        else:
+            getNumberOfResults(args[1], args[2])
+
+    # Get search results
+    elif args[0] == 'getResults':
+        if len(args) < 4:
+            print('domain, query and fields should be given.')
+        else:
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            sortfield = options.sortfield if options.sortfield else ''
+            order = options.order if options.order else ''
+            sort = options.sort if options.sort else ''
+            getResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort)
+    # Get search results with facets
+    elif args[0] == 'getFacetedResults':
+        if len(args) < 4:
+            print('domain, query and fields should be given.')
+        else:
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            sortfield = options.sortfield if options.sortfield else ''
+            order = options.order if options.order else ''
+            sort = options.sort if options.sort else ''
+            facetcount = options.facetcount if options.facetcount else ''
+            facetfields = options.facetfields if options.facetfields else ''
+            facets = options.facets if options.facets else ''
+            facetsdepth = options.facetsdepth if options.facetsdepth else ''
+            getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort,
+                              facetcount, facetfields, facets, facetsdepth)
+    # Get entry details.
+    elif args[0] == 'getEntries':
+        if len(args) < 4:
+            print('domain, entry ids and fields should be given.')
+        else:
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            getEntries(args[1], args[2], args[3], fieldurl, viewurl)
+    # Get domain ids referenced in a domain
+    elif args[0] == 'getDomainsReferencedInDomain':
+        if len(args) < 2:
+            print('domain sholud be given.')
+        else:
+            getDomainsReferencedInDomain(args[1])
+    # Get domain ids referenced in an entry
+    elif args[0] == 'getDomainsReferencedInEntry':
+        if len(args) < 3:
+            print('domain and entry id should be given.')
+        else:
+            getDomainsReferencedInEntry(args[1], args[2])
+    # Get cross-references
+    elif args[0] == 'getReferencedEntries':
+        if len(args) < 5:
+            print('domain, entryids, referencedDomain and fields should be given.')
+        else:
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            facetcount = options.facetcount if options.facetcount else ''
+            facetfields = options.facetfields if options.facetfields else ''
+            facets = options.facets if options.facets else ''
+            getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount,
+                                 facetfields, facets)
+    # Get top terms
+    elif args[0] == 'getTopTerms':
+        if len(args) < 3:
+            print('domain and field should be given.')
+        else:
+            size = options.size if options.size else ''
+            excludes = options.excludes if options.excludes else ''
+            excludesets = options.excludesets if options.excludesets else ''
+            getTopTerms(args[1], args[2], size, excludes, excludesets)
+    # Get similar documents to a given one
+    elif args[0] == 'getMoreLikeThis':
+        if len(args) < 4:
+            print('domain, entryid and fields should be given.')
+        else:
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            mltfields = options.mltfields if options.mltfields else ''
+            mintermfreq = options.mintermfreq if options.mintermfreq else ''
+            mindocfreq = options.mindocfreq if options.mindocfreq else ''
+            maxqueryterm = options.maxqueryterm if options.maxqueryterm else ''
+            excludes = options.excludes if options.excludes else ''
+            excludesets = options.excludesets if options.excludesets else ''
+            getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+                            mindocfreq, maxqueryterm, excludes, excludesets)
+    # Get similar documents to a given one
+    elif args[0] == 'getExtendedMoreLikeThis':
+        if len(args) < 5:
+            print('domain, entryid, targetDomain and fields should be given.')
+        else:
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            mltfields = options.mltfields if options.mltfields else ''
+            mintermfreq = options.mintermfreq if options.mintermfreq else ''
+            mindocfreq = options.mindocfreq if options.mindocfreq else ''
+            maxqueryterm = options.maxqueryterm if options.maxqueryterm else ''
+            excludes = options.excludes if options.excludes else ''
+            excludesets = options.excludesets if options.excludesets else ''
+            getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+                            mindocfreq, maxqueryterm, excludes, excludesets)
+
+    elif args[0] == 'getAutoComplete':
+        if len(args) < 3:
+            print('domain and term should be given.')
+        else:
+            getAutoComplete(args[1], args[2])
+    # Unknown argument combination, display usage
     else:
-        getAutoComplete(args[1], args[2])
-# Unknown argument combination, display usage
-else:
-    print ('Error: unrecognised argument combination')
-    parser.print_help()
+        print('Error: unrecognised argument combination')
+        parser.print_help()
+
+
+if __name__ == "__main__":
+
+    # Service base URL
+    baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
+
+    # Output level
+    outputLevel = 1
+
+    # Debug level
+    debugLevel = 0
+
+    # Usage message
+    usage = """
+      %prog getDomainHierarchy
+      %prog getDomainDetails  <domain>
+
+      %prog getNumberOfResults <domain> <query>
+      %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]
+      %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth ]
+
+      %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
+
+      %prog getDomainsReferencedInDomain <domain>
+      %prog getDomainsReferencedInEntry  <domain> <entryid>
+      %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets]
+
+      %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
+
+      %prog getAutoComplete   <domain> <term>
+
+      %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
+      %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
+
+    description = ("Search at EMBL-EBI in All results using the EBI search engine."
+                   " For more information on EBI Search refer to https://www.ebi.ac.uk/ebisearch/")
+
+    main(baseUrl, outputLevel, debugLevel, usage)
