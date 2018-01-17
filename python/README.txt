@@ -5,6 +5,7 @@ A set of sample clients for the EBI Web Services written in Python.
 
 Directory     Description
 ---------------------------
+requests/     Clients for REST services using Requests.
 urllib/       Clients for REST services using urllib/urllib2.
 soappy/       Clients for SOAP services using SOAPpy.
 zsi20/        Clients for SOAP services using ZSI 2.0.
