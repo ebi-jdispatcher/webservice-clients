@@ -22,7 +22,9 @@
 # See:
 # https://www.ebi.ac.uk/ebisearch/swagger.ebi
 #
-import platform, requests, os, json
+import os
+import requests
+import platform
 from optparse import OptionParser
 
 
