@@ -365,10 +365,14 @@ def printSuggestions(suggestions):
     printDebugMessage('printSuggestions', 'End', 1)
 
 
-def main(baseUrl, outputLevel, debugLevel, usage):
+def main():
     """
     Main caller method that sets the CLI.
     """
+    global baseUrl
+    global outputLevel
+    global debugLevel
+    global usage
 
     # Process command-line options
     parser = OptionParser(usage=usage, description=description)
@@ -594,4 +598,5 @@ if __name__ == "__main__":
     description = ("Search at EMBL-EBI in All results using the EBI search engine."
                    " For more information on EBI Search refer to https://www.ebi.ac.uk/ebisearch/")
 
-    main(baseUrl, outputLevel, debugLevel, usage)
+    #main(baseUrl, outputLevel, debugLevel, usage)
+    main()
