@@ -281,8 +281,8 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;	
-	$revisionNumber = $1 if('$Revision: 2702 $' =~ m/(\d+)/);	
+	my $revisionNumber = 0;
+	$revisionNumber = $1 if('$Revision: 2702 $' =~ m/(\d+)/);
 	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -533,13 +533,13 @@ sub _print_facets {
 		}
 
 		print "\n";
-	}	
+	}
 }
 
 sub _print_facetValue {
 	my $facetValue = shift;
 	my $depth = shift;
-	
+
 	for (my $i=0; $i < $depth; $i++) {
    		print "\t";
 	}
@@ -580,7 +580,7 @@ sub print_get_domains_referenced_in_domain {
 	my ($domain_list) = &rest_get_domains_referenced_in_domain(@_);
 	foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}){
 		print $domain->{'id'}, "\n";
-	} 
+	}
 	print_debug_message( 'print_get_domains_referenced_in_domain', 'End', 1 );
 }
 
@@ -597,8 +597,8 @@ sub print_get_domains_referenced_in_entry {
 	print_debug_message( 'print_get_domains_referenced_in_entry', 'Begin', 1 );
 	my ($domain_list) = &rest_get_domains_referenced_in_entry(@_);
 	foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}){
-		print $domain->{'id'}, "\n";
-	} 
+		print $domain->{'id'}, ": ", $domain->{'referenceEntryCount'}, "\n";
+	}
 	print_debug_message( 'print_get_domains_referenced_in_entry', 'End', 1 );
 }
 
@@ -644,7 +644,7 @@ sub print_get_top_terms {
 
 
 =head2
-Print similar documents 
+Print similar documents
 
   &print_get_more_like_this($domainid, $entry, $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
 
@@ -658,7 +658,7 @@ sub print_get_more_like_this{
 }
 
 =head2
-Print similar documents 
+Print similar documents
 
   &print_get_extended_more_like_this($domainid, $entry, $targetDomainid, $fields, $size, $start, $fieldurl, $viewurl, $mltfields, $mintermfreq, $mindocfreq, $maxqueryterm, $excludes, $excludesets);
 
@@ -681,7 +681,7 @@ Print suggestions
 sub print_get_auto_complete{
 	print_debug_message( 'print_get_auto_complete', 'Begin', 1 );
 	my ($param_list_xml) = &rest_get_auto_complete(@_);
-		
+
 	&_print_suggestions($param_list_xml->{'suggestions'}->{'suggestion'});
 	print_debug_message( 'print_get_auto_complete', 'End', 1 );
 }
@@ -805,7 +805,7 @@ sub rest_get_faceted_results {
 	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
 	my $facets = $params{'facets'}? $params{'facets'} : "";
 	my $facetsdepth = $params{'facetsdepth'}? $params{'facetsdepth'} : "";
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&sort=". $sort . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth; 
+	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&sort=". $sort . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth;
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_faceted_results', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue']);
@@ -897,7 +897,7 @@ sub rest_get_referenced_entries {
 
 	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryids ."/xref/" . $referencedDomainId . "?fields=" .$fields . "&start=" . $start. "&size=" . $size. "&fieldurl=".$fieldurl . "&viewurl=".$viewurl ."&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" .$facets;
 	my $param_list_xml_str = &rest_request($url);
-	
+
 	print_debug_message( 'rest_get_referenced_entries', 'End', 1 );
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'reference', 'referenceFacet', 'value', 'field', 'fieldURL', 'viewURL', 'facetValue']);
 }
@@ -906,9 +906,9 @@ sub rest_get_referenced_entries {
 =head2 rest_get_top_terms()
 
 Get Top terms
-  
+
   my(@term_list) = &rest_get_top_terms($domainid, $fieldid, $size, $excludes, $excludesets);
-  
+
 =cut
 
 sub rest_get_top_terms{
@@ -940,7 +940,7 @@ sub rest_get_more_like_this{
 	my $domainid = shift;
 	my $entryid = shift;
 	my $fields = shift;
-	
+
 	my $size = $params{'size'}? $params{'size'} : "" ;
 	my $start = $params{'start'}? $params{'start'} : "" ;
 	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
@@ -972,7 +972,7 @@ sub rest_get_extended_more_like_this{
 	my $entryid = shift;
 	my $targetDomainid = shift;
 	my $fields = shift;
-	
+
 	my $size = $params{'size'}? $params{'size'} : "" ;
 	my $start = $params{'start'}? $params{'start'} : "" ;
 	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
@@ -1004,10 +1004,10 @@ sub rest_get_auto_complete{
 	my $term = shift;
 
 	my $url = $baseUrl . "/" .$domainid . "/autocomplete?term=" . $term;
-	
+
 	my $param_list_xml_str = &rest_request($url);
 	print_debug_message( 'rest_get_auto_complete', 'End', 1 );
-	
+
 	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['suggetion']);
 }
 
@@ -1051,7 +1051,7 @@ A number of methods are available:
 
 getDomainHierarchy
   Return the hierarchy of the domains availabe.
-  
+
 getDomainDetails <domain>
   Return the details of a particula domain.
 
@@ -1060,29 +1060,29 @@ getNumberOfResults <domain> <query>
 
 getResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]
   Executes a query and returns a list of results.
-  
+
 getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets ]
   Executes a query and returns a list of results including facets.
 
 getEntries <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
-  Search for entries in a domain and returns the values for some of the 
+  Search for entries in a domain and returns the values for some of the
   fields of these entries.
 
 getDomainsReferencedInDomain <domain>
-  Returns the list of domains with entries referenced in a particular domain. 
-  These domains are indexed in the EB-eye. 
+  Returns the list of domains with entries referenced in a particular domain.
+  These domains are indexed in the EB-eye.
 
 getDomainsReferencedInEntry <domain> <entryid>
-  Returns the list of domains with entries referenced in a particular domain 
+  Returns the list of domains with entries referenced in a particular domain
   entry. These domains are indexed in the EB-eye.
 
 getReferencedEntries <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets ]
-  Returns the list of referenced entry identifiers from a domain referenced 
-  in a particular domain entry. 
-  
+  Returns the list of referenced entry identifiers from a domain referenced
+  in a particular domain entry.
+
 getTopTerms <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
   Returns the list of top N terms from a field.
-  
+
 getMoreLikeThis <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
   Returns the list of similar documents.
 
@@ -1129,7 +1129,7 @@ Options:
   --baseUrl=BASEURL     base URL for dbfetch
   --debugLevel=DEBUGLEVEL
                         debug output level
-  
+
 Support/Feedback:
 
   http://www.ebi.ac.uk/support/
@@ -1138,7 +1138,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut

@@ -283,7 +283,7 @@ def getDomainsReferencedInEntry(domain, entryid):
     printDebugMessage('getDomainsReferencedInEntry', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     for domain in jsonRes['domains']:
-        print(domain['id'])
+        print(domain['id'] + ': ' + str(domain['referenceEntryCount']) )
     printDebugMessage('getDomainsReferencedInEntry', 'End', 1)
 
 
