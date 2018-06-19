@@ -5,6 +5,7 @@ MAINTAINER EBI, Web Production Team support@ebi.ac.uk
 RUN apk update && \
     apk add expat-dev
 
+
 RUN cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS
 
 WORKDIR /usr/src/ebitools
