@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-hmmer3_hmmscan_lwp.pl
+hmmer3_phmmer_lwp.pl
 
 =head1 DESCRIPTION
 
-HMMER3 HMMSCAN (REST) web service Perl client using L<LWP>.
+HMMER3 PHMMER (REST) web service Perl client using L<LWP>.
 
 Tested with:
 
@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: hmmer3_hmmscan_lwp.pl 2791 2014-05-29 15:31:39Z hpm $
+$Id: hmmer3_phmmer_lwp.pl 2791 2014-05-29 15:31:39Z hpm $
 
 =cut
 
@@ -76,7 +76,7 @@ use JSON::XS;
 use Try::Tiny;
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
+my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
 
 # Set interval for checking status
 my $checkInterval = 5;
@@ -99,19 +99,21 @@ my %params = (
 my %tool_params = ();
 GetOptions(
 
-	# Tool specific options		
-	'database|D=s'  => \$tool_params{'database'},# Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
-	'hmmdb|D=s'     => \$tool_params{'database'},# Compatability database option
+	# Tool specific options	
+	'database|D=s'	=> \$tool_params{'database'},	# Ddatabase to search, Reference Proteomes:uniprotrefprot, UniProtKB:uniprotkb, SwissProt:swissprot, PDB:pdb
+	'seqdb|D=s'     => \$tool_params{'database'},   # Compatability database option	
 	'E|e=f'         => \$tool_params{'E'},          # Report E-values[Model] (ex:1)
 	'domE|f=f'      => \$tool_params{'domE'},       # Report E-values[Hit] (ex:1)
 	'incE|g=f'      => \$tool_params{'incE'},       # Siginificance E-values[Model] (ex:0.01)
-	'incdomE|h=f'   => \$tool_params{'incdomE'},    # Siginificance E-values[Hit] (ex:0.03)
+	'incdomE|h=f'	=> \$tool_params{'incdomE'},    # Siginificance E-values[Hit] (ex:0.03)
 	'T|t=f'         => \$tool_params{'T'},          # Report bit scores[Sequence] (ex:7)
 	'domT|u=f'      => \$tool_params{'domT'},       # Report bit scores[Hit] (ex:5)
 	'incT|v=f'      => \$tool_params{'incT'},       # Significance bit scores[Sequence] (ex:25)
 	'incdomT|w=f'   => \$tool_params{'incdomT'},    # Significance bit scores[Hit] (ex:22))
-	'nobias|n=s'    => \$tool_params{'nobias'},     # Bias composition filter	
-	'acc=i'         => \$params{'acc'},             # Get accession ID, how many from top	
+	'popen|o=f'     => \$tool_params{'popen'},      # Gap Penalties for Open
+	'pextend|p=f'   => \$tool_params{'pextend'},    # Gap Penalties for Extended
+	'mx|m=s'        => \$tool_params{'mx'},         # Substitution scoring matrix [BLOSUM45, BLOSUM62, BLOSUM90, PAM30, PAM70]
+	'nobias|n=s'    => \$tool_params{'nobias'},     # True for turnning off, bias composition filter
 
 	# Generic options
 	'email=s'       => \$params{'email'},           # User e-mail address
@@ -132,8 +134,9 @@ GetOptions(
 	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.	
 	'useSeqId'      => \$params{'useSeqId'},        # Seq Id file name
 	'maxJobs=i'     => \$params{'maxJobs'},         # Max. parallel jobs
-	'alignView|A=s' => \$tool_params{'alignView'},  # Output alignment in result. The default is true.	
-	'multifasta'	=> \$params{'multifasta'}       # Multiple fasta input	
+	'alignView=s'   => \$tool_params{'alignView'},  # Output alignment in result. The default is true.
+	'multifasta'	=> \$params{'multifasta'},      # Multiple fasta input
+	'acc=i'         => \$params{'acc'}              # Get accession ID, how many from top
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )  { $outputLevel-- }
@@ -146,7 +149,7 @@ if ( lc $tool_params{'alignView'} eq 'true') {
 	delete $tool_params{'alignView'};
 } elsif ( lc $tool_params{'alignView'} eq 'false') {
 } else {		
-	print "The alignView option should be one of the restricted values : true or false. The default is true. \n";
+	print "The alignView option should be one of the restricted values : true or false. \n";
 	exit(0);
 }
 
@@ -261,9 +264,8 @@ else {
 	}
 }
 
-# hmmscan db index
-my $db_index = "4";# default Pfam
-
+# seq db index
+my $db_index = "2";# default uniprotkb
 
 =head1 FUNCTIONS
 
@@ -366,7 +368,7 @@ sub rest_request {
 	$retVal = $response->content() unless defined($retVal);
 	# Check for an error.
 	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request', 'End', 11 );		
+	print_debug_message( 'rest_request', 'End', 11 );
 
 	# Return the response data
 	return $retVal;
@@ -382,9 +384,9 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request_for_accid {
-	print_debug_message( 'rest_request_for_accid', 'Begin', 11 );
+	print_debug_message( 'rest_request', 'Begin', 11 );
 	my $requestUrl = shift;
-	print_debug_message( 'rest_request_for_accid', 'URL: ' . $requestUrl, 11 );
+	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
 
 	# Get an LWP UserAgent.
 	$ua = &rest_user_agent() unless defined($ua);
@@ -398,10 +400,14 @@ sub rest_request_for_accid {
 	my $response = $ua->get($requestUrl,
 		'Accept-Encoding' => $can_accept, # HTTP compression.
 	);
-	print_debug_message( 'rest_request_for_accid', 'HTTP status: ' . $response->code,	11 );
-	print_debug_message( 'rest_request_for_accid', 'response length: ' . length($response->content()), 11 );
-	print_debug_message( 'rest_request_for_accid', 'request:' ."\n" . $response->request()->as_string(), 32 );
-	print_debug_message( 'rest_request_for_accid', 'response: ' . "\n" . $response->as_string(), 32 );
+	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
+		11 );
+	print_debug_message( 'rest_request',
+		'response length: ' . length($response->content()), 11 );
+	print_debug_message( 'rest_request',
+		'request:' ."\n" . $response->request()->as_string(), 32 );
+	print_debug_message( 'rest_request',
+		'response: ' . "\n" . $response->as_string(), 32 );
 	# Unpack possibly compressed response.
 	my $retVal;
 	if ( defined($can_accept) && $can_accept ne '') {
@@ -411,8 +417,7 @@ sub rest_request_for_accid {
 	$retVal = $response->content() unless defined($retVal);
 	# Check for an error.
 	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request_for_accid', 'retVal: ' . $retVal, 12 );
-	print_debug_message( 'rest_request_for_accid', 'End', 11 );
+	print_debug_message( 'rest_request', 'End', 11 );
 		
 	my @lines = split /\n/, $retVal;
 	
@@ -423,40 +428,44 @@ sub rest_request_for_accid {
 	}
 
 	foreach my $line (@lines) {
-	
+
 		# Updating HMMER numeric ID to Accession
 		if ( $v_cnt >= $top_acc) {
 			 last;			 
 		}
+	
+		my $where_id_begin = index($line, '>>');		
 
-		my $where_id_begin = index($line, '>>');
-
-		if ($where_id_begin>-1) {		
+		if ($where_id_begin>-1) {			
 			$v_cnt++;
 
 			my $grab_id = substr($line, $where_id_begin+3, 30);
 			$grab_id =~ s/\s*$//; # trim left whitespace
 
-			#print "=grab_id=====================\n";
+			try {
 
-			my $acc_id = rest_get_accid($grab_id);
-			
-			if ($grab_id ) {
-				if ($acc_id ) {
-					
-					my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' ';
-					my $numeric2 = ' '.$grab_id.' ';
-					my $new_id = ' '.$acc_id.' ';
+				my $acc_id = rest_get_accid($grab_id);
+				
+				if ($grab_id ) {
+					if ($acc_id ) {
 
-					$retVal =~ s/$numeric1/$new_id/g;	
-					$retVal =~ s/$numeric2/$new_id/g;	
+						my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' ';
+						my $numeric2 = ' '.$grab_id.' ';
+						my $new_id = ' '.$acc_id.' ';
+
+						$retVal =~ s/$numeric1/$new_id/g;	
+						$retVal =~ s/$numeric2/$new_id/g;	
+					}
 				}
+			} catch {
+				#warn "Caught Getting Accession error: $_";
+				warn " Not found the Accession for: " . $grab_id;
+				#last;	
 			}
-
-		}		
+		}	
 	
 	}
-
+	
 	# Return the response data
 	return $retVal;
 }
@@ -471,25 +480,24 @@ http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
 =cut
 
 sub rest_get_accid {
-	print_debug_message( 'rest_get_accid', '##### Begin', 42 );
+	print_debug_message( 'rest_get_accid', '################ Begin', 42 );
 	#my (@reference);
 	my $each_acc_id;
 	my ($entryid) = @_;
 	
-	#my $domainid ='hmmer_seq';	
-	my $domainid ='hmmer_hmm';	
-	my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
+	my $domainid ='hmmer_seq';	
+	my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/';
 
-	my $url = $ebisearch_baseUrl . "/entry/".$entryid."?fields=id,content";
+	my $url = $ebisearch_baseUrl . $domainid . "/entry/".$entryid."?fields=id,content";
 	my $reference_list_xml_str = &rest_request($url);
 	my $reference_list_xml     = XMLin($reference_list_xml_str);
 
 	# read XML file
-	my $data = XMLin($reference_list_xml_str);	
+	my $data = XMLin($reference_list_xml_str);
 	my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
 
 	if ($acc_info) {
-		print_debug_message( 'rest_get_accid', '#acc_info is: ' . $acc_info, 42 );
+		print_debug_message( 'rest_get_accid', 'acc_info is: ' . $acc_info, 42 );
 
 		my $decoded;
 
@@ -500,18 +508,18 @@ sub rest_get_accid {
 			warn "Caught JSON::XS decode error: $_";
 		};
 
-		my @selected_db = $decoded->[$db_index];
+		my @dbs1 = $decoded->{'db'};		
+		my @selected_db = $dbs1[0]->[$db_index];
 
-		$each_acc_id = $selected_db[0]->{'acc'};	
+		$each_acc_id = $selected_db[0]->[0]->{'dn'};	
 
 	} else {
-		print_debug_message( 'rest_get_accid', '#acc_info NONE: ' , 42 );
+		print_debug_message( 'rest_get_accid', '=acc_info NONE: ' , 42 );
 	}
 	
 	print_debug_message( 'rest_get_accid', 'End', 42 );
 	return ($each_acc_id);
 }
-
 
 =head2 rest_get_parameters()
 
@@ -569,8 +577,8 @@ sub rest_run {
 	if ( defined($title) ) {
 		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
-	print_debug_message( 'rest_run', 'params>>: ' . Dumper($params), 1 );
-	
+	print_debug_message( 'rest_run', 'params: ' . Dumper($params), 1 );
+
 	# Get an LWP UserAgent.
 	$ua = &rest_user_agent() unless defined($ua);
 
@@ -660,7 +668,6 @@ sub rest_get_result {
 	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id, 1 );
 	print_debug_message( 'rest_get_result', 'type: ' . $type,    1 );
 	my $url    = $baseUrl . '/result/' . $job_id . '/' . $type;
-
 #	my $result = &rest_request($url);
 	my $result = &rest_request_for_accid($url);
 	print_debug_message( 'rest_get_result', length($result) . ' characters',
@@ -855,36 +862,54 @@ Submit a job to the service.
 
 sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
-	
+
 	# Set input sequence
 	$tool_params{'sequence'} = shift;
 	my $seq_id = shift;
-	print_debug_message( 'submit_job', 'seq_id: ' . $seq_id, 1 ) if($seq_id);
 
-	# Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
-	my $param_hmmdb = $tool_params{'database'};
+	# Set input seqdb ; ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
+	my $param_seqdb = $tool_params{'database'};
 
-	if ($param_hmmdb eq 'treefam'  ) {
+	if ($param_seqdb eq 'ensemblgenomes'  ) {
+		$db_index = "1";
+	}
+	if ($param_seqdb eq 'uniprotkb'  ) {
 		$db_index = "2";
-	}	
-	if ($param_hmmdb eq 'gene3d'  ) {
+	}
+	if ($param_seqdb eq 'rp75'  ) {
 		$db_index = "3";
-	}	
-	if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam' ) {
-		$tool_params{'database'} = 'pfam';
+	}
+	if ($param_seqdb eq 'uniprotrefprot'  ) {
 		$db_index = "4";
-	}	
-	if ($param_hmmdb eq 'superfamily'  ) {
+	}
+	if ($param_seqdb eq 'rp55'  ) {
 		$db_index = "5";
-	}	
-	if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
-		$tool_params{'database'} = 'tigrfam';
+	}
+	if ($param_seqdb eq 'rp35'  ) {
 		$db_index = "6";
-	}		
-	if ($param_hmmdb eq 'pirsf'  ) {
+	}
+	if ($param_seqdb eq 'rp15'  ) {
 		$db_index = "7";
-	}	
- 
+	}
+	if ($param_seqdb eq 'ensembl'  ) {
+		$db_index = "8";
+	}
+	if ($param_seqdb eq 'merops'  ) {
+		$db_index = "9";
+	}
+	if ($param_seqdb eq 'qfo'  ) {
+		$db_index = "10";
+	}
+	if ($param_seqdb eq 'swissprot'  ) {
+		$db_index = "11";
+	}
+	if ($param_seqdb eq 'pdb'  ) {
+		$db_index = "12";
+	}
+	if ($param_seqdb eq 'meropsscan'  ) {
+		$db_index = "13";
+	}
+
 	# Load parameters
 	&load_params();
 
@@ -1197,10 +1222,7 @@ sub load_params {
 	#	$tool_params{'tree'} = $params{'outputtree'};
 	# }
 
-	#print_debug_message( 'load_params', 'hmmdb:'.$params{'hmmdb'}, 1 );
-
 	print_debug_message( 'load_params', 'End', 1 );
-	
 }
 
 =head2 client_poll()
@@ -1276,7 +1298,7 @@ sub get_results {
 		# Make safe to use as a file name.
 		$output_basename =~ s/\W/_/g;
 	}
-	
+
 	# Get list of data types
 	my (@resultTypes) = rest_get_result_types($jobid);
 
@@ -1400,21 +1422,21 @@ Print program usage message.
 sub usage {
 	print STDERR <<EOF
 
-HMMER3 HMMSCAN
+HMMER3 PHMMER
 ===================
 
-HMMER hmmscan is used to search sequences against collections of profiles.
+HMMER phmmer is used to search sequences against collections of profiles.
 
 [Required]
 
   --email            : str  : e-mail address
-  -D, --database     : str  : This field indicates which profile HMM database the query should be searched against. Accepted values are gene3d, pfam, tigrfam, superfamily, pirsf
-  -D, --hmmdb	     : str  : Compatability database option
+  -D, --database     : str  : The sequence database field changes which target sequence database is searched. Accepted values are ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
+  -D, --seqdb	     : str  : Compatability database option
   seqFile            : file : query sequence ("-" for STDIN, \@filename for
                               identifier list file)
 
 [Optional]
-  
+
   -e, --E            : real : Report E-values[Model] (ex:1)
   -f, --domE         : real : Report E-values[Hit] (ex:1)
   -g, --incE         : real : Siginificance E-values[Model] (ex:0.01)
@@ -1423,10 +1445,14 @@ HMMER hmmscan is used to search sequences against collections of profiles.
   -u, --domT         : real : Report bit scores[Hit] (ex:5)
   -v, --incT         : real : Significance bit scores[Sequence] (ex:25)
   -w, --incdomT      : real : Significance bit scores[Hit] (ex:22)
-  -n, --nobias       : str  : Bias composition filter
+  -n, --nobias       : str  : True for turnning off, bias composition filter
+  -o, --popen        : real : Gap Penalties for Open
+  -p, --pextend      : real : Gap Penalties for Extend
+  -m, --mx           : str  : Substitution scoring matrix
+                              [BLOSUM45, BLOSUM62, BLOSUM90, PAM30, PAM70]
   -A, --alignView    : str  : Output alignment in result
   --acc              : int  : Get accession ID, how many from top. The default is 20
-  --multifasta       : file : treat input as a set of fasta formatted sequences
+  --multifasta       :      : treat input as a set of fasta formatted sequences
 
 [General]
 
@@ -1471,7 +1497,7 @@ Asynchronous job:
 
 Further information:
 
-  https://www.ebi.ac.uk/seqdb/confluence/display/THD/Hmmer3+hmmscan
+  https://www.ebi.ac.uk/seqdb/confluence/display/THD/Hmmer3+phmmer
   https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Job+Dispatcher+Sequence+Analysis+Tools+Home
 
 Support/Feedback:
