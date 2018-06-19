@@ -1,18 +1,16 @@
-FROM perl:latest 
-MAINTAINER EMBL-EBI, Wep production Team support@ebi.ac.uk
+FROM scottw/alpine-perl:5.26.0
+MAINTAINER EBI, Web Production Team support@ebi.ac.uk
 
 # Dependencies
-RUN apt-get update  
+RUN apk update && \
+    apk add expat-dev
 
-#RUN chown -R www-data:www-data /var/lib/nginx
+RUN cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS
 
-#RUN apt-get  Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS  
-#RUN cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS  
-  
-WORKDIR /usr/src/ebi-webservice-clients
-ENV PATH="/usr/src/ebi-webservice-clients/:${PATH}"
+WORKDIR /usr/src/ebitools
+ENV PATH="/usr/src/ebitools/:${PATH}"
 
-COPY ./perl/lwp/*.pl /usr/src/ebi-webservice-clients/perl/
+COPY ./clients/*.pl /usr/src/ebitools/
 # package secondary tools for linking the perl scripts
-#COPY ./*.sh /usr/src/ebi-webservice-clients/
-#RUN chmod +x /usr/src/ebi-webservice-clients/*.*
+COPY ./*.sh /usr/src/ebitools/
+RUN chmod +x /usr/src/ebitools/*.*
