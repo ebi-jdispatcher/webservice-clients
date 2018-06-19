@@ -13,5 +13,5 @@ ENV PATH="/usr/src/ebitools/:${PATH}"
 
 COPY ./perl/lwp/*.pl /usr/src/ebitools/
 # package secondary tools for linking the perl scripts
-COPY ./*.sh /usr/src/ebitools/
+#COPY ./*.sh /usr/src/ebitools/
 RUN chmod +x /usr/src/ebitools/*.*
