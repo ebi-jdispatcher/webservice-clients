@@ -22,7 +22,7 @@ Users are encouraged to develop their own clients. Feel free to share them with 
 A selection of sample workflow descriptions showing how to use the
 services can be found in the following directories:
 
-* [Taverna](taverna/)
+* [Taverna](workflows/taverna/)
 
 ## Contact and Support
 
