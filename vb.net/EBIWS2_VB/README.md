@@ -1,11 +1,11 @@
-# EBI Web Services Visual Basic .NET Sample Clients
+# EBI Web Services Visual Basic .NET Sample Clients
 
 Sample clients for a selection of EMBL-EBI SOAP web services implemented in
 Visual Basic .NET.
 
 This is a Microsoft Visual Basic 2008 Express solution.
 
-## Service Stubs
+## Service Stubs
 
 Due to issues with the Mono versions of `wsdl.exe` (see Notes) the required
 service stubs have been generated using the Microsoft SDK and checked-in to
