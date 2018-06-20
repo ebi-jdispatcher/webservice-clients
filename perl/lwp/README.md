@@ -1,4 +1,4 @@
-#EBI Web Services Perl LWP Clients
+# EBI Web Services Perl LWP Clients
 
 A set of sample clients for the EBI Web Services written in Perl using the
 LWP module(s) to access the REST web services.
