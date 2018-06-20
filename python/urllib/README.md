@@ -1,4 +1,4 @@
-## EBI Web Services Python Clients using urllib
+# EBI Web Services Python Clients using urllib
 
 To run tests for tools:
 
