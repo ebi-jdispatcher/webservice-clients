@@ -1,4 +1,4 @@
-# EBI Web Services Java Clients
+# EBI Web Services Java Clients
 
 A set of sample EBI Web Services clients developed in Java.
 
