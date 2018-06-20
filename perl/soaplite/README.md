@@ -1,4 +1,4 @@
-# EBI Web Services Perl SOAP::Lite Clients
+# EBI Web Services Perl SOAP::Lite Clients
 
 A set of sample clients for the EBI Web Services written in Perl using the
 SOAP::Lite module(s) to access the SOAP web services.
