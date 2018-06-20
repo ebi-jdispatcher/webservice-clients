@@ -62,7 +62,7 @@ create single exe files which include the dll code. A makefile
 performed on MS Windows using ILMerge
 (http://research.microsoft.com/en-us/people/mbarnett/ilmerge.aspx).
 
-## Contact and Support
+## Contact and Support
 
 If you have problems with the clients or any suggestions for our web services
 then please contact us via the Support form http://www.ebi.ac.uk/support/
