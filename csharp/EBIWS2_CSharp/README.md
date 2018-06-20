@@ -1,4 +1,4 @@
-# C# # .NET Sample Clients
+# C&#35; .NET Sample Clients
 
 Sample clients for a selection of EMBL-EBI SOAP web services implemented in
 C# for .NET.

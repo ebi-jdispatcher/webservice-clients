@@ -1,4 +1,4 @@
-# EBI Web Services .NET C# # Clients
+# EBI Web Services .NET C&#35; Clients
 
 A set of sample EBI Web Services clients developed in C# for .NET environments.
 
