@@ -2,7 +2,7 @@
 
 This repository provides a collection of Sample Web Service Clients to consume EBI's Job Dispatcher Web Service tools via REST and SOAP APIs.
 
-*New:* RESTful API (SWAGGER UI) is available at https://www.ebi.ac.uk/Tools/common/tools/help/
+**New:** RESTful API interface is available at https://www.ebi.ac.uk/Tools/common/tools/help/
 
 ## Sample Clients
 
