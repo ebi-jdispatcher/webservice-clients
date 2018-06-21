@@ -3,7 +3,6 @@
 A set of sample clients for the EBI Web Services written in PHP.
 
 * [nusoap](nusoap/) - Clients for SOAP services using nuSOAP
-* [pear_soap](pear_soap/) - Clients for SOAP services using PEAR SOAP
 * [php_file](php_file/) - Clients for REST services using PHP file_get_contents
 * [php_soap](php_soap/) - Clients for SOAP services using PHP SOAP
 
