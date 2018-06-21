@@ -100,8 +100,8 @@ my %tool_params = ();
 GetOptions(
 
 	# Tool specific options		
-	'database|D=s'  => \$tool_params{'database'},# Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
-	'hmmdb|D=s'     => \$tool_params{'database'},# Compatability database option
+	'database|D=s'  => \$tool_params{'database'},   # Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
+	'hmmdb|D=s'     => \$tool_params{'database'},   # Compatability database option
 	'E|e=f'         => \$tool_params{'E'},          # Report E-values[Model] (ex:1)
 	'domE|f=f'      => \$tool_params{'domE'},       # Report E-values[Hit] (ex:1)
 	'incE|g=f'      => \$tool_params{'incE'},       # Siginificance E-values[Model] (ex:0.01)
