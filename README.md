@@ -1,8 +1,12 @@
 # EBI Web Services Clients
 
+This repository provides a collection of Sample Web Service Clients to consume EBI's Job Dispatcher Web Service tools via REST and SOAP APIs.
+
+*New:* RESTful API (SWAGGER UI) is available at https://www.ebi.ac.uk/Tools/common/tools/help/
+
 ## Sample Clients
 
-A collection of sample clients for the EBI webservices in a range of
+A collection of sample clients for the EBI Job Dispatcher Web Services in a range of
 programming languages:
 
 * [C#](csharp/)
@@ -24,6 +28,10 @@ A selection of sample workflow descriptions showing how to use the
 services can be found in the following directories:
 
 * [Taverna](workflows/taverna/)
+
+## Auto-generation of Python Clients
+
+We have got a new project that allows auto-generation of Python clients. See https://github.com/ebi-wp/webservice-client-generator for more details.
 
 ## Contact and Support
 
