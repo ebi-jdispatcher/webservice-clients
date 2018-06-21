@@ -8,10 +8,10 @@ programming languages:
 * [C#](csharp/)
 * [Java](java/)
 * [Visual Basic .NET](vb.net/)
-* [Perl](perl/) | [Perl (lwp)](perl/lwp) | [Perl (soaplite)](perl/soaplite) | [Perl (xmlcompile)](perl/xmlcompile)
-* [Python](python/) | [Python (requests)](python/requests) | [Python (urllib)](python/urllib) | [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
-* [PHP](php/) | [PHP (nusoap)](php/nusoap) | [PHP (php_file)](php/php_file) | [PHP (php_soap)](php/php_soap)
-* [Ruby](ruby/) | [Ruby (net_http)](ruby/net_http) | [Ruby (open-uri)](ruby/open-uri) | [Ruby (soap4r)](ruby/soap4r)
+* [Perl](perl/) > [Perl (lwp)](perl/lwp) | [Perl (soaplite)](perl/soaplite) | [Perl (xmlcompile)](perl/xmlcompile)
+* [Python](python/) > [Python (requests)](python/requests) | [Python (urllib)](python/urllib) | [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
+* [PHP](php/) > [PHP (nusoap)](php/nusoap) | [PHP (php_file)](php/php_file) | [PHP (php_soap)](php/php_soap)
+* [Ruby](ruby/) > [Ruby (net_http)](ruby/net_http) | [Ruby (open-uri)](ruby/open-uri) | [Ruby (soap4r)](ruby/soap4r)
 
 
 A selection of utility scripts are provided in the [util](util/) directory.
