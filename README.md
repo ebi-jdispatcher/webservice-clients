@@ -13,7 +13,7 @@ programming languages:
 * [Java](java/)
 * [Visual Basic .NET](vb.net/)
 * [Perl](perl/) > [Perl (lwp)](perl/lwp) | [Perl (soaplite)](perl/soaplite) | [Perl (xmlcompile)](perl/xmlcompile)
-* [Python](python/) > [Python (requests)](python/requests) | [Python (urllib)](python/urllib) | [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
+* [Python](python/) > [Python (auto-generated)](python/auto-generated) | [Python (urllib)](python/urllib) | [Python (requests)](python/requests) | [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
 * [PHP](php/) > [PHP (nusoap)](php/nusoap) | [PHP (php_file)](php/php_file) | [PHP (php_soap)](php/php_soap)
 * [Ruby](ruby/) > [Ruby (net_http)](ruby/net_http) | [Ruby (open-uri)](ruby/open-uri) | [Ruby (soap4r)](ruby/soap4r)
 
@@ -32,7 +32,7 @@ services can be found in the following directories:
 
 ## Run Perl Clients with Docker
 
-You can prefer to run the Perl Sample Clients with Docker. We provide a docker container at https://hub.docker.com/r/ebiwp/webservice-clients/. 
+You can prefer to run the Perl Sample Clients with Docker. We provide a docker container at https://hub.docker.com/r/ebiwp/webservice-clients/.
 
 Pull the `webservice-clients` container from Docker Hub:
 ```

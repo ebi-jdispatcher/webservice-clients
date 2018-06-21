@@ -1,0 +1,455 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+###############################################################################
+#
+# Python Client Automatically generated with:
+# https://github.com/ebi-wp/webservice-client-generator
+#
+# Copyright (C) 2006-2018 EMBL - European Bioinformatics Institute
+# Under GNU GPL v3 License - See LICENSE for more details!
+###############################################################################
+
+from __future__ import print_function
+import platform, os, sys, time
+from xmltramp2 import xmltramp
+from optparse import OptionParser
+
+try:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+    from urllib.request import __version__ as urllib_version
+except ImportError:
+    from urlparse import urlparse
+    from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
+    from urllib2 import __version__ as urllib_version
+
+# allow unicode(str) to be used in python 3
+try:
+  unicode('')
+except NameError:
+  unicode = str
+
+# Base URL for service
+baseUrl = u'http://www.ebi.ac.uk/Tools/services/rest/genewise'
+
+# Set interval for checking status
+checkInterval = 10
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Usage message
+usage = u'''`Usage: %prog [options...] [seqFile]'''
+description = u'''\
+    The Wise2 form compares a protein sequence to a genomic DNA sequence, allowing for introns and frameshifting errors.\
+'''
+epilog = u'''For further information about the GENEWISE web service, see
+http://www.ebi.ac.uk/tools/webservices/services/psa/genewise_rest.'''
+version = u'ee8df29'
+
+# Process command-line options
+parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
+
+# Tool specific options (Try to print all the commands automatically)
+
+parser.add_option('--para', help='Show parameters in the output alignmment, as in genewise.')
+parser.add_option('--pretty', help='Show pretty ASCII alignment viewing, as in genewise.')
+parser.add_option('--genes', help='Show gene structure, as in genewise')
+parser.add_option('--trans', help='Show protein translation, breaking at frameshifts.')
+parser.add_option('--cdna', help='Show cDNA, as in genewise.')
+parser.add_option('--embl', help='EMBL feature table format with CDS key.')
+parser.add_option('--ace', help='Show Ace file gene structure, as in genewise.')
+parser.add_option('--gff', help='Show Gene Feature Format file, as in genewise.')
+parser.add_option('--diana', help='Show EMBL FT format suitable for diana.')
+parser.add_option('--init', help='Model in local/global mode. You should only put the model in global mode if you expect your protein homolog to have homology from start to end to the gene in the DNA sequence.')
+parser.add_option('--splice', help='Using splice model or GT/AG? Use the full blown model for splice sites, or a simplistic GT/AG. Generally if you are using a DNA sequence which is from human or worm, then leave this on. If you are using a very different (eg plant) species, switch it off.')
+parser.add_option('--random', help='The probability of the model has to compared to an alternative model (in fact to all alternative models which are possible) to allow proper Bayesian inference. This causes considerable difficulty in these algorithms because from a algorithmical point of view we would probably like to use an alternative model which is a single state, like the random model in profile-HMMs, where we can simply \'log-odd\' the scored model, whereas from a biological point of view we probably want to use a full gene predicting alternative model.\
+\	\	\	In addition we need to account for the fact that the protein HMM or protein homolog probably does not extend over all the gene sequence, nor in fact does the gene have to be the only gene in the DNA sequence. This means that there are very good splice sites/poly-pyrimidine tracts outside of the \'matched\' alignment can severely de-rail the alignment.')
+parser.add_option('--alg', help='The solutions is different in the genewise21:93 compared to the genewise 6:23 algorithms. \
+\	\	\	(1) In 6:23 we force the external match portions of the homology model to be identical to the alternative model, thus cancelling each other out. This is a pretty gross approximation and is sort of equivalent to the intron tie\'ing. It makes things algorithmically easier... However this means a) 6:23 is nowhere near a probabilistic model and b) you really have to used a tied intron model in 6:23 otherwise very bad edge effects (final introns being ridiculously long) occur.\
+\	\	\	(2) In 21:93 we have a full probabilistic model on each side of the homology segment. This is not reported in the -pretty output but you can see it in the -alb output if you like. Do not trust the gene model outside of the homology segment however. By having these external gene model parts we can use all the gene model features safe in the knowledge that if the homology segments do not justify the match then the external part of the model will soak up the additional intron/py-tract/splice site biases.\
+\	\	\	')
+parser.add_option('--asequence', help='The protein sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.')
+parser.add_option('--bsequence', help='The DNA sequence to be compared can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.')
+# General options
+parser.add_option('--email', help='e-mail address')
+parser.add_option('--title', help='job title')
+parser.add_option('--outfile', help='file name for results')
+parser.add_option('--outformat', help='output format for results')
+parser.add_option('--async', action='store_true', help='asynchronous mode')
+parser.add_option('--jobid', help='job identifier')
+parser.add_option('--polljob', action="store_true", help='get job result')
+parser.add_option('--status', action="store_true", help='get job status')
+parser.add_option('--resultTypes', action='store_true', help='get result types')
+parser.add_option('--params', action='store_true', help='list input parameters')
+parser.add_option('--paramDetail', help='get details for parameter')
+parser.add_option('--quiet', action='store_true', help='decrease output level')
+parser.add_option('--verbose', action='store_true', help='increase output level')
+parser.add_option('--baseURL', default=baseUrl, help='Base URL for service')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+# Debug print
+def printDebugMessage(functionName, message, level):
+    if(level <= debugLevel):
+        print(u'[' + functionName + u'] ' + message, file=sys.stderr)
+
+# User-agent for request (see RFC2616).
+def getUserAgent():
+    printDebugMessage(u'getUserAgent', u'Begin', 11)
+    # Agent string for urllib2 library.
+    urllib_agent = u'Python-urllib/%s' % urllib_version
+    clientRevision = u'$Revision: 2107 $'
+    clientVersion = u'0'
+    if len(clientRevision) > 11:
+        clientVersion = clientRevision[11:-2]
+    # Prepend client specific agent string.
+    user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+        clientVersion, os.path.basename( __file__ ),
+        platform.python_version(), platform.system(),
+        urllib_agent
+    )
+    printDebugMessage(u'getUserAgent', u'user_agent: ' + user_agent, 12)
+    printDebugMessage(u'getUserAgent', u'End', 11)
+    return user_agent
+
+# Wrapper for a REST (HTTP GET) request
+def restRequest(url):
+    printDebugMessage(u'restRequest', u'Begin', 11)
+    printDebugMessage(u'restRequest', u'url: ' + url, 11)
+    try:
+        # Set the User-agent.
+        user_agent = getUserAgent()
+        http_headers = { u'User-Agent' : user_agent }
+        req = Request(url, None, http_headers)
+        # Make the request (HTTP GET).
+        reqH = urlopen(req)
+        resp = reqH.read()
+        contenttype = reqH.info()
+
+
+        if(len(resp)>0 and contenttype!=u"image/png;charset=UTF-8"
+           and contenttype!=u"image/jpeg;charset=UTF-8"
+           and contenttype!=u"application/gzip;charset=UTF-8"):
+
+            result = unicode(resp, u'utf-8')
+        else:
+            result = resp
+        reqH.close()
+    # Errors are indicated by HTTP status codes.
+    except HTTPError as ex:
+        print(xmltramp.parse(ex.read())[0][0])
+        quit()
+    printDebugMessage(u'restRequest', u'End', 11)
+    return result
+
+# Get input parameters list
+def serviceGetParameters():
+    printDebugMessage(u'serviceGetParameters', u'Begin', 1)
+    requestUrl = baseUrl + u'/parameters'
+    printDebugMessage(u'serviceGetParameters', u'requestUrl: ' + requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    printDebugMessage(u'serviceGetParameters', u'End', 1)
+    return doc[u'id':]
+
+# Print list of parameters
+def printGetParameters():
+    printDebugMessage(u'printGetParameters', u'Begin', 1)
+    idList = serviceGetParameters()
+    for id_ in idList:
+        print(id_)
+    printDebugMessage(u'printGetParameters', u'End', 1)
+
+# Get input parameter information
+def serviceGetParameterDetails(paramName):
+    printDebugMessage(u'serviceGetParameterDetails', u'Begin', 1)
+    printDebugMessage(u'serviceGetParameterDetails', u'paramName: ' + paramName, 2)
+    requestUrl = baseUrl + u'/parameterdetails/' + paramName
+    printDebugMessage(u'serviceGetParameterDetails', u'requestUrl: ' + requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    printDebugMessage(u'serviceGetParameterDetails', u'End', 1)
+    return doc
+
+# Print description of a parameter
+def printGetParameterDetails(paramName):
+    printDebugMessage(u'printGetParameterDetails', u'Begin', 1)
+    doc = serviceGetParameterDetails(paramName)
+    print(unicode(doc.name) + u"\t" + unicode(doc.type))
+    print(doc.description)
+    for value in doc.values:
+        print(value.value)
+        if unicode(value.defaultValue) == u'true':
+            print(u'default')
+        print
+        print(u"\t" + unicode(value.label))
+        if hasattr(value, u'properties'):
+            for wsProperty in value.properties:
+                print(u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value))
+    printDebugMessage(u'printGetParameterDetails', u'End', 1)
+
+# Submit job
+def serviceRun(email, title, params):
+    printDebugMessage(u'serviceRun', u'Begin', 1)
+    # Insert e-mail and title into params
+    params[u'email'] = email
+    if title:
+        params[u'title'] = title
+    requestUrl = baseUrl + u'/run/'
+    printDebugMessage(u'serviceRun', u'requestUrl: ' + requestUrl, 2)
+
+    # Get the data for the other options
+    requestData = urlencode(params)
+
+    printDebugMessage(u'serviceRun', u'requestData: ' + requestData, 2)
+    # Errors are indicated by HTTP status codes.
+    try:
+        # Set the HTTP User-agent.
+        user_agent = getUserAgent()
+        http_headers = { u'User-Agent' : user_agent }
+        req = Request(requestUrl, None, http_headers)
+        # Make the submission (HTTP POST).
+        reqH = urlopen(req, requestData.encode(encoding=u'utf_8', errors=u'strict'))
+        jobId = unicode(reqH.read(), u'utf-8')
+        reqH.close()
+    except HTTPError as ex:
+        print(xmltramp.parse(ex.read())[0][0])
+        quit()
+    printDebugMessage(u'serviceRun', u'jobId: ' + jobId, 2)
+    printDebugMessage(u'serviceRun', u'End', 1)
+    return jobId
+
+# Get job status
+def serviceGetStatus(jobId):
+    printDebugMessage(u'serviceGetStatus', u'Begin', 1)
+    printDebugMessage(u'serviceGetStatus', u'jobId: ' + jobId, 2)
+    requestUrl = baseUrl + u'/status/' + jobId
+    printDebugMessage(u'serviceGetStatus', u'requestUrl: ' + requestUrl, 2)
+    status = restRequest(requestUrl)
+    printDebugMessage(u'serviceGetStatus', u'status: ' + status, 2)
+    printDebugMessage(u'serviceGetStatus', u'End', 1)
+    return status
+
+# Print the status of a job
+def printGetStatus(jobId):
+    printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
+    print(status)
+    printDebugMessage(u'printGetStatus', u'End', 1)
+
+
+# Get available result types for job
+def serviceGetResultTypes(jobId):
+    printDebugMessage(u'serviceGetResultTypes', u'Begin', 1)
+    printDebugMessage(u'serviceGetResultTypes', u'jobId: ' + jobId, 2)
+    requestUrl = baseUrl + u'/resulttypes/' + jobId
+    printDebugMessage(u'serviceGetResultTypes', u'requestUrl: ' + requestUrl, 2)
+    xmlDoc = restRequest(requestUrl)
+    doc = xmltramp.parse(xmlDoc)
+    printDebugMessage(u'serviceGetResultTypes', u'End', 1)
+    return doc[u'type':]
+
+# Print list of available result types for a job.
+def printGetResultTypes(jobId):
+    printDebugMessage(u'printGetResultTypes', u'Begin', 1)
+    resultTypeList = serviceGetResultTypes(jobId)
+    for resultType in resultTypeList:
+        print(resultType[u'identifier'])
+        if(hasattr(resultType, u'label')):
+            print(u"\t", resultType[u'label'])
+        if(hasattr(resultType, u'description')):
+            print(u"\t", resultType[u'description'])
+        if(hasattr(resultType, u'mediaType')):
+            print(u"\t", resultType[u'mediaType'])
+        if(hasattr(resultType, u'fileSuffix')):
+            print(u"\t", resultType[u'fileSuffix'])
+    printDebugMessage(u'printGetResultTypes', u'End', 1)
+
+# Get result
+def serviceGetResult(jobId, type_):
+    printDebugMessage(u'serviceGetResult', u'Begin', 1)
+    printDebugMessage(u'serviceGetResult', u'jobId: ' + jobId, 2)
+    printDebugMessage(u'serviceGetResult', u'type_: ' + type_, 2)
+    requestUrl = baseUrl + u'/result/' + jobId + u'/' + type_
+    result = restRequest(requestUrl)
+    printDebugMessage(u'serviceGetResult', u'End', 1)
+    return result
+
+# Client-side poll
+def clientPoll(jobId):
+    printDebugMessage(u'clientPoll', u'Begin', 1)
+    result = u'PENDING'
+    while result == u'RUNNING' or result == u'PENDING':
+        result = serviceGetStatus(jobId)
+        print(result, file=sys.stderr)
+        if result == u'RUNNING' or result == u'PENDING':
+            time.sleep(checkInterval)
+    printDebugMessage(u'clientPoll', u'End', 1)
+
+# Get result for a jobid
+# function modified by Mana to allow more than one output file written when 'outformat' is defined.
+def getResult(jobId):
+    printDebugMessage(u'getResult', u'Begin', 1)
+    printDebugMessage(u'getResult', u'jobId: ' + jobId, 1)
+    # Check status and wait if necessary
+    clientPoll(jobId)
+    # Get available result types
+    resultTypes = serviceGetResultTypes(jobId)
+
+    for resultType in resultTypes:
+        # Derive the filename for the result
+        if options.outfile:
+            filename = options.outfile + u'.' + unicode(resultType[u'identifier']) + u'.' + unicode(resultType[u'fileSuffix'])
+        else:
+            filename = jobId + u'.' + unicode(resultType[u'identifier']) + u'.' + unicode(resultType[u'fileSuffix'])
+        # Write a result file
+
+        outformat_parm = str(options.outformat).split(',')
+        for outformat_type in outformat_parm:
+            outformat_type = outformat_type.replace(' ', '')
+
+            if outformat_type == 'None':
+                outformat_type = None
+
+            if not outformat_type or outformat_type == unicode(resultType[u'identifier']):
+                # Get the result
+                result = serviceGetResult(jobId, unicode(resultType[u'identifier']))
+                if(unicode(resultType[u'mediaType']) == u"image/png"
+                   or unicode(resultType[u'mediaType']) == u"image/jpeg"
+                   or unicode(resultType[u'mediaType']) == u"application/gzip"):
+                    fmode = 'wb'
+                else:
+                    fmode = 'w'
+
+                fh = open(filename, fmode)
+
+                fh.write(result)
+                fh.close()
+                print(filename)
+    printDebugMessage(u'getResult', u'End', 1)
+
+# Read a file
+def readFile(filename):
+    printDebugMessage(u'readFile', u'Begin', 1)
+    fh = open(filename, 'r')
+    data = fh.read()
+    fh.close()
+    printDebugMessage(u'readFile', u'End', 1)
+    return data
+
+# No options... print help.
+if numOpts < 2:
+    parser.print_help()
+# List parameters
+elif options.params:
+    printGetParameters()
+# Get parameter details
+elif options.paramDetail:
+    printGetParameterDetails(options.paramDetail)
+# Submit job
+elif options.email and not options.jobid:
+    params = {}
+    if len(args) > 0:
+        if os.access(args[0], os.R_OK): # Read file into content
+            params[u'sequence'] = readFile(args[0])
+        else: # Argument is a sequence id
+            params[u'sequence'] = args[0]
+    elif options.sequence: # Specified via option
+        if os.access(options.sequence, os.R_OK): # Read file into content
+            params[u'sequence'] = readFile(options.sequence)
+        else: # Argument is a sequence id
+            params[u'sequence'] = options.sequence
+    # Booleans need to be represented as 1/0 rather than True/False
+
+    if options.para:
+        params['para'] = True
+    else:
+        params['para'] = False
+    if options.pretty:
+        params['pretty'] = True
+    else:
+        params['pretty'] = False
+    if options.genes:
+        params['genes'] = True
+    else:
+        params['genes'] = False
+    if options.trans:
+        params['trans'] = True
+    else:
+        params['trans'] = False
+    if options.cdna:
+        params['cdna'] = True
+    else:
+        params['cdna'] = False
+    if options.embl:
+        params['embl'] = True
+    else:
+        params['embl'] = False
+    if options.ace:
+        params['ace'] = True
+    else:
+        params['ace'] = False
+    if options.gff:
+        params['gff'] = True
+    else:
+        params['gff'] = False
+    if options.diana:
+        params['diana'] = True
+    else:
+        params['diana'] = False
+    if options.init:
+            params['init'] = options.init
+    if options.splice:
+            params['splice'] = options.splice
+    if options.random:
+            params['random'] = options.random
+    if options.alg:
+            params['alg'] = options.alg
+    if options.asequence:
+            params['asequence'] = options.asequence
+    if options.bsequence:
+            params['bsequence'] = options.bsequence
+# Submit the job
+    jobid = serviceRun(options.email, options.title, params)
+    if options.async: # Async mode
+        print(jobid)
+    else: # Sync mode
+        print(jobid, file=sys.stderr)
+        time.sleep(5)
+        getResult(jobid)
+# Get job status
+elif options.status and options.jobid:
+    printGetStatus(options.jobid)
+# List result types for job
+elif options.resultTypes and options.jobid:
+    printGetResultTypes(options.jobid)
+# Get results for job
+elif options.polljob and options.jobid:
+    getResult(options.jobid)
+else:
+    # Checks for 'email' parameter; added by Mana.
+    if not options.email:
+        print('\nParameter "--email" is missing in your command. It is required!\n')
+
+    print(u'Error: unrecognised argument combination', file=sys.stderr)
+    parser.print_help()
