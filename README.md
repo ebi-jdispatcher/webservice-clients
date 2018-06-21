@@ -29,6 +29,29 @@ services can be found in the following directories:
 
 * [Taverna](workflows/taverna/)
 
+
+## Run Perl Clients with Docker
+
+You can prefer to run the Perl Sample Clients with Docker. We provide a docker container at https://hub.docker.com/r/ebiwp/webservice-clients/. 
+
+Pull the `webservice-clients` container from Docker Hub:
+```
+docker pull ebiwp/webservice-clients
+```
+
+Then run the Perl Clients with:
+```
+# example
+docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl --help
+```
+
+You can control input/output with `--volumes` or simply `-v`:
+```
+# example
+docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl -v /local/path/:/results -w /results --email your@email.com --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
+```
+
+
 ## Auto-generation of Python Clients
 
 We have got a new project that allows auto-generation of Python clients. See https://github.com/ebi-wp/webservice-client-generator for more details.
