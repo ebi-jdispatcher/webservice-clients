@@ -1,7 +1,7 @@
 ' $Id$
 ' ======================================================================
 ' 
-' Copyright 2011-2013 EMBL - European Bioinformatics Institute
+' Copyright 2011-2018 EMBL - European Bioinformatics Institute
 '
 ' Licensed under the Apache License, Version 2.0 (the "License");
 ' you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ Imports System.Runtime.CompilerServices
 <assembly: AssemblyConfiguration("")>
 <assembly: AssemblyCompany("EMBL - European Bioinformatics Institute")>
 <assembly: AssemblyProduct("EMBL-EBI Web Services Sample Clients")>
-<assembly: AssemblyCopyright("Copyright © 2011-2013 EMBL - European Bioinformatics Institute")>
+<assembly: AssemblyCopyright("Copyright 2011-2018 EMBL - European Bioinformatics Institute")>
 '<assembly: AssemblyTrademark("")>
 <assembly: AssemblyCulture("")>
 

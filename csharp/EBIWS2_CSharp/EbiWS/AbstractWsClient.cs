@@ -1,7 +1,7 @@
 /* $Id$
  * ======================================================================
  * 
- * Copyright 2009-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2009-2018 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -214,7 +214,7 @@ Asynchronous job:
 		/// <summary>
 		/// Copyright license for the EMBL-EBI web service sample clients.
 		/// </summary>
-		private const string clientLicenseStr = @"Copyright 2009-2013 EMBL - European Bioinformatics Institute
+		private const string clientLicenseStr = @"Copyright 2009-2018 EMBL - European Bioinformatics Institute
  
 Licensed under the Apache License, Version 2.0 (the ""License"")
 you may not use this file except in compliance with the License.

@@ -1,7 +1,7 @@
 /* $Id: DaliliteClient.java 1816 2011-04-05 09:51:24Z hpm $
  * ======================================================================
  * 
- * Copyright 2012-2014 EMBL - European Bioinformatics Institute
+ * Copyright 2012-2018 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

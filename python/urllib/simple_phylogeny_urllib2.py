@@ -2,7 +2,7 @@
 # $Id: simple_phylogeny_urllib2.py 2106 2012-05-01 17:00:40Z hpm $
 # ======================================================================
 #
-# Copyright 2009-2013 EMBL - European Bioinformatics Institute
+# Copyright 2009-2018 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

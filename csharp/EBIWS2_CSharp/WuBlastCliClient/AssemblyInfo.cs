@@ -1,7 +1,7 @@
 /* $Id$
  * ======================================================================
  * 
- * Copyright 2009-2013 EMBL - European Bioinformatics Institute
+ * Copyright 2009-2018 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ using System.Runtime.CompilerServices;
 #endif
 [assembly: AssemblyCompany("EMBL - European Bioinformatics Institute")]
 [assembly: AssemblyProduct("EMBL-EBI Web Services Sample Clients")]
-[assembly: AssemblyCopyright("Copyright © 2009-2013 EMBL - European Bioinformatics Institute")]
+[assembly: AssemblyCopyright("Copyright 2009-2018 EMBL - European Bioinformatics Institute")]
 //[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
