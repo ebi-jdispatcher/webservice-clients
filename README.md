@@ -48,7 +48,8 @@ docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl --help
 You can control input/output with `--volumes` or simply `-v`:
 ```
 # example
-docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl -v /local/path/:/results -w /results --email your@email.com --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
+docker run --rm -it -v `pwd`:/results -w /results ebiwp/webservice-clients ncbiblast_lwp.pl  \
+  --email your@email.com --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
 ```
 
 ## Perl Clients in BioContainers
