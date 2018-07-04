@@ -143,9 +143,10 @@ def main(inputHits, outputFasta=None):
                 else:
                     print("Hits not in <db_id>:<accession_id> format...")
                     return
-            out = open(outputFasta, "w")
-            out.write("".join(output))
-            out.close()
+
+        out = open(outputFasta, "w")
+        out.write("".join(output))
+        out.close()
     else:
         print("Input file %s not available or readable!" % inputHits)
 
