@@ -2,7 +2,7 @@
 # $Id: psisearch_urllib2.py 2673 2013-10-26 05:56:18Z hpm $
 # ======================================================================
 #
-# Copyright 2009-2013 EMBL - European Bioinformatics Institute
+# Copyright 2009-2018 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

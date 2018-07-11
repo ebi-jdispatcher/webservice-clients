@@ -2,7 +2,7 @@
 # $Id: pfamscan_urllib2.py 2809 2015-03-13 16:10:25Z uludag $
 # ======================================================================
 # 
-# Copyright 2009-2014 EMBL - European Bioinformatics Institute
+# Copyright 2009-2018 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

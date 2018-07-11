@@ -1,7 +1,7 @@
 # $Id: test.makefile 2794 2014-09-17 13:05:56Z uludag $
 # ======================================================================
 # 
-# Copyright 2012-2014 EMBL - European Bioinformatics Institute
+# Copyright 2012-2018 EMBL - European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

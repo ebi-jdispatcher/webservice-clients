@@ -2,7 +2,7 @@
 <!-- $Id$
 ======================================================================
 
-   Copyright 2010-2014 EMBL - European Bioinformatics Institute
+   Copyright 2010-2018 EMBL - European Bioinformatics Institute
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@
 	<import file="${ant.import.lib.dir}/jaxws-ri.xml" />
 	<!-- JAX-RS Client tasks -->
 	<import file="${ant.import.lib.dir}/jaxrs-client.xml" />
-	
+
 	<!-- Resolve library dependencies using Apache Ivy -->
 	<target name="resolve" description="Retrieve dependencies (Ivy)" depends="init-ivy">
 		<ivy:retrieve />
@@ -73,7 +73,7 @@
 
 	<!-- Tests -->
 	<import file="test_build.xml" />
-	
+
 	<!-- Clean-up build directory -->
 	<target name="clean" description="Delete compiled classes">
 		<delete includeemptydirs="true">
@@ -90,7 +90,7 @@
 		<antcall target="axis1-distclean-stubs" />
 		<antcall target="jaxws-distclean-stubs" />
 	</target>
-	
+
 	<!-- Generate JAX-RS stubs for ebeye -->
 	<target name="jaxrs-stubs-ebeye" description="JAX-RS Client: generate stubs for EBeye (REST)">
 		<antcall target="genJaxrsStubs">
@@ -98,7 +98,7 @@
 			<param name="wsdlUrl" value="https://www.ebi.ac.uk/ebisearch/ws/rest?_wadl" />
 		</antcall>
 	</target>
-	
+
 	<!-- Axis 1.x -->
 	<target name="axis1" depends="axis1-jar" description="Axis 1.x: generate stubs and build SOAP clients" />
 
@@ -494,8 +494,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalO_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/ClustalO_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/ClustalOClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalo/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalOClient"/>
@@ -504,8 +504,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/ClustalW2_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/ClustalW2Client** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2Client"/>
@@ -514,8 +514,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/ClustalW2Phylogeny_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/ClustalW2PhylogenyClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/clustalw2phylogeny/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.ClustalW2PhylogenyClient"/>
@@ -524,8 +524,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/DaliLite_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/DaliLite_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/DaliliteClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dalilite/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DaliliteClient"/>
@@ -534,8 +534,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/DbClustal_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/DbClustal_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/DbClustalClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/dbclustal/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.DbClustalClient"/>
@@ -824,8 +824,8 @@
 				<attribute name="Implementation-Vendor" value="EMBL-EBI"/>
 			</manifest>
 		</jar>
-		<jar destfile="${jar.dir}/MView_Axis1.jar" 
-			basedir="${build.dir}" 
+		<jar destfile="${jar.dir}/MView_Axis1.jar"
+			basedir="${build.dir}"
 			includes="uk/ac/ebi/webservices/axis1/MViewClient** uk/ac/ebi/webservices/AbstractWsToolClient.** uk/ac/ebi/webservices/axis1/stubs/mview/** client-config.wsdd">
 			<manifest>
 				<attribute name="Main-Class" value="uk.ac.ebi.webservices.axis1.MViewClient"/>
@@ -2203,14 +2203,14 @@
 
 	<!-- JAX-RS Client -->
 	<!-- <target name="jaxrs" depends="jaxrs-jar" description="JAX-RS Client: generate stubs and build REST clients" /> -->
-	
-	<!-- Generate JAX-RS stubs for all services 
+
+	<!-- Generate JAX-RS stubs for all services
 		 This can be used when starting developing a new client since stubs generated from WADL cann't be used directly. They require some modifications.
 	<target name="jaxrs-stubs" depends="resolve" description= "JAX-RS Client: generate code stubs for REST Clients" >
 		<antcall target="jaxrs-stubs-ebeye" />
 	</target>
 	-->
-	
+
 	<!-- Compile JAX-RS into classes -->
 	<target name="jaxrs-compile" description="JAX-RS Client: compile REST clients">
 		<javac target="1.5" source="1.5" includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includes="uk/ac/ebi/webservices/jaxrs/" />
@@ -2242,7 +2242,7 @@
 		</jar>
 	</target>
 
-	<!-- Clean-up JAX-RS generate files 
+	<!-- Clean-up JAX-RS generate files
 	<target name="jaxrs-distclean-stubs" description="JAX-RS Client: remove generated stubs">
 		<antcall target="jaxrs-distclean-stubs-ebeye" />
 	</target>

@@ -6,17 +6,26 @@ This repository provides a collection of Sample Web Service Clients to consume E
 
 ## Sample Clients
 
-A collection of sample clients for the EBI Job Dispatcher Web Services in a range of
-programming languages:
+A collection of REST and SOAP sample clients for the EBI Job Dispatcher Web Services in a range of
+programming languages.
+
+### REST Clients
+
+* [Java](java/) (`*_JAXRS.jar` programs)
+* [Perl](perl/) > [Perl (lwp)](perl/lwp)
+* [Python](python/) > [Python (auto-generated)](python/auto-generated) | [Python (urllib)](python/urllib) | [Python (requests)](python/requests)
+* [PHP](php/) > [PHP (php_file)](php/php_file)
+* [Ruby](ruby/) > [Ruby (net_http)](ruby/net_http) | [Ruby (open-uri)](ruby/open-uri)
+
+### SOAP Clients
 
 * [C#](csharp/)
-* [Java](java/)
+* [Java](java/) (`*_Axis1.jar` programs)
 * [Visual Basic .NET](vb.net/)
-* [Perl](perl/) > [Perl (lwp)](perl/lwp) | [Perl (soaplite)](perl/soaplite) | [Perl (xmlcompile)](perl/xmlcompile)
-* [Python](python/) > [Python (auto-generated)](python/auto-generated) | [Python (urllib)](python/urllib) | [Python (requests)](python/requests) | [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
-* [PHP](php/) > [PHP (nusoap)](php/nusoap) | [PHP (php_file)](php/php_file) | [PHP (php_soap)](php/php_soap)
-* [Ruby](ruby/) > [Ruby (net_http)](ruby/net_http) | [Ruby (open-uri)](ruby/open-uri) | [Ruby (soap4r)](ruby/soap4r)
-
+* [Perl](perl/) > [Perl (soaplite)](perl/soaplite) | [Perl (xmlcompile)](perl/xmlcompile)
+* [Python](python/) > [Python (soappy)](python/soappy) | [Python (zsi20)](python/zsi20) | [Python (suds)](python/suds)
+* [PHP](php/) > [PHP (nusoap)](php/nusoap) | [PHP (php_soap)](php/php_soap)
+* [Ruby](ruby/) > [Ruby (soap4r)](ruby/soap4r)
 
 A selection of utility scripts are provided in the [util](util/) directory.
 
@@ -48,9 +57,17 @@ docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl --help
 You can control input/output with `--volumes` or simply `-v`:
 ```
 # example
-docker run --rm -it ebiwp/webservice-clients ncbiblast_lwp.pl -v /local/path/:/results -w /results --email your@email.com --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
+docker run --rm -it -v `pwd`:/results -w /results ebiwp/webservice-clients ncbiblast_lwp.pl  \
+  --email your@email.com --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
 ```
 
+## Perl Clients in BioContainers
+
+EBI Web Service Perl Clients are also available through [BioContainers](http://biocontainers.pro/).
+
+```
+docker pull biocontainers/ebi-webservice
+```
 
 ## Auto-generation of Python Clients
 

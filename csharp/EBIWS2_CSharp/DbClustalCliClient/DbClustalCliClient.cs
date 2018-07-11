@@ -1,7 +1,7 @@
 /* $Id$
  * ======================================================================
- * 
- * Copyright 2011-2013 EMBL - European Bioinformatics Institute
+ *
+ * Copyright 2011-2018 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * ======================================================================
  * jDispatcher SOAP command-line client for DbClustal (SOAP).
  * ====================================================================== */
@@ -30,7 +30,7 @@ namespace EbiWS
 		private string usageMsg = @"DbClustal
 =========
 
-Create an multiple sequences alignment from a BLAST report using full length 
+Create an multiple sequences alignment from a BLAST report using full length
 hit sequences with the local alignments found by BLAST preserved.
 
 [Required]
@@ -41,7 +41,7 @@ hit sequences with the local alignments found by BLAST preserved.
 [Optional]
 
       --idlist         : file : list of BLAST hit identifiers
-      --output         : str  : output alignment format, see 
+      --output         : str  : output alignment format, see
                                 --paramDetail output
 
 ";

@@ -12,7 +12,7 @@ Imports System.Runtime.CompilerServices
 <assembly: AssemblyConfiguration("")>
 <assembly: AssemblyCompany("EMBL - European Bioinformatics Institute")>
 <assembly: AssemblyProduct("EMBL-EBI Web Services Sample Clients")>
-<assembly: AssemblyCopyright("Copyright © 2011-2013 EMBL - European Bioinformatics Institute")>
+<assembly: AssemblyCopyright("Copyright 2011-2018 EMBL - European Bioinformatics Institute")>
 '<assembly: AssemblyTrademark("")>
 <assembly: AssemblyCulture("")>
 
