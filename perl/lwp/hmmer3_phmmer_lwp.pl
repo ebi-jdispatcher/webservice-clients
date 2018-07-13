@@ -95,6 +95,8 @@ my %params = (
 	'maxJobs'    => 1
 );
 
+my $isFirst = 1;
+
 # Default parameter values (should get these from the service)
 my %tool_params = ();
 GetOptions(
@@ -265,7 +267,7 @@ else {
 }
 
 # seq db index
-my $db_index = "2";# default uniprotkb
+my $db_index = '2';# default uniprotkb
 
 =head1 FUNCTIONS
 
@@ -427,6 +429,7 @@ sub rest_request_for_accid {
 		$top_acc = $params{'acc'};
 	}
 
+	my $new_id_len = 0;
 	foreach my $line (@lines) {
 
 		# Updating HMMER numeric ID to Accession
@@ -445,17 +448,16 @@ sub rest_request_for_accid {
 			try {
 
 				my $acc_id = rest_get_accid($grab_id);
-				
-				if ($grab_id ) {
-					if ($acc_id ) {
+				if ($grab_id and $acc_id) {
 
-						my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' ';
-						my $numeric2 = ' '.$grab_id.' ';
-						my $new_id = ' '.$acc_id.' ';
+						my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' '; # HMMER ID, to be replaced on sequence list											
+						my $numeric2 = ' '.$grab_id.' '; # >> HMMER ID, to be replaced on sequence detail(under >>)
+																		
+						my $new_id = ' '.$acc_id.' '; # both spaces requries to avoid unexpected replacement 															 
+						$numeric2 = sprintf "%*s", length($new_id), $numeric2; #11/07/2018
 
-						$retVal =~ s/$numeric1/$new_id/g;	
-						$retVal =~ s/$numeric2/$new_id/g;	
-					}
+						$retVal =~ s/$numeric2/$new_id/g;# Sequence list & >> Sequence
+						$retVal =~ s/$numeric1/$new_id/g;# Sequence Details	
 				}
 			} catch {
 				#warn "Caught Getting Accession error: $_";
