@@ -1112,29 +1112,45 @@ sub get_results {
 
 	# Get the data and write it to a file
 	if ( defined( $params{'outformat'} ) ) {    # Specified data type
-		my $selResultType;
-		foreach my $resultType (@resultTypes) {
-			if ( $resultType->{'identifier'} eq $params{'outformat'} ) {
-				$selResultType = $resultType;
-			}
-		}
-		if ( defined($selResultType) ) {
-			my $result =
-			  rest_get_result( $jobid, $selResultType->{'identifier'} );
-			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
-				write_file( $params{'outfile'}, $result );
-			}
-			else {
-				write_file(
-					$output_basename . '.'
-					  . $selResultType->{'identifier'} . '.'
-					  . $selResultType->{'fileSuffix'},
-					$result
-				);
-			}
+		# check to see if there are multiple formats (comma separated)
+		my $sep = ",";
+		my (@multResultTypes);
+		if ($params{'outformat'} =~ /$sep/) {
+			@multResultTypes = split(',', $params{'outformat'});
 		}
 		else {
-			die 'Error: unknown result format "' . $params{'outformat'} . '"';
+			@multResultTypes[0] = $params{'outformat'};
+		}
+		# check if the provided formats are recognised
+		foreach my $inputType (@multResultTypes) {
+			my $expectation = 0;
+			foreach my $resultType (@resultTypes) {
+				if ( $resultType->{'identifier'} eq $inputType && $expectation eq 0){
+						$expectation = 1;
+					}
+			}
+			if ( $expectation ne 1){
+				die 'Error: unknown result format "' . $inputType . '"';
+			}
+		}
+		# if so get the files
+		my $selResultType;
+		foreach my $resultType (@resultTypes) {
+			if ( grep { $_ eq $resultType->{'identifier'} } @multResultTypes ) {
+				$selResultType = $resultType;
+				my $result = rest_get_result( $jobid, $selResultType->{'identifier'} );
+				if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
+					write_file( $params{'outfile'}, $result );
+				}
+				else {
+					write_file(
+						$output_basename . '.'
+							. $selResultType->{'identifier'} . '.'
+							. $selResultType->{'fileSuffix'},
+						$result
+					);
+				}
+			}
 		}
 	}
 	else {    # Data types available
@@ -1281,7 +1297,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
                               Only available in multifasta or list file modes.
       --maxJobs      : int  : maximum number of concurrent jobs. Only
                               available in multifasta or list file modes.
-      --outformat    : str  : result format to retrieve
+      --outformat    : str  : result format(s) to retrieve (comma-separated values)
       --params       :      : list input parameters
       --paramDetail  : str  : display details for input parameter
       --quiet        :      : decrease output
