@@ -288,8 +288,8 @@ sub soap_get_parameters {
 
 =head2 soap_get_parameter_details();
 
-Get detailed information about a tool parameter. Includes a description 
-suitable for use in user help, and details of valid values. 
+Get detailed information about a tool parameter. Includes a description
+suitable for use in user help, and details of valid values.
 
   my $paramDetail = &soap_get_parameter_details($paramName);
 
@@ -440,21 +440,21 @@ sub print_debug_message {
 
 =head2 from_wsdl()
 
-Extract the service namespace and endpoint from the service WSDL document 
+Extract the service namespace and endpoint from the service WSDL document
 for use when creating the service interface.
 
 This function assumes that the WSDL contains a single service using a single
 namespace and endpoint.
 
-The namespace and endpoint are required to create a service interface, using 
-SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used 
+The namespace and endpoint are required to create a service interface, using
+SOAP::Lite->proxy(), that supports repeating elements (maxOcurrs > 1) as used
 in many document/literal services. Using SOAP::Lite->service() with the WSDL
-gives an interface where the data structures returned by the service are 
+gives an interface where the data structures returned by the service are
 mapped into hash structures and repeated elements are collapsed to a single
 instance.
 
-Note: rpc/encoded services are handled  as expected by SOAP::Lite->service() 
-since repeating data structures are encoded using arrays by the service.  
+Note: rpc/encoded services are handled  as expected by SOAP::Lite->service()
+since repeating data structures are encoded using arrays by the service.
 
   my ($serviceEndpoint, $serviceNamespace) = &from_wsdl($WSDL);
 
@@ -476,7 +476,7 @@ sub from_wsdl {
 	$can_accept = '' unless defined($can_accept);
 	while(scalar(@retVal) != 2 && $fetchAttemptCount < MAX_RETRIES) {
 		# Fetch WSDL document.
-		my $response = $ua->get($WSDL, 
+		my $response = $ua->get($WSDL,
 			'Accept-Encoding' => $can_accept, # HTTP compression.
 		);
 		if ( $params{'trace'} ) { # Request/response trace.
@@ -675,7 +675,7 @@ sub submit_job {
 
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
+Load sequence data, from file or direct specification of input data with
 command-line option.
 
   my (@data) = load_data();
@@ -728,7 +728,7 @@ sub load_data {
 
 Load job parameters into input structure.
 
-Since most of the loading is done when processing the command-line options, 
+Since most of the loading is done when processing the command-line options,
 this function only provides additional processing required from some options.
 
   &load_params();
@@ -810,7 +810,7 @@ sub get_results {
 		# Get list of data types
 		my (@resultTypes) = soap_get_result_types($jobid);
 
-		# Get the data and write it to a file
+    # Get the data and write it to a file
 		if ( defined( $params{'outformat'} ) ) {    # Specified data type
 			my $selResultType;
 			foreach my $resultType (@resultTypes) {
@@ -869,7 +869,7 @@ sub get_results {
 
 =head2 read_file()
 
-Read all data from a file. The special filename '-' can be used to read from 
+Read all data from a file. The special filename '-' can be used to read from
 standard input.
 
   my $data = &read_file($filename);
@@ -899,7 +899,7 @@ sub read_file {
 
 =head2 write_file()
 
-Write data to a file. The special filename '-' can be used to write to 
+Write data to a file. The special filename '-' can be used to write to
 standard output.
 
   &write_file($filename, $data);
@@ -962,7 +962,7 @@ Local pairwise sequence alignment using EMBOSS matcher.
       --status       :      : get job status
       --resultTypes  :      : get available result types for job
       --polljob      :      : poll for the status of a job
-      --jobid        : str  : jobid that was returned when an asynchronous job 
+      --jobid        : str  : jobid that was returned when an asynchronous job
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
@@ -971,7 +971,7 @@ Local pairwise sequence alignment using EMBOSS matcher.
       --paramDetail  : str  : display details for input parameter
       --quiet        :      : decrease output
       --verbose      :      : increase output
-      --trace        :      : show SOAP messages being interchanged 
+      --trace        :      : show SOAP messages being interchanged
 
 Synchronous job:
 
@@ -981,15 +981,15 @@ Synchronous job:
 
 Asynchronous job:
 
-  Use this if you want to retrieve the results at a later time. The results 
-  are stored for up to 24 hours. 	
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
   Usage: $scriptName --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
-  Use the jobid to query for the status of the job. If the job is finished, 
+  Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
+  Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
@@ -1005,7 +1005,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut
