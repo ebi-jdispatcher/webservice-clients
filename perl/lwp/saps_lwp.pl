@@ -87,8 +87,8 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 
-	'debugLevel' => 0, 
+my %params = (
+	'debugLevel' => 0,
 	'maxJobs'    => 1
 );
 
@@ -245,8 +245,8 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;	
-	$revisionNumber = $1 if('$Revision: 2699 $' =~ m/(\d+)/);	
+	my $revisionNumber = 0;
+	$revisionNumber = $1 if('$Revision: 2699 $' =~ m/(\d+)/);
 	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -876,7 +876,7 @@ sub _job_list_poll {
 
 =head2 list_file_submit_job()
 
-Submit multiple jobs using a file containing a list of entry identifiers as 
+Submit multiple jobs using a file containing a list of entry identifiers as
 input.
 
   &list_file_submit_job($list_filename)
@@ -1122,7 +1122,7 @@ sub get_results {
 
 =head2 read_file()
 
-Read a file into a scalar. The special filename '-' can be used to read from 
+Read a file into a scalar. The special filename '-' can be used to read from
 standard input (STDIN).
 
   my $data = &read_file($filename);
@@ -1153,7 +1153,7 @@ sub read_file {
 
 =head2 write_file()
 
-Write data to a file. The special filename '-' can be used to write to 
+Write data to a file. The special filename '-' can be used to write to
 standard output (STDOUT).
 
   &write_file($filename, $data);
@@ -1192,18 +1192,18 @@ sub usage {
 SAPS
 ====
 
-SAPS evaluates by statistical criteria a wide variety of protein sequence 
+SAPS evaluates by statistical criteria a wide variety of protein sequence
 properties.
 
 [Required]
 
-  seqFile                : file : query sequence ("-" for STDIN, \@filename 
+  seqFile                : file : query sequence ("-" for STDIN, \@filename
                                   for identifier list file)
 
 [Optional]
       --outputtype       : str  : output type, see --paramDetail outputtype
       --species          : str  : species, see --paramDetail species
-      --positiveresidues : str  : positive residues, see --paramDetail 
+      --positiveresidues : str  : positive residues, see --paramDetail
                                   positiveresidues
 
 [General]
@@ -1215,21 +1215,21 @@ properties.
       --status           :      : get job status
       --resultTypes      :      : get available result types for job
       --polljob          :      : poll for the status of a job
-      --jobid            : str  : jobid that was returned when an asynchronous 
+      --jobid            : str  : jobid that was returned when an asynchronous
                                   job was submitted.
       --outfile          : str  : file name for results (default is jobid;
                                   "-" for STDOUT)
-      --useSeqId         :      : use sequence identifiers for output 
-                                  filenames. Only available in multifasta or 
+      --useSeqId         :      : use sequence identifiers for output
+                                  filenames. Only available in multifasta or
                                   list file modes.
-      --maxJobs          : int  : maximum number of concurrent jobs. Only 
+      --maxJobs          : int  : maximum number of concurrent jobs. Only
                                   available in multifasta or list file modes.
       --outformat        : str  : result format to retrieve
       --params           :      : list input parameters
       --paramDetail      : str  : display details for input parameter
       --quiet            :      : decrease output
       --verbose          :      : increase output
-   
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -1238,15 +1238,15 @@ Synchronous job:
 
 Asynchronous job:
 
-  Use this if you want to retrieve the results at a later time. The results 
-  are stored for up to 24 hours. 	
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
   Usage: $scriptName --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
-  Use the jobid to query for the status of the job. If the job is finished, 
+  Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
+  Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
@@ -1262,7 +1262,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut

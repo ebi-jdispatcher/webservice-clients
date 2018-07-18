@@ -90,8 +90,8 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 
-my %params = ( 
-	'debugLevel' => 0, 
+my %params = (
+	'debugLevel' => 0,
 	'maxJobs'    => 1
 );
 
@@ -99,7 +99,7 @@ my %params = (
 my %tool_params = ();
 GetOptions(
 
-	# Tool specific options		
+	# Tool specific options
 	'database|D=s'  => \$tool_params{'database'},   # Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
 	'hmmdb|D=s'     => \$tool_params{'database'},   # Compatability database option
 	'E|e=f'         => \$tool_params{'E'},          # Report E-values[Model] (ex:1)
@@ -110,8 +110,8 @@ GetOptions(
 	'domT|u=f'      => \$tool_params{'domT'},       # Report bit scores[Hit] (ex:5)
 	'incT|v=f'      => \$tool_params{'incT'},       # Significance bit scores[Sequence] (ex:25)
 	'incdomT|w=f'   => \$tool_params{'incdomT'},    # Significance bit scores[Hit] (ex:22))
-	'nobias|n=s'    => \$tool_params{'nobias'},     # Bias composition filter	
-	'acc=i'         => \$params{'acc'},             # Get accession ID, how many from top	
+	'nobias|n=s'    => \$tool_params{'nobias'},     # Bias composition filter
+	'acc=i'         => \$params{'acc'},             # Get accession ID, how many from top
 
 	# Generic options
 	'email=s'       => \$params{'email'},           # User e-mail address
@@ -129,11 +129,11 @@ GetOptions(
 	'quiet'         => \$params{'quiet'},           # Decrease output level
 	'verbose'       => \$params{'verbose'},         # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},      # Debug output level
-	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.	
+	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.
 	'useSeqId'      => \$params{'useSeqId'},        # Seq Id file name
 	'maxJobs=i'     => \$params{'maxJobs'},         # Max. parallel jobs
-	'alignView|A=s' => \$tool_params{'alignView'},  # Output alignment in result. The default is true.	
-	'multifasta'	=> \$params{'multifasta'}       # Multiple fasta input	
+	'alignView|A=s' => \$tool_params{'alignView'},  # Output alignment in result. The default is true.
+	'multifasta'	=> \$params{'multifasta'}       # Multiple fasta input
 );
 if ( $params{'verbose'} ) { $outputLevel++ }
 if ( $params{'quiet'} )  { $outputLevel-- }
@@ -145,7 +145,7 @@ if (!($tool_params{'alignView'})) {
 if ( lc $tool_params{'alignView'} eq 'true') {
 	delete $tool_params{'alignView'};
 } elsif ( lc $tool_params{'alignView'} eq 'false') {
-} else {		
+} else {
 	print "The alignView option should be one of the restricted values : true or false. The default is true. \n";
 	exit(0);
 }
@@ -157,7 +157,7 @@ if (!($tool_params{'nobias'})) {
 if ( lc $tool_params{'nobias'} eq 'true') {
 	delete $tool_params{'nobias'};
 } elsif ( lc $tool_params{'nobias'} eq 'false') {
-} else {		
+} else {
 	print "The nobias option should be one of the restricted values : true or false. The default is true. \n";
 	exit(0);
 }
@@ -235,7 +235,7 @@ else {
 	if ( $params{'multifasta'} ) {
 		&multi_submit_job();
 	}
-	
+
 	# Entry identifier list file.
 	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
 		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
@@ -366,7 +366,7 @@ sub rest_request {
 	$retVal = $response->content() unless defined($retVal);
 	# Check for an error.
 	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request', 'End', 11 );		
+	print_debug_message( 'rest_request', 'End', 11 );
 
 	# Return the response data
 	return $retVal;
@@ -413,9 +413,9 @@ sub rest_request_for_accid {
 	&rest_error($response, $retVal);
 	print_debug_message( 'rest_request_for_accid', 'retVal: ' . $retVal, 12 );
 	print_debug_message( 'rest_request_for_accid', 'End', 11 );
-		
+
 	my @lines = split /\n/, $retVal;
-	
+
 	my $v_cnt = 0;
 	my $top_acc = 20;
 	if (defined $params{'acc'}) {
@@ -423,15 +423,15 @@ sub rest_request_for_accid {
 	}
 
 	foreach my $line (@lines) {
-	
+
 		# Updating HMMER numeric ID to Accession
 		if ( $v_cnt >= $top_acc) {
-			 last;			 
+			 last;
 		}
 
 		my $where_id_begin = index($line, '>>');
 
-		if ($where_id_begin>-1) {		
+		if ($where_id_begin>-1) {
 			$v_cnt++;
 
 			my $grab_id = substr($line, $where_id_begin+3, 30);
@@ -440,21 +440,21 @@ sub rest_request_for_accid {
 			#print "=grab_id=====================\n";
 
 			my $acc_id = rest_get_accid($grab_id);
-			
+
 			if ($grab_id ) {
 				if ($acc_id ) {
-					
+
 					my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' ';
 					my $numeric2 = ' '.$grab_id.' ';
 					my $new_id = ' '.$acc_id.' ';
 
-					$retVal =~ s/$numeric1/$new_id/g;	
-					$retVal =~ s/$numeric2/$new_id/g;	
+					$retVal =~ s/$numeric1/$new_id/g;
+					$retVal =~ s/$numeric2/$new_id/g;
 				}
 			}
 
-		}		
-	
+		}
+
 	}
 
 	# Return the response data
@@ -475,9 +475,9 @@ sub rest_get_accid {
 	#my (@reference);
 	my $each_acc_id;
 	my ($entryid) = @_;
-	
-	#my $domainid ='hmmer_seq';	
-	my $domainid ='hmmer_hmm';	
+
+	#my $domainid ='hmmer_seq';
+	my $domainid ='hmmer_hmm';
 	my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
 
 	my $url = $ebisearch_baseUrl . "/entry/".$entryid."?fields=id,content";
@@ -485,7 +485,7 @@ sub rest_get_accid {
 	my $reference_list_xml     = XMLin($reference_list_xml_str);
 
 	# read XML file
-	my $data = XMLin($reference_list_xml_str);	
+	my $data = XMLin($reference_list_xml_str);
 	my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
 
 	if ($acc_info) {
@@ -502,12 +502,12 @@ sub rest_get_accid {
 
 		my @selected_db = $decoded->[$db_index];
 
-		$each_acc_id = $selected_db[0]->{'acc'};	
+		$each_acc_id = $selected_db[0]->{'acc'};
 
 	} else {
 		print_debug_message( 'rest_get_accid', '#acc_info NONE: ' , 42 );
 	}
-	
+
 	print_debug_message( 'rest_get_accid', 'End', 42 );
 	return ($each_acc_id);
 }
@@ -570,7 +570,7 @@ sub rest_run {
 		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
 	}
 	print_debug_message( 'rest_run', 'params>>: ' . Dumper($params), 1 );
-	
+
 	# Get an LWP UserAgent.
 	$ua = &rest_user_agent() unless defined($ua);
 
@@ -855,7 +855,7 @@ Submit a job to the service.
 
 sub submit_job {
 	print_debug_message( 'submit_job', 'Begin', 1 );
-	
+
 	# Set input sequence
 	$tool_params{'sequence'} = shift;
 	my $seq_id = shift;
@@ -866,25 +866,25 @@ sub submit_job {
 
 	if ($param_hmmdb eq 'treefam'  ) {
 		$db_index = "2";
-	}	
+	}
 	if ($param_hmmdb eq 'gene3d'  ) {
 		$db_index = "3";
-	}	
+	}
 	if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam' ) {
 		$tool_params{'database'} = 'pfam';
 		$db_index = "4";
-	}	
+	}
 	if ($param_hmmdb eq 'superfamily'  ) {
 		$db_index = "5";
-	}	
+	}
 	if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
 		$tool_params{'database'} = 'tigrfam';
 		$db_index = "6";
-	}		
+	}
 	if ($param_hmmdb eq 'pirsf'  ) {
 		$db_index = "7";
-	}	
- 
+	}
+
 	# Load parameters
 	&load_params();
 
@@ -983,9 +983,9 @@ sub multi_submit_job {
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				$job_number++;
 				my $job_id = &submit_job($seq, $seq_id);
-				
+
 				my $job_info_str = sprintf( '%s %d %d', $job_id, 0, $job_number );
-				
+
 				push( @jobid_list, $job_info_str );
 			}
 
@@ -1080,7 +1080,7 @@ sub _job_list_poll {
 
 =head2 list_file_submit_job()
 
-Submit multiple jobs using a file containing a list of entry identifiers as 
+Submit multiple jobs using a file containing a list of entry identifiers as
 input.
 
   &list_file_submit_job($list_filename)
@@ -1200,7 +1200,7 @@ sub load_params {
 	#print_debug_message( 'load_params', 'hmmdb:'.$params{'hmmdb'}, 1 );
 
 	print_debug_message( 'load_params', 'End', 1 );
-	
+
 }
 
 =head2 client_poll()
@@ -1314,7 +1314,7 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {			
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
@@ -1414,7 +1414,7 @@ HMMER hmmscan is used to search sequences against collections of profiles.
                               identifier list file)
 
 [Optional]
-  
+
   -e, --E            : real : Report E-values[Model] (ex:1)
   -f, --domE         : real : Report E-values[Hit] (ex:1)
   -g, --incE         : real : Siginificance E-values[Model] (ex:0.01)
@@ -1440,9 +1440,9 @@ HMMER hmmscan is used to search sequences against collections of profiles.
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
-      --useSeqId     :      : use sequence identifiers for output filenames. 
+      --useSeqId     :      : use sequence identifiers for output filenames.
                               Only available in multifasta or list file modes.
-      --maxJobs      : int  : maximum number of concurrent jobs. Only 
+      --maxJobs      : int  : maximum number of concurrent jobs. Only
                               available in multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters

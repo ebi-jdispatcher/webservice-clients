@@ -217,8 +217,8 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;	
-	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);	
+	my $revisionNumber = 0;
+	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);
 	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -680,7 +680,7 @@ sub submit_job {
 
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
+Load sequence data, from file or direct specification of input data with
 command-line option.
 
   my (@data) = load_data();
@@ -739,7 +739,7 @@ Load job parameters from command-line options.
 
 sub load_params {
 	print_debug_message( 'load_params', 'Begin', 1 );
-	
+
 	# Enable/disable endweight
 	if($params{'endweight'}) {
 		$tool_params{'endweight'} = 'true';
@@ -747,7 +747,7 @@ sub load_params {
 	elsif($params{'noendweight'}) {
 		$tool_params{'endweight'} = 'false';
 	}
-	
+
 	print_debug_message( 'load_params',
 		"tool_params:\n" . Dumper( \%tool_params ), 2 );
 	print_debug_message( 'load_params', 'End', 1 );
@@ -874,7 +874,7 @@ sub get_results {
 
 =head2 read_file()
 
-Read a file into a scalar. The special filename '-' can be used to read from 
+Read a file into a scalar. The special filename '-' can be used to read from
 standard input (STDIN).
 
   my $data = &read_file($filename);
@@ -905,7 +905,7 @@ sub read_file {
 
 =head2 write_file()
 
-Write data to a file. The special filename '-' can be used to write to 
+Write data to a file. The special filename '-' can be used to write to
 standard output (STDOUT).
 
   &write_file($filename, $data);
@@ -972,7 +972,7 @@ Global pairwise sequence alignment using EMBOSS needle.
       --status        :      : get job status
       --resultTypes   :      : get available result types for job
       --polljob       :      : poll for the status of a job
-      --jobid         : str  : jobid that was returned when an asynchronous job 
+      --jobid         : str  : jobid that was returned when an asynchronous job
                                was submitted.
       --outfile       : str  : file name for results (default is jobid;
                                "-" for STDOUT)
@@ -981,7 +981,7 @@ Global pairwise sequence alignment using EMBOSS needle.
       --paramDetail   : str  : display details for input parameter
       --quiet         :      : decrease output
       --verbose       :      : increase output
-   
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -990,15 +990,15 @@ Synchronous job:
 
 Asynchronous job:
 
-  Use this if you want to retrieve the results at a later time. The results 
-  are stored for up to 24 hours. 	
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
   Usage: $scriptName --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
-  Use the jobid to query for the status of the job. If the job is finished, 
+  Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
+  Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
@@ -1014,7 +1014,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut

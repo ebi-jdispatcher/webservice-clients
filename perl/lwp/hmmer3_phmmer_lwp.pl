@@ -90,8 +90,8 @@ my $outputLevel = 1;
 # Process command-line options
 my $numOpts = scalar(@ARGV);
 
-my %params = ( 
-	'debugLevel' => 0, 
+my %params = (
+	'debugLevel' => 0,
 	'maxJobs'    => 1
 );
 
@@ -101,9 +101,9 @@ my $isFirst = 1;
 my %tool_params = ();
 GetOptions(
 
-	# Tool specific options	
+	# Tool specific options
 	'database|D=s'	=> \$tool_params{'database'},	# Ddatabase to search, Reference Proteomes:uniprotrefprot, UniProtKB:uniprotkb, SwissProt:swissprot, PDB:pdb
-	'seqdb|D=s'     => \$tool_params{'database'},   # Compatability database option	
+	'seqdb|D=s'     => \$tool_params{'database'},   # Compatability database option
 	'E|e=f'         => \$tool_params{'E'},          # Report E-values[Model] (ex:1)
 	'domE|f=f'      => \$tool_params{'domE'},       # Report E-values[Hit] (ex:1)
 	'incE|g=f'      => \$tool_params{'incE'},       # Siginificance E-values[Model] (ex:0.01)
@@ -133,7 +133,7 @@ GetOptions(
 	'quiet'         => \$params{'quiet'},           # Decrease output level
 	'verbose'       => \$params{'verbose'},         # Increase output level
 	'debugLevel=i'  => \$params{'debugLevel'},      # Debug output level
-	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.	
+	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.
 	'useSeqId'      => \$params{'useSeqId'},        # Seq Id file name
 	'maxJobs=i'     => \$params{'maxJobs'},         # Max. parallel jobs
 	'alignView=s'   => \$tool_params{'alignView'},  # Output alignment in result. The default is true.
@@ -150,7 +150,7 @@ if (!($tool_params{'alignView'})) {
 if ( lc $tool_params{'alignView'} eq 'true') {
 	delete $tool_params{'alignView'};
 } elsif ( lc $tool_params{'alignView'} eq 'false') {
-} else {		
+} else {
 	print "The alignView option should be one of the restricted values : true or false. \n";
 	exit(0);
 }
@@ -162,7 +162,7 @@ if (!($tool_params{'nobias'})) {
 if ( lc $tool_params{'nobias'} eq 'true') {
 	delete $tool_params{'nobias'};
 } elsif ( lc $tool_params{'nobias'} eq 'false') {
-} else {		
+} else {
 	print "The nobias option should be one of the restricted values : true or false. The default is true. \n";
 	exit(0);
 }
@@ -240,7 +240,7 @@ else {
 	if ( $params{'multifasta'} ) {
 		&multi_submit_job();
 	}
-	
+
 	# Entry identifier list file.
 	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
 		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
@@ -420,9 +420,9 @@ sub rest_request_for_accid {
 	# Check for an error.
 	&rest_error($response, $retVal);
 	print_debug_message( 'rest_request', 'End', 11 );
-		
+
 	my @lines = split /\n/, $retVal;
-	
+
 	my $v_cnt = 0;
 	my $top_acc = 20;
 	if (defined $params{'acc'}) {
@@ -434,12 +434,12 @@ sub rest_request_for_accid {
 
 		# Updating HMMER numeric ID to Accession
 		if ( $v_cnt >= $top_acc) {
-			 last;			 
+			 last;
 		}
-	
-		my $where_id_begin = index($line, '>>');		
 
-		if ($where_id_begin>-1) {			
+		my $where_id_begin = index($line, '>>');
+
+		if ($where_id_begin>-1) {
 			$v_cnt++;
 
 			my $grab_id = substr($line, $where_id_begin+3, 30);
@@ -450,24 +450,24 @@ sub rest_request_for_accid {
 				my $acc_id = rest_get_accid($grab_id);
 				if ($grab_id and $acc_id) {
 
-						my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' '; # HMMER ID, to be replaced on sequence list											
+						my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' '; # HMMER ID, to be replaced on sequence list
 						my $numeric2 = ' '.$grab_id.' '; # >> HMMER ID, to be replaced on sequence detail(under >>)
-																		
-						my $new_id = ' '.$acc_id.' '; # both spaces requries to avoid unexpected replacement 															 
+
+						my $new_id = ' '.$acc_id.' '; # both spaces requries to avoid unexpected replacement
 						$numeric2 = sprintf "%*s", length($new_id), $numeric2; #11/07/2018
 
 						$retVal =~ s/$numeric2/$new_id/g;# Sequence list & >> Sequence
-						$retVal =~ s/$numeric1/$new_id/g;# Sequence Details	
+						$retVal =~ s/$numeric1/$new_id/g;# Sequence Details
 				}
 			} catch {
 				#warn "Caught Getting Accession error: $_";
 				warn " Not found the Accession for: " . $grab_id;
-				#last;	
+				#last;
 			}
-		}	
-	
+		}
+
 	}
-	
+
 	# Return the response data
 	return $retVal;
 }
@@ -486,8 +486,8 @@ sub rest_get_accid {
 	#my (@reference);
 	my $each_acc_id;
 	my ($entryid) = @_;
-	
-	my $domainid ='hmmer_seq';	
+
+	my $domainid ='hmmer_seq';
 	my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/';
 
 	my $url = $ebisearch_baseUrl . $domainid . "/entry/".$entryid."?fields=id,content";
@@ -510,15 +510,15 @@ sub rest_get_accid {
 			warn "Caught JSON::XS decode error: $_";
 		};
 
-		my @dbs1 = $decoded->{'db'};		
+		my @dbs1 = $decoded->{'db'};
 		my @selected_db = $dbs1[0]->[$db_index];
 
-		$each_acc_id = $selected_db[0]->[0]->{'dn'};	
+		$each_acc_id = $selected_db[0]->[0]->{'dn'};
 
 	} else {
 		print_debug_message( 'rest_get_accid', '=acc_info NONE: ' , 42 );
 	}
-	
+
 	print_debug_message( 'rest_get_accid', 'End', 42 );
 	return ($each_acc_id);
 }
@@ -1010,9 +1010,9 @@ sub multi_submit_job {
 				&print_debug_message( 'multi_submit_job', $seq, 11 );
 				$job_number++;
 				my $job_id = &submit_job($seq, $seq_id);
-				
+
 				my $job_info_str = sprintf( '%s %d %d', $job_id, 0, $job_number );
-				
+
 				push( @jobid_list, $job_info_str );
 			}
 
@@ -1107,7 +1107,7 @@ sub _job_list_poll {
 
 =head2 list_file_submit_job()
 
-Submit multiple jobs using a file containing a list of entry identifiers as 
+Submit multiple jobs using a file containing a list of entry identifiers as
 input.
 
   &list_file_submit_job($list_filename)
@@ -1338,7 +1338,7 @@ sub get_results {
 				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
 			}
 			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {			
+			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
 				write_file( $params{'outfile'}, $result );
 			}
 			else {
@@ -1468,9 +1468,9 @@ HMMER phmmer is used to search sequences against collections of profiles.
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
                               "-" for STDOUT)
-      --useSeqId     :      : use sequence identifiers for output filenames. 
+      --useSeqId     :      : use sequence identifiers for output filenames.
                               Only available in multifasta or list file modes.
-      --maxJobs      : int  : maximum number of concurrent jobs. Only 
+      --maxJobs      : int  : maximum number of concurrent jobs. Only
                               available in multifasta or list file modes.
       --outformat    : str  : result format to retrieve
       --params       :      : list input parameters

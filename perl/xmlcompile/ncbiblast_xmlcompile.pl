@@ -256,7 +256,7 @@ else {
 
 Generic wrapper for SOAP requests.
 
-If SOAP trace ($params{'trace'}) is enabled the details of the SOAP messages 
+If SOAP trace ($params{'trace'}) is enabled the details of the SOAP messages
 exchanged will be output using &print_soap_trace().
 
   my $response = soap_request($service_method, \%method_params);
@@ -324,8 +324,8 @@ sub soap_get_parameters {
 
 =head2 soap_get_parameter_details();
 
-Get detailed information about a tool parameter. Includes a description 
-suitable for use in user help, and details of valid values. 
+Get detailed information about a tool parameter. Includes a description
+suitable for use in user help, and details of valid values.
 
   my $param_detail = &soap_get_parameter_details($param_name);
 
@@ -689,7 +689,7 @@ sub multi_submit_job {
 
 =head2 list_file_submit_job()
 
-Submit multiple jobs using a file containing a list of entry identifiers as 
+Submit multiple jobs using a file containing a list of entry identifiers as
 input.
 
   &list_file_submit_job($list_filename)
@@ -726,7 +726,7 @@ sub list_file_submit_job {
 
 =head2 load_data()
 
-Load sequence data, from file or direct specification of input data with 
+Load sequence data, from file or direct specification of input data with
 command-line option.
 
   my $data = load_data();
@@ -762,7 +762,7 @@ sub load_data {
 
 Load job parameters into input structure.
 
-Since most of the loading is done when processing the command-line options, 
+Since most of the loading is done when processing the command-line options,
 this function only provides additional processing required from some options.
 
   &load_params();
@@ -856,6 +856,7 @@ sub get_results {
 	# Get list of data types
 	my (@resultTypes) = soap_get_result_types($jobid);
 
+	my $output_basename = $jobid;
 	# Get the data and write it to a file
 	if ( defined( $params{'outformat'} ) ) {    # Specified data type
 		my $selResultType;
@@ -908,7 +909,7 @@ sub get_results {
 
 =head2 read_file()
 
-Read all data from a file. The special filename '-' can be used to read from 
+Read all data from a file. The special filename '-' can be used to read from
 standard input.
 
   my $data = &read_file($filename);
@@ -938,7 +939,7 @@ sub read_file {
 
 =head2 write_file()
 
-Write data to a file. The special filename '-' can be used to write to 
+Write data to a file. The special filename '-' can be used to write to
 standard output.
 
   &write_file($filename, $data);
@@ -975,9 +976,9 @@ sub usage {
 	print STDERR <<EOF
 NCBI BLAST
 ==========
-   
+
 Rapid sequence database search programs utilizing the BLAST algorithm
-    
+
 [Required]
 
   -p, --program	    : str  : BLAST program to use, see --paramDetail program
@@ -990,9 +991,9 @@ Rapid sequence database search programs utilizing the BLAST algorithm
 [Optional]
 
   -m, --matrix       : str  : scoring matrix, see --paramDetail matrix
-  -e, --exp          : real : 0<E<= 1000. Statistical significance threshold 
+  -e, --exp          : real : 0<E<= 1000. Statistical significance threshold
                               for reporting database sequence matches.
-  -f, --filter       :      : filter the query sequence for low complexity 
+  -f, --filter       :      : filter the query sequence for low complexity
                               regions, see --paramDetail filter
   -A, --align        : int  : pairwise alignment format, see --paramDetail align
   -s, --scores       : int  : number of scores to be reported
@@ -1003,7 +1004,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
   -x, --gapext       : int  : Gap extension penalty
   -d, --dropoff      : int  : Drop-off
   -g, --gapalign     :      : Optimise gapped alignments
-      --compstats    : str  : Composition adjustment/statistics method, see 
+      --compstats    : str  : Composition adjustment/statistics method, see
                               --paramDetail compstats
       --seqrange     : str  : region within input to use as query
       --multifasta   :      : treat input as a set of fasta formatted sequences
@@ -1017,7 +1018,7 @@ Rapid sequence database search programs utilizing the BLAST algorithm
       --status      :      : get job status
       --resultTypes :      : get available result types for job
       --polljob     :      : poll for the status of a job
-      --jobid       : str  : jobid that was returned when an asynchronous job 
+      --jobid       : str  : jobid that was returned when an asynchronous job
                              was submitted.
       --outfile     : str  : file name for results (default is jobid;
                              "-" for STDOUT)
@@ -1026,8 +1027,8 @@ Rapid sequence database search programs utilizing the BLAST algorithm
       --paramDetail : str  : display details for input parameter
       --quiet       :      : decrease output
       --verbose     :      : increase output
-      --trace	    :      : show SOAP messages being interchanged 
-   
+      --trace	    :      : show SOAP messages being interchanged
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -1036,15 +1037,15 @@ Synchronous job:
 
 Asynchronous job:
 
-  Use this if you want to retrieve the results at a later time. The results 
-  are stored for up to 24 hours. 	
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
   Usage: $scriptName --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
-  Use the jobid to query for the status of the job. If the job is finished, 
+  Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
+  Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
@@ -1060,7 +1061,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut

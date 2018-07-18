@@ -95,15 +95,15 @@ GetOptions(
 	'patternPosition=s'       => \$tool_params{'patternPosition'},       # Pattern position in sequence
 	'maxPatternLength=i'      => \$tool_params{'maxPatternLength'},      # Maximum pattern length
 	'maxNumPatternSymbols=i'  => \$tool_params{'maxNumPatternSymbols'},  # Maximum number Of pattern symbols
-	'maxNumWildcard=i'        => \$tool_params{'maxNumWildcard'},        # Maximum length of a widecard (x)	
+	'maxNumWildcard=i'        => \$tool_params{'maxNumWildcard'},        # Maximum length of a widecard (x)
 	'maxNumFlexSpaces=i'      => \$tool_params{'maxNumFlexSpaces'},      # Maximum length of flexible spaces
 	'maxFlexibility=i'        => \$tool_params{'maxFlexibility'},        # Maximum flexibility
 	'maxFlexProduct=i'        => \$tool_params{'maxFlexProduct'},        # Maximum flex. product
 	'patternSymbolFile'       => \$params{'patternSymbolFile'},          # Enable pattern symbol file
-	'noPatternSymbolFile'     => \$params{'noPatternSymbolFile'},        # Disable pattern symbol file	
+	'noPatternSymbolFile'     => \$params{'noPatternSymbolFile'},        # Disable pattern symbol file
 	'numPatternSymbols=i'     => \$tool_params{'numPatternSymbols'},     # Number of pattern symbols used
 	'patternScoring=s'        => \$tool_params{'patternScoring'},        # Pattern scoring
-	'patternGraph=s'          => \$tool_params{'patternGraph'},          # Pattern graph allows the use of an alignment 
+	'patternGraph=s'          => \$tool_params{'patternGraph'},          # Pattern graph allows the use of an alignment
 																		 # or a query sequence to restrict the pattern search
 	'searchGreediness=i'      => \$tool_params{'searchGreediness'},      # Greediness of the search
 	'patternRefinement'       => \$params{'patternRefinement'},          # Enable pattern refinement
@@ -251,8 +251,8 @@ sub rest_user_agent() {
 	# Create an LWP UserAgent for making HTTP calls.
 	my $ua = LWP::UserAgent->new();
 	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;	
-	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);	
+	my $revisionNumber = 0;
+	$revisionNumber = $1 if('$Revision$' =~ m/(\d+)/);
 	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
 	# Configure HTTP proxy support from environment.
 	$ua->env_proxy;
@@ -772,7 +772,7 @@ sub multi_submit_job {
 
 =head2 list_file_submit_job()
 
-Submit multiple jobs using a file containing a list of entry identifiers as 
+Submit multiple jobs using a file containing a list of entry identifiers as
 input.
 
   &list_file_submit_job($list_filename)
@@ -872,7 +872,7 @@ sub load_params {
 	elsif ( $params{'noPatternRefinement'} ) {
 		$tool_params{'patternRefinement'} = 0;
 	}
-	
+
 	# Enable/disable generalise ambiguous symbols
 	if ( $params{'genAmbigSymbols'} ) {
 		$tool_params{'genAmbigSymbols'} = 1;
@@ -880,7 +880,7 @@ sub load_params {
 	elsif ( $params{'noGenAmbigSymbols'} ) {
 		$tool_params{'genAmbigSymbols'} = 0;
 	}
-	
+
 	# Enable/disable print Patterns in sequences
 	if ( $params{'patternFormat'} ) {
 		$tool_params{'patternFormat'} = 1;
@@ -888,7 +888,7 @@ sub load_params {
 	elsif ( $params{'noPatternFormat'} ) {
 		$tool_params{'patternFormat'} = 0;
 	}
-	
+
 	# Enable/disable print Patterns in sequences
 	if ( $params{'printPatterns'} ) {
 		$tool_params{'printPatterns'} = 1;
@@ -896,7 +896,7 @@ sub load_params {
 	elsif ( $params{'noPrintPatterns'} ) {
 		$tool_params{'printPatterns'} = 0;
 	}
-	
+
 	# Enable/disable print vertically
 	if ( $params{'printVertically'} ) {
 		$tool_params{'printVertically'} = 1;
@@ -1029,7 +1029,7 @@ sub get_results {
 
 =head2 read_file()
 
-Read a file into a scalar. The special filename '-' can be used to read from 
+Read a file into a scalar. The special filename '-' can be used to read from
 standard input (STDIN).
 
   my $data = &read_file($filename);
@@ -1060,7 +1060,7 @@ sub read_file {
 
 =head2 write_file()
 
-Write data to a file. The special filename '-' can be used to write to 
+Write data to a file. The special filename '-' can be used to write to
 standard output (STDOUT).
 
   &write_file($filename, $data);
@@ -1111,7 +1111,7 @@ Searching for patterns conserved in sets of unaligned protein sequences.
       --patternPosition        : str  :  Pattern position in sequence
       --maxPatternLength       : int  :  Maximum pattern length
       --maxNumPatternSymbols   : int  :  Maximum number Of pattern symbols
-      --maxNumWildcard         : int  :  Maximum length of a widecard (x)	
+      --maxNumWildcard         : int  :  Maximum length of a widecard (x)
       --maxNumFlexSpaces       : int  :  Maximum length of flexible spaces
       --maxFlexibility         : int  :  Maximum flexibility
       --maxFlexProduct         : int  :  Maximum flex. product
@@ -1119,11 +1119,11 @@ Searching for patterns conserved in sets of unaligned protein sequences.
       --noPatternSymbolFile    :      :  Disable pattern symbol file
       --numPatternSymbols      : int  :  Number of pattern symbols used
       --patternScoring         : str  :  Pattern scoring
-      --patternGraph           : str  :  Pattern graph allows the use of an alignment 
+      --patternGraph           : str  :  Pattern graph allows the use of an alignment
                                           or a query sequence to restrict the pattern search
       --searchGreediness       : int  :  Greediness of the search
       --patternRefinement      :      :  Enable pattern refinement
-      --noPatternRefinement    :      :  Disable pattern refinement		
+      --noPatternRefinement    :      :  Disable pattern refinement
       --genAmbigSymbols        :      :  Enable generalise ambiguous symbols
       --noGenAmbigSymbols      :      :  Disable generalise ambiguous symbols
       --patternFormat          :      :  Enable PROSITE pattern format
@@ -1154,7 +1154,7 @@ Searching for patterns conserved in sets of unaligned protein sequences.
       --paramDetail            : str  : display details for input parameter
       --quiet                  :      : decrease output
       --verbose                :      : increase output
-   
+
 Synchronous job:
 
   The results/errors are returned as soon as the job is finished.
@@ -1163,15 +1163,15 @@ Synchronous job:
 
 Asynchronous job:
 
-  Use this if you want to retrieve the results at a later time. The results 
-  are stored for up to 24 hours. 	
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
   Usage: $scriptName --async --email <your\@email> [options...] seqFile
   Returns: jobid
 
-  Use the jobid to query for the status of the job. If the job is finished, 
+  Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
-  Returns: string indicating the status of the job and if applicable, results 
+  Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
@@ -1187,7 +1187,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut
