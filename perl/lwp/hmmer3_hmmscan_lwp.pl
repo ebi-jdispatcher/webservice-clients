@@ -1289,7 +1289,7 @@ sub get_results {
 			@multResultTypes = split(',', $params{'outformat'});
 		}
 		else {
-			@multResultTypes[0] = $params{'outformat'};
+			$multResultTypes[0] = $params{'outformat'};
 		}
 		# check if the provided formats are recognised
 		foreach my $inputType (@multResultTypes) {
