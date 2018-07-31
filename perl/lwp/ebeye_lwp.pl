@@ -81,185 +81,184 @@ my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ( 'debugLevel' => 0 );
+my %params = ('debugLevel' => 0);
 
 
 # Default parameter values (should get these from the service)
 GetOptions(
-	'size=s'       => \$params{'size'},          # Number of entries to retrieve
-	'start=s'      => \$params{'start'},         # Index of the first entry in results
-	'fieldurl=s'   => \$params{'fieldurl'},      # whether field links are included
-	'viewurl=s'    => \$params{'viewurl'},       # whether view links are included
-	'sortfield=s'  => \$params{'sortfield'},     # Field id to sort
-	'order=s'      => \$params{'order'},         # Sort in ascending/descending order
-	'sort=s'       => \$params{'sort'},          # comma separated value of sort criteria
-	'facetcount=s' => \$params{'facetcount'},    # Number of facet values to retrieve
-	'facetfields=s'=> \$params{'facetfields'},   # Field ids associated with facets to retrieve
-	'facets=s'     => \$params{'facets'},		 # Selected facets
-	'facetsdepth=s'=> \$params{'facetsdepth'},   # depth in hierarchical facets
-	'mltfields=s'  => \$params{'mltfields'},     # Field ids to be used for generating a morelikethis query
-	'mintermfreq=s'=> \$params{'mintermfreq'},   # Frequency below which terms will be ignored in the base document
-	'mindocfreq=s' => \$params{'mindocfreq'},    # Frequency at which words will be ignored which do not occur in at least this many documents
-	'maxqueryterm=s'=> \$params{'maxqueryterm'}, # maximum number of query terms that will be included in any generated query
-	'excludes=s'   => \$params{'excludes'},      # Terms to be excluded
-	'excludesets=s'=> \$params{'excludesets'},   # stop word sets to be excluded
+    'size=s'         => \$params{'size'},         # Number of entries to retrieve
+    'start=s'        => \$params{'start'},        # Index of the first entry in results
+    'fieldurl=s'     => \$params{'fieldurl'},     # whether field links are included
+    'viewurl=s'      => \$params{'viewurl'},      # whether view links are included
+    'sortfield=s'    => \$params{'sortfield'},    # Field id to sort
+    'order=s'        => \$params{'order'},        # Sort in ascending/descending order
+    'sort=s'         => \$params{'sort'},         # comma separated value of sort criteria
+    'facetcount=s'   => \$params{'facetcount'},   # Number of facet values to retrieve
+    'facetfields=s'  => \$params{'facetfields'},  # Field ids associated with facets to retrieve
+    'facets=s'       => \$params{'facets'},       # Selected facets
+    'facetsdepth=s'  => \$params{'facetsdepth'},  # depth in hierarchical facets
+    'mltfields=s'    => \$params{'mltfields'},    # Field ids to be used for generating a morelikethis query
+    'mintermfreq=s'  => \$params{'mintermfreq'},  # Frequency below which terms will be ignored in the base document
+    'mindocfreq=s'   => \$params{'mindocfreq'},   # Frequency at which words will be ignored which do not occur in at least this many documents
+    'maxqueryterm=s' => \$params{'maxqueryterm'}, # maximum number of query terms that will be included in any generated query
+    'excludes=s'     => \$params{'excludes'},     # Terms to be excluded
+    'excludesets=s'  => \$params{'excludesets'},  # stop word sets to be excluded
 
 
-	'quiet'        => \$params{'quiet'},         # Decrease output level
-	'verbose'      => \$params{'verbose'},       # Increase output level
-	'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
-	'baseUrl=s'    => \$baseUrl,                 # Base URL for service.
+    'quiet'          => \$params{'quiet'},      # Decrease output level
+    'verbose'        => \$params{'verbose'},    # Increase output level
+    'debugLevel=i'   => \$params{'debugLevel'}, # Debug output level
+    'baseUrl=s'      => \$baseUrl,              # Base URL for service.
 );
-if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ($params{'verbose'}) {$outputLevel++}
+if ($params{'quiet'}) {$outputLevel--}
 
 # Debug mode: LWP version
-&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,	1 );
+&print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1);
 
 # Debug mode: print the input parameters
-&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ), 11 );
+&print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
 
 # Get the script filename for use in usage messages
-my $scriptName = basename( $0, () );
+my $scriptName = basename($0, ());
 
 # Print usage and exit if requested
-if ( $params{'help'} || $numOpts == 0 ) {
-	&usage();
-	exit(0);
+if ($params{'help'} || $numOpts == 0) {
+    &usage();
+    exit(0);
 }
 
 # Debug mode: show the base URL
-&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
+&print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
 my $method = shift;
 
 # Get domain hierarchy
-if ( $method eq 'getDomainHierarchy' ) {
-	&print_get_domain_hierarchy();
+if ($method eq 'getDomainHierarchy') {
+    &print_get_domain_hierarchy();
 }
 
 # Get domain details
-elsif ( $method eq 'getDomainDetails' ) {
-	&print_get_domain_details(@ARGV);
+elsif ($method eq 'getDomainDetails') {
+    &print_get_domain_details(@ARGV);
 }
 
 # Get number of search results
-elsif ( $method eq 'getNumberOfResults') {
-	if (scalar(@ARGV) != 2)  {
-		print STDERR '[main()] ', 'domain and query should be given.', "\n";
-	}
-	else {
-		&print_get_number_of_results(@ARGV);
-	}
+elsif ($method eq 'getNumberOfResults') {
+    if (scalar(@ARGV) != 2) {
+        print STDERR '[main()] ', 'domain and query should be given.', "\n";
+    }
+    else {
+        &print_get_number_of_results(@ARGV);
+    }
 }
 
 # Get search results
-elsif ( $method eq 'getResults') {
-	if (scalar(@ARGV) < 3)  {
-		print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
-	}
-	else {
-		&print_get_results(@ARGV);
-	}
+elsif ($method eq 'getResults') {
+    if (scalar(@ARGV) < 3) {
+        print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
+    }
+    else {
+        &print_get_results(@ARGV);
+    }
 }
 
 # Get search results with facets
-elsif ( $method eq 'getFacetedResults') {
-	if (scalar(@ARGV) < 3)  {
-		print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
-	}
-	else {
-		&print_get_faceted_results(@ARGV);
-	}
+elsif ($method eq 'getFacetedResults') {
+    if (scalar(@ARGV) < 3) {
+        print STDERR '[main()] ', 'domain, query and fields should be given.', "\n";
+    }
+    else {
+        &print_get_faceted_results(@ARGV);
+    }
 }
 
 # Get entries
-elsif ( $method eq 'getEntries') {
-	if (scalar(@ARGV) < 3)  {
-		print STDERR '[main()] ', 'domain, entries and fields should be given.', "\n";
-	}
-	else {
-		&print_get_entries(@ARGV);
-	}
+elsif ($method eq 'getEntries') {
+    if (scalar(@ARGV) < 3) {
+        print STDERR '[main()] ', 'domain, entries and fields should be given.', "\n";
+    }
+    else {
+        &print_get_entries(@ARGV);
+    }
 }
 
 # Get domain ids referenced in a domain
-elsif ( $method eq 'getDomainsReferencedInDomain') {
-	if (scalar(@ARGV) < 1)  {
-		print STDERR '[main()] ', 'domain should be given.', "\n";
-	}
-	else {
-		&print_get_domains_referenced_in_domain(@ARGV);
-	}
+elsif ($method eq 'getDomainsReferencedInDomain') {
+    if (scalar(@ARGV) < 1) {
+        print STDERR '[main()] ', 'domain should be given.', "\n";
+    }
+    else {
+        &print_get_domains_referenced_in_domain(@ARGV);
+    }
 }
 
 # Get domain ids referenced in an entry
-elsif ( $method eq 'getDomainsReferencedInEntry') {
-	if (scalar(@ARGV) < 2)  {
-		print STDERR '[main()] ', 'domain and entry should be given.', "\n";
-	}
-	else {
-		&print_get_domains_referenced_in_entry(@ARGV);
-	}
+elsif ($method eq 'getDomainsReferencedInEntry') {
+    if (scalar(@ARGV) < 2) {
+        print STDERR '[main()] ', 'domain and entry should be given.', "\n";
+    }
+    else {
+        &print_get_domains_referenced_in_entry(@ARGV);
+    }
 }
 
 # Get cross references
-elsif ( $method eq 'getReferencedEntries') {
-	if (scalar(@ARGV) < 4)  {
-		print STDERR '[main()] ', 'domain, entries, reference domain and fields should be given.', "\n";
-	}
-	else {
-		&print_get_referenced_entries(@ARGV);
-	}
+elsif ($method eq 'getReferencedEntries') {
+    if (scalar(@ARGV) < 4) {
+        print STDERR '[main()] ', 'domain, entries, reference domain and fields should be given.', "\n";
+    }
+    else {
+        &print_get_referenced_entries(@ARGV);
+    }
 }
 
 # Get top terms
-elsif ( $method eq 'getTopTerms' ) {
-		if (scalar(@ARGV) < 2)  {
-		print STDERR '[main()] ', 'domain and field should be given.', "\n";
-	}
-	else {
-		&print_get_top_terms(@ARGV);
-	}
+elsif ($method eq 'getTopTerms') {
+    if (scalar(@ARGV) < 2) {
+        print STDERR '[main()] ', 'domain and field should be given.', "\n";
+    }
+    else {
+        &print_get_top_terms(@ARGV);
+    }
 }
 
 # Get similar documents in a same domain
-elsif ( $method eq 'getMoreLikeThis' ) {
-	if (scalar(@ARGV) < 3)  {
-		print STDERR '[main()] ', 'domain, entry and fields should be given.', "\n";
-	}
-	else {
-		&print_get_more_like_this(@ARGV);
-	}
+elsif ($method eq 'getMoreLikeThis') {
+    if (scalar(@ARGV) < 3) {
+        print STDERR '[main()] ', 'domain, entry and fields should be given.', "\n";
+    }
+    else {
+        &print_get_more_like_this(@ARGV);
+    }
 }
 
 # Get similar documents in a different domain
-elsif ( $method eq 'getExtendedMoreLikeThis' ) {
-	if (scalar(@ARGV) < 4)  {
-		print STDERR '[main()] ', 'domain, entry, target domain and fields should be given.', "\n";
-	}
-	else {
-		&print_get_extended_more_like_this(@ARGV);
-	}
+elsif ($method eq 'getExtendedMoreLikeThis') {
+    if (scalar(@ARGV) < 4) {
+        print STDERR '[main()] ', 'domain, entry, target domain and fields should be given.', "\n";
+    }
+    else {
+        &print_get_extended_more_like_this(@ARGV);
+    }
 }
 
 
 # Get suggestions
-elsif ( $method eq 'getAutoComplete' ) {
-	if (scalar(@ARGV) < 2) {
-		print STDERR '[main()] ', 'domain and term should be given.', "\n";
-	}
-	else {
-		&print_get_auto_complete(@ARGV);
-	}
+elsif ($method eq 'getAutoComplete') {
+    if (scalar(@ARGV) < 2) {
+        print STDERR '[main()] ', 'domain and term should be given.', "\n";
+    }
+    else {
+        &print_get_auto_complete(@ARGV);
+    }
 }
-
 else {
-	&usage();
-	exit(1);
+    &usage();
+    exit(1);
 }
 
 =head1 FUNCTIONS
@@ -277,17 +276,17 @@ Get a LWP UserAgent to use to perform REST requests.
 =cut
 
 sub rest_user_agent() {
-	print_debug_message( 'rest_user_agent', 'Begin', 21 );
-	# Create an LWP UserAgent for making HTTP calls.
-	my $ua = LWP::UserAgent->new();
-	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;
-	$revisionNumber = $1 if('$Revision: 2702 $' =~ m/(\d+)/);
-	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
-	# Configure HTTP proxy support from environment.
-	$ua->env_proxy;
-	print_debug_message( 'rest_user_agent', 'End', 21 );
-	return $ua;
+    print_debug_message('rest_user_agent', 'Begin', 21);
+    # Create an LWP UserAgent for making HTTP calls.
+    my $ua = LWP::UserAgent->new();
+    # Set 'User-Agent' HTTP header to identifiy the client.
+    my $revisionNumber = 0;
+    $revisionNumber = $1 if ('$Revision: 2702 $' =~ m/(\d+)/);
+    $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
+    # Configure HTTP proxy support from environment.
+    $ua->env_proxy;
+    print_debug_message('rest_user_agent', 'End', 21);
+    return $ua;
 }
 
 =head2 rest_error()
@@ -299,29 +298,29 @@ Check a REST response for an error condition. An error is mapped to a die.
 =cut
 
 sub rest_error() {
-	print_debug_message( 'rest_error', 'Begin', 21 );
-	my $response = shift;
-	my $contentdata;
-	if(scalar(@_) > 0) {
-		$contentdata = shift;
-	}
-	if(!defined($contentdata) || $contentdata eq '') {
-		$contentdata = $response->content();
-	}
-	# Check for HTTP error codes
-	if ( $response->is_error ) {
-		my $error_message = '';
-		# HTML response.
-		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
-			$error_message = $1;
-		}
-		#  XML response.
-		elsif($contentdata =~ m/<message>([^<]+)<\/message>/) {
-			$error_message = $1;
-		}
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
-	}
-	print_debug_message( 'rest_error', 'End', 21 );
+    print_debug_message('rest_error', 'Begin', 21);
+    my $response = shift;
+    my $contentdata;
+    if (scalar(@_) > 0) {
+        $contentdata = shift;
+    }
+    if (!defined($contentdata) || $contentdata eq '') {
+        $contentdata = $response->content();
+    }
+    # Check for HTTP error codes
+    if ($response->is_error) {
+        my $error_message = '';
+        # HTML response.
+        if ($contentdata =~ m/<h1>([^<]+)<\/h1>/) {
+            $error_message = $1;
+        }
+        #  XML response.
+        elsif ($contentdata =~ m/<message>([^<]+)<\/message>/) {
+            $error_message = $1;
+        }
+        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+    }
+    print_debug_message('rest_error', 'End', 21);
 }
 
 =head2 rest_request()
@@ -333,40 +332,40 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request {
-	print_debug_message( 'rest_request', 'Begin', 11 );
-	my $requestUrl = shift;
-	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+    print_debug_message('rest_request', 'Begin', 11);
+    my $requestUrl = shift;
+    print_debug_message('rest_request', 'URL: ' . $requestUrl, 11);
 
-	# Get an LWP UserAgent.
-	$ua = &rest_user_agent() unless defined($ua);
-	# Available HTTP compression methods.
-	my $can_accept;
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
-	$can_accept = '' unless defined($can_accept);
-	# Perform the request
-	my $response = $ua->get($requestUrl,
-		'Accept-Encoding' => $can_accept, # HTTP compression.
-	);
-	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code, 11 );
-	print_debug_message( 'rest_request', 'response length: ' . length($response->content()), 11 );
-	print_debug_message( 'rest_request', 'request:' ."\n" . $response->request()->as_string(), 32 );
-	print_debug_message( 'rest_request', 'response: ' . "\n" . $response->as_string(), 32 );
-	# Unpack possibly compressed response.
-	my $retVal;
-	if ( defined($can_accept) && $can_accept ne '') {
-	    $retVal = $response->decoded_content();
-	}
-	# If unable to decode use orginal content.
-	$retVal = $response->content() unless defined($retVal);
-	# Check for an error.
-	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
-	print_debug_message( 'rest_request', 'End', 11 );
+    # Get an LWP UserAgent.
+    $ua = &rest_user_agent() unless defined($ua);
+    # Available HTTP compression methods.
+    my $can_accept;
+    eval {
+        $can_accept = HTTP::Message::decodable();
+    };
+    $can_accept = '' unless defined($can_accept);
+    # Perform the request
+    my $response = $ua->get($requestUrl,
+        'Accept-Encoding' => $can_accept, # HTTP compression.
+    );
+    print_debug_message('rest_request', 'HTTP status: ' . $response->code, 11);
+    print_debug_message('rest_request', 'response length: ' . length($response->content()), 11);
+    print_debug_message('rest_request', 'request:' . "\n" . $response->request()->as_string(), 32);
+    print_debug_message('rest_request', 'response: ' . "\n" . $response->as_string(), 32);
+    # Unpack possibly compressed response.
+    my $retVal;
+    if (defined($can_accept) && $can_accept ne '') {
+        $retVal = $response->decoded_content();
+    }
+    # If unable to decode use orginal content.
+    $retVal = $response->content() unless defined($retVal);
+    # Check for an error.
+    &rest_error($response, $retVal);
+    print_debug_message('rest_request', 'retVal: ' . $retVal, 12);
+    print_debug_message('rest_request', 'End', 11);
 
-	# Return the response data
-	return $retVal;
+    # Return the response data
+    return $retVal;
 }
 
 =head2
@@ -378,26 +377,26 @@ Print domain hierarchy
 =cut
 
 sub print_get_domain_hierarchy {
-	print_debug_message( 'print_get_domain_hierarchy', 'Begin', 11 );
-	my ($param_list_xml) = &rest_get_domain_hierarchy();
-	&_print_domains($param_list_xml->{domains}->{domain}, "");
-	print_debug_message( 'print_get_domain_hierarchy', 'End', 11 );
+    print_debug_message('print_get_domain_hierarchy', 'Begin', 11);
+    my ($param_list_xml) = &rest_get_domain_hierarchy();
+    &_print_domains($param_list_xml->{domains}->{domain}, "");
+    print_debug_message('print_get_domain_hierarchy', 'End', 11);
 }
 
-sub _print_domains{
-	my ($domain, $indent) = @_;
-	print $indent . $domain->{'id'} . ": " . $domain->{'name'}, "\n";
-	if (exists $domain->{'subdomains'}) {
-		my $subdomains = $domain->{'subdomains'}->{'domain'};
-		if(ref($subdomains) eq 'ARRAY'){
-			foreach my $subdomain (@{$subdomains}) {
-				&_print_domains($subdomain, $indent ."\t");
-			}
-		}
-		else {
-			&_print_domains($subdomains, $indent ."\t");
-		}
-	}
+sub _print_domains {
+    my ($domain, $indent) = @_;
+    print $indent . $domain->{'id'} . ": " . $domain->{'name'}, "\n";
+    if (exists $domain->{'subdomains'}) {
+        my $subdomains = $domain->{'subdomains'}->{'domain'};
+        if (ref($subdomains) eq 'ARRAY') {
+            foreach my $subdomain (@{$subdomains}) {
+                &_print_domains($subdomain, $indent . "\t");
+            }
+        }
+        else {
+            &_print_domains($subdomains, $indent . "\t");
+        }
+    }
 }
 
 =head2
@@ -409,43 +408,43 @@ Print domain details
 =cut
 
 sub print_get_domain_details {
-	print_debug_message( 'print_get_domain_details', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_domain_details(@_);
-	&_print_domain_details($param_list_xml->{'domains'}->{'domain'});
-	print_debug_message( 'print_get_domain_details', 'End', 1 );
+    print_debug_message('print_get_domain_details', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_domain_details(@_);
+    &_print_domain_details($param_list_xml->{'domains'}->{'domain'});
+    print_debug_message('print_get_domain_details', 'End', 1);
 }
 
-sub _print_domain_details{
-	my ($domain) = @_;
-	print $domain->{'name'} . " (" .$domain->{'id'} . ")", "\n";
-	if (exists $domain->{'subdomains'}) {
-		my $subdomains = $domain->{'subdomains'}->{'domain'};
-		if(ref($subdomains) eq 'ARRAY'){
-			foreach my $subdomain (@{$subdomains}) {
-				&_print_domain_details($subdomain);
-			}
-		}
-		else {
-			&_print_domain_details($subdomains);
-		}
-	}
-	else {
-		my $indexInfos = $domain->{'indexInfos'}->{'indexInfo'};
-		foreach my $indexInfo (@{$indexInfos}) {
-			print $indexInfo->{'name'} . ": " . $indexInfo->{'content'}, "\n";
-		}
-		print "\n";
-		my $fieldInfos = $domain->{'fieldInfos'}->{'fieldInfo'};
-		print "field_id\tsearchable\tretrievable\tsortable\tfacet", "\n";
-		foreach my $fieldInfo (@{$fieldInfos}) {
-			print $fieldInfo->{'id'} . "\t";
-			foreach my $option (@{$fieldInfo->{'options'}->{'option'}}) {
-				print $option->{'content'} . "\t";
-			}
-			print "\n";
-		}
-	}
-	print "\n";
+sub _print_domain_details {
+    my ($domain) = @_;
+    print $domain->{'name'} . " (" . $domain->{'id'} . ")", "\n";
+    if (exists $domain->{'subdomains'}) {
+        my $subdomains = $domain->{'subdomains'}->{'domain'};
+        if (ref($subdomains) eq 'ARRAY') {
+            foreach my $subdomain (@{$subdomains}) {
+                &_print_domain_details($subdomain);
+            }
+        }
+        else {
+            &_print_domain_details($subdomains);
+        }
+    }
+    else {
+        my $indexInfos = $domain->{'indexInfos'}->{'indexInfo'};
+        foreach my $indexInfo (@{$indexInfos}) {
+            print $indexInfo->{'name'} . ": " . $indexInfo->{'content'}, "\n";
+        }
+        print "\n";
+        my $fieldInfos = $domain->{'fieldInfos'}->{'fieldInfo'};
+        print "field_id\tsearchable\tretrievable\tsortable\tfacet", "\n";
+        foreach my $fieldInfo (@{$fieldInfos}) {
+            print $fieldInfo->{'id'} . "\t";
+            foreach my $option (@{$fieldInfo->{'options'}->{'option'}}) {
+                print $option->{'content'} . "\t";
+            }
+            print "\n";
+        }
+    }
+    print "\n";
 }
 
 =head2
@@ -457,11 +456,11 @@ Print number of search results
 =cut
 
 sub print_get_number_of_results {
-	print_debug_message( 'print_get_number_of_results', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_number_of_results(@_);
-	my $numberOfResult = $param_list_xml->{'hitCount'};
-	print $numberOfResult, "\n";
-	print_debug_message( 'print_get_number_of_results', 'End', 1 );
+    print_debug_message('print_get_number_of_results', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_number_of_results(@_);
+    my $numberOfResult = $param_list_xml->{'hitCount'};
+    print $numberOfResult, "\n";
+    print_debug_message('print_get_number_of_results', 'End', 1);
 }
 
 =head2
@@ -473,38 +472,38 @@ Print search results
 =cut
 
 sub print_get_results {
-	print_debug_message( 'print_get_results', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_results(@_);
-	&_print_entries($param_list_xml->{'entries'}->{'entry'});
-	print_debug_message( 'print_get_results', 'End', 1 );
+    print_debug_message('print_get_results', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_results(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    print_debug_message('print_get_results', 'End', 1);
 }
 
 sub _print_entries {
-	my $entries = shift;
-	if ( defined $entries) {
-		print_debug_message( '_print_enties', 'len($entires)=' . scalar(@{$entries}) ,1);
-		foreach my $entry (@{$entries}) {
-			foreach my $field (@{$entry->{'fields'}->{'field'}}) {
-				if (exists $field->{'values'}->{'value'}) {
-					foreach my $value (@{$field->{'values'}->{'value'}}) {
-						print $value, "\n";
-					}
-				}
-				else {
-					print "\n";
-				}
-			}
+    my $entries = shift;
+    if (defined $entries) {
+        print_debug_message('_print_enties', 'len($entires)=' . scalar(@{$entries}), 1);
+        foreach my $entry (@{$entries}) {
+            foreach my $field (@{$entry->{'fields'}->{'field'}}) {
+                if (exists $field->{'values'}->{'value'}) {
+                    foreach my $value (@{$field->{'values'}->{'value'}}) {
+                        print $value, "\n";
+                    }
+                }
+                else {
+                    print "\n";
+                }
+            }
 
-			foreach my $fieldurl (@{$entry->{'fieldURLs'}->{'fieldURL'}}) {
-				print $fieldurl->{'content'}, "\n";
-			}
+            foreach my $fieldurl (@{$entry->{'fieldURLs'}->{'fieldURL'}}) {
+                print $fieldurl->{'content'}, "\n";
+            }
 
-			foreach my $viewurl (@{$entry->{'viewURLs'}->{'viewURL'}}) {
-				print $viewurl->{'content'}, "\n";
-			}
-			print "\n";
-		}
-	}
+            foreach my $viewurl (@{$entry->{'viewURLs'}->{'viewURL'}}) {
+                print $viewurl->{'content'}, "\n";
+            }
+            print "\n";
+        }
+    }
 }
 
 =head2
@@ -516,38 +515,38 @@ Print search results with facets
 =cut
 
 sub print_get_faceted_results {
-	print_debug_message( 'print_get_faceted_results', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_faceted_results(@_);
-	&_print_entries($param_list_xml->{'entries'}->{'entry'});
-	&_print_facets($param_list_xml->{'facets'}->{'facet'});
-	print_debug_message( 'print_get_faceted_results', 'End', 1 );
+    print_debug_message('print_get_faceted_results', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_faceted_results(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    &_print_facets($param_list_xml->{'facets'}->{'facet'});
+    print_debug_message('print_get_faceted_results', 'End', 1);
 }
 
 sub _print_facets {
-	my $facets = shift;
+    my $facets = shift;
 
-	foreach my $facet (@{$facets}) {
-		print $facet->{'label'} . " (" .$facet->{'id'} . ") ", "\n";
-		foreach my $facetValue (@{$facet->{'facetValues'}->{'facetValue'}}) {
-			&_print_facetValue($facetValue, 0);
-		}
+    foreach my $facet (@{$facets}) {
+        print $facet->{'label'} . " (" . $facet->{'id'} . ") ", "\n";
+        foreach my $facetValue (@{$facet->{'facetValues'}->{'facetValue'}}) {
+            &_print_facetValue($facetValue, 0);
+        }
 
-		print "\n";
-	}
+        print "\n";
+    }
 }
 
 sub _print_facetValue {
-	my $facetValue = shift;
-	my $depth = shift;
+    my $facetValue = shift;
+    my $depth = shift;
 
-	for (my $i=0; $i < $depth; $i++) {
-   		print "\t";
-	}
-	print $facetValue->{'label'} . " (" . $facetValue->{'value'}->[0] . ") " . $facetValue->{'count'}, "\n";
+    for (my $i = 0; $i < $depth; $i++) {
+        print "\t";
+    }
+    print $facetValue->{'label'} . " (" . $facetValue->{'value'}->[0] . ") " . $facetValue->{'count'}, "\n";
 
-	foreach my $child (@{$facetValue->{'children'}->{'facetValue'}}) {
-		&_print_facetValue($child, $depth + 1);
-	}
+    foreach my $child (@{$facetValue->{'children'}->{'facetValue'}}) {
+        &_print_facetValue($child, $depth + 1);
+    }
 }
 
 =head2
@@ -559,10 +558,10 @@ Print entries
 =cut
 
 sub print_get_entries {
-	print_debug_message( 'print_get_entries', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_entries(@_);
-	&_print_entries($param_list_xml->{'entries'}->{'entry'});
-	print_debug_message( 'print_get_entries', 'End', 1 );
+    print_debug_message('print_get_entries', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_entries(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    print_debug_message('print_get_entries', 'End', 1);
 }
 
 
@@ -576,12 +575,12 @@ Print domain ids referenced in a domain
 =cut
 
 sub print_get_domains_referenced_in_domain {
-	print_debug_message( 'print_get_domains_referenced_in_domain', 'Begin', 1 );
-	my ($domain_list) = &rest_get_domains_referenced_in_domain(@_);
-	foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}){
-		print $domain->{'id'}, "\n";
-	}
-	print_debug_message( 'print_get_domains_referenced_in_domain', 'End', 1 );
+    print_debug_message('print_get_domains_referenced_in_domain', 'Begin', 1);
+    my ($domain_list) = &rest_get_domains_referenced_in_domain(@_);
+    foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}) {
+        print $domain->{'id'}, "\n";
+    }
+    print_debug_message('print_get_domains_referenced_in_domain', 'End', 1);
 }
 
 
@@ -594,12 +593,12 @@ Print domain ids referenced in an entry
 =cut
 
 sub print_get_domains_referenced_in_entry {
-	print_debug_message( 'print_get_domains_referenced_in_entry', 'Begin', 1 );
-	my ($domain_list) = &rest_get_domains_referenced_in_entry(@_);
-	foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}){
-		print $domain->{'id'}, ": ", $domain->{'referenceEntryCount'}, "\n";
-	}
-	print_debug_message( 'print_get_domains_referenced_in_entry', 'End', 1 );
+    print_debug_message('print_get_domains_referenced_in_entry', 'Begin', 1);
+    my ($domain_list) = &rest_get_domains_referenced_in_entry(@_);
+    foreach my $domain (@{$domain_list->{'domains'}->{'domain'}}) {
+        print $domain->{'id'}, ": ", $domain->{'referenceEntryCount'}, "\n";
+    }
+    print_debug_message('print_get_domains_referenced_in_entry', 'End', 1);
 }
 
 
@@ -612,16 +611,16 @@ Print cross references
 =cut
 
 sub print_get_referenced_entries {
-	print_debug_message( 'print_get_referenced_entries', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_referenced_entries(@_);
-	foreach my $entry (@{$param_list_xml->{'entries'}->{'entry'}}) {
-		&_print_entries($entry->{'references'}->{'reference'});
+    print_debug_message('print_get_referenced_entries', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_referenced_entries(@_);
+    foreach my $entry (@{$param_list_xml->{'entries'}->{'entry'}}) {
+        &_print_entries($entry->{'references'}->{'reference'});
 
-		if (exists $entry->{'referenceFacets'}) {
-			&_print_facets($entry->{'referenceFacets'}->{'referenceFacet'});
-		}
-	}
-	print_debug_message( 'print_get_referenced_entries', 'End', 1 );
+        if (exists $entry->{'referenceFacets'}) {
+            &_print_facets($entry->{'referenceFacets'}->{'referenceFacet'});
+        }
+    }
+    print_debug_message('print_get_referenced_entries', 'End', 1);
 }
 
 
@@ -634,12 +633,12 @@ Print top terms
 =cut
 
 sub print_get_top_terms {
-	print_debug_message( 'print_get_top_terms', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_top_terms(@_);
-	foreach my $term (@{$param_list_xml->{'topTerms'}->{'term'}}) {
-		print $term->{'text'}, ": ", $term->{'docFreq'}, "\n";
-	}
-	print_debug_message( 'print_get_top_terms', 'End', 1 );
+    print_debug_message('print_get_top_terms', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_top_terms(@_);
+    foreach my $term (@{$param_list_xml->{'topTerms'}->{'term'}}) {
+        print $term->{'text'}, ": ", $term->{'docFreq'}, "\n";
+    }
+    print_debug_message('print_get_top_terms', 'End', 1);
 }
 
 
@@ -650,11 +649,11 @@ Print similar documents
 
 =cut
 
-sub print_get_more_like_this{
-	print_debug_message( 'print_get_more_like_this', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_more_like_this(@_);
-	&_print_entries($param_list_xml->{'entries'}->{'entry'});
-	print_debug_message( 'print_get_more_like_this', 'End', 1 );
+sub print_get_more_like_this {
+    print_debug_message('print_get_more_like_this', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_more_like_this(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    print_debug_message('print_get_more_like_this', 'End', 1);
 }
 
 =head2
@@ -664,11 +663,11 @@ Print similar documents
 
 =cut
 
-sub print_get_extended_more_like_this{
-	print_debug_message( 'print_get_extended_more_like_this', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_extended_more_like_this(@_);
-	&_print_entries($param_list_xml->{'entries'}->{'entry'});
-	print_debug_message( 'print_get_extended_more_like_this', 'End', 1 );
+sub print_get_extended_more_like_this {
+    print_debug_message('print_get_extended_more_like_this', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_extended_more_like_this(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    print_debug_message('print_get_extended_more_like_this', 'End', 1);
 }
 
 =head2
@@ -678,20 +677,20 @@ Print suggestions
 
 =cut
 
-sub print_get_auto_complete{
-	print_debug_message( 'print_get_auto_complete', 'Begin', 1 );
-	my ($param_list_xml) = &rest_get_auto_complete(@_);
+sub print_get_auto_complete {
+    print_debug_message('print_get_auto_complete', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_auto_complete(@_);
 
-	&_print_suggestions($param_list_xml->{'suggestions'}->{'suggestion'});
-	print_debug_message( 'print_get_auto_complete', 'End', 1 );
+    &_print_suggestions($param_list_xml->{'suggestions'}->{'suggestion'});
+    print_debug_message('print_get_auto_complete', 'End', 1);
 }
 
-sub _print_suggestions{
-	my $suggestions = shift;
+sub _print_suggestions {
+    my $suggestions = shift;
 
-	foreach my $sug (@{$suggestions}) {
-		print $sug->{'suggestion'} . "\n";
-	}
+    foreach my $sug (@{$suggestions}) {
+        print $sug->{'suggestion'} . "\n";
+    }
 }
 
 
@@ -705,11 +704,11 @@ Get domain hierarchy
 =cut
 
 sub rest_get_domain_hierarchy {
-	print_debug_message( 'rest_get_domain_hierarchy', 'Begin', 1 );
-	my $url                = $baseUrl;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_domain_hierarchy', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => []);
+    print_debug_message('rest_get_domain_hierarchy', 'Begin', 1);
+    my $url = $baseUrl;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_domain_hierarchy', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => []);
 }
 
 
@@ -722,12 +721,12 @@ Get domain details
 =cut
 
 sub rest_get_domain_details {
-	print_debug_message( 'rest_get_domain_details', 'Begin', 1 );
-	my $domainid = shift || 'allebi';
-	my $url = $baseUrl . "/" .$domainid;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_domain_details', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => []);
+    print_debug_message('rest_get_domain_details', 'Begin', 1);
+    my $domainid = shift || 'allebi';
+    my $url = $baseUrl . "/" . $domainid;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_domain_details', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => []);
 }
 
 =head2 rest_get_number_of_results()
@@ -739,15 +738,15 @@ Get number of search results
 =cut
 
 sub rest_get_number_of_results {
-	print_debug_message( 'rest_get_number_of_results', 'Begin', 1 );
+    print_debug_message('rest_get_number_of_results', 'Begin', 1);
 
-	my $domainid = shift;
-	my $query = shift;
+    my $domainid = shift;
+    my $query = shift;
 
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&size=0";
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_number_of_results', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => []);
+    my $url = $baseUrl . "/" . $domainid . "?query=" . $query . "&size=0";
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_number_of_results', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => []);
 }
 
 
@@ -760,24 +759,24 @@ Get search results
 =cut
 
 sub rest_get_results {
-	print_debug_message( 'rest_get_results', 'Begin', 1 );
+    print_debug_message('rest_get_results', 'Begin', 1);
 
-	my $domainid = shift;
-	my $query = shift;
-	my $fields = shift;
+    my $domainid = shift;
+    my $query = shift;
+    my $fields = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $start = $params{'start'}? $params{'start'} : "" ;
-	my $sort = $params{'sort'}? $params{'sort'} : "" ;
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
-	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
-	my $order = $params{'order'}? $params{'order'} : "" ;
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $sort = $params{'sort'} ? $params{'sort'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $sortfield = $params{'sortfield'} ? $params{'sortfield'} : "";
+    my $order = $params{'order'} ? $params{'order'} : "";
 
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order ."&facetcount=0&sort=". $sort ;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_results', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+    my $url = $baseUrl . "/" . $domainid . "?query=" . $query . "&fields=" . $fields . "&size=" . $size . "&start=" . $start . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . "&sortfield=" . $sortfield . "&order=" . $order . "&facetcount=0&sort=" . $sort;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_results', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL' ]);
 }
 
 =head2 rest_get_faceted_results()
@@ -789,26 +788,26 @@ Get search results with facets
 =cut
 
 sub rest_get_faceted_results {
-	print_debug_message( 'rest_get_faceted_results', 'Begin', 1 );
-	my $domainid = shift;
-	my $query = shift;
-	my $fields = shift;
+    print_debug_message('rest_get_faceted_results', 'Begin', 1);
+    my $domainid = shift;
+    my $query = shift;
+    my $fields = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $start = $params{'start'}? $params{'start'} : "" ;
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
-	my $sortfield = $params{'sortfield'}? $params{'sortfield'} : "" ;
-	my $order = $params{'order'}? $params{'order'} : "" ;
-	my $sort = $params{'sort'}? $params{'sort'} : "" ;
-	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
-	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
-	my $facets = $params{'facets'}? $params{'facets'} : "";
-	my $facetsdepth = $params{'facetsdepth'}? $params{'facetsdepth'} : "";
-	my $url = $baseUrl . "/" .$domainid . "?query=" . $query . "&fields=" .$fields . "&size=" . $size ."&start=" . $start. "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl . "&sortfield=". $sortfield . "&order=". $order . "&sort=". $sort . "&facetcount=".$facetcount ."&facetfields=". $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_faceted_results', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue']);
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $sortfield = $params{'sortfield'} ? $params{'sortfield'} : "";
+    my $order = $params{'order'} ? $params{'order'} : "";
+    my $sort = $params{'sort'} ? $params{'sort'} : "";
+    my $facetcount = $params{'facetcount'} ? $params{'facetcount'} : "10";
+    my $facetfields = $params{'facetfields'} ? $params{'facetfields'} : "";
+    my $facets = $params{'facets'} ? $params{'facets'} : "";
+    my $facetsdepth = $params{'facetsdepth'} ? $params{'facetsdepth'} : "";
+    my $url = $baseUrl . "/" . $domainid . "?query=" . $query . "&fields=" . $fields . "&size=" . $size . "&start=" . $start . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . "&sortfield=" . $sortfield . "&order=" . $order . "&sort=" . $sort . "&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_faceted_results', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue' ]);
 }
 
 =head2 rest_get_entries()
@@ -820,18 +819,18 @@ Get entries
 =cut
 
 sub rest_get_entries {
-	print_debug_message( 'rest_get_entries', 'Begin', 1 );
-	my $domainid = shift;
-	my $entryid = shift;
-	my $fields = shift;
+    print_debug_message('rest_get_entries', 'Begin', 1);
+    my $domainid = shift;
+    my $entryid = shift;
+    my $fields = shift;
 
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
 
-	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "?fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=".$fieldurl;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_entries', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryid . "?fields=" . $fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_entries', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL' ]);
 }
 
 
@@ -845,12 +844,12 @@ Get domain ids referenced in a domain
 =cut
 
 sub rest_get_domains_referenced_in_domain {
-	print_debug_message( 'rest_get_domains_referenced_in_domain', 'Begin', 1 );
-	my ($domainid) = @_;
-	my $url                = $baseUrl . "/" .$domainid . "/xref";
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_domains_referenced_in_domain', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['domain']);
+    print_debug_message('rest_get_domains_referenced_in_domain', 'Begin', 1);
+    my ($domainid) = @_;
+    my $url = $baseUrl . "/" . $domainid . "/xref";
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_domains_referenced_in_domain', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'domain' ]);
 }
 
 
@@ -863,12 +862,12 @@ Get domain ids referenced in an entry
 =cut
 
 sub rest_get_domains_referenced_in_entry {
-	print_debug_message( 'rest_get_domains_referenced_in_entry', 'Begin', 1 );
-	my ($domainid, $entryid) = @_;
-	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryid ."/xref/";
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_domains_referenced_in_entry', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'reference', 'value', 'field', 'fieldURL', 'viewURL']);
+    print_debug_message('rest_get_domains_referenced_in_entry', 'Begin', 1);
+    my ($domainid, $entryid) = @_;
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryid . "/xref/";
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_domains_referenced_in_entry', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'reference', 'value', 'field', 'fieldURL', 'viewURL' ]);
 }
 
 
@@ -881,25 +880,25 @@ Get cross references
 =cut
 
 sub rest_get_referenced_entries {
-	print_debug_message( 'rest_get_referenced_entries', 'Begin', 1 );
-	my $domainid = shift;
-	my $entryids = shift;
-	my $referencedDomainId = shift;
-	my $fields = shift;
+    print_debug_message('rest_get_referenced_entries', 'Begin', 1);
+    my $domainid = shift;
+    my $entryids = shift;
+    my $referencedDomainId = shift;
+    my $fields = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $start = $params{'start'}? $params{'start'} : "" ;
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
-	my $facetcount = $params{'facetcount'}? $params{'facetcount'} : "10";
-	my $facetfields = $params{'facetfields'}? $params{'facetfields'} : "";
-	my $facets = $params{'facets'}? $params{'facets'} : "";
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $facetcount = $params{'facetcount'} ? $params{'facetcount'} : "10";
+    my $facetfields = $params{'facetfields'} ? $params{'facetfields'} : "";
+    my $facets = $params{'facets'} ? $params{'facets'} : "";
 
-	my $url                = $baseUrl . "/" .$domainid . "/entry/" . $entryids ."/xref/" . $referencedDomainId . "?fields=" .$fields . "&start=" . $start. "&size=" . $size. "&fieldurl=".$fieldurl . "&viewurl=".$viewurl ."&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" .$facets;
-	my $param_list_xml_str = &rest_request($url);
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryids . "/xref/" . $referencedDomainId . "?fields=" . $fields . "&start=" . $start . "&size=" . $size . "&fieldurl=" . $fieldurl . "&viewurl=" . $viewurl . "&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" . $facets;
+    my $param_list_xml_str = &rest_request($url);
 
-	print_debug_message( 'rest_get_referenced_entries', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'reference', 'referenceFacet', 'value', 'field', 'fieldURL', 'viewURL', 'facetValue']);
+    print_debug_message('rest_get_referenced_entries', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'reference', 'referenceFacet', 'value', 'field', 'fieldURL', 'viewURL', 'facetValue' ]);
 }
 
 
@@ -911,20 +910,20 @@ Get Top terms
 
 =cut
 
-sub rest_get_top_terms{
-	print_debug_message( 'rest_get_top_terms', 'Begin', 1 );
-	my $domainid = shift;
-	my $fieldid = shift;
+sub rest_get_top_terms {
+    print_debug_message('rest_get_top_terms', 'Begin', 1);
+    my $domainid = shift;
+    my $fieldid = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
-	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $excludes = $params{'excludes'} ? $params{'excludes'} : "";
+    my $excludesets = $params{'excludesets'} ? $params{'excludesets'} : "";
 
-	my $url                = $baseUrl . "/" .$domainid . "/topterms/" . $fieldid . "?size=" . $size . "&excludes="  .$excludes . "&excludesets=" . $excludesets;
-	print_debug_message( 'rest_get_top_terms', $url, 2 );
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_top_terms', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['term']);
+    my $url = $baseUrl . "/" . $domainid . "/topterms/" . $fieldid . "?size=" . $size . "&excludes=" . $excludes . "&excludesets=" . $excludesets;
+    print_debug_message('rest_get_top_terms', $url, 2);
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_top_terms', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'term' ]);
 }
 
 =head2 rest_get_more_like_this()
@@ -935,27 +934,27 @@ Get similar documents to a given one
 
 =cut
 
-sub rest_get_more_like_this{
-	print_debug_message( 'rest_get_more_like_this', 'Begin', 1 );
-	my $domainid = shift;
-	my $entryid = shift;
-	my $fields = shift;
+sub rest_get_more_like_this {
+    print_debug_message('rest_get_more_like_this', 'Begin', 1);
+    my $domainid = shift;
+    my $entryid = shift;
+    my $fields = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $start = $params{'start'}? $params{'start'} : "" ;
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
-	my $mltfields = $params{'mltfields'}? $params{'mltfields'} : "" ;
-	my $mintermfreq = $params{'mintermfreq'}? $params{'mintermfreq'} : "" ;
-	my $mindocfreq = $params{'mindocfreq'}? $params{'mindocfreq'} : "" ;
-	my $maxqueryterm = $params{'maxqueryterm'}? $params{'maxqueryterm'} : "" ;
-	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
-	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $mltfields = $params{'mltfields'} ? $params{'mltfields'} : "";
+    my $mintermfreq = $params{'mintermfreq'} ? $params{'mintermfreq'} : "";
+    my $mindocfreq = $params{'mindocfreq'} ? $params{'mindocfreq'} : "";
+    my $maxqueryterm = $params{'maxqueryterm'} ? $params{'maxqueryterm'} : "";
+    my $excludes = $params{'excludes'} ? $params{'excludes'} : "";
+    my $excludesets = $params{'excludesets'} ? $params{'excludesets'} : "";
 
-	my $url = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "/morelikethis" . "?size=" . $size . "&start=" . $start . "&fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq  . '&mindocfreq=' . $maxqueryterm  . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_more_like_this', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryid . "/morelikethis" . "?size=" . $size . "&start=" . $start . "&fields=" . $fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq . '&mindocfreq=' . $maxqueryterm . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_more_like_this', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL' ]);
 }
 
 =head2 rest_get_extended_more_like_this()
@@ -966,28 +965,28 @@ Get similar documents to a given one
 
 =cut
 
-sub rest_get_extended_more_like_this{
-	print_debug_message( 'rest_get_extended_more_like_this', 'Begin', 1 );
-	my $domainid = shift;
-	my $entryid = shift;
-	my $targetDomainid = shift;
-	my $fields = shift;
+sub rest_get_extended_more_like_this {
+    print_debug_message('rest_get_extended_more_like_this', 'Begin', 1);
+    my $domainid = shift;
+    my $entryid = shift;
+    my $targetDomainid = shift;
+    my $fields = shift;
 
-	my $size = $params{'size'}? $params{'size'} : "" ;
-	my $start = $params{'start'}? $params{'start'} : "" ;
-	my $fieldurl = $params{'fieldurl'}? $params{'fieldurl'} : "" ;
-	my $viewurl = $params{'viewurl'}? $params{'viewurl'} : "" ;
-	my $mltfields = $params{'mltfields'}? $params{'mltfields'} : "" ;
-	my $mintermfreq = $params{'mintermfreq'}? $params{'mintermfreq'} : "" ;
-	my $mindocfreq = $params{'mindocfreq'}? $params{'mindocfreq'} : "" ;
-	my $maxqueryterm = $params{'maxqueryterm'}? $params{'maxqueryterm'} : "" ;
-	my $excludes = $params{'excludes'}? $params{'excludes'} : "" ;
-	my $excludesets = $params{'excludesets'}? $params{'excludesets'} : "" ;
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $mltfields = $params{'mltfields'} ? $params{'mltfields'} : "";
+    my $mintermfreq = $params{'mintermfreq'} ? $params{'mintermfreq'} : "";
+    my $mindocfreq = $params{'mindocfreq'} ? $params{'mindocfreq'} : "";
+    my $maxqueryterm = $params{'maxqueryterm'} ? $params{'maxqueryterm'} : "";
+    my $excludes = $params{'excludes'} ? $params{'excludes'} : "";
+    my $excludesets = $params{'excludesets'} ? $params{'excludesets'} : "";
 
-	my $url = $baseUrl . "/" .$domainid . "/entry/" . $entryid . "/morelikethis/" . "$targetDomainid" . "?size=" . $size . "&start=" . $start . "&fields=" .$fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq  . '&mindocfreq=' . $maxqueryterm  . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_extended_more_like_this', 'End', 1 );
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['entry', 'value', 'field', 'fieldURL', 'viewURL']);
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryid . "/morelikethis/" . "$targetDomainid" . "?size=" . $size . "&start=" . $start . "&fields=" . $fields . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . '&mltfields=' . $mltfields . '&mintermfreq=' . $mintermfreq . '&mindocfreq=' . $maxqueryterm . '&maxqueryterm=' . $mindocfreq . '&excludes=' . $excludes . '&excludesets=' . $excludesets;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_extended_more_like_this', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL' ]);
 }
 
 =head2 rest_get_auto_complete()
@@ -998,17 +997,17 @@ Get similar documents to a given one
 
 =cut
 
-sub rest_get_auto_complete{
-	print_debug_message( 'rest_get_auto_complete', 'Begin', 1 );
-	my $domainid = shift;
-	my $term = shift;
+sub rest_get_auto_complete {
+    print_debug_message('rest_get_auto_complete', 'Begin', 1);
+    my $domainid = shift;
+    my $term = shift;
 
-	my $url = $baseUrl . "/" .$domainid . "/autocomplete?term=" . $term;
+    my $url = $baseUrl . "/" . $domainid . "/autocomplete?term=" . $term;
 
-	my $param_list_xml_str = &rest_request($url);
-	print_debug_message( 'rest_get_auto_complete', 'End', 1 );
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_auto_complete', 'End', 1);
 
-	return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => ['suggetion']);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'suggetion' ]);
 }
 
 
@@ -1023,12 +1022,12 @@ Print debug message at specified debug level.
 =cut
 
 sub print_debug_message {
-	my $function_name = shift;
-	my $message       = shift;
-	my $level         = shift;
-	if ( $level <= $params{'debugLevel'} ) {
-		print STDERR '[', $function_name, '()] ', $message, "\n";
-	}
+    my $function_name = shift;
+    my $message = shift;
+    my $level = shift;
+    if ($level <= $params{'debugLevel'}) {
+        print STDERR '[', $function_name, '()] ', $message, "\n";
+    }
 }
 
 =head2 usage()
@@ -1040,7 +1039,7 @@ Print program usage message.
 =cut
 
 sub usage {
-	print STDERR <<EOF
+    print STDERR <<EOF
 EB-eye
 ======
 

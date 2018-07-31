@@ -91,178 +91,180 @@ my $outputLevel = 1;
 my $numOpts = scalar(@ARGV);
 
 my %params = (
-	'debugLevel' => 0,
-	'maxJobs'    => 1
+    'debugLevel' => 0,
+    'maxJobs'    => 1
 );
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
 GetOptions(
 
-	# Tool specific options
-	'database|D=s'  => \$tool_params{'database'},   # Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
-	'hmmdb|D=s'     => \$tool_params{'database'},   # Compatability database option
-	'E|e=f'         => \$tool_params{'E'},          # Report E-values[Model] (ex:1)
-	'domE|f=f'      => \$tool_params{'domE'},       # Report E-values[Hit] (ex:1)
-	'incE|g=f'      => \$tool_params{'incE'},       # Siginificance E-values[Model] (ex:0.01)
-	'incdomE|h=f'   => \$tool_params{'incdomE'},    # Siginificance E-values[Hit] (ex:0.03)
-	'T|t=f'         => \$tool_params{'T'},          # Report bit scores[Sequence] (ex:7)
-	'domT|u=f'      => \$tool_params{'domT'},       # Report bit scores[Hit] (ex:5)
-	'incT|v=f'      => \$tool_params{'incT'},       # Significance bit scores[Sequence] (ex:25)
-	'incdomT|w=f'   => \$tool_params{'incdomT'},    # Significance bit scores[Hit] (ex:22))
-	'nobias|n=s'    => \$tool_params{'nobias'},     # Bias composition filter
-	'acc=i'         => \$params{'acc'},             # Get accession ID, how many from top
+    # Tool specific options
+    'database|D=s'  => \$tool_params{'database'}, # Ddatabase to search, Pfam Tigrfam gene3d pirsf superfamily are available
+    'hmmdb|D=s'     => \$tool_params{'database'}, # Compatability database option
+    'E|e=f'         => \$tool_params{'E'},        # Report E-values[Model] (ex:1)
+    'domE|f=f'      => \$tool_params{'domE'},     # Report E-values[Hit] (ex:1)
+    'incE|g=f'      => \$tool_params{'incE'},     # Siginificance E-values[Model] (ex:0.01)
+    'incdomE|h=f'   => \$tool_params{'incdomE'},  # Siginificance E-values[Hit] (ex:0.03)
+    'T|t=f'         => \$tool_params{'T'},        # Report bit scores[Sequence] (ex:7)
+    'domT|u=f'      => \$tool_params{'domT'},     # Report bit scores[Hit] (ex:5)
+    'incT|v=f'      => \$tool_params{'incT'},     # Significance bit scores[Sequence] (ex:25)
+    'incdomT|w=f'   => \$tool_params{'incdomT'},  # Significance bit scores[Hit] (ex:22))
+    'nobias|n=s'    => \$tool_params{'nobias'},   # Bias composition filter
+    'acc=i'         => \$params{'acc'},           # Get accession ID, how many from top
 
-	# Generic options
-	'email=s'       => \$params{'email'},           # User e-mail address
-	'title=s'       => \$params{'title'},           # Job title
-	'outfile=s'     => \$params{'outfile'},         # File name for results
-	'outformat=s'   => \$params{'outformat'},       # Output format for results
-	'jobid=s'       => \$params{'jobid'},           # JobId
-	'help|h'        => \$params{'help'},            # Usage help
-	'async'         => \$params{'async'},           # Asynchronous submission
-	'polljob'       => \$params{'polljob'},         # Get job result
-	'resultTypes'   => \$params{'resultTypes'},     # Get result types
-	'status'        => \$params{'status'},          # Get job status
-	'params'        => \$params{'params'},          # List input parameters
-	'paramDetail=s' => \$params{'paramDetail'},     # Get details for parameter
-	'quiet'         => \$params{'quiet'},           # Decrease output level
-	'verbose'       => \$params{'verbose'},         # Increase output level
-	'debugLevel=i'  => \$params{'debugLevel'},      # Debug output level
-	'baseUrl=s'     => \$baseUrl,                   # Base URL for service.
-	'useSeqId'      => \$params{'useSeqId'},        # Seq Id file name
-	'maxJobs=i'     => \$params{'maxJobs'},         # Max. parallel jobs
-	'alignView|A=s' => \$tool_params{'alignView'},  # Output alignment in result. The default is true.
-	'multifasta'	=> \$params{'multifasta'}       # Multiple fasta input
+    # Generic options
+    'email=s'       => \$params{'email'},          # User e-mail address
+    'title=s'       => \$params{'title'},          # Job title
+    'outfile=s'     => \$params{'outfile'},        # File name for results
+    'outformat=s'   => \$params{'outformat'},      # Output format for results
+    'jobid=s'       => \$params{'jobid'},          # JobId
+    'help|h'        => \$params{'help'},           # Usage help
+    'async'         => \$params{'async'},          # Asynchronous submission
+    'polljob'       => \$params{'polljob'},        # Get job result
+    'resultTypes'   => \$params{'resultTypes'},    # Get result types
+    'status'        => \$params{'status'},         # Get job status
+    'params'        => \$params{'params'},         # List input parameters
+    'paramDetail=s' => \$params{'paramDetail'},    # Get details for parameter
+    'quiet'         => \$params{'quiet'},          # Decrease output level
+    'verbose'       => \$params{'verbose'},        # Increase output level
+    'debugLevel=i'  => \$params{'debugLevel'},     # Debug output level
+    'baseUrl=s'     => \$baseUrl,                  # Base URL for service.
+    'useSeqId'      => \$params{'useSeqId'},       # Seq Id file name
+    'maxJobs=i'     => \$params{'maxJobs'},        # Max. parallel jobs
+    'alignView|A=s' => \$tool_params{'alignView'}, # Output alignment in result. The default is true.
+    'multifasta'    => \$params{'multifasta'}      # Multiple fasta input
 );
-if ( $params{'verbose'} ) { $outputLevel++ }
-if ( $params{'quiet'} )  { $outputLevel-- }
+if ($params{'verbose'}) {$outputLevel++}
+if ($params{'quiet'}) {$outputLevel--}
 
 if (!($tool_params{'alignView'})) {
-	$tool_params{'alignView'} = 'true';
+    $tool_params{'alignView'} = 'true';
 }
 
-if ( lc $tool_params{'alignView'} eq 'true') {
-	delete $tool_params{'alignView'};
-} elsif ( lc $tool_params{'alignView'} eq 'false') {
-} else {
-	print "The alignView option should be one of the restricted values : true or false. The default is true. \n";
-	exit(0);
+if (lc $tool_params{'alignView'} eq 'true') {
+    delete $tool_params{'alignView'};
+}
+elsif (lc $tool_params{'alignView'} eq 'false') {
+}
+else {
+    print "The alignView option should be one of the restricted values : true or false. The default is true. \n";
+    exit(0);
 }
 
 if (!($tool_params{'nobias'})) {
-	$tool_params{'nobias'} = 'true';
+    $tool_params{'nobias'} = 'true';
 }
 
-if ( lc $tool_params{'nobias'} eq 'true') {
-	delete $tool_params{'nobias'};
-} elsif ( lc $tool_params{'nobias'} eq 'false') {
-} else {
-	print "The nobias option should be one of the restricted values : true or false. The default is true. \n";
-	exit(0);
+if (lc $tool_params{'nobias'} eq 'true') {
+    delete $tool_params{'nobias'};
+}
+elsif (lc $tool_params{'nobias'} eq 'false') {
+}
+else {
+    print "The nobias option should be one of the restricted values : true or false. The default is true. \n";
+    exit(0);
 }
 
 # Debug mode: LWP version
-&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
-	1 );
+&print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
+    1);
 
 # Debug mode: print the input parameters
-&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ),           11 );
-&print_debug_message( 'MAIN', "tool_params:\n" . Dumper( \%tool_params ), 11 );
+&print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
+&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
 
 # Get the script filename for use in usage messages
-my $scriptName = basename( $0, () );
+my $scriptName = basename($0, ());
 
 # Print usage and exit if requested
-if ( $params{'help'} || $numOpts == 0 ) {
-	&usage();
-	exit(0);
+if ($params{'help'} || $numOpts == 0) {
+    &usage();
+    exit(0);
 }
 
 # Debug mode: show the base URL
-&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
+&print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
 if (
-	!(
-		   $params{'polljob'}
-		|| $params{'resultTypes'}
-		|| $params{'status'}
-		|| $params{'params'}
-		|| $params{'paramDetail'}
-	)
-	&& !( defined( $ARGV[0] ) || defined( $params{'sequence'} ) )
-  )
-{
+    !(
+        $params{'polljob'}
+            || $params{'resultTypes'}
+            || $params{'status'}
+            || $params{'params'}
+            || $params{'paramDetail'}
+    )
+        && !(defined($ARGV[0]) || defined($params{'sequence'}))
+) {
 
-	# Bad argument combination, so print error message and usage
-	print STDERR 'Error: bad option combination', "\n";
-	&usage();
-	exit(1);
+    # Bad argument combination, so print error message and usage
+    print STDERR 'Error: bad option combination', "\n";
+    &usage();
+    exit(1);
 }
 
 # Get parameters list
-elsif ( $params{'params'} ) {
-	&print_tool_params();
+elsif ($params{'params'}) {
+    &print_tool_params();
 }
 
 # Get parameter details
-elsif ( $params{'paramDetail'} ) {
-	&print_param_details( $params{'paramDetail'} );
+elsif ($params{'paramDetail'}) {
+    &print_param_details($params{'paramDetail'});
 }
 
 # Job status
-elsif ( $params{'status'} && defined( $params{'jobid'} ) ) {
-	&print_job_status( $params{'jobid'} );
+elsif ($params{'status'} && defined($params{'jobid'})) {
+    &print_job_status($params{'jobid'});
 }
 
 # Result types
-elsif ( $params{'resultTypes'} && defined( $params{'jobid'} ) ) {
-	&print_result_types( $params{'jobid'} );
+elsif ($params{'resultTypes'} && defined($params{'jobid'})) {
+    &print_result_types($params{'jobid'});
 }
 
 # Poll job and get results
-elsif ( $params{'polljob'} && defined( $params{'jobid'} ) ) {
-	&get_results( $params{'jobid'} );
+elsif ($params{'polljob'} && defined($params{'jobid'})) {
+    &get_results($params{'jobid'});
 }
 
 # Submit a job
 else {
 
-	# Multiple input sequence mode, assume fasta format.
-	if ( $params{'multifasta'} ) {
-		&multi_submit_job();
-	}
+    # Multiple input sequence mode, assume fasta format.
+    if ($params{'multifasta'}) {
+        &multi_submit_job();
+    }
 
-	# Entry identifier list file.
-	elsif (( defined( $params{'sequence'} ) && $params{'sequence'} =~ m/^\@/ )
-		|| ( defined( $ARGV[0] ) && $ARGV[0] =~ m/^\@/ ) )
-	{
-		my $list_filename = $params{'sequence'} || $ARGV[0];
-		$list_filename =~ s/^\@//;
-		&list_file_submit_job($list_filename);
-	}
+    # Entry identifier list file.
+    elsif ((defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/)
+        || (defined($ARGV[0]) && $ARGV[0] =~ m/^\@/)) {
+        my $list_filename = $params{'sequence'} || $ARGV[0];
+        $list_filename =~ s/^\@//;
+        &list_file_submit_job($list_filename);
+    }
 
-	# Default: single sequence/identifier.
-	else {
-		# Warn for invalid batch only option use.
-		if ( $params{'useSeqId'} ) {
-			print STDERR "Warning: --useSeqId option ignored.\n";
-			delete $params{'useSeqId'};
-		}
-		if ( $params{'maxJobs'} > 1 ) {
-			print STDERR "Warning: --maxJobs option ignored.\n";
-			$params{'maxJobs'} = 1;
-		}
-		# Load the sequence data and submit.
-		&submit_job( &load_data() );
-	}
+    # Default: single sequence/identifier.
+    else {
+        # Warn for invalid batch only option use.
+        if ($params{'useSeqId'}) {
+            print STDERR "Warning: --useSeqId option ignored.\n";
+            delete $params{'useSeqId'};
+        }
+        if ($params{'maxJobs'} > 1) {
+            print STDERR "Warning: --maxJobs option ignored.\n";
+            $params{'maxJobs'} = 1;
+        }
+        # Load the sequence data and submit.
+        &submit_job(&load_data());
+    }
 }
 
 # hmmscan db index
-my $db_index = "4";# default Pfam
+my $db_index = "4"; # default Pfam
 
 
 =head1 FUNCTIONS
@@ -280,17 +282,17 @@ Get a LWP UserAgent to use to perform REST requests.
 =cut
 
 sub rest_user_agent() {
-	print_debug_message( 'rest_user_agent', 'Begin', 21 );
-	# Create an LWP UserAgent for making HTTP calls.
-	my $ua = LWP::UserAgent->new();
-	# Set 'User-Agent' HTTP header to identifiy the client.
-	my $revisionNumber = 0;
-	$revisionNumber = $1 if('$Revision: 2791 $' =~ m/(\d+)/);
-	$ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
-	# Configure HTTP proxy support from environment.
-	$ua->env_proxy;
-	print_debug_message( 'rest_user_agent', 'End', 21 );
-	return $ua;
+    print_debug_message('rest_user_agent', 'Begin', 21);
+    # Create an LWP UserAgent for making HTTP calls.
+    my $ua = LWP::UserAgent->new();
+    # Set 'User-Agent' HTTP header to identifiy the client.
+    my $revisionNumber = 0;
+    $revisionNumber = $1 if ('$Revision: 2791 $' =~ m/(\d+)/);
+    $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
+    # Configure HTTP proxy support from environment.
+    $ua->env_proxy;
+    print_debug_message('rest_user_agent', 'End', 21);
+    return $ua;
 }
 
 =head2 rest_error()
@@ -302,29 +304,29 @@ Check a REST response for an error condition. An error is mapped to a die.
 =cut
 
 sub rest_error() {
-	print_debug_message( 'rest_error', 'Begin', 21 );
-	my $response = shift;
-	my $contentdata;
-	if(scalar(@_) > 0) {
-		$contentdata = shift;
-	}
-	if(!defined($contentdata) || $contentdata eq '') {
-		$contentdata = $response->content();
-	}
-	# Check for HTTP error codes
-	if ( $response->is_error ) {
-		my $error_message = '';
-		# HTML response.
-		if(	$contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
-			$error_message = $1;
-		}
-		#  XML response.
-		elsif($contentdata =~ m/<description>([^<]+)<\/description>/) {
-			$error_message = $1;
-		}
-		die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
-	}
-	print_debug_message( 'rest_error', 'End', 21 );
+    print_debug_message('rest_error', 'Begin', 21);
+    my $response = shift;
+    my $contentdata;
+    if (scalar(@_) > 0) {
+        $contentdata = shift;
+    }
+    if (!defined($contentdata) || $contentdata eq '') {
+        $contentdata = $response->content();
+    }
+    # Check for HTTP error codes
+    if ($response->is_error) {
+        my $error_message = '';
+        # HTML response.
+        if ($contentdata =~ m/<h1>([^<]+)<\/h1>/) {
+            $error_message = $1;
+        }
+        #  XML response.
+        elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
+            $error_message = $1;
+        }
+        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+    }
+    print_debug_message('rest_error', 'End', 21);
 }
 
 =head2 rest_request()
@@ -336,40 +338,40 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request {
-	print_debug_message( 'rest_request', 'Begin', 11 );
-	my $requestUrl = shift;
-	print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
+    print_debug_message('rest_request', 'Begin', 11);
+    my $requestUrl = shift;
+    print_debug_message('rest_request', 'URL: ' . $requestUrl, 11);
 
-	# Get an LWP UserAgent.
-	$ua = &rest_user_agent() unless defined($ua);
-	# Available HTTP compression methods.
-	my $can_accept;
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
-	$can_accept = '' unless defined($can_accept);
-	# Perform the request
-	my $response = $ua->get($requestUrl,
-		'Accept-Encoding' => $can_accept, # HTTP compression.
-	);
-	print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,	11 );
-	print_debug_message( 'rest_request', 'response length: ' . length($response->content()), 11 );
-	print_debug_message( 'rest_request', 'request:' ."\n" . $response->request()->as_string(), 32 );
-	print_debug_message( 'rest_request', 'response: ' . "\n" . $response->as_string(), 32 );
+    # Get an LWP UserAgent.
+    $ua = &rest_user_agent() unless defined($ua);
+    # Available HTTP compression methods.
+    my $can_accept;
+    eval {
+        $can_accept = HTTP::Message::decodable();
+    };
+    $can_accept = '' unless defined($can_accept);
+    # Perform the request
+    my $response = $ua->get($requestUrl,
+        'Accept-Encoding' => $can_accept, # HTTP compression.
+    );
+    print_debug_message('rest_request', 'HTTP status: ' . $response->code, 11);
+    print_debug_message('rest_request', 'response length: ' . length($response->content()), 11);
+    print_debug_message('rest_request', 'request:' . "\n" . $response->request()->as_string(), 32);
+    print_debug_message('rest_request', 'response: ' . "\n" . $response->as_string(), 32);
 
-	# Unpack possibly compressed response.
-	my $retVal;
-	if ( defined($can_accept) && $can_accept ne '') {
-	    $retVal = $response->decoded_content();
-	}
-	# If unable to decode use orginal content.
-	$retVal = $response->content() unless defined($retVal);
-	# Check for an error.
-	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request', 'End', 11 );
+    # Unpack possibly compressed response.
+    my $retVal;
+    if (defined($can_accept) && $can_accept ne '') {
+        $retVal = $response->decoded_content();
+    }
+    # If unable to decode use orginal content.
+    $retVal = $response->content() unless defined($retVal);
+    # Check for an error.
+    &rest_error($response, $retVal);
+    print_debug_message('rest_request', 'End', 11);
 
-	# Return the response data
-	return $retVal;
+    # Return the response data
+    return $retVal;
 }
 
 
@@ -382,83 +384,83 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request_for_accid {
-	print_debug_message( 'rest_request_for_accid', 'Begin', 11 );
-	my $requestUrl = shift;
-	print_debug_message( 'rest_request_for_accid', 'URL: ' . $requestUrl, 11 );
+    print_debug_message('rest_request_for_accid', 'Begin', 11);
+    my $requestUrl = shift;
+    print_debug_message('rest_request_for_accid', 'URL: ' . $requestUrl, 11);
 
-	# Get an LWP UserAgent.
-	$ua = &rest_user_agent() unless defined($ua);
-	# Available HTTP compression methods.
-	my $can_accept;
-	eval {
-	    $can_accept = HTTP::Message::decodable();
-	};
-	$can_accept = '' unless defined($can_accept);
-	# Perform the request
-	my $response = $ua->get($requestUrl,
-		'Accept-Encoding' => $can_accept, # HTTP compression.
-	);
-	print_debug_message( 'rest_request_for_accid', 'HTTP status: ' . $response->code,	11 );
-	print_debug_message( 'rest_request_for_accid', 'response length: ' . length($response->content()), 11 );
-	print_debug_message( 'rest_request_for_accid', 'request:' ."\n" . $response->request()->as_string(), 32 );
-	print_debug_message( 'rest_request_for_accid', 'response: ' . "\n" . $response->as_string(), 32 );
-	# Unpack possibly compressed response.
-	my $retVal;
-	if ( defined($can_accept) && $can_accept ne '') {
-	    $retVal = $response->decoded_content();
-	}
-	# If unable to decode use orginal content.
-	$retVal = $response->content() unless defined($retVal);
-	# Check for an error.
-	&rest_error($response, $retVal);
-	print_debug_message( 'rest_request_for_accid', 'retVal: ' . $retVal, 12 );
-	print_debug_message( 'rest_request_for_accid', 'End', 11 );
+    # Get an LWP UserAgent.
+    $ua = &rest_user_agent() unless defined($ua);
+    # Available HTTP compression methods.
+    my $can_accept;
+    eval {
+        $can_accept = HTTP::Message::decodable();
+    };
+    $can_accept = '' unless defined($can_accept);
+    # Perform the request
+    my $response = $ua->get($requestUrl,
+        'Accept-Encoding' => $can_accept, # HTTP compression.
+    );
+    print_debug_message('rest_request_for_accid', 'HTTP status: ' . $response->code, 11);
+    print_debug_message('rest_request_for_accid', 'response length: ' . length($response->content()), 11);
+    print_debug_message('rest_request_for_accid', 'request:' . "\n" . $response->request()->as_string(), 32);
+    print_debug_message('rest_request_for_accid', 'response: ' . "\n" . $response->as_string(), 32);
+    # Unpack possibly compressed response.
+    my $retVal;
+    if (defined($can_accept) && $can_accept ne '') {
+        $retVal = $response->decoded_content();
+    }
+    # If unable to decode use orginal content.
+    $retVal = $response->content() unless defined($retVal);
+    # Check for an error.
+    &rest_error($response, $retVal);
+    print_debug_message('rest_request_for_accid', 'retVal: ' . $retVal, 12);
+    print_debug_message('rest_request_for_accid', 'End', 11);
 
-	my @lines = split /\n/, $retVal;
+    my @lines = split /\n/, $retVal;
 
-	my $v_cnt = 0;
-	my $top_acc = 20;
-	if (defined $params{'acc'}) {
-		$top_acc = $params{'acc'};
-	}
+    my $v_cnt = 0;
+    my $top_acc = 20;
+    if (defined $params{'acc'}) {
+        $top_acc = $params{'acc'};
+    }
 
-	foreach my $line (@lines) {
+    foreach my $line (@lines) {
 
-		# Updating HMMER numeric ID to Accession
-		if ( $v_cnt >= $top_acc) {
-			 last;
-		}
+        # Updating HMMER numeric ID to Accession
+        if ($v_cnt >= $top_acc) {
+            last;
+        }
 
-		my $where_id_begin = index($line, '>>');
+        my $where_id_begin = index($line, '>>');
 
-		if ($where_id_begin>-1) {
-			$v_cnt++;
+        if ($where_id_begin > -1) {
+            $v_cnt++;
 
-			my $grab_id = substr($line, $where_id_begin+3, 30);
-			$grab_id =~ s/\s*$//; # trim left whitespace
+            my $grab_id = substr($line, $where_id_begin + 3, 30);
+            $grab_id =~ s/\s*$//; # trim left whitespace
 
-			#print "=grab_id=====================\n";
+            #print "=grab_id=====================\n";
 
-			my $acc_id = rest_get_accid($grab_id);
+            my $acc_id = rest_get_accid($grab_id);
 
-			if ($grab_id ) {
-				if ($acc_id ) {
+            if ($grab_id) {
+                if ($acc_id) {
 
-					my $numeric1 = ' '.sprintf ("%09d", $grab_id ).' ';
-					my $numeric2 = ' '.$grab_id.' ';
-					my $new_id = ' '.$acc_id.' ';
+                    my $numeric1 = ' ' . sprintf("%09d", $grab_id) . ' ';
+                    my $numeric2 = ' ' . $grab_id . ' ';
+                    my $new_id = ' ' . $acc_id . ' ';
 
-					$retVal =~ s/$numeric1/$new_id/g;
-					$retVal =~ s/$numeric2/$new_id/g;
-				}
-			}
+                    $retVal =~ s/$numeric1/$new_id/g;
+                    $retVal =~ s/$numeric2/$new_id/g;
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
-	# Return the response data
-	return $retVal;
+    # Return the response data
+    return $retVal;
 }
 
 
@@ -471,45 +473,46 @@ http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
 =cut
 
 sub rest_get_accid {
-	print_debug_message( 'rest_get_accid', '##### Begin', 42 );
-	#my (@reference);
-	my $each_acc_id;
-	my ($entryid) = @_;
+    print_debug_message('rest_get_accid', '##### Begin', 42);
+    #my (@reference);
+    my $each_acc_id;
+    my ($entryid) = @_;
 
-	#my $domainid ='hmmer_seq';
-	my $domainid ='hmmer_hmm';
-	my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
+    #my $domainid ='hmmer_seq';
+    my $domainid = 'hmmer_hmm';
+    my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
 
-	my $url = $ebisearch_baseUrl . "/entry/".$entryid."?fields=id,content";
-	my $reference_list_xml_str = &rest_request($url);
-	my $reference_list_xml     = XMLin($reference_list_xml_str);
+    my $url = $ebisearch_baseUrl . "/entry/" . $entryid . "?fields=id,content";
+    my $reference_list_xml_str = &rest_request($url);
+    my $reference_list_xml = XMLin($reference_list_xml_str);
 
-	# read XML file
-	my $data = XMLin($reference_list_xml_str);
-	my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
+    # read XML file
+    my $data = XMLin($reference_list_xml_str);
+    my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
 
-	if ($acc_info) {
-		print_debug_message( 'rest_get_accid', '#acc_info is: ' . $acc_info, 42 );
+    if ($acc_info) {
+        print_debug_message('rest_get_accid', '#acc_info is: ' . $acc_info, 42);
 
-		my $decoded;
+        my $decoded;
 
-		try {
-			$decoded = JSON::XS::decode_json($acc_info);
-		}
-		catch {
-			warn "Caught JSON::XS decode error: $_";
-		};
+        try {
+            $decoded = JSON::XS::decode_json($acc_info);
+        }
+        catch {
+            warn "Caught JSON::XS decode error: $_";
+        };
 
-		my @selected_db = $decoded->[$db_index];
+        my @selected_db = $decoded->[$db_index];
 
-		$each_acc_id = $selected_db[0]->{'acc'};
+        $each_acc_id = $selected_db[0]->{'acc'};
 
-	} else {
-		print_debug_message( 'rest_get_accid', '#acc_info NONE: ' , 42 );
-	}
+    }
+    else {
+        print_debug_message('rest_get_accid', '#acc_info NONE: ', 42);
+    }
 
-	print_debug_message( 'rest_get_accid', 'End', 42 );
-	return ($each_acc_id);
+    print_debug_message('rest_get_accid', 'End', 42);
+    return($each_acc_id);
 }
 
 
@@ -522,13 +525,13 @@ Get list of tool parameter names.
 =cut
 
 sub rest_get_parameters {
-	print_debug_message( 'rest_get_parameters', 'Begin', 1 );
-	my $url                = $baseUrl . '/parameters/';
-	my $param_list_xml_str = rest_request($url);
-	my $param_list_xml     = XMLin($param_list_xml_str);
-	my (@param_list)       = @{ $param_list_xml->{'id'} };
-	print_debug_message( 'rest_get_parameters', 'End', 1 );
-	return (@param_list);
+    print_debug_message('rest_get_parameters', 'Begin', 1);
+    my $url = $baseUrl . '/parameters/';
+    my $param_list_xml_str = rest_request($url);
+    my $param_list_xml = XMLin($param_list_xml_str);
+    my (@param_list) = @{$param_list_xml->{'id'}};
+    print_debug_message('rest_get_parameters', 'End', 1);
+    return(@param_list);
 }
 
 =head2 rest_get_parameter_details()
@@ -540,15 +543,15 @@ Get details of a tool parameter.
 =cut
 
 sub rest_get_parameter_details {
-	print_debug_message( 'rest_get_parameter_details', 'Begin', 1 );
-	my $parameterId = shift;
-	print_debug_message( 'rest_get_parameter_details',
-		'parameterId: ' . $parameterId, 1 );
-	my $url                  = $baseUrl . '/parameterdetails/' . $parameterId;
-	my $param_detail_xml_str = rest_request($url);
-	my $param_detail_xml     = XMLin($param_detail_xml_str);
-	print_debug_message( 'rest_get_parameter_details', 'End', 1 );
-	return ($param_detail_xml);
+    print_debug_message('rest_get_parameter_details', 'Begin', 1);
+    my $parameterId = shift;
+    print_debug_message('rest_get_parameter_details',
+        'parameterId: ' . $parameterId, 1);
+    my $url = $baseUrl . '/parameterdetails/' . $parameterId;
+    my $param_detail_xml_str = rest_request($url);
+    my $param_detail_xml = XMLin($param_detail_xml_str);
+    print_debug_message('rest_get_parameter_details', 'End', 1);
+    return($param_detail_xml);
 }
 
 =head2 rest_run()
@@ -560,46 +563,46 @@ Submit a job.
 =cut
 
 sub rest_run {
-	print_debug_message( 'rest_run', 'Begin', 1 );
-	my $email  = shift;
-	my $title  = shift;
-	my $params = shift;
-	$email = '' if(!$email);
-	print_debug_message( 'rest_run', 'email: ' . $email, 1 );
-	if ( defined($title) ) {
-		print_debug_message( 'rest_run', 'title: ' . $title, 1 );
-	}
-	print_debug_message( 'rest_run', 'params>>: ' . Dumper($params), 1 );
+    print_debug_message('rest_run', 'Begin', 1);
+    my $email = shift;
+    my $title = shift;
+    my $params = shift;
+    $email = '' if (!$email);
+    print_debug_message('rest_run', 'email: ' . $email, 1);
+    if (defined($title)) {
+        print_debug_message('rest_run', 'title: ' . $title, 1);
+    }
+    print_debug_message('rest_run', 'params>>: ' . Dumper($params), 1);
 
-	# Get an LWP UserAgent.
-	$ua = &rest_user_agent() unless defined($ua);
+    # Get an LWP UserAgent.
+    $ua = &rest_user_agent() unless defined($ua);
 
-	# Clean up parameters
-	my (%tmp_params) = %{$params};
-	$tmp_params{'email'} = $email;
-	$tmp_params{'title'} = $title;
-	foreach my $param_name ( keys(%tmp_params) ) {
-		if ( !defined( $tmp_params{$param_name} ) ) {
-			delete $tmp_params{$param_name};
-		}
-	}
+    # Clean up parameters
+    my (%tmp_params) = %{$params};
+    $tmp_params{'email'} = $email;
+    $tmp_params{'title'} = $title;
+    foreach my $param_name (keys(%tmp_params)) {
+        if (!defined($tmp_params{$param_name})) {
+            delete $tmp_params{$param_name};
+        }
+    }
 
-	# Submit the job as a POST
-	my $url = $baseUrl . '/run';
-	my $response = $ua->post( $url, \%tmp_params );
-	print_debug_message( 'rest_run', 'HTTP status: ' . $response->code, 11 );
-	print_debug_message( 'rest_run',
-		'request:' ."\n" . $response->request()->as_string(), 11 );
-	print_debug_message( 'rest_run',
-		'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11 );
+    # Submit the job as a POST
+    my $url = $baseUrl . '/run';
+    my $response = $ua->post($url, \%tmp_params);
+    print_debug_message('rest_run', 'HTTP status: ' . $response->code, 11);
+    print_debug_message('rest_run',
+        'request:' . "\n" . $response->request()->as_string(), 11);
+    print_debug_message('rest_run',
+        'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11);
 
-	# Check for an error.
-	&rest_error($response);
+    # Check for an error.
+    &rest_error($response);
 
-	# The job id is returned
-	my $job_id = $response->content();
-	print_debug_message( 'rest_run', 'End', 1 );
-	return $job_id;
+    # The job id is returned
+    my $job_id = $response->content();
+    print_debug_message('rest_run', 'End', 1);
+    return $job_id;
 }
 
 =head2 rest_get_status()
@@ -611,15 +614,15 @@ Check the status of a job.
 =cut
 
 sub rest_get_status {
-	print_debug_message( 'rest_get_status', 'Begin', 1 );
-	my $job_id = shift;
-	print_debug_message( 'rest_get_status', 'jobid: ' . $job_id, 2 );
-	my $status_str = 'UNKNOWN';
-	my $url        = $baseUrl . '/status/' . $job_id;
-	$status_str = &rest_request($url);
-	print_debug_message( 'rest_get_status', 'status_str: ' . $status_str, 2 );
-	print_debug_message( 'rest_get_status', 'End', 1 );
-	return $status_str;
+    print_debug_message('rest_get_status', 'Begin', 1);
+    my $job_id = shift;
+    print_debug_message('rest_get_status', 'jobid: ' . $job_id, 2);
+    my $status_str = 'UNKNOWN';
+    my $url = $baseUrl . '/status/' . $job_id;
+    $status_str = &rest_request($url);
+    print_debug_message('rest_get_status', 'status_str: ' . $status_str, 2);
+    print_debug_message('rest_get_status', 'End', 1);
+    return $status_str;
 }
 
 =head2 rest_get_result_types()
@@ -631,18 +634,18 @@ Get list of result types for finished job.
 =cut
 
 sub rest_get_result_types {
-	print_debug_message( 'rest_get_result_types', 'Begin', 1 );
-	my $job_id = shift;
-	print_debug_message( 'rest_get_result_types', 'jobid: ' . $job_id, 2 );
-	my (@resultTypes);
-	my $url                      = $baseUrl . '/resulttypes/' . $job_id;
-	my $result_type_list_xml_str = &rest_request($url);
-	my $result_type_list_xml     = XMLin($result_type_list_xml_str);
-	(@resultTypes) = @{ $result_type_list_xml->{'type'} };
-	print_debug_message( 'rest_get_result_types',
-		scalar(@resultTypes) . ' result types', 2 );
-	print_debug_message( 'rest_get_result_types', 'End', 1 );
-	return (@resultTypes);
+    print_debug_message('rest_get_result_types', 'Begin', 1);
+    my $job_id = shift;
+    print_debug_message('rest_get_result_types', 'jobid: ' . $job_id, 2);
+    my (@resultTypes);
+    my $url = $baseUrl . '/resulttypes/' . $job_id;
+    my $result_type_list_xml_str = &rest_request($url);
+    my $result_type_list_xml = XMLin($result_type_list_xml_str);
+    (@resultTypes) = @{$result_type_list_xml->{'type'}};
+    print_debug_message('rest_get_result_types',
+        scalar(@resultTypes) . ' result types', 2);
+    print_debug_message('rest_get_result_types', 'End', 1);
+    return(@resultTypes);
 }
 
 =head2 rest_get_result()
@@ -654,19 +657,19 @@ Get result data of a specified type for a finished job.
 =cut
 
 sub rest_get_result {
-	print_debug_message( 'rest_get_result', 'Begin', 1 );
-	my $job_id = shift;
-	my $type   = shift;
-	print_debug_message( 'rest_get_result', 'jobid: ' . $job_id, 1 );
-	print_debug_message( 'rest_get_result', 'type: ' . $type,    1 );
-	my $url    = $baseUrl . '/result/' . $job_id . '/' . $type;
+    print_debug_message('rest_get_result', 'Begin', 1);
+    my $job_id = shift;
+    my $type = shift;
+    print_debug_message('rest_get_result', 'jobid: ' . $job_id, 1);
+    print_debug_message('rest_get_result', 'type: ' . $type, 1);
+    my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
 
-#	my $result = &rest_request($url);
-	my $result = &rest_request_for_accid($url);
-	print_debug_message( 'rest_get_result', length($result) . ' characters',
-		1 );
-	print_debug_message( 'rest_get_result', 'End', 1 );
-	return $result;
+    #	my $result = &rest_request($url);
+    my $result = &rest_request_for_accid($url);
+    print_debug_message('rest_get_result', length($result) . ' characters',
+        1);
+    print_debug_message('rest_get_result', 'End', 1);
+    return $result;
 }
 
 ### Service actions and utility functions ###
@@ -680,12 +683,12 @@ Print debug message at specified debug level.
 =cut
 
 sub print_debug_message {
-	my $function_name = shift;
-	my $message       = shift;
-	my $level         = shift;
-	if ( $level <= $params{'debugLevel'} ) {
-		print STDERR '[', $function_name, '()] ', $message, "\n";
-	}
+    my $function_name = shift;
+    my $message = shift;
+    my $level = shift;
+    if ($level <= $params{'debugLevel'}) {
+        print STDERR '[', $function_name, '()] ', $message, "\n";
+    }
 }
 
 =head2 print_tool_params()
@@ -697,12 +700,12 @@ Print list of tool parameters.
 =cut
 
 sub print_tool_params {
-	print_debug_message( 'print_tool_params', 'Begin', 1 );
-	my (@param_list) = &rest_get_parameters();
-	foreach my $param ( sort(@param_list) ) {
-		print $param, "\n";
-	}
-	print_debug_message( 'print_tool_params', 'End', 1 );
+    print_debug_message('print_tool_params', 'Begin', 1);
+    my (@param_list) = &rest_get_parameters();
+    foreach my $param (sort (@param_list)) {
+        print $param, "\n";
+    }
+    print_debug_message('print_tool_params', 'End', 1);
 }
 
 =head2 print_param_details()
@@ -714,23 +717,23 @@ Print details of a tool parameter.
 =cut
 
 sub print_param_details {
-	print_debug_message( 'print_param_details', 'Begin', 1 );
-	my $paramName = shift;
-	print_debug_message( 'print_param_details', 'paramName: ' . $paramName, 2 );
-	my $paramDetail = &rest_get_parameter_details($paramName);
-	print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
-	print $paramDetail->{'description'}, "\n";
-	if(defined($paramDetail->{'values'}->{'value'})) {
-		if(ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
-			foreach my $value ( @{ $paramDetail->{'values'}->{'value'} } ) {
-				&print_param_value($value);
-			}
-		}
-		else {
-				&print_param_value($paramDetail->{'values'}->{'value'});
-		}
-	}
-	print_debug_message( 'print_param_details', 'End', 1 );
+    print_debug_message('print_param_details', 'Begin', 1);
+    my $paramName = shift;
+    print_debug_message('print_param_details', 'paramName: ' . $paramName, 2);
+    my $paramDetail = &rest_get_parameter_details($paramName);
+    print $paramDetail->{'name'}, "\t", $paramDetail->{'type'}, "\n";
+    print $paramDetail->{'description'}, "\n";
+    if (defined($paramDetail->{'values'}->{'value'})) {
+        if (ref($paramDetail->{'values'}->{'value'}) eq 'ARRAY') {
+            foreach my $value (@{$paramDetail->{'values'}->{'value'}}) {
+                &print_param_value($value);
+            }
+        }
+        else {
+            &print_param_value($paramDetail->{'values'}->{'value'});
+        }
+    }
+    print_debug_message('print_param_details', 'End', 1);
 }
 
 =head2 print_param_value()
@@ -744,31 +747,29 @@ Used by print_param_details() to handle both singluar and array values.
 =cut
 
 sub print_param_value {
-	my $value = shift;
-	print $value->{'value'};
-	if ( $value->{'defaultValue'} eq 'true' ) {
-		print "\t", 'default';
-	}
-	print "\n";
-	print "\t", $value->{'label'}, "\n";
-	if ( defined( $value->{'properties'} ) ) {
-		foreach
-		  my $key ( sort( keys( %{ $value->{'properties'}{'property'} } ) ) )
-		{
-			if ( ref( $value->{'properties'}{'property'}{$key} ) eq 'HASH'
-				&& defined( $value->{'properties'}{'property'}{$key}{'value'} )
-			  )
-			{
-				print "\t", $key, "\t",
-				  $value->{'properties'}{'property'}{$key}{'value'}, "\n";
-			}
-			else {
-				print "\t", $value->{'properties'}{'property'}{'key'},
-				  "\t", $value->{'properties'}{'property'}{'value'}, "\n";
-				last;
-			}
-		}
-	}
+    my $value = shift;
+    print $value->{'value'};
+    if ($value->{'defaultValue'} eq 'true') {
+        print "\t", 'default';
+    }
+    print "\n";
+    print "\t", $value->{'label'}, "\n";
+    if (defined($value->{'properties'})) {
+        foreach
+        my $key (sort ( keys(%{$value->{'properties'}{'property'}}) )) {
+            if (ref($value->{'properties'}{'property'}{$key}) eq 'HASH'
+                && defined($value->{'properties'}{'property'}{$key}{'value'})
+            ) {
+                print "\t", $key, "\t",
+                    $value->{'properties'}{'property'}{$key}{'value'}, "\n";
+            }
+            else {
+                print "\t", $value->{'properties'}{'property'}{'key'},
+                    "\t", $value->{'properties'}{'property'}{'value'}, "\n";
+                last;
+            }
+        }
+    }
 }
 
 =head2 print_job_status()
@@ -780,19 +781,19 @@ Print status of a job.
 =cut
 
 sub print_job_status {
-	print_debug_message( 'print_job_status', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'print_job_status', 'jobid: ' . $jobid, 1 );
-	if ( $outputLevel > 0 ) {
-		print STDERR 'Getting status for job ', $jobid, "\n";
-	}
-	my $result = &rest_get_status($jobid);
-	print "$result\n";
-	if ( $result eq 'FINISHED' && $outputLevel > 0 ) {
-		print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
-		  . "\n";
-	}
-	print_debug_message( 'print_job_status', 'End', 1 );
+    print_debug_message('print_job_status', 'Begin', 1);
+    my $jobid = shift;
+    print_debug_message('print_job_status', 'jobid: ' . $jobid, 1);
+    if ($outputLevel > 0) {
+        print STDERR 'Getting status for job ', $jobid, "\n";
+    }
+    my $result = &rest_get_status($jobid);
+    print "$result\n";
+    if ($result eq 'FINISHED' && $outputLevel > 0) {
+        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+            . "\n";
+    }
+    print_debug_message('print_job_status', 'End', 1);
 }
 
 =head2 print_result_types()
@@ -804,45 +805,45 @@ Print available result types for a job.
 =cut
 
 sub print_result_types {
-	print_debug_message( 'result_types', 'Begin', 1 );
-	my $jobid = shift;
-	print_debug_message( 'result_types', 'jobid: ' . $jobid, 1 );
-	if ( $outputLevel > 0 ) {
-		print STDERR 'Getting result types for job ', $jobid, "\n";
-	}
-	my $status = &rest_get_status($jobid);
-	if ( $status eq 'PENDING' || $status eq 'RUNNING' ) {
-		print STDERR 'Error: Job status is ', $status,
-		  '. To get result types the job must be finished.', "\n";
-	}
-	else {
-		my (@resultTypes) = &rest_get_result_types($jobid);
-		if ( $outputLevel > 0 ) {
-			print STDOUT 'Available result types:', "\n";
-		}
-		foreach my $resultType (@resultTypes) {
-			print STDOUT $resultType->{'identifier'}, "\n";
-			if ( defined( $resultType->{'label'} ) ) {
-				print STDOUT "\t", $resultType->{'label'}, "\n";
-			}
-			if ( defined( $resultType->{'description'} ) ) {
-				print STDOUT "\t", $resultType->{'description'}, "\n";
-			}
-			if ( defined( $resultType->{'mediaType'} ) ) {
-				print STDOUT "\t", $resultType->{'mediaType'}, "\n";
-			}
-			if ( defined( $resultType->{'fileSuffix'} ) ) {
-				print STDOUT "\t", $resultType->{'fileSuffix'}, "\n";
-			}
-		}
-		if ( $status eq 'FINISHED' && $outputLevel > 0 ) {
-			print STDERR "\n", 'To get results:', "\n",
-			  "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-			  "  $scriptName --polljob --outformat <type> --jobid "
-			  . $params{'jobid'} . "\n";
-		}
-	}
-	print_debug_message( 'result_types', 'End', 1 );
+    print_debug_message('result_types', 'Begin', 1);
+    my $jobid = shift;
+    print_debug_message('result_types', 'jobid: ' . $jobid, 1);
+    if ($outputLevel > 0) {
+        print STDERR 'Getting result types for job ', $jobid, "\n";
+    }
+    my $status = &rest_get_status($jobid);
+    if ($status eq 'PENDING' || $status eq 'RUNNING') {
+        print STDERR 'Error: Job status is ', $status,
+            '. To get result types the job must be finished.', "\n";
+    }
+    else {
+        my (@resultTypes) = &rest_get_result_types($jobid);
+        if ($outputLevel > 0) {
+            print STDOUT 'Available result types:', "\n";
+        }
+        foreach my $resultType (@resultTypes) {
+            print STDOUT $resultType->{'identifier'}, "\n";
+            if (defined($resultType->{'label'})) {
+                print STDOUT "\t", $resultType->{'label'}, "\n";
+            }
+            if (defined($resultType->{'description'})) {
+                print STDOUT "\t", $resultType->{'description'}, "\n";
+            }
+            if (defined($resultType->{'mediaType'})) {
+                print STDOUT "\t", $resultType->{'mediaType'}, "\n";
+            }
+            if (defined($resultType->{'fileSuffix'})) {
+                print STDOUT "\t", $resultType->{'fileSuffix'}, "\n";
+            }
+        }
+        if ($status eq 'FINISHED' && $outputLevel > 0) {
+            print STDERR "\n", 'To get results:', "\n",
+                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  $scriptName --polljob --outformat <type> --jobid "
+                    . $params{'jobid'} . "\n";
+        }
+    }
+    print_debug_message('result_types', 'End', 1);
 }
 
 =head2 submit_job()
@@ -854,74 +855,74 @@ Submit a job to the service.
 =cut
 
 sub submit_job {
-	print_debug_message( 'submit_job', 'Begin', 1 );
+    print_debug_message('submit_job', 'Begin', 1);
 
-	# Set input sequence
-	$tool_params{'sequence'} = shift;
-	my $seq_id = shift;
-	print_debug_message( 'submit_job', 'seq_id: ' . $seq_id, 1 ) if($seq_id);
+    # Set input sequence
+    $tool_params{'sequence'} = shift;
+    my $seq_id = shift;
+    print_debug_message('submit_job', 'seq_id: ' . $seq_id, 1) if ($seq_id);
 
-	# Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
-	my $param_hmmdb = $tool_params{'database'};
+    # Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
+    my $param_hmmdb = $tool_params{'database'};
 
-	if ($param_hmmdb eq 'treefam'  ) {
-		$db_index = "2";
-	}
-	if ($param_hmmdb eq 'gene3d'  ) {
-		$db_index = "3";
-	}
-	if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam' ) {
-		$tool_params{'database'} = 'pfam';
-		$db_index = "4";
-	}
-	if ($param_hmmdb eq 'superfamily'  ) {
-		$db_index = "5";
-	}
-	if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
-		$tool_params{'database'} = 'tigrfam';
-		$db_index = "6";
-	}
-	if ($param_hmmdb eq 'pirsf'  ) {
-		$db_index = "7";
-	}
+    if ($param_hmmdb eq 'treefam') {
+        $db_index = "2";
+    }
+    if ($param_hmmdb eq 'gene3d') {
+        $db_index = "3";
+    }
+    if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam') {
+        $tool_params{'database'} = 'pfam';
+        $db_index = "4";
+    }
+    if ($param_hmmdb eq 'superfamily') {
+        $db_index = "5";
+    }
+    if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
+        $tool_params{'database'} = 'tigrfam';
+        $db_index = "6";
+    }
+    if ($param_hmmdb eq 'pirsf') {
+        $db_index = "7";
+    }
 
-	# Load parameters
-	&load_params();
+    # Load parameters
+    &load_params();
 
-	# Submit the job
-	my $jobid = &rest_run( $params{'email'}, $params{'title'}, \%tool_params );
+    # Submit the job
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
 
-	# Asychronus submission.
-	if ( defined( $params{'async'} ) ) {
-		print STDOUT $jobid, "\n";
-		if ( $outputLevel > 0 ) {
-			print STDERR
-			  "To check status: $scriptName --status --jobid $jobid\n";
-		}
-	}
+    # Asychronus submission.
+    if (defined($params{'async'})) {
+        print STDOUT $jobid, "\n";
+        if ($outputLevel > 0) {
+            print STDERR
+                "To check status: $scriptName --status --jobid $jobid\n";
+        }
+    }
 
-	# Parallel submission mode.
-	elsif ( $params{'maxJobs'} > 1 ) {
-		if ( $outputLevel > 0 ) {
-			print STDERR "JobId: $jobid\n";
-		}
-		select( undef, undef, undef, 0.25 );    # 0.25 second sleep.
-	}
+    # Parallel submission mode.
+    elsif ($params{'maxJobs'} > 1) {
+        if ($outputLevel > 0) {
+            print STDERR "JobId: $jobid\n";
+        }
+        select(undef, undef, undef, 0.25); # 0.25 second sleep.
+    }
 
-	# Simulate synchronous submission serial mode.
-	else {
-		if ( $outputLevel > 0 ) {
-			print STDERR "JobId: $jobid\n";
-		}
-		select( undef, undef, undef, 0.5 );     # 0.5 second sleep.
-		# Check status, and wait if not finished
-		&client_poll($jobid);
+    # Simulate synchronous submission serial mode.
+    else {
+        if ($outputLevel > 0) {
+            print STDERR "JobId: $jobid\n";
+        }
+        select(undef, undef, undef, 0.5); # 0.5 second sleep.
+        # Check status, and wait if not finished
+        &client_poll($jobid);
 
-		# Get results.
-		&get_results($jobid, $seq_id);
-	}
-	print_debug_message( 'submit_job', 'End', 1 );
-	return $jobid;
+        # Get results.
+        &get_results($jobid, $seq_id);
+    }
+    print_debug_message('submit_job', 'End', 1);
+    return $jobid;
 }
 
 =head2 multi_submit_job()
@@ -933,81 +934,80 @@ Submit multiple jobs assuming input is a collection of fasta formatted sequences
 =cut
 
 sub multi_submit_job {
-	print_debug_message( 'multi_submit_job', 'Begin', 1 );
-	my (@filename_list) = ();
+    print_debug_message('multi_submit_job', 'Begin', 1);
+    my (@filename_list) = ();
 
-	# Query sequence
-	if ( defined( $ARGV[0] ) ) {    # Bare option
-		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			push( @filename_list, $ARGV[0] );
-		}
-		else {
-			warn 'Warning: Input file "' . $ARGV[0] . '" does not exist';
-		}
-	}
-	if ( $params{'sequence'} ) {                   # Via --sequence
-		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			push( @filename_list, $params{'sequence'} );
-		}
-		else {
-			warn 'Warning: Input file "'
-			  . $params{'sequence'}
-			  . '" does not exist';
-		}
-	}
+    # Query sequence
+    if (defined($ARGV[0])) {                  # Bare option
+        if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
+            push(@filename_list, $ARGV[0]);
+        }
+        else {
+            warn 'Warning: Input file "' . $ARGV[0] . '" does not exist';
+        }
+    }
+    if ($params{'sequence'}) {                                      # Via --sequence
+        if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
+            push(@filename_list, $params{'sequence'});
+        }
+        else {
+            warn 'Warning: Input file "'
+                . $params{'sequence'}
+                . '" does not exist';
+        }
+    }
 
-	# Job identifier tracking for parallel execution.
-	my @jobid_list = ();
-	my $job_number = 0;
-	$/ = '>';
-	foreach my $filename (@filename_list) {
-		my $INFILE;
-		if ( $filename eq '-' ) {    # STDIN.
-			open( $INFILE, '<-' )
-			  or die 'Error: unable to STDIN (' . $! . ')';
-		}
-		else {                       # File.
-			open( $INFILE, '<', $filename )
-			  or die 'Error: unable to open file '
-			  . $filename . ' ('
-			  . $! . ')';
-		}
-		while (<$INFILE>) {
-			my $seq = $_;
-			$seq =~ s/>$//;
-			if ( $seq =~ m/(\S+)/ ) {
-				my $seq_id = $1;
-				print STDERR "Submitting job for: $seq_id\n"
-				  if ( $outputLevel > 0 );
-				$seq = '>' . $seq;
-				&print_debug_message( 'multi_submit_job', $seq, 11 );
-				$job_number++;
-				my $job_id = &submit_job($seq, $seq_id);
+    # Job identifier tracking for parallel execution.
+    my @jobid_list = ();
+    my $job_number = 0;
+    $/ = '>';
+    foreach my $filename (@filename_list) {
+        my $INFILE;
+        if ($filename eq '-') { # STDIN.
+            open($INFILE, '<-')
+                or die 'Error: unable to STDIN (' . $! . ')';
+        }
+        else { # File.
+            open($INFILE, '<', $filename)
+                or die 'Error: unable to open file '
+                . $filename . ' ('
+                . $! . ')';
+        }
+        while (<$INFILE>) {
+            my $seq = $_;
+            $seq =~ s/>$//;
+            if ($seq =~ m/(\S+)/) {
+                my $seq_id = $1;
+                print STDERR "Submitting job for: $seq_id\n"
+                    if ($outputLevel > 0);
+                $seq = '>' . $seq;
+                &print_debug_message('multi_submit_job', $seq, 11);
+                $job_number++;
+                my $job_id = &submit_job($seq, $seq_id);
 
-				my $job_info_str = sprintf( '%s %d %d', $job_id, 0, $job_number );
+                my $job_info_str = sprintf('%s %d %d', $job_id, 0, $job_number);
 
-				push( @jobid_list, $job_info_str );
-			}
+                push(@jobid_list, $job_info_str);
+            }
 
-			# Parallel mode, wait for job(s) to finish to free slots.
-			while ( $params{'maxJobs'} > 1
-				&& scalar(@jobid_list) >= $params{'maxJobs'} )
-			{
-				&_job_list_poll( \@jobid_list );
-				print_debug_message( 'multi_submit_job',
-					'Remaining jobs: ' . scalar(@jobid_list), 1 );
-			}
-		}
-		close $INFILE;
-	}
+            # Parallel mode, wait for job(s) to finish to free slots.
+            while ($params{'maxJobs'} > 1
+                && scalar(@jobid_list) >= $params{'maxJobs'}) {
+                &_job_list_poll(\@jobid_list);
+                print_debug_message('multi_submit_job',
+                    'Remaining jobs: ' . scalar(@jobid_list), 1);
+            }
+        }
+        close $INFILE;
+    }
 
-	# Parallel mode, wait for remaining jobs to finish.
-	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
-		&_job_list_poll( \@jobid_list );
-		print_debug_message( 'multi_submit_job',
-			'Remaining jobs: ' . scalar(@jobid_list), 1 );
-	}
-	print_debug_message( 'multi_submit_job', 'End', 1 );
+    # Parallel mode, wait for remaining jobs to finish.
+    while ($params{'maxJobs'} > 1 && scalar(@jobid_list) > 0) {
+        &_job_list_poll(\@jobid_list);
+        print_debug_message('multi_submit_job',
+            'Remaining jobs: ' . scalar(@jobid_list), 1);
+    }
+    print_debug_message('multi_submit_job', 'End', 1);
 }
 
 
@@ -1022,60 +1022,58 @@ Poll the status of a list of jobs and fetch results for finished jobs.
 =cut
 
 sub _job_list_poll {
-	print_debug_message( '_job_list_poll', 'Begin', 1 );
-	my $jobid_list = shift;
-	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
-		11 );
+    print_debug_message('_job_list_poll', 'Begin', 1);
+    my $jobid_list = shift;
+    print_debug_message('_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+        11);
 
-	# Loop though job Id list polling job status.
-	for ( my $jobNum = ( scalar(@$jobid_list) - 1 ) ; $jobNum > -1 ; $jobNum-- )
-	{
-		my ( $jobid, $seq_id, $error_count, $job_number ) =
-		  split( /\s+/, $jobid_list->[$jobNum] );
-		print_debug_message( '_job_list_poll', 'jobNum: ' . $jobNum, 12 );
-		print_debug_message( '_job_list_poll',
-			'Job info: ' . $jobid_list->[$jobNum], 12 );
+    # Loop though job Id list polling job status.
+    for (my $jobNum = (scalar(@$jobid_list) - 1); $jobNum > -1; $jobNum--) {
+        my ($jobid, $seq_id, $error_count, $job_number) =
+            split(/\s+/, $jobid_list->[$jobNum]);
+        print_debug_message('_job_list_poll', 'jobNum: ' . $jobNum, 12);
+        print_debug_message('_job_list_poll',
+            'Job info: ' . $jobid_list->[$jobNum], 12);
 
-		# Get job status.
-		my $job_status = &rest_get_status($jobid);
-		print_debug_message( '_job_list_poll', 'Status: ' . $job_status, 12 );
+        # Get job status.
+        my $job_status = &rest_get_status($jobid);
+        print_debug_message('_job_list_poll', 'Status: ' . $job_status, 12);
 
-		# Fetch results and remove finished/failed jobs from list.
-		if (
-			!(
-				   $job_status eq 'RUNNING'
-				|| $job_status eq 'PENDING'
-				|| (   $job_status eq 'ERROR'
-					&& $error_count < $maxErrorStatusCount )
-			)
-		  )
-		{
-			if ( $job_status eq 'ERROR' || $job_status eq 'FAILED' ) {
-				print STDERR
-"Warning: job $jobid failed for sequence $job_number: $seq_id\n";
-			}
-			&get_results( $jobid, $seq_id );
-			splice( @$jobid_list, $jobNum, 1 );
-		}
-		else {
+        # Fetch results and remove finished/failed jobs from list.
+        if (
+            !(
+                $job_status eq 'RUNNING'
+                    || $job_status eq 'PENDING'
+                    || ($job_status eq 'ERROR'
+                    && $error_count < $maxErrorStatusCount)
+            )
+        ) {
+            if ($job_status eq 'ERROR' || $job_status eq 'FAILED') {
+                print STDERR
+                    "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
+            }
+            &get_results($jobid, $seq_id);
+            splice(@$jobid_list, $jobNum, 1);
+        }
+        else {
 
-			# Update error count, increment for new error or clear old errors.
-			if ( $job_status eq 'ERROR' ) {
-				$error_count++;
-			}
-			elsif ( $error_count > 0 ) {
-				$error_count--;
-			}
+            # Update error count, increment for new error or clear old errors.
+            if ($job_status eq 'ERROR') {
+                $error_count++;
+            }
+            elsif ($error_count > 0) {
+                $error_count--;
+            }
 
-			# Update job tracking info.
-			my $job_info_str = sprintf( '%s %s %d %d',
-				$jobid, $seq_id, $error_count, $job_number );
-			$jobid_list->[$jobNum] = $job_info_str;
-		}
-	}
-	print_debug_message( '_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
-		11 );
-	print_debug_message( '_job_list_poll', 'End', 1 );
+            # Update job tracking info.
+            my $job_info_str = sprintf('%s %s %d %d',
+                $jobid, $seq_id, $error_count, $job_number);
+            $jobid_list->[$jobNum] = $job_info_str;
+        }
+    }
+    print_debug_message('_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+        11);
+    print_debug_message('_job_list_poll', 'End', 1);
 }
 
 =head2 list_file_submit_job()
@@ -1088,64 +1086,64 @@ input.
 =cut
 
 sub list_file_submit_job {
-	print_debug_message( 'list_file_submit_job', 'Begin', 1 );
-	my $filename = shift;
+    print_debug_message('list_file_submit_job', 'Begin', 1);
+    my $filename = shift;
 
-	# Open the file of identifiers.
-	my $LISTFILE;
-	if ( $filename eq '-' ) {    # STDIN.
-		open( $LISTFILE, '<-' )
-		  or die 'Error: unable to STDIN (' . $! . ')';
-	}
-	else {                       # File.
-		open( $LISTFILE, '<', $filename )
-		  or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
-	}
+    # Open the file of identifiers.
+    my $LISTFILE;
+    if ($filename eq '-') { # STDIN.
+        open($LISTFILE, '<-')
+            or die 'Error: unable to STDIN (' . $! . ')';
+    }
+    else { # File.
+        open($LISTFILE, '<', $filename)
+            or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+    }
 
-	# Job identifier tracking for parallel execution.
-	my @jobid_list = ();
-	my $job_number = 0;
+    # Job identifier tracking for parallel execution.
+    my @jobid_list = ();
+    my $job_number = 0;
 
-	# Iterate over identifiers, submitting each job
-	while (<$LISTFILE>) {
-		my $line = $_;
-		chomp($line);
-		if ( $line ne '' ) {
-			&print_debug_message( 'list_file_submit_job', 'line: ' . $line, 2 );
-			if ( $line =~ m/\w:\w/ ) {    # Check this is an identifier
-				my $seq_id = $line;
-				print STDERR "Submitting job for: $seq_id\n"
-				  if ( $outputLevel > 0 );
-				$job_number++;
-				my $job_id = &submit_job($seq_id, $seq_id);
-				my $job_info_str =
-				  sprintf( '%s %s %d %d', $job_id, $seq_id, 0, $job_number );
-				push( @jobid_list, $job_info_str );
-			}
-			else {
-				print STDERR
-"Warning: line \"$line\" is not recognised as an identifier\n";
-			}
+    # Iterate over identifiers, submitting each job
+    while (<$LISTFILE>) {
+        my $line = $_;
+        chomp($line);
+        if ($line ne '') {
+            &print_debug_message('list_file_submit_job', 'line: ' . $line, 2);
+            if ($line =~ m/\w:\w/) {
+                # Check this is an identifier
+                my $seq_id = $line;
+                print STDERR "Submitting job for: $seq_id\n"
+                    if ($outputLevel > 0);
+                $job_number++;
+                my $job_id = &submit_job($seq_id, $seq_id);
+                my $job_info_str =
+                    sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+                push(@jobid_list, $job_info_str);
+            }
+            else {
+                print STDERR
+                    "Warning: line \"$line\" is not recognised as an identifier\n";
+            }
 
-			# Parallel mode, wait for job(s) to finish to free slots.
-			while ( $params{'maxJobs'} > 1
-				&& scalar(@jobid_list) >= $params{'maxJobs'} )
-			{
-				&_job_list_poll( \@jobid_list );
-				print_debug_message( 'list_file_submit_job',
-					'Remaining jobs: ' . scalar(@jobid_list), 1 );
-			}
-		}
-	}
-	close $LISTFILE;
+            # Parallel mode, wait for job(s) to finish to free slots.
+            while ($params{'maxJobs'} > 1
+                && scalar(@jobid_list) >= $params{'maxJobs'}) {
+                &_job_list_poll(\@jobid_list);
+                print_debug_message('list_file_submit_job',
+                    'Remaining jobs: ' . scalar(@jobid_list), 1);
+            }
+        }
+    }
+    close $LISTFILE;
 
-	# Parallel mode, wait for remaining jobs to finish.
-	while ( $params{'maxJobs'} > 1 && scalar(@jobid_list) > 0 ) {
-		&_job_list_poll( \@jobid_list );
-		print_debug_message( 'list_file_submit_job',
-			'Remaining jobs: ' . scalar(@jobid_list), 1 );
-	}
-	print_debug_message( 'list_file_submit_job', 'End', 1 );
+    # Parallel mode, wait for remaining jobs to finish.
+    while ($params{'maxJobs'} > 1 && scalar(@jobid_list) > 0) {
+        &_job_list_poll(\@jobid_list);
+        print_debug_message('list_file_submit_job',
+            'Remaining jobs: ' . scalar(@jobid_list), 1);
+    }
+    print_debug_message('list_file_submit_job', 'End', 1);
 }
 
 =head2 load_data()
@@ -1157,28 +1155,28 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
-	print_debug_message( 'load_data', 'Begin', 1 );
-	my $retSeq;
+    print_debug_message('load_data', 'Begin', 1);
+    my $retSeq;
 
-	# Query sequence
-	if ( defined( $ARGV[0] ) ) {    # Bare option
-		if ( -f $ARGV[0] || $ARGV[0] eq '-' ) {    # File
-			$retSeq = &read_file( $ARGV[0] );
-		}
-		else {                                     # DB:ID or sequence
-			$retSeq = $ARGV[0];
-		}
-	}
-	if ( $params{'sequence'} ) {                   # Via --sequence
-		if ( -f $params{'sequence'} || $params{'sequence'} eq '-' ) {    # File
-			$retSeq = &read_file( $params{'sequence'} );
-		}
-		else {    # DB:ID or sequence
-			$retSeq = $params{'sequence'};
-		}
-	}
-	print_debug_message( 'load_data', 'End', 1 );
-	return $retSeq;
+    # Query sequence
+    if (defined($ARGV[0])) {                  # Bare option
+        if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
+            $retSeq = &read_file($ARGV[0]);
+        }
+        else { # DB:ID or sequence
+            $retSeq = $ARGV[0];
+        }
+    }
+    if ($params{'sequence'}) {                                      # Via --sequence
+        if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
+            $retSeq = &read_file($params{'sequence'});
+        }
+        else { # DB:ID or sequence
+            $retSeq = $params{'sequence'};
+        }
+    }
+    print_debug_message('load_data', 'End', 1);
+    return $retSeq;
 }
 
 =head2 load_params()
@@ -1190,16 +1188,16 @@ Load job parameters from command-line options.
 =cut
 
 sub load_params {
-	print_debug_message( 'load_params', 'Begin', 1 );
+    print_debug_message('load_params', 'Begin', 1);
 
-	# Compatability options, old command-line
-	# if ( !$tool_params{'tree'} && $params{'outputtree'} ) {
-	#	$tool_params{'tree'} = $params{'outputtree'};
-	# }
+    # Compatability options, old command-line
+    # if ( !$tool_params{'tree'} && $params{'outputtree'} ) {
+    #	$tool_params{'tree'} = $params{'outputtree'};
+    # }
 
-	#print_debug_message( 'load_params', 'hmmdb:'.$params{'hmmdb'}, 1 );
+    #print_debug_message( 'load_params', 'hmmdb:'.$params{'hmmdb'}, 1 );
 
-	print_debug_message( 'load_params', 'End', 1 );
+    print_debug_message('load_params', 'End', 1);
 
 }
 
@@ -1212,35 +1210,33 @@ Client-side job polling.
 =cut
 
 sub client_poll {
-	print_debug_message( 'client_poll', 'Begin', 1 );
-	my $jobid  = shift;
-	my $status = 'PENDING';
+    print_debug_message('client_poll', 'Begin', 1);
+    my $jobid = shift;
+    my $status = 'PENDING';
 
-# Check status and wait if not finished. Terminate if three attempts get "ERROR".
-	my $errorCount = 0;
-	while ($status eq 'RUNNING'
-		|| $status eq 'PENDING'
-		|| ( $status eq 'ERROR' && $errorCount < 2 ) )
-	{
-		$status = rest_get_status($jobid);
-		print STDERR "$status\n" if ( $outputLevel > 0 );
-		if ( $status eq 'ERROR' ) {
-			$errorCount++;
-		}
-		elsif ( $errorCount > 0 ) {
-			$errorCount--;
-		}
-		if (   $status eq 'RUNNING'
-			|| $status eq 'PENDING'
-			|| $status eq 'ERROR' )
-		{
+    # Check status and wait if not finished. Terminate if three attempts get "ERROR".
+    my $errorCount = 0;
+    while ($status eq 'RUNNING'
+        || $status eq 'PENDING'
+        || ($status eq 'ERROR' && $errorCount < 2)) {
+        $status = rest_get_status($jobid);
+        print STDERR "$status\n" if ($outputLevel > 0);
+        if ($status eq 'ERROR') {
+            $errorCount++;
+        }
+        elsif ($errorCount > 0) {
+            $errorCount--;
+        }
+        if ($status eq 'RUNNING'
+            || $status eq 'PENDING'
+            || $status eq 'ERROR') {
 
-			# Wait before polling again.
-			sleep $checkInterval;
-		}
-	}
-	print_debug_message( 'client_poll', 'End', 1 );
-	return $status;
+            # Wait before polling again.
+            sleep $checkInterval;
+        }
+    }
+    print_debug_message('client_poll', 'End', 1);
+    return $status;
 }
 
 =head2 get_results()
@@ -1252,98 +1248,99 @@ Get the results for a job identifier.
 =cut
 
 sub get_results {
-	print_debug_message( 'get_results', 'Begin', 1 );
-	my $jobid  = shift;
-	my $seq_id = shift;
-	print_debug_message( 'get_results', 'jobid: ' . $jobid, 1 );
-	print_debug_message( 'get_results', 'seq_id: ' . $seq_id, 1 ) if($seq_id);
-	my $output_basename = $jobid;
+    print_debug_message('get_results', 'Begin', 1);
+    my $jobid = shift;
+    my $seq_id = shift;
+    print_debug_message('get_results', 'jobid: ' . $jobid, 1);
+    print_debug_message('get_results', 'seq_id: ' . $seq_id, 1) if ($seq_id);
+    my $output_basename = $jobid;
 
-	# Verbose
-	if ( $outputLevel > 1 ) {
-		print 'Getting results for job ', $jobid, "\n";
-	}
+    # Verbose
+    if ($outputLevel > 1) {
+        print 'Getting results for job ', $jobid, "\n";
+    }
 
-	# Default output file names use JobId, however the name can be specified...
-	if ( defined( $params{'outfile'} ) ) {
-		$output_basename = $params{'outfile'};
-	}
+    # Default output file names use JobId, however the name can be specified...
+    if (defined($params{'outfile'})) {
+        $output_basename = $params{'outfile'};
+    }
 
-	# Or use sequence identifer.
-	elsif ( defined( $params{'useSeqId'} && defined($seq_id) && $seq_id ne '') ) {
-		$output_basename = $seq_id;
+    # Or use sequence identifer.
+    elsif (defined($params{'useSeqId'} && defined($seq_id) && $seq_id ne '')) {
+        $output_basename = $seq_id;
 
-		# Make safe to use as a file name.
-		$output_basename =~ s/\W/_/g;
-	}
+        # Make safe to use as a file name.
+        $output_basename =~ s/\W/_/g;
+    }
 
-	# Get list of data types
-	my (@resultTypes) = rest_get_result_types($jobid);
+    # Get list of data types
+    my (@resultTypes) = rest_get_result_types($jobid);
 
-	# Get the data and write it to a file
-	if ( defined( $params{'outformat'} ) ) {    # Specified data type
-		# check to see if there are multiple formats (comma separated)
-		my $sep = ",";
-		my (@multResultTypes);
-		if ($params{'outformat'} =~ /$sep/) {
-			@multResultTypes = split(',', $params{'outformat'});
-		}
-		else {
-			$multResultTypes[0] = $params{'outformat'};
-		}
-		# check if the provided formats are recognised
-		foreach my $inputType (@multResultTypes) {
-			my $expectation = 0;
-			foreach my $resultType (@resultTypes) {
-				if ( $resultType->{'identifier'} eq $inputType && $expectation eq 0){
-						$expectation = 1;
-					}
-			}
-			if ( $expectation ne 1){
-				die 'Error: unknown result format "' . $inputType . '"';
-			}
-		}
-		# if so get the files
-		my $selResultType;
-		foreach my $resultType (@resultTypes) {
-			if ( grep { $_ eq $resultType->{'identifier'} } @multResultTypes ) {
-				$selResultType = $resultType;
-				my $result = rest_get_result( $jobid, $selResultType->{'identifier'} );
-				if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
-					write_file( $params{'outfile'}, $result );
-				}
-				else {
-					write_file(
-						$output_basename . '.'
-							. $selResultType->{'identifier'} . '.'
-							. $selResultType->{'fileSuffix'},
-						$result
-					);
-				}
-			}
-		}
-	}
-	else {    # Data types available
-		      # Write a file for each output type
-		for my $resultType (@resultTypes) {
-			if ( $outputLevel > 1 ) {
-				print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
-			}
-			my $result = rest_get_result( $jobid, $resultType->{'identifier'} );
-			if ( defined( $params{'outfile'} ) && $params{'outfile'} eq '-' ) {
-				write_file( $params{'outfile'}, $result );
-			}
-			else {
-				write_file(
-					$output_basename . '.'
-					  . $resultType->{'identifier'} . '.'
-					  . $resultType->{'fileSuffix'},
-					$result
-				);
-			}
-		}
-	}
-	print_debug_message( 'get_results', 'End', 1 );
+    # Get the data and write it to a file
+    if (defined($params{'outformat'})) {
+        # Specified data type
+        # check to see if there are multiple formats (comma separated)
+        my $sep = ",";
+        my (@multResultTypes);
+        if ($params{'outformat'} =~ /$sep/) {
+            @multResultTypes = split(',', $params{'outformat'});
+        }
+        else {
+            $multResultTypes[0] = $params{'outformat'};
+        }
+        # check if the provided formats are recognised
+        foreach my $inputType (@multResultTypes) {
+            my $expectation = 0;
+            foreach my $resultType (@resultTypes) {
+                if ($resultType->{'identifier'} eq $inputType && $expectation eq 0) {
+                    $expectation = 1;
+                }
+            }
+            if ($expectation ne 1) {
+                die 'Error: unknown result format "' . $inputType . '"';
+            }
+        }
+        # if so get the files
+        my $selResultType;
+        foreach my $resultType (@resultTypes) {
+            if (grep {$_ eq $resultType->{'identifier'}} @multResultTypes) {
+                $selResultType = $resultType;
+                my $result = rest_get_result($jobid, $selResultType->{'identifier'});
+                if (defined($params{'outfile'}) && $params{'outfile'} eq '-') {
+                    write_file($params{'outfile'}, $result);
+                }
+                else {
+                    write_file(
+                        $output_basename . '.'
+                            . $selResultType->{'identifier'} . '.'
+                            . $selResultType->{'fileSuffix'},
+                        $result
+                    );
+                }
+            }
+        }
+    }
+    else { # Data types available
+        # Write a file for each output type
+        for my $resultType (@resultTypes) {
+            if ($outputLevel > 1) {
+                print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
+            }
+            my $result = rest_get_result($jobid, $resultType->{'identifier'});
+            if (defined($params{'outfile'}) && $params{'outfile'} eq '-') {
+                write_file($params{'outfile'}, $result);
+            }
+            else {
+                write_file(
+                    $output_basename . '.'
+                        . $resultType->{'identifier'} . '.'
+                        . $resultType->{'fileSuffix'},
+                    $result
+                );
+            }
+        }
+    }
+    print_debug_message('get_results', 'End', 1);
 }
 
 =head2 read_file()
@@ -1356,25 +1353,26 @@ standard input (STDIN).
 =cut
 
 sub read_file {
-	print_debug_message( 'read_file', 'Begin', 1 );
-	my $filename = shift;
-	print_debug_message( 'read_file', 'filename: ' . $filename, 2 );
-	my ( $content, $buffer );
-	if ( $filename eq '-' ) {
-		while ( sysread( STDIN, $buffer, 1024 ) ) {
-			$content .= $buffer;
-		}
-	}
-	else {    # File
-		open( my $FILE, '<', $filename )
-		  or die "Error: unable to open input file $filename ($!)";
-		while ( sysread( $FILE, $buffer, 1024 ) ) {
-			$content .= $buffer;
-		}
-		close($FILE);
-	}
-	print_debug_message( 'read_file', 'End', 1 );
-	return $content;
+    print_debug_message('read_file', 'Begin', 1);
+    my $filename = shift;
+    print_debug_message('read_file', 'filename: ' . $filename, 2);
+    my ($content, $buffer);
+    if ($filename eq '-') {
+        while (sysread(STDIN, $buffer, 1024)) {
+            $content .= $buffer;
+        }
+    }
+    else {
+        # File
+        open(my $FILE, '<', $filename)
+            or die "Error: unable to open input file $filename ($!)";
+        while (sysread($FILE, $buffer, 1024)) {
+            $content .= $buffer;
+        }
+        close($FILE);
+    }
+    print_debug_message('read_file', 'End', 1);
+    return $content;
 }
 
 =head2 write_file()
@@ -1387,22 +1385,22 @@ standard output (STDOUT).
 =cut
 
 sub write_file {
-	print_debug_message( 'write_file', 'Begin', 1 );
-	my ( $filename, $data ) = @_;
-	print_debug_message( 'write_file', 'filename: ' . $filename, 2 );
-	if ( $outputLevel > 0 ) {
-		print STDERR 'Creating result file: ' . $filename . "\n";
-	}
-	if ( $filename eq '-' ) {
-		print STDOUT $data;
-	}
-	else {
-		open( my $FILE, '>', $filename )
-		  or die "Error: unable to open output file $filename ($!)";
-		syswrite( $FILE, $data );
-		close($FILE);
-	}
-	print_debug_message( 'write_file', 'End', 1 );
+    print_debug_message('write_file', 'Begin', 1);
+    my ($filename, $data) = @_;
+    print_debug_message('write_file', 'filename: ' . $filename, 2);
+    if ($outputLevel > 0) {
+        print STDERR 'Creating result file: ' . $filename . "\n";
+    }
+    if ($filename eq '-') {
+        print STDOUT $data;
+    }
+    else {
+        open(my $FILE, '>', $filename)
+            or die "Error: unable to open output file $filename ($!)";
+        syswrite($FILE, $data);
+        close($FILE);
+    }
+    print_debug_message('write_file', 'End', 1);
 }
 
 =head2 usage()
@@ -1414,7 +1412,7 @@ Print program usage message.
 =cut
 
 sub usage {
-	print STDERR <<EOF
+    print STDERR <<EOF
 
 HMMER3 HMMSCAN
 ===================
@@ -1423,11 +1421,13 @@ HMMER hmmscan is used to search sequences against collections of profiles.
 
 [Required]
 
+	seqFile            : file : query sequence ("-" for STDIN, \@filename for
+															identifier list file)
+	-D, --database     : str  : This field indicates which profile HMM database the query
+	                            should be searched against. Accepted values are:
+															gene3d, pfam, tigrfam, superfamily, pirsf
+  -D, --hmmdb	      : str  : Compatability database option
   --email            : str  : e-mail address
-  -D, --database     : str  : This field indicates which profile HMM database the query should be searched against. Accepted values are gene3d, pfam, tigrfam, superfamily, pirsf
-  -D, --hmmdb	     : str  : Compatability database option
-  seqFile            : file : query sequence ("-" for STDIN, \@filename for
-                              identifier list file)
 
 [Optional]
 
