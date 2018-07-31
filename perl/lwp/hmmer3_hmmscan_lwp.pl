@@ -74,6 +74,7 @@ use File::Basename;
 use Data::Dumper;
 use JSON::XS;
 use Try::Tiny;
+use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
@@ -122,6 +123,7 @@ GetOptions(
     'help|h'        => \$params{'help'},           # Usage help
     'async'         => \$params{'async'},          # Asynchronous submission
     'polljob'       => \$params{'polljob'},        # Get job result
+    'pollFreq=f'    => \$params{'pollFreq'},       # Poll Frequency
     'resultTypes'   => \$params{'resultTypes'},    # Get result types
     'status'        => \$params{'status'},         # Get job status
     'params'        => \$params{'params'},         # List input parameters
@@ -137,6 +139,7 @@ GetOptions(
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
+if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 
 if (!($tool_params{'alignView'})) {
     $tool_params{'alignView'} = 'true';
@@ -1232,7 +1235,7 @@ sub client_poll {
             || $status eq 'ERROR') {
 
             # Wait before polling again.
-            sleep $checkInterval;
+            usleep($checkInterval);
         }
     }
     print_debug_message('client_poll', 'End', 1);
@@ -1452,6 +1455,7 @@ HMMER hmmscan is used to search sequences against collections of profiles.
       --status       :      : get job status
       --resultTypes  :      : get available result types for job
       --polljob      :      : poll for the status of a job
+      --pollFreq     : int  : poll frequency in seconds (default 3s)
       --jobid        : str  : jobid that was returned when an asynchronous job
                               was submitted.
       --outfile      : str  : file name for results (default is jobid;
