@@ -913,8 +913,11 @@ sub submit_job {
     if ($param_seqdb eq 'pdb') {
         $db_index = "12";
     }
-    if ($param_seqdb eq 'meropsscan') {
+    if ($param_seqdb eq 'chembl') {
         $db_index = "13";
+    }
+    if ($param_seqdb eq 'meropsscan') {
+        $db_index = "14";
     }
 
     # Load parameters
