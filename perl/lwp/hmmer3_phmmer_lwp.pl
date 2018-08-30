@@ -391,9 +391,9 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request_for_accid {
-    print_debug_message('rest_request', 'Begin', 11);
+    print_debug_message('rest_request_for_accid', 'Begin', 11);
     my $requestUrl = shift;
-    print_debug_message('rest_request', 'URL: ' . $requestUrl, 11);
+    print_debug_message('rest_request_for_accid', 'URL: ' . $requestUrl, 11);
 
     # Get an LWP UserAgent.
     $ua = &rest_user_agent() unless defined($ua);
@@ -453,15 +453,48 @@ sub rest_request_for_accid {
             try {
 
                 my $acc_id = rest_get_accid($grab_id);
+				print_debug_message('rest_request_for_accid', '###>>>>>>>> grab_id: ' . $grab_id, 42);
+				print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id: ' . $acc_id, 42);
                 if ($grab_id and $acc_id) {
 
+					# List, Header, Details
+					
+					# List (Except not start with 00) & Details
                     my $numeric1 = ' ' . sprintf("%09d", $grab_id) . ' '; # HMMER ID, to be replaced on sequence list
-                    my $numeric2 = ' ' . $grab_id . ' ';                  # >> HMMER ID, to be replaced on sequence detail(under >>)
+					my $new_id = '' . sprintf("%10s", $acc_id) . ' '; 
 
-                    my $new_id = ' ' . $acc_id . ' ';                      # both spaces requries to avoid unexpected replacement
-                    $numeric2 = sprintf "%*s", length($new_id), $numeric2; #11/07/2018
+					#print_debug_message('rest_request_for_accid', '###>>>>>>>> numeric1 =' . $numeric1 . "=", 42);
+					#print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id =' . $new_id . "=", 42);
+					
+					# List (Start with two spaces)
+                    my $old_id_forList = '  ' . $grab_id . '';
+                    my $new_id_forList = '  ' . $acc_id . '';
+					
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList =' . $old_id_forList . "=Len=" . length($old_id_forList) , 42);
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList =' . $new_id_forList . "=Len=" . length($new_id_forList) , 42);
+					
+					# >> Sequence ID (Start with '>>' and One spaces)
+                    my $old_id_forDetailHeader = '  ' . $grab_id . ' ';
+                    my $new_id_forDetailHeader = '  ' . $acc_id . ' ';                      # both spaces requries to avoid unexpected replacement		
+					
+					#print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetailHeader =' . $old_id_forDetailHeader . "=", 42);
+					#print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetailHeader =' . $new_id_forDetailHeader . "=", 42);			
 
-                    $retVal =~ s/$numeric2/$new_id/g; # Sequence list & >> Sequence
+                    $retVal =~ s/$old_id_forList/$new_id_forList/g; # Sequence list (Start with two spaces)
+					
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id length =' . $new_id_forList . "=Len=" . length($acc_id) , 42);
+
+					if (length($acc_id) == 10 ) {
+						my $before_str = '  ' . $acc_id .' ';
+						my $after_str  = ' ' . $acc_id .' '; 
+						$retVal =~ s/$before_str/$after_str/g;
+						print_debug_message('rest_request_for_accid', '###>>>>>>>> Before =' . '  ' . $before_str . "=" , 42);
+						print_debug_message('rest_request_for_accid', '###>>>>>>>> After =' . ' ' . $after_str . "=", 42);
+					} else {
+					
+					}
+
+                    $retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g; # >> Sequence ID (Start with '>>' and One spaces)
                     $retVal =~ s/$numeric1/$new_id/g; # Sequence Details
                 }
             }
@@ -514,6 +547,7 @@ sub rest_get_accid {
         }
         catch {
             warn "Caught JSON::XS decode error: $_";
+			print_debug_message('rest_get_accid', '### catch ###' , 42);
         };
 
         my @dbs1 = $decoded->{'db'};
@@ -527,6 +561,7 @@ sub rest_get_accid {
     }
 
     print_debug_message('rest_get_accid', 'End', 42);
+	print_debug_message('rest_get_accid', '###>>>>>>>> each_acc_id: ' . $each_acc_id, 42);
     return($each_acc_id);
 }
 
