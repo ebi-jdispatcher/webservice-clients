@@ -361,10 +361,6 @@ sub rest_request {
     my $response = $ua->get($requestUrl,
         'Accept-Encoding' => $can_accept, # HTTP compression.
     );
-    print_debug_message('rest_request', 'HTTP status: ' . $response->code, 11);
-    print_debug_message('rest_request', 'response length: ' . length($response->content()), 11);
-    print_debug_message('rest_request', 'request:' . "\n" . $response->request()->as_string(), 32);
-    print_debug_message('rest_request', 'response: ' . "\n" . $response->as_string(), 32);
 
     # Unpack possibly compressed response.
     my $retVal;
@@ -407,14 +403,7 @@ sub rest_request_for_accid {
     my $response = $ua->get($requestUrl,
         'Accept-Encoding' => $can_accept, # HTTP compression.
     );
-    print_debug_message('rest_request', 'HTTP status: ' . $response->code,
-        11);
-    print_debug_message('rest_request',
-        'response length: ' . length($response->content()), 11);
-    print_debug_message('rest_request',
-        'request:' . "\n" . $response->request()->as_string(), 32);
-    print_debug_message('rest_request',
-        'response: ' . "\n" . $response->as_string(), 32);
+    
     # Unpack possibly compressed response.
     my $retVal;
     if (defined($can_accept) && $can_accept ne '') {
@@ -458,44 +447,49 @@ sub rest_request_for_accid {
                 if ($grab_id and $acc_id) {
 
 					# List, Header, Details
-					
-					# List (Except not start with 00) & Details
-                    my $numeric1 = ' ' . sprintf("%09d", $grab_id) . ' '; # HMMER ID, to be replaced on sequence list
-					my $new_id = '' . sprintf("%10s", $acc_id) . ' '; 
+										
+					my $isChEMBL = substr($acc_id,0,2);
+					my $new_id =$acc_id; 
 
-					#print_debug_message('rest_request_for_accid', '###>>>>>>>> numeric1 =' . $numeric1 . "=", 42);
-					#print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id =' . $new_id . "=", 42);
+					# List & Details
+                    #my $old_id_forDetail = '  ' . $grab_id . ' ';
+                    #my $new_id_forDetail = '' . substr($new_id . '  ', 0, length($old_id_forDetail));
+                    my $old_id_forDetail = LPad($grab_id, ' ', 10);
+                    my $new_id_forDetail = LPad($new_id, ' ', length($old_id_forDetail)-length($new_id));
 					
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetail=' . $old_id_forDetail . '==' , 42);	
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetail=' . $new_id_forDetail . '==' , 42);
+					
+					#1  Details =Sequence list (Start with two spaces) &
+                    $retVal =~ s/$old_id_forDetail/$new_id_forDetail/g; 
+
+
+					#2 >> Sequence ID (Start with '>>' and One spaces)
+                    my $old_id_forDetailHeader = '>> ' . $grab_id;
+                    my $new_id_forDetailHeader = '>> ' . $acc_id;                      # both spaces requries to avoid unexpected replacement		
+					$retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g;
+
+
 					# List (Start with two spaces)
-                    my $old_id_forList = '  ' . $grab_id . '';
-                    my $new_id_forList = '  ' . $acc_id . '';
-					
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList =' . $old_id_forList . "=Len=" . length($old_id_forList) , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList =' . $new_id_forList . "=Len=" . length($new_id_forList) , 42);
-					
+                    #my $old_id_forList = '   ' . $grab_id . '';
+                    #my $new_id_forList = '' . $new_id . '   ';
+
+                    my $old_id_forList = LPad($grab_id , ' ', 2) . ' ';
+                    my $new_id_forList = LPad($new_id , ' ', 2) . ' ';
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList=' . $old_id_forList . '==' , 42);	
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList=' . $new_id_forList . '==' , 42);
+					$retVal =~ s/$old_id_forList/$new_id_forList/g;
+
+
 					# >> Sequence ID (Start with '>>' and One spaces)
-                    my $old_id_forDetailHeader = '  ' . $grab_id . ' ';
-                    my $new_id_forDetailHeader = '  ' . $acc_id . ' ';                      # both spaces requries to avoid unexpected replacement		
-					
-					#print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetailHeader =' . $old_id_forDetailHeader . "=", 42);
-					#print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetailHeader =' . $new_id_forDetailHeader . "=", 42);			
+                    
+					# List (Except not start with 00) & Details
+                    my $HMMERID_StartWithZero = sprintf("%09d", $grab_id) . ' ';
+                    my $new_HMMERID_StartWithZero = LPad($new_id, ' ', length($HMMERID_StartWithZero)-length($new_id));
 
-                    $retVal =~ s/$old_id_forList/$new_id_forList/g; # Sequence list (Start with two spaces)
-					
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id length =' . $new_id_forList . "=Len=" . length($acc_id) , 42);
-
-					if (length($acc_id) == 10 ) {
-						my $before_str = '  ' . $acc_id .' ';
-						my $after_str  = ' ' . $acc_id .' '; 
-						$retVal =~ s/$before_str/$after_str/g;
-						print_debug_message('rest_request_for_accid', '###>>>>>>>> Before =' . '  ' . $before_str . "=" , 42);
-						print_debug_message('rest_request_for_accid', '###>>>>>>>> After =' . ' ' . $after_str . "=", 42);
-					} else {
-					
-					}
-
-                    $retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g; # >> Sequence ID (Start with '>>' and One spaces)
-                    $retVal =~ s/$numeric1/$new_id/g; # Sequence Details
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> HMMERID_StartWithZero       =' . $HMMERID_StartWithZero . '==' , 42);	
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_HMMERID_StartWithZero   =' . $new_HMMERID_StartWithZero . '==' , 42);
+                    $retVal =~ s/$HMMERID_StartWithZero/$new_HMMERID_StartWithZero/g;
                 }
             }
             catch {
@@ -511,6 +505,23 @@ sub rest_request_for_accid {
     return $retVal;
 }
 
+sub LPad {
+    my ($str, $padding, $length) = @_;
+
+    my $pad_length = $length;
+    $pad_length = 0 if $pad_length < 0;
+    $padding x= $pad_length;
+    $padding.$str;
+}
+
+sub RPad {
+    my ($str, $padding, $length) = @_;
+
+    my $pad_length = $length - length $str;
+    $pad_length = 0 if $pad_length < 0;
+    $padding x= $pad_length;
+    $str.$padding;
+}
 
 =head2 rest_get_accid()
 
@@ -538,8 +549,7 @@ sub rest_get_accid {
     my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
 
     if ($acc_info) {
-        print_debug_message('rest_get_accid', 'acc_info is: ' . $acc_info, 42);
-
+        
         my $decoded;
 
         try {
@@ -639,12 +649,7 @@ sub rest_run {
     # Submit the job as a POST
     my $url = $baseUrl . '/run';
     my $response = $ua->post($url, \%tmp_params);
-    print_debug_message('rest_run', 'HTTP status: ' . $response->code, 11);
-    print_debug_message('rest_run',
-        'request:' . "\n" . $response->request()->as_string(), 11);
-    print_debug_message('rest_run',
-        'response: ' . length($response->as_string()) . "\n" . $response->as_string(), 11);
-
+    
     # Check for an error.
     &rest_error($response);
 
@@ -714,8 +719,7 @@ sub rest_get_result {
     my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
     #	my $result = &rest_request($url);
     my $result = &rest_request_for_accid($url);
-    print_debug_message('rest_get_result', length($result) . ' characters',
-        1);
+    
     print_debug_message('rest_get_result', 'End', 1);
     return $result;
 }
@@ -1231,19 +1235,39 @@ sub load_data {
     if (defined($ARGV[0])) {                  # Bare option
         if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
             $retSeq = &read_file($ARGV[0]);
+			print_debug_message('load_data', '###>>>load_data the input sequence #if else ='  , 42);
+			
+		#$newInputSequence = substr($retSeq,0,2);
+		my $newInputSequence = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
+		print_debug_message('load_data', '###>>>load_data the input sequence =' . $retSeq . '==' , 42);
+		print_debug_message('load_data', '###>>>load_data the input sequence =' . $newInputSequence . '==' , 42);
+
+		$retSeq =~ s/$retSeq/$newInputSequence/g;
+
         }
         else { # DB:ID or sequence
             $retSeq = $ARGV[0];
+			print_debug_message('load_data', '###>>>load_data the input sequence #else ='  , 42);
         }
     }
     if ($params{'sequence'}) {                                      # Via --sequence
         if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
             $retSeq = &read_file($params{'sequence'});
+			
+		#$newInputSequence = substr($retSeq,0,2);
+		my $newInputSequence = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
+		print_debug_message('load_data', '###>>>load_data the input sequence =' . $retSeq . '==' , 42);
+		print_debug_message('load_data', '###>>>load_data the input sequence =' . $newInputSequence . '==' , 42);
+
+		$retSeq =~ s/$retSeq/$newInputSequence/g;
         }
         else { # DB:ID or sequence
             $retSeq = $params{'sequence'};
+			print_debug_message('load_data', '###>>>load_data the input sequence else ='  , 42);
         }
     }
+	
+
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
 }
