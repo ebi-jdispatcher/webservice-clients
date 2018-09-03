@@ -97,6 +97,7 @@ my %params = (
 );
 
 my $isFirst = 1;
+my $isLoadedSeq='false';
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
@@ -1230,44 +1231,38 @@ Load sequence data from file or option specified on the command-line.
 sub load_data {
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
+	
+	my $newInputSequence = '>HMMER-phmmer-';
 
     # Query sequence
     if (defined($ARGV[0])) {                  # Bare option
         if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
             $retSeq = &read_file($ARGV[0]);
-			print_debug_message('load_data', '###>>>load_data the input sequence #if else ='  , 42);
-			
-		#$newInputSequence = substr($retSeq,0,2);
-		my $newInputSequence = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
-		print_debug_message('load_data', '###>>>load_data the input sequence =' . $retSeq . '==' , 42);
-		print_debug_message('load_data', '###>>>load_data the input sequence =' . $newInputSequence . '==' , 42);
 
-		$retSeq =~ s/$retSeq/$newInputSequence/g;
-
+			if ($isLoadedSeq eq 'false' && '>' eq substr($retSeq,0,1) ) {
+				$retSeq = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
+				$isLoadedSeq = 'true';			
+			}
+		
         }
         else { # DB:ID or sequence
             $retSeq = $ARGV[0];
-			print_debug_message('load_data', '###>>>load_data the input sequence #else ='  , 42);
         }
     }
     if ($params{'sequence'}) {                                      # Via --sequence
         if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
-            $retSeq = &read_file($params{'sequence'});
+            $retSeq = &read_file($params{'sequence'});			
 			
-		#$newInputSequence = substr($retSeq,0,2);
-		my $newInputSequence = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
-		print_debug_message('load_data', '###>>>load_data the input sequence =' . $retSeq . '==' , 42);
-		print_debug_message('load_data', '###>>>load_data the input sequence =' . $newInputSequence . '==' , 42);
-
-		$retSeq =~ s/$retSeq/$newInputSequence/g;
+			if ($isLoadedSeq eq 'false' && '>' eq substr($retSeq,0,1) ) {
+				$retSeq = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
+				$isLoadedSeq = 'true';						
+			}
         }
         else { # DB:ID or sequence
             $retSeq = $params{'sequence'};
-			print_debug_message('load_data', '###>>>load_data the input sequence else ='  , 42);
         }
     }
 	
-
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
 }
