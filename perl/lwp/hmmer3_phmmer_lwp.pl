@@ -97,7 +97,6 @@ my %params = (
 );
 
 my $isFirst = 1;
-my $isLoadedSeq='false';
 
 # Default parameter values (should get these from the service)
 my %tool_params = ();
@@ -1232,18 +1231,10 @@ sub load_data {
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 	
-	my $newInputSequence = '>HMMER-phmmer-';
-
     # Query sequence
     if (defined($ARGV[0])) {                  # Bare option
         if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
             $retSeq = &read_file($ARGV[0]);
-
-			if ($isLoadedSeq eq 'false' && '>' eq substr($retSeq,0,1) ) {
-				$retSeq = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
-				$isLoadedSeq = 'true';			
-			}
-		
         }
         else { # DB:ID or sequence
             $retSeq = $ARGV[0];
@@ -1251,12 +1242,7 @@ sub load_data {
     }
     if ($params{'sequence'}) {                                      # Via --sequence
         if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
-            $retSeq = &read_file($params{'sequence'});			
-			
-			if ($isLoadedSeq eq 'false' && '>' eq substr($retSeq,0,1) ) {
-				$retSeq = '>HMMER-phmmer-'. substr($retSeq,1,length($retSeq)) ;	
-				$isLoadedSeq = 'true';						
-			}
+            $retSeq = &read_file($params{'sequence'});
         }
         else { # DB:ID or sequence
             $retSeq = $params{'sequence'};
