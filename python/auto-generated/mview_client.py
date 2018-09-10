@@ -150,7 +150,10 @@ def restRequest(url):
            and contenttype!=u"image/jpeg;charset=UTF-8"
            and contenttype!=u"application/gzip;charset=UTF-8"):
 
-            result = unicode(resp, u'utf-8')
+            try:
+                result = unicode(resp, u'utf-8')
+            except UnicodeDecodeError:
+                result = resp
         else:
             result = resp
         reqH.close()
