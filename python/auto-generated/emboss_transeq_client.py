@@ -36,7 +36,7 @@ except NameError:
 baseUrl = u'http://www.ebi.ac.uk/Tools/services/rest/emboss_transeq'
 
 # Set interval for checking status
-checkInterval = 10
+pollFreq = 3
 # Output level
 outputLevel = 1
 # Debug level
@@ -63,8 +63,7 @@ parser.add_option('--codontable', help='Which genetic code table to use. These a
 parser.add_option('--regions', help='Which regions of the user\'s DNA molecule are to be translated.')
 parser.add_option('--trim', help='Remove \'*\' and \'X\' (stop and ambiguity) symbols from the end of the translation. ')
 parser.add_option('--reverse', help='Choose this option if you wish to reverse and complement your input sequence before frame translation.')
-parser.add_option('--sequence', help='One or more nucleic acid sequences to be translated can be entered directly into this form. Any input formats accepted by EMBOSS can be used, the full list of sequence formats\
-\	\	\	\	accepted as input by EMBOSS tools is given in this table: EMBOSS sequence formats.  Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.')
+parser.add_option('--sequence', help='Any input formats accepted by EMBOSS can be used, the full list of sequence formats accepted as input by EMBOSS tools can be accessed via the link below. Word processor files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.')
 # General options
 parser.add_option('--email', help='e-mail address')
 parser.add_option('--title', help='job title')
@@ -73,6 +72,7 @@ parser.add_option('--outformat', help='output format for results')
 parser.add_option('--async', action='store_true', help='asynchronous mode')
 parser.add_option('--jobid', help='job identifier')
 parser.add_option('--polljob', action="store_true", help='get job result')
+parser.add_option('--pollFreq', type='int', default=3, help='poll frequency in seconds (default 3s)')
 parser.add_option('--status', action="store_true", help='get job status')
 parser.add_option('--resultTypes', action='store_true', help='get result types')
 parser.add_option('--params', action='store_true', help='list input parameters')
@@ -95,6 +95,9 @@ if options.quiet:
 # Debug level
 if options.debugLevel:
     debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -294,7 +297,7 @@ def clientPoll(jobId):
         result = serviceGetStatus(jobId)
         print(result, file=sys.stderr)
         if result == u'RUNNING' or result == u'PENDING':
-            time.sleep(checkInterval)
+            time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
 # Get result for a jobid
@@ -394,7 +397,7 @@ elif options.email and not options.jobid:
         print(jobid)
     else: # Sync mode
         print(jobid, file=sys.stderr)
-        time.sleep(5)
+        time.sleep(pollFreq)
         getResult(jobid)
 # Get job status
 elif options.status and options.jobid:

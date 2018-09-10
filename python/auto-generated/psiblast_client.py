@@ -36,7 +36,7 @@ except NameError:
 baseUrl = u'http://www.ebi.ac.uk/Tools/services/rest/psiblast'
 
 # Set interval for checking status
-checkInterval = 10
+pollFreq = 3
 # Output level
 outputLevel = 1
 # Debug level
@@ -85,6 +85,7 @@ parser.add_option('--outformat', help='output format for results')
 parser.add_option('--async', action='store_true', help='asynchronous mode')
 parser.add_option('--jobid', help='job identifier')
 parser.add_option('--polljob', action="store_true", help='get job result')
+parser.add_option('--pollFreq', type='int', default=3, help='poll frequency in seconds (default 3s)')
 parser.add_option('--status', action="store_true", help='get job status')
 parser.add_option('--resultTypes', action='store_true', help='get result types')
 parser.add_option('--params', action='store_true', help='list input parameters')
@@ -107,6 +108,9 @@ if options.quiet:
 # Debug level
 if options.debugLevel:
     debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -306,7 +310,7 @@ def clientPoll(jobId):
         result = serviceGetStatus(jobId)
         print(result, file=sys.stderr)
         if result == u'RUNNING' or result == u'PENDING':
-            time.sleep(checkInterval)
+            time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
 # Get result for a jobid
@@ -428,7 +432,7 @@ elif options.email and not options.jobid:
         print(jobid)
     else: # Sync mode
         print(jobid, file=sys.stderr)
-        time.sleep(5)
+        time.sleep(pollFreq)
         getResult(jobid)
 # Get job status
 elif options.status and options.jobid:
