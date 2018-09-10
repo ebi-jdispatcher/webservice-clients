@@ -33,7 +33,8 @@
 baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pratt'
 
 # Load libraries
-import platform, os, re, sys, time, urllib, urllib2, xmltramp
+import platform, os, re, sys, time, urllib, urllib2
+from xmltramp2 import xmltramp
 from optparse import OptionParser
 
 # Set interval for checking status
@@ -67,7 +68,8 @@ parser.add_option('--patternSymbolFile', action="store_true", help='Enable patte
 parser.add_option('--noPatternSymbolFile', help='Disable pattern symbol file')
 parser.add_option('--numPatternSymbols', help='Number of pattern symbols used')
 parser.add_option('--patternScoring', help='Pattern scoring')
-parser.add_option('--patternGraph', help='Pattern graph allows the use of an alignment or a query sequence to restrict the pattern search')
+parser.add_option('--patternGraph',
+                  help='Pattern graph allows the use of an alignment or a query sequence to restrict the pattern search')
 parser.add_option('--searchGreediness', help='Greediness of the search')
 parser.add_option('--patternRefinement', help='Enable pattern refinement')
 parser.add_option('--nopatternRefinement', help='Disable pattern refinement')
@@ -114,10 +116,12 @@ if options.quiet:
 if options.debugLevel:
     debugLevel = options.debugLevel
 
+
 # Debug print
 def printDebugMessage(functionName, message, level):
-    if(level <= debugLevel):
-        print >>sys.stderr, '[' + functionName + '] ' + message
+    if (level <= debugLevel):
+        print >> sys.stderr, '[' + functionName + '] ' + message
+
 
 # User-agent for request (see RFC2616).
 def getUserAgent():
@@ -130,13 +134,14 @@ def getUserAgent():
         clientVersion = clientRevision[11:-2]
     # Prepend client specific agent string.
     user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename( __file__ ),
+        clientVersion, os.path.basename(__file__),
         platform.python_version(), platform.system(),
         urllib_agent
     )
     printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
     printDebugMessage('getUserAgent', 'End', 11)
     return user_agent
+
 
 # Wrapper for a REST (HTTP GET) request
 def restRequest(url):
@@ -146,7 +151,7 @@ def restRequest(url):
     try:
         # Set the User-agent.
         user_agent = getUserAgent()
-        http_headers = { 'User-Agent' : user_agent }
+        http_headers = {'User-Agent': user_agent}
         req = urllib2.Request(url, None, http_headers)
         # Make the request (HTTP GET).
         reqH = urllib2.urlopen(req)
@@ -155,10 +160,11 @@ def restRequest(url):
     # Errors are indicated by HTTP status codes.
     except urllib2.HTTPError, ex:
         # Trap exception and output the document to get error message.
-        print >>sys.stderr, ex.read()
+        print >> sys.stderr, ex.read()
         raise
     printDebugMessage('restRequest', 'End', 11)
     return result
+
 
 # Get input parameters list
 def serviceGetParameters():
@@ -170,6 +176,7 @@ def serviceGetParameters():
     printDebugMessage('serviceGetParameters', 'End', 1)
     return doc['id':]
 
+
 # Print list of parameters
 def printGetParameters():
     printDebugMessage('printGetParameters', 'Begin', 1)
@@ -177,6 +184,7 @@ def printGetParameters():
     for id in idList:
         print id
     printDebugMessage('printGetParameters', 'End', 1)
+
 
 # Get input parameter information
 def serviceGetParameterDetails(paramName):
@@ -188,6 +196,7 @@ def serviceGetParameterDetails(paramName):
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage('serviceGetParameterDetails', 'End', 1)
     return doc
+
 
 # Print description of a parameter
 def printGetParameterDetails(paramName):
@@ -201,11 +210,12 @@ def printGetParameterDetails(paramName):
             print 'default',
         print
         print "\t" + str(value.label)
-        if(hasattr(value, 'properties')):
+        if (hasattr(value, 'properties')):
             for wsProperty in value.properties:
                 print  "\t" + str(wsProperty.key) + "\t" + str(wsProperty.value)
-    #print doc
+    # print doc
     printDebugMessage('printGetParameterDetails', 'End', 1)
+
 
 # Submit job
 def serviceRun(email, title, params):
@@ -234,7 +244,7 @@ def serviceRun(email, title, params):
     try:
         # Set the HTTP User-agent.
         user_agent = getUserAgent()
-        http_headers = { 'User-Agent' : user_agent }
+        http_headers = {'User-Agent': user_agent}
         req = urllib2.Request(requestUrl, None, http_headers)
         # Make the submission (HTTP POST).
         reqH = urllib2.urlopen(req, requestData)
@@ -242,11 +252,12 @@ def serviceRun(email, title, params):
         reqH.close()
     except urllib2.HTTPError, ex:
         # Trap exception and output the document to get error message.
-        print >>sys.stderr, ex.read()
+        print >> sys.stderr, ex.read()
         raise
     printDebugMessage('serviceRun', 'jobId: ' + jobId, 2)
     printDebugMessage('serviceRun', 'End', 1)
     return jobId
+
 
 # Get job status
 def serviceGetStatus(jobId):
@@ -258,6 +269,7 @@ def serviceGetStatus(jobId):
     printDebugMessage('serviceGetStatus', 'status: ' + status, 2)
     printDebugMessage('serviceGetStatus', 'End', 1)
     return status
+
 
 # Print the status of a job
 def printGetStatus(jobId):
@@ -278,21 +290,23 @@ def serviceGetResultTypes(jobId):
     printDebugMessage('serviceGetResultTypes', 'End', 1)
     return doc['type':]
 
+
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage('printGetResultTypes', 'Begin', 1)
     resultTypeList = serviceGetResultTypes(jobId)
     for resultType in resultTypeList:
         print resultType['identifier']
-        if(hasattr(resultType, 'label')):
+        if (hasattr(resultType, 'label')):
             print "\t", resultType['label']
-        if(hasattr(resultType, 'description')):
+        if (hasattr(resultType, 'description')):
             print "\t", resultType['description']
-        if(hasattr(resultType, 'mediaType')):
+        if (hasattr(resultType, 'mediaType')):
             print "\t", resultType['mediaType']
-        if(hasattr(resultType, 'fileSuffix')):
+        if (hasattr(resultType, 'fileSuffix')):
             print "\t", resultType['fileSuffix']
     printDebugMessage('printGetResultTypes', 'End', 1)
+
 
 # Get result
 def serviceGetResult(jobId, type_):
@@ -304,16 +318,18 @@ def serviceGetResult(jobId, type_):
     printDebugMessage('serviceGetResult', 'End', 1)
     return result
 
+
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage('clientPoll', 'Begin', 1)
     result = 'PENDING'
     while result == 'RUNNING' or result == 'PENDING':
         result = serviceGetStatus(jobId)
-        print >>sys.stderr, result
+        print >> sys.stderr, result
         if result == 'RUNNING' or result == 'PENDING':
             time.sleep(checkInterval)
     printDebugMessage('clientPoll', 'End', 1)
+
 
 # Get result for a jobid
 def getResult(jobId):
@@ -339,6 +355,7 @@ def getResult(jobId):
             print filename
     printDebugMessage('getResult', 'End', 1)
 
+
 # Read a file
 def readFile(filename):
     printDebugMessage('readFile', 'Begin', 1)
@@ -347,6 +364,7 @@ def readFile(filename):
     fh.close()
     printDebugMessage('readFile', 'End', 1)
     return data
+
 
 # No options... print help.
 if numOpts < 2:
@@ -362,14 +380,14 @@ elif options.paramDetail:
 elif options.email and not options.jobid:
     params = {}
     if len(args) > 0:
-        if os.access(args[0], os.R_OK): # Read file into content
+        if os.access(args[0], os.R_OK):  # Read file into content
             params['sequence'] = readFile(args[0])
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params['sequence'] = args[0]
-    elif options.sequence: # Specified via option
-        if os.access(options.sequence, os.R_OK): # Read file into content
+    elif options.sequence:  # Specified via option
+        if os.access(options.sequence, os.R_OK):  # Read file into content
             params['sequence'] = readFile(options.sequence)
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params['sequence'] = options.sequence
     # Add the other options (if defined)
     if options.patternSymbolFile:
@@ -434,10 +452,10 @@ elif options.email and not options.jobid:
 
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
-    if options.async: # Async mode
+    if options.async:  # Async mode
         print jobid
-    else: # Sync mode
-        print >>sys.stderr, jobid
+    else:  # Sync mode
+        print >> sys.stderr, jobid
         time.sleep(5)
         getResult(jobid)
 # Get job status
@@ -450,5 +468,5 @@ elif options.resultTypes and options.jobid:
 elif options.polljob and options.jobid:
     getResult(options.jobid)
 else:
-    print >>sys.stderr, 'Error: unrecognised argument combination'
+    print >> sys.stderr, 'Error: unrecognised argument combination'
     parser.print_help()

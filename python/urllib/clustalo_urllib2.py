@@ -21,9 +21,16 @@
 # Load libraries
 from __future__ import absolute_import
 from io import open
-import platform, os, sys, time, urllib, xmltramp
+import platform, os, sys, time, urllib
+from xmltramp2 import xmltramp
 from optparse import OptionParser
 import urllib2
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
 
 # Base URL for service
 baseUrl = u'http://www.ebi.ac.uk/Tools/services/rest/clustalo'
@@ -93,10 +100,12 @@ if options.quiet:
 if options.debugLevel:
     debugLevel = options.debugLevel
 
+
 # Debug print
 def printDebugMessage(functionName, message, level):
-    if(level <= debugLevel):
-        print >>sys.stderr, u'[' + functionName + u'] ' + message
+    if (level <= debugLevel):
+        print >> sys.stderr, u'[' + functionName + u'] ' + message
+
 
 # User-agent for request (see RFC2616).
 def getUserAgent():
@@ -109,13 +118,14 @@ def getUserAgent():
         clientVersion = clientRevision[11:-2]
     # Prepend client specific agent string.
     user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename( __file__ ),
+        clientVersion, os.path.basename(__file__),
         platform.python_version(), platform.system(),
         urllib_agent
     )
     printDebugMessage(u'getUserAgent', u'user_agent: ' + user_agent, 12)
     printDebugMessage(u'getUserAgent', u'End', 11)
     return user_agent
+
 
 # Wrapper for a REST (HTTP GET) request
 def restRequest(url):
@@ -124,28 +134,31 @@ def restRequest(url):
     try:
         # Set the User-agent.
         user_agent = getUserAgent()
-        http_headers = { u'User-Agent' : user_agent }
+        http_headers = {u'User-Agent': user_agent}
         req = urllib2.Request(url, None, http_headers)
         # Make the request (HTTP GET).
         reqH = urllib2.urlopen(req)
         resp = reqH.read();
         contenttype = reqH.info()
 
-
-        if(len(resp)>0 and contenttype!=u"image/png;charset=UTF-8"
-           and contenttype!=u"image/jpeg;charset=UTF-8"
-           and contenttype!=u"application/gzip;charset=UTF-8"):
-            result = unicode(resp, u'utf-8')
+        if (len(resp) > 0 and contenttype != u"image/png;charset=UTF-8"
+                and contenttype != u"image/jpeg;charset=UTF-8"
+                and contenttype != u"application/gzip;charset=UTF-8"):
+            try:
+                result = unicode(resp, u'utf-8')
+            except UnicodeDecodeError:
+                result = resp
         else:
             result = resp;
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except urllib2.HTTPError, ex:
         # Trap exception and output the document to get error message.
-        print >>sys.stderr, ex.read()
+        print >> sys.stderr, ex.read()
         raise
     printDebugMessage(u'restRequest', u'End', 11)
     return result
+
 
 # Get input parameters list
 def serviceGetParameters():
@@ -157,6 +170,7 @@ def serviceGetParameters():
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
 
+
 # Print list of parameters
 def printGetParameters():
     printDebugMessage(u'printGetParameters', u'Begin', 1)
@@ -164,6 +178,7 @@ def printGetParameters():
     for id_ in idList:
         print id_
     printDebugMessage(u'printGetParameters', u'End', 1)
+
 
 # Get input parameter information
 def serviceGetParameterDetails(paramName):
@@ -175,6 +190,7 @@ def serviceGetParameterDetails(paramName):
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameterDetails', u'End', 1)
     return doc
+
 
 # Print description of a parameter
 def printGetParameterDetails(paramName):
@@ -188,11 +204,12 @@ def printGetParameterDetails(paramName):
             print u'default',
         print
         print u"\t" + unicode(value.label)
-        if(hasattr(value, u'properties')):
+        if (hasattr(value, u'properties')):
             for wsProperty in value.properties:
                 print u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value)
-    #print doc
+    # print doc
     printDebugMessage(u'printGetParameterDetails', u'End', 1)
+
 
 # Submit job
 def serviceRun(email, title, params):
@@ -212,7 +229,7 @@ def serviceRun(email, title, params):
     try:
         # Set the HTTP User-agent.
         user_agent = getUserAgent()
-        http_headers = { u'User-Agent' : user_agent }
+        http_headers = {u'User-Agent': user_agent}
         req = urllib2.Request(requestUrl, None, http_headers)
         # Make the submission (HTTP POST).
         reqH = urllib2.urlopen(req, requestData.encode(encoding=u'utf_8', errors=u'strict'))
@@ -220,11 +237,12 @@ def serviceRun(email, title, params):
         reqH.close()
     except urllib2.HTTPError, ex:
         # Trap exception and output the document to get error message.
-        print >>sys.stderr, ex.read()
+        print >> sys.stderr, ex.read()
         raise
     printDebugMessage(u'serviceRun', u'jobId: ' + jobId, 2)
     printDebugMessage(u'serviceRun', u'End', 1)
     return jobId
+
 
 # Get job status
 def serviceGetStatus(jobId):
@@ -236,6 +254,7 @@ def serviceGetStatus(jobId):
     printDebugMessage(u'serviceGetStatus', u'status: ' + status, 2)
     printDebugMessage(u'serviceGetStatus', u'End', 1)
     return status
+
 
 # Print the status of a job
 def printGetStatus(jobId):
@@ -256,21 +275,23 @@ def serviceGetResultTypes(jobId):
     printDebugMessage(u'serviceGetResultTypes', u'End', 1)
     return doc[u'type':]
 
+
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
     resultTypeList = serviceGetResultTypes(jobId)
     for resultType in resultTypeList:
         print resultType[u'identifier']
-        if(hasattr(resultType, u'label')):
+        if (hasattr(resultType, u'label')):
             print u"\t", resultType[u'label']
-        if(hasattr(resultType, u'description')):
+        if (hasattr(resultType, u'description')):
             print u"\t", resultType[u'description']
-        if(hasattr(resultType, u'mediaType')):
+        if (hasattr(resultType, u'mediaType')):
             print u"\t", resultType[u'mediaType']
-        if(hasattr(resultType, u'fileSuffix')):
+        if (hasattr(resultType, u'fileSuffix')):
             print u"\t", resultType[u'fileSuffix']
     printDebugMessage(u'printGetResultTypes', u'End', 1)
+
 
 # Get result
 def serviceGetResult(jobId, type_):
@@ -282,16 +303,18 @@ def serviceGetResult(jobId, type_):
     printDebugMessage(u'serviceGetResult', u'End', 1)
     return result
 
+
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage(u'clientPoll', u'Begin', 1)
     result = u'PENDING'
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
-        print >>sys.stderr, result
+        print >> sys.stderr, result
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(checkInterval)
     printDebugMessage(u'clientPoll', u'End', 1)
+
 
 # Get result for a jobid
 # function modified by Mana to allow more than one output file written when 'outformat' is defined.
@@ -306,7 +329,8 @@ def getResult(jobId):
     for resultType in resultTypes:
         # Derive the filename for the result
         if options.outfile:
-            filename = options.outfile + u'.' + unicode(resultType[u'identifier']) + u'.' + unicode(resultType[u'fileSuffix'])
+            filename = options.outfile + u'.' + unicode(resultType[u'identifier']) + u'.' + unicode(
+                resultType[u'fileSuffix'])
         else:
             filename = jobId + u'.' + unicode(resultType[u'identifier']) + u'.' + unicode(resultType[u'fileSuffix'])
         # Write a result file
@@ -321,12 +345,12 @@ def getResult(jobId):
             if not outformat_type or outformat_type == unicode(resultType[u'identifier']):
                 # Get the result
                 result = serviceGetResult(jobId, unicode(resultType[u'identifier']))
-                if(unicode(resultType[u'mediaType']) == u"image/png"
-                   or unicode(resultType[u'mediaType']) == u"image/jpeg"
-                   or unicode(resultType[u'mediaType']) == u"application/gzip"):
-                    fmode= u'wb'
+                if (unicode(resultType[u'mediaType']) == u"image/png"
+                        or unicode(resultType[u'mediaType']) == u"image/jpeg"
+                        or unicode(resultType[u'mediaType']) == u"application/gzip"):
+                    fmode = u'wb'
                 else:
-                    fmode=u'w'
+                    fmode = u'w'
 
                 fh = open(filename, fmode);
 
@@ -334,6 +358,7 @@ def getResult(jobId):
                 fh.close()
                 print filename
     printDebugMessage(u'getResult', u'End', 1)
+
 
 # Read a file
 def readFile(filename):
@@ -343,6 +368,7 @@ def readFile(filename):
     fh.close()
     printDebugMessage(u'readFile', u'End', 1)
     return data
+
 
 # No options... print help.
 if numOpts < 2:
@@ -357,14 +383,14 @@ elif options.paramDetail:
 elif options.email and not options.jobid:
     params = {}
     if len(args) > 0:
-        if os.access(args[0], os.R_OK): # Read file into content
+        if os.access(args[0], os.R_OK):  # Read file into content
             params[u'sequence'] = readFile(args[0])
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence: # Specified via option
-        if os.access(options.sequence, os.R_OK): # Read file into content
+    elif options.sequence:  # Specified via option
+        if os.access(options.sequence, os.R_OK):  # Read file into content
             params[u'sequence'] = readFile(options.sequence)
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params[u'sequence'] = options.sequence
     # Booleans need to be represented as 1/0 rather than True/False
     if options.guidetreeout:
@@ -402,10 +428,10 @@ elif options.email and not options.jobid:
 
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
-    if options.async: # Async mode
+    if options.async:  # Async mode
         print jobid
-    else: # Sync mode
-        print >>sys.stderr, jobid
+    else:  # Sync mode
+        print >> sys.stderr, jobid
         time.sleep(5)
         getResult(jobid)
 # Get job status
@@ -422,5 +448,5 @@ else:
     if not options.email:
         print '\nParameter "--email" is missing in your command. It is required!\n'
 
-    print >>sys.stderr, u'Error: unrecognised argument combination'
+    print >> sys.stderr, u'Error: unrecognised argument combination'
     parser.print_help()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # $Id: clustalo_urllib3.py 2106 2012-05-01 17:00:40Z hpm $
 # ======================================================================
-# Clustal Omega(REST) Python-3 client using urllib3 and 
+# Clustal Omega(REST) Python-3 client using urllib3 and
 # xmltramp2 (https://pypi.python.org/pypi/xmltramp2/).
 #
 # Tested with:
@@ -20,6 +20,12 @@ from optparse import OptionParser
 from xmltramp2 import xmltramp
 import urllib.request as urllib2
 
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
 # Set interval for checking status
 checkInterval = 10
 # Output level
@@ -32,7 +38,7 @@ numOpts = len(sys.argv)
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
 description = """Multiple sequence alignment using Clustal Omega"""
-epilog = """For further information about the Clustal Omega web service, see 
+epilog = """For further information about the Clustal Omega web service, see
 http://www.ebi.ac.uk/tools/webservices/services/msa/clustalo_rest."""
 version = "$Id: clustalo_urllib3.py 2106 2012-05-01 17:00:40Z hpm $"
 # Process command-line options
@@ -85,10 +91,12 @@ if options.quiet:
 if options.debugLevel:
     debugLevel = options.debugLevel
 
+
 # Debug print
 def printDebugMessage(functionName, message, level):
-    if(level <= debugLevel):
+    if (level <= debugLevel):
         print ('[' + functionName + '] ' + message, file=sys.stderr)
+
 
 # User-agent for request (see RFC2616).
 def getUserAgent():
@@ -101,13 +109,14 @@ def getUserAgent():
         clientVersion = clientRevision[11:-2]
     # Prepend client specific agent string.
     user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename( __file__ ),
+        clientVersion, os.path.basename(__file__),
         platform.python_version(), platform.system(),
         urllib_agent
     )
     printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
     printDebugMessage('getUserAgent', 'End', 11)
     return user_agent
+
 
 # Wrapper for a REST (HTTP GET) request
 def restRequest(url):
@@ -116,17 +125,17 @@ def restRequest(url):
     try:
         # Set the User-agent.
         user_agent = getUserAgent()
-        http_headers = { 'User-Agent' : user_agent }
+        http_headers = {'User-Agent': user_agent}
         req = urllib2.Request(url, None, http_headers)
         # Make the request (HTTP GET).
         reqH = urllib2.urlopen(req)
         resp = reqH.read();
         contenttype = reqH.getheader("Content-Type")
-                
-        if(len(resp)>0 and contenttype!="image/png;charset=UTF-8"
-            and contenttype!="image/jpeg;charset=UTF-8"
-            and contenttype!="application/gzip;charset=UTF-8"):
-            result = str(resp, 'utf-8')
+
+        if (len(resp) > 0 and contenttype != "image/png;charset=UTF-8"
+                and contenttype != "image/jpeg;charset=UTF-8"
+                and contenttype != "application/gzip;charset=UTF-8"):
+            result = unicode(resp, 'utf-8')
         else:
             result = resp;
         reqH.close()
@@ -138,6 +147,7 @@ def restRequest(url):
     printDebugMessage('restRequest', 'End', 11)
     return result
 
+
 # Get input parameters list
 def serviceGetParameters():
     printDebugMessage('serviceGetParameters', 'Begin', 1)
@@ -148,13 +158,15 @@ def serviceGetParameters():
     printDebugMessage('serviceGetParameters', 'End', 1)
     return doc['id':]
 
+
 # Print list of parameters
 def printGetParameters():
     printDebugMessage('printGetParameters', 'Begin', 1)
     idList = serviceGetParameters()
     for id_ in idList:
         print (id_)
-    printDebugMessage('printGetParameters', 'End', 1)    
+    printDebugMessage('printGetParameters', 'End', 1)
+
 
 # Get input parameter information
 def serviceGetParameterDetails(paramName):
@@ -167,6 +179,7 @@ def serviceGetParameterDetails(paramName):
     printDebugMessage('serviceGetParameterDetails', 'End', 1)
     return doc
 
+
 # Print description of a parameter
 def printGetParameterDetails(paramName):
     printDebugMessage('printGetParameterDetails', 'Begin', 1)
@@ -174,16 +187,17 @@ def printGetParameterDetails(paramName):
     print (str(doc.name) + "\t" + str(doc.type))
     print (doc.description)
     for value in doc.values:
-        print (value.value,end=" ")
+        print (value.value, end=" ")
         if str(value.defaultValue) == 'true':
             print ('default', end=" ")
         print
         print ("\t" + str(value.label))
-        if(hasattr(value, 'properties')):
+        if (hasattr(value, 'properties')):
             for wsProperty in value.properties:
                 print  ("\t" + str(wsProperty.key) + "\t" + str(wsProperty.value))
-    #print doc
+    # print doc
     printDebugMessage('printGetParameterDetails', 'End', 1)
+
 
 # Submit job
 def serviceRun(email, title, params):
@@ -203,7 +217,7 @@ def serviceRun(email, title, params):
     try:
         # Set the HTTP User-agent.
         user_agent = getUserAgent()
-        http_headers = { 'User-Agent' : user_agent }
+        http_headers = {'User-Agent': user_agent}
         req = urllib2.Request(requestUrl, None, http_headers)
         # Make the submission (HTTP POST).
         reqH = urllib2.urlopen(req, requestData.encode(encoding='utf_8', errors='strict'))
@@ -217,6 +231,7 @@ def serviceRun(email, title, params):
     printDebugMessage('serviceRun', 'End', 1)
     return jobId
 
+
 # Get job status
 def serviceGetStatus(jobId):
     printDebugMessage('serviceGetStatus', 'Begin', 1)
@@ -228,13 +243,14 @@ def serviceGetStatus(jobId):
     printDebugMessage('serviceGetStatus', 'End', 1)
     return status
 
+
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage('printGetStatus', 'Begin', 1)
     status = serviceGetStatus(jobId)
     print (status)
     printDebugMessage('printGetStatus', 'End', 1)
-    
+
 
 # Get available result types for job
 def serviceGetResultTypes(jobId):
@@ -247,21 +263,23 @@ def serviceGetResultTypes(jobId):
     printDebugMessage('serviceGetResultTypes', 'End', 1)
     return doc['type':]
 
+
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage('printGetResultTypes', 'Begin', 1)
     resultTypeList = serviceGetResultTypes(jobId)
     for resultType in resultTypeList:
         print (resultType['identifier'])
-        if(hasattr(resultType, 'label')):
+        if (hasattr(resultType, 'label')):
             print ("\t", resultType['label'])
-        if(hasattr(resultType, 'description')):
+        if (hasattr(resultType, 'description')):
             print ("\t", resultType['description'])
-        if(hasattr(resultType, 'mediaType')):
+        if (hasattr(resultType, 'mediaType')):
             print ("\t", resultType['mediaType'])
-        if(hasattr(resultType, 'fileSuffix')):
+        if (hasattr(resultType, 'fileSuffix')):
             print ("\t", resultType['fileSuffix'])
     printDebugMessage('printGetResultTypes', 'End', 1)
+
 
 # Get result
 def serviceGetResult(jobId, type_):
@@ -273,6 +291,7 @@ def serviceGetResult(jobId, type_):
     printDebugMessage('serviceGetResult', 'End', 1)
     return result
 
+
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage('clientPoll', 'Begin', 1)
@@ -283,6 +302,7 @@ def clientPoll(jobId):
         if result == 'RUNNING' or result == 'PENDING':
             time.sleep(checkInterval)
     printDebugMessage('clientPoll', 'End', 1)
+
 
 # Get result for a jobid
 def getResult(jobId):
@@ -302,19 +322,20 @@ def getResult(jobId):
         if not options.outformat or options.outformat == str(resultType['identifier']):
             # Get the result
             result = serviceGetResult(jobId, str(resultType['identifier']))
-            if(str(resultType['mediaType']) == "image/png"
-                or str(resultType['mediaType']) == "image/jpeg"
-                or str(resultType['mediaType']) == "application/gzip"):
-                fmode= 'wb'
+            if (str(resultType['mediaType']) == "image/png"
+                    or str(resultType['mediaType']) == "image/jpeg"
+                    or str(resultType['mediaType']) == "application/gzip"):
+                fmode = 'wb'
             else:
-                fmode='w'
-                
+                fmode = 'w'
+
             fh = open(filename, fmode);
-            
+
             fh.write(result)
             fh.close()
             print (filename)
     printDebugMessage('getResult', 'End', 1)
+
 
 # Read a file
 def readFile(filename):
@@ -324,6 +345,7 @@ def readFile(filename):
     fh.close()
     printDebugMessage('readFile', 'End', 1)
     return data
+
 
 # No options... print help.
 if numOpts < 2:
@@ -338,14 +360,14 @@ elif options.paramDetail:
 elif options.email and not options.jobid:
     params = {}
     if len(args) > 0:
-        if os.access(args[0], os.R_OK): # Read file into content
+        if os.access(args[0], os.R_OK):  # Read file into content
             params['sequence'] = readFile(args[0])
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params['sequence'] = args[0]
-    elif options.sequence: # Specified via option
-        if os.access(options.sequence, os.R_OK): # Read file into content
+    elif options.sequence:  # Specified via option
+        if os.access(options.sequence, os.R_OK):  # Read file into content
             params['sequence'] = readFile(options.sequence)
-        else: # Argument is a sequence id
+        else:  # Argument is a sequence id
             params['sequence'] = options.sequence
     # Booleans need to be represented as 1/0 rather than True/False
     if options.guidetreeout:
@@ -380,12 +402,12 @@ elif options.email and not options.jobid:
         params['hmmiterations'] = options.hmmiterations
     if options.outfmt:
         params['outfmt'] = options.outfmt
-    
+
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
-    if options.async: # Async mode
+    if options.async:  # Async mode
         print (jobid)
-    else: # Sync mode
+    else:  # Sync mode
         print (jobid, file=sys.stderr)
         time.sleep(5)
         getResult(jobid)

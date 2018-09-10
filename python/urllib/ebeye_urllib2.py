@@ -83,7 +83,8 @@ parser.add_option('--facets', help='list of selected facets')
 parser.add_option('--facetsdepth', help='depth in hierarchical facet')
 parser.add_option('--mltfields', help='field ids  to be used for generating a morelikethis query')
 parser.add_option('--mintermfreq', help='frequency below which terms will be ignored in the base document')
-parser.add_option('--mindocfreq', help='frequency at which words will be ignored which do not occur in at least this many documents')
+parser.add_option('--mindocfreq',
+                  help='frequency at which words will be ignored which do not occur in at least this many documents')
 parser.add_option('--maxqueryterm', help='maximum number of query terms that will be included in any generated query')
 parser.add_option('--excludes', help='terms to be excluded')
 parser.add_option('--excludesets', help='stop word sets to be excluded')
@@ -110,10 +111,12 @@ if options.debugLevel:
 if options.baseUrl:
     baseUrl = options.baseUrl
 
+
 # Debug print
 def printDebugMessage(functionName, message, level):
-    if(level <= debugLevel):
-        print >>sys.stderr, '[' + functionName + '] ' + message
+    if (level <= debugLevel):
+        print >> sys.stderr, '[' + functionName + '] ' + message
+
 
 # User-agent for request.
 def getUserAgent():
@@ -124,7 +127,7 @@ def getUserAgent():
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
     user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename( __file__ ), 
+        clientVersion, os.path.basename(__file__),
         platform.python_version(), platform.system(),
         urllib_agent
     )
@@ -142,8 +145,8 @@ def restRequest(url):
     try:
         user_agent = getUserAgent()
         http_headers = {
-            'User-Agent' : user_agent,
-            'Accept-Encoding' : 'gzip'
+            'User-Agent': user_agent,
+            'Accept-Encoding': 'gzip'
         }
         req = urllib2.Request(url, None, http_headers)
         resp = urllib2.urlopen(req)
@@ -157,7 +160,7 @@ def restRequest(url):
             gz = GzipFile(
                 fileobj=StringIO(result),
                 mode="r"
-                )
+            )
             result = gz.read()
         else:
             raise Exception('Unsupported Content-Encoding')
@@ -169,11 +172,13 @@ def restRequest(url):
     printDebugMessage('restRequest', 'End', 11)
     return result
 
+
 def hasSubdomains(domainInfo):
     for dir in domainInfo._dir:
         if dir._name == 'subdomains':
             return True
     return False
+
 
 def printDomains(domainInfo, indent):
     printDebugMessage('printDomains', 'Begin', 1)
@@ -181,8 +186,9 @@ def printDomains(domainInfo, indent):
     if hasSubdomains(domainInfo):
         subdomains = domainInfo['subdomains']['domain':]
         for subdomain in subdomains:
-            printDomains (subdomain, indent + '\t')
+            printDomains(subdomain, indent + '\t')
     printDebugMessage('printDomains', 'End', 1)
+
 
 # Get domain Hierarchy
 def getDomainHierarchy():
@@ -194,9 +200,10 @@ def getDomainHierarchy():
     allebi = doc['domains']['domain']
     printDomains(allebi, '')
     domainInfoList = doc['result.domains.domain':]
-    #for domainInfo in domainInfoList:
+    # for domainInfo in domainInfoList:
     #    print (domainInfo.id)
     printDebugMessage('getDomainHierarchy', 'End', 1)
+
 
 # Check if a databaseInfo matches a database name.
 def is_database(dbInfo, dbName):
@@ -212,6 +219,7 @@ def is_database(dbInfo, dbName):
     printDebugMessage('is_database', 'End', 11)
     return retVal
 
+
 # Get domain details
 def getDomainDetails(domain):
     printDebugMessage('getDomainDetails', 'Begin', 1)
@@ -223,13 +231,14 @@ def getDomainDetails(domain):
     printDomainDetails(domainInfo)
     printDebugMessage('getDomainDetails', 'End', 1)
 
+
 def printDomainDetails(domainInfo):
     printDebugMessage('printDomainDetails', 'Begin', 1)
     print (domainInfo('name') + ' (' + domainInfo('id') + ')')
     if hasSubdomains(domainInfo):
         subdomains = domainInfo['subdomains']['domain':]
         for subdomain in subdomains:
-            printDomainDetails (subdomain)
+            printDomainDetails(subdomain)
     else:
         indexInfos = domainInfo['indexInfos']['indexInfo':]
         for indexInfo in indexInfos:
@@ -247,10 +256,11 @@ def printDomainDetails(domainInfo):
         print
     printDebugMessage('printDomainDetails', 'End', 1)
 
+
 # Get number of results
 def getNumberOfResults(domain, query):
     printDebugMessage('getNumberOfResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&size=0'
+    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&size=0'
     printDebugMessage('getNumberOfResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -258,21 +268,24 @@ def getNumberOfResults(domain, query):
     printNumber(numberOfResults)
     printDebugMessage('getNumberOfResults', 'End', 1)
 
+
 def printNumber(num):
     printDebugMessage('printNumber', 'Begin', 1)
     print(num);
     printDebugMessage('printNumber', 'End', 1)
 
+
 # Get search results
 def getResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', sort=''):
     printDebugMessage('getResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort
+    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort
     printDebugMessage('getResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
     entries = doc['entries']['entry':]
     printEntries(entries)
     printDebugMessage('getResults', 'End', 1)
+
 
 def printEntries(entries):
     printDebugMessage('printEntries', 'Begin', 1)
@@ -285,13 +298,14 @@ def printEntries(entries):
             else:
                 print
         if hasFieldUrls(entry):
-           for fieldurl in entry['fieldURLs']['fieldURL':]:
-              print (str(fieldurl))
+            for fieldurl in entry['fieldURLs']['fieldURL':]:
+                print (str(fieldurl))
         if hasViewUrls(entry):
             for viewurl in entry['viewURLs']['viewURL':]:
-               print (str(viewurl))
+                print (str(viewurl))
     print
     printDebugMessage('printEntries', 'End', 1)
+
 
 def hasFieldUrls(entry):
     for dir in entry._dir:
@@ -299,11 +313,13 @@ def hasFieldUrls(entry):
             return True
     return False
 
+
 def hasViewUrls(entry):
     for dir in entry._dir:
         if dir._name == 'viewURLs':
             return True
     return False
+
 
 def printFacets(facets):
     printDebugMessage('printFacets', 'Begin', 1)
@@ -313,6 +329,7 @@ def printFacets(facets):
             printFacetValue(facetValue, 0)
         print
     printDebugMessage('printFacets', 'End', 1)
+
 
 def printFacetValue(facetValue, depth=0):
     printDebugMessage('printFacetValue', 'Begin', 1)
@@ -325,16 +342,19 @@ def printFacetValue(facetValue, depth=0):
 
     printDebugMessage('printFacetValue', 'End', 1)
 
+
 def hasFacetValueChildren(facetValue):
     for dir in facetValue._dir:
         if dir._name == 'children':
             return True
     return False
 
+
 # Get search results with facets
-def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='', sort='', facetcount='10', facetfields='', facets='', facetsdepth=''):
+def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', viewurl='', sortfield='', order='',
+                      sort='', facetcount='10', facetfields='', facets='', facetsdepth=''):
     printDebugMessage('getFacetedResults', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '?query=' + query +'&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets + '&facetsdepth=' + facetsdepth
+    requestUrl = baseUrl + '/' + domain + '?query=' + query + '&fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + '&sort=' + sort + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets + '&facetsdepth=' + facetsdepth
     printDebugMessage('getFacetedResults', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -345,16 +365,18 @@ def getFacetedResults(domain, query, fields, size='', start='', fieldurl='', vie
     printFacets(facets)
     printDebugMessage('getFacetedResults', 'End', 1)
 
+
 # Get entry details
 def getEntries(domain, entryids, fields, fieldurl='', viewurl=''):
     printDebugMessage('getEntries', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids +'?fields=' + fields + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '?fields=' + fields + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl
     printDebugMessage('getEntries', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
     entries = doc['entries']['entry':]
-    printEntries(entries)    
+    printEntries(entries)
     printDebugMessage('getEntries', 'End', 1)
+
 
 # Get domain ids referenced in a domain
 def getDomainsReferencedInDomain(domain):
@@ -367,10 +389,11 @@ def getDomainsReferencedInDomain(domain):
         print domain('id')
     printDebugMessage('getDomainsReferencedInDomain', 'End', 1)
 
+
 # Get domain ids referenced in an entry
 def getDomainsReferencedInEntry(domain, entryid):
     printDebugMessage('getDomainsReferencedInEntry', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/'+ entryid + '/xref/'
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/xref/'
     printDebugMessage('getDomainsReferencedInEntry', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -378,10 +401,12 @@ def getDomainsReferencedInEntry(domain, entryid):
         print domain('id')
     printDebugMessage('getDomainsReferencedInEntry', 'End', 1)
 
+
 # Get cross-references
-def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', start='', fieldurl='', viewurl='', facetcount='', facetfields='', facets=''):
+def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', start='', fieldurl='', viewurl='',
+                         facetcount='', facetfields='', facets=''):
     printDebugMessage('getReferencedEntries', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain +'?fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain + '?fields=' + fields + '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + '&facetfields=' + facetfields + '&facets=' + facets
     printDebugMessage('getReferencedEntries', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -393,16 +418,18 @@ def getReferencedEntries(domain, entryids, referenceddomain, fields, size='', st
             print
     printDebugMessage('getReferencedEntries', 'End', 1)
 
+
 def hasReferenceFacet(entry):
     for dir in entry._dir:
         if dir._name == 'referenceFacets':
             return True
     return False
 
+
 # Get top terms
 def getTopTerms(domain, field, size='', excludes='', excludesets=''):
     printDebugMessage('getTopTerms', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/topterms/' + field +'?size=' +size + '&excludes=' + excludes + '&excludesets=' + excludesets
+    requestUrl = baseUrl + '/' + domain + '/topterms/' + field + '?size=' + size + '&excludes=' + excludes + '&excludesets=' + excludesets
     printDebugMessage('getTopTerms', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
@@ -411,22 +438,26 @@ def getTopTerms(domain, field, size='', excludes='', excludesets=''):
         printTerm(term)
     printDebugMessage('getTopTerms', 'End', 1)
 
+
 def printTerm(term):
     printDebugMessage('printTerm', 'Begin', 1)
     print (str(term['text']) + ': ' + str(term['docFreq']))
     printDebugMessage('printTerm', 'End', 1)
 
+
 # Get similar documents to a given one
-def getMoreLikeThis(domain, entryid, targetDomain, fields, size='', start='', fieldurl='', viewurl='', mltfields='', mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
+def getMoreLikeThis(domain, entryid, targetDomain, fields, size='', start='', fieldurl='', viewurl='', mltfields='',
+                    mintermfreq='', mindocfreq='', maxqueryterm='', excludes='', excludesets=''):
     printDebugMessage('getMoreLikeThis', 'Begin', 1)
-    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis/' + targetDomain +'?size=' +size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl  + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq  + '&mindocfreq=' + maxqueryterm  + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
+    requestUrl = baseUrl + '/' + domain + '/entry/' + entryid + '/morelikethis/' + targetDomain + '?size=' + size + '&start=' + start + '&fields=' + fields + '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&mltfields=' + mltfields + '&mintermfreq=' + mintermfreq + '&mindocfreq=' + maxqueryterm + '&maxqueryterm=' + mindocfreq + '&excludes=' + excludes + '&excludesets=' + excludesets
     printDebugMessage('getMoreLikeThis', requestUrl, 2)
     xmlDoc = restRequest(requestUrl)
     doc = xmltramp.parse(xmlDoc)
     entries = doc['entries']['entry':]
     printEntries(entries)
     printDebugMessage('getMoreLikeThis', 'End', 1)
-   
+
+
 # Get suggestions
 def getAutoComplete(domain, term):
     printDebugMessage('getAutoComplete', 'Begin', 1)
@@ -438,12 +469,14 @@ def getAutoComplete(domain, term):
     printSuggestions(suggestions)
     printDebugMessage('getAutoComplete', 'End', 1)
 
+
 def printSuggestions(suggestions):
     printDebugMessage('printSuggestions', 'Begin', 1)
     for suggetion in suggestions:
         print suggetion['suggestion']
     print
     printDebugMessage('printSuggestions', 'End', 1)
+
 
 # No arguments, print usage
 if len(args) < 1:
@@ -500,7 +533,7 @@ elif args[0] == 'getFacetedResults':
         facetfields = ''
         facets = ''
         facetdepths = ''
-        
+
         if options.start:       start = options.start
         if options.size:        size = options.size
         if options.fieldurl:    fieldurl = options.fieldurl
@@ -512,14 +545,15 @@ elif args[0] == 'getFacetedResults':
         if options.facetfields: facetfields = options.facetfields
         if options.facets:      facets = options.facets
         if options.facetsdepth: facetdepths = options.facetsdepth
-        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort, facetcount, facetfields, facets, facetdepths)
+        getFacetedResults(args[1], args[2], args[3], size, start, fieldurl, viewurl, sortfield, order, sort, facetcount,
+                          facetfields, facets, facetdepths)
 # Get entry details.
 elif args[0] == 'getEntries':
     if len(args) < 4:
         print ('domain, entry ids and fields should be given.')
     else:
         fieldurl = ''
-        viewurl =  ''
+        viewurl = ''
         if options.fieldurl: fieldurl = options.fieldurl
         if options.viewurl: viewurl = options.viewurl
 
@@ -557,7 +591,8 @@ elif args[0] == 'getReferencedEntries':
         if options.facetfields: facetfields = options.facetfields
         if options.facets:      facets = options.facets
 
-        getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount, facetfields, facets)
+        getReferencedEntries(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, facetcount,
+                             facetfields, facets)
 # Get top terms
 elif args[0] == 'getTopTerms':
     if len(args) < 3:
@@ -566,10 +601,10 @@ elif args[0] == 'getTopTerms':
         size = ''
         excludes = ''
         excludesets = ''
-        
+
         if options.size:        size = options.size
         if options.excludes: excludes = options.excludes
-        if options.excludesets: excludesets = options.excludesets        
+        if options.excludesets: excludesets = options.excludesets
         getTopTerms(args[1], args[2], size, excludes, excludesets)
 # Get similar documents to a given one
 elif args[0] == 'getMoreLikeThis':
@@ -592,14 +627,15 @@ elif args[0] == 'getMoreLikeThis':
         if options.start:       start = options.start
         if options.size:        size = options.size
         if options.fieldurl:    fieldurl = options.fieldurl
-        if options.viewurl:     viewurl = options.viewurl        
+        if options.viewurl:     viewurl = options.viewurl
         if options.mltfields: mltfields = options.mltfields
         if options.mintermfreq: mintermfreq = options.mintermfreq
         if options.mindocfreq: mindocfreq = options.mindocfreq
         if options.maxqueryterm: maxqueryterm = options.maxqueryterm
         if options.excludes: excludes = options.excludes
         if options.excludesets: excludesets = options.excludesets
-        getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+        getMoreLikeThis(args[1], args[2], args[1], args[3], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+                        mindocfreq, maxqueryterm, excludes, excludesets)
 # Get similar documents to a given one
 elif args[0] == 'getExtendedMoreLikeThis':
     if len(args) < 5:
@@ -621,14 +657,15 @@ elif args[0] == 'getExtendedMoreLikeThis':
         if options.start:       start = options.start
         if options.size:        size = options.size
         if options.fieldurl:    fieldurl = options.fieldurl
-        if options.viewurl:     viewurl = options.viewurl        
+        if options.viewurl:     viewurl = options.viewurl
         if options.mltfields: mltfields = options.mltfields
         if options.mintermfreq: mintermfreq = options.mintermfreq
         if options.mindocfreq: mindocfreq = options.mindocfreq
         if options.maxqueryterm: maxqueryterm = options.maxqueryterm
         if options.excludes: excludes = options.excludes
         if options.excludesets: excludesets = options.excludesets
-        getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq, mindocfreq, maxqueryterm, excludes, excludesets)
+        getMoreLikeThis(args[1], args[2], args[3], args[4], size, start, fieldurl, viewurl, mltfields, mintermfreq,
+                        mindocfreq, maxqueryterm, excludes, excludesets)
 
 elif args[0] == 'getAutoComplete':
     if len(args) < 3:

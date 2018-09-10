@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # $Id$
 # ======================================================================
-# 
+#
 # Copyright 2009-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
-# WSDbfetch (REST) using urllib2 and xmltramp 
+# WSDbfetch (REST) using urllib2 and xmltramp
 # (http://www.aaronsw.com/2002/xmltramp/).
 #
 # Tested with:
@@ -32,7 +32,8 @@
 baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Load libraries
-import platform, os, sys, urllib2, xmltramp
+import platform, os, sys, urllib2
+from xmltramp2 import xmltramp
 from optparse import OptionParser
 from gzip import GzipFile
 from StringIO import StringIO
@@ -51,9 +52,9 @@ usage = """
   %prog getSupportedDBs [options...]
   %prog getSupportedFormats [options...]
   %prog getSupportedStyles [options...]"""
-description = """Fetch database entries using entry identifiers. For more information on dbfetch 
+description = """Fetch database entries using entry identifiers. For more information on dbfetch
 refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
-epilog = """For further information about the WSDbfetch (SOAP) web service, see 
+epilog = """For further information about the WSDbfetch (SOAP) web service, see
 http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
 version = "$Id$"
 # Process command-line options
@@ -80,10 +81,12 @@ if options.debugLevel:
 if options.baseUrl:
     baseUrl = options.baseUrl
 
+
 # Debug print
 def printDebugMessage(functionName, message, level):
-    if(level <= debugLevel):
-        print >>sys.stderr, '[' + functionName + '] ' + message
+    if (level <= debugLevel):
+        print >> sys.stderr, '[' + functionName + '] ' + message
+
 
 # User-agent for request.
 def getUserAgent():
@@ -94,7 +97,7 @@ def getUserAgent():
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
     user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename( __file__ ), 
+        clientVersion, os.path.basename(__file__),
         platform.python_version(), platform.system(),
         urllib_agent
     )
@@ -110,8 +113,8 @@ def restRequest(url):
     try:
         user_agent = getUserAgent()
         http_headers = {
-            'User-Agent' : user_agent,
-            'Accept-Encoding' : 'gzip'
+            'User-Agent': user_agent,
+            'Accept-Encoding': 'gzip'
         }
         req = urllib2.Request(url, None, http_headers)
         resp = urllib2.urlopen(req)
@@ -125,7 +128,7 @@ def restRequest(url):
             gz = GzipFile(
                 fileobj=StringIO(result),
                 mode="r"
-                )
+            )
             result = gz.read()
         else:
             raise Exception('Unsupported Content-Encoding')
@@ -136,6 +139,7 @@ def restRequest(url):
     printDebugMessage('restRequest', 'result: ' + result, 11)
     printDebugMessage('restRequest', 'End', 11)
     return result
+
 
 # Get database details.
 def getDatabaseInfoList():
@@ -148,6 +152,7 @@ def getDatabaseInfoList():
     printDebugMessage('getDatabaseInfoList', 'End', 11)
     return databaseInfoList
 
+
 # Get list of database names.
 def getSupportedDbs():
     printDebugMessage('getSupportedDbs', 'Begin', 1)
@@ -157,6 +162,7 @@ def getSupportedDbs():
         dbList.append(str(dbInfo.name))
     printDebugMessage('getSupportedDbs', 'End', 1)
     return dbList
+
 
 # Check if a databaseInfo matches a database name.
 def is_database(dbInfo, dbName):
@@ -172,6 +178,7 @@ def is_database(dbInfo, dbName):
     printDebugMessage('is_database', 'End', 11)
     return retVal
 
+
 # Get list of formats for a database.
 def getDbFormats(db):
     printDebugMessage('getDbFormats', 'Begin', 1)
@@ -184,6 +191,7 @@ def getDbFormats(db):
                 formatNameList.append(str(formatInfo.name))
     printDebugMessage('getDbFormats', 'End', 1)
     return formatNameList
+
 
 # Check if a formatInfo matches a format name.
 def is_format(formatInfo, formatName):
@@ -214,6 +222,7 @@ def getFormatStyles(db, format):
     printDebugMessage('getFormatStyles', 'End', 1)
     return styleNameList
 
+
 # Get an entry.
 def fetchData(query, format='default', style='default'):
     printDebugMessage('fetchData', 'Begin', 1)
@@ -222,6 +231,7 @@ def fetchData(query, format='default', style='default'):
     printDebugMessage('fetchData', 'End', 1)
     return result
 
+
 # Get a set of entries.
 def fetchBatch(db, idListStr, format='default', style='default'):
     printDebugMessage('fetchBatch', 'Begin', 1)
@@ -229,6 +239,7 @@ def fetchBatch(db, idListStr, format='default', style='default'):
     result = restRequest(requestUrl)
     printDebugMessage('fetchBatch', 'End', 1)
     return result
+
 
 # No arguments, print usage
 if len(args) < 1:
