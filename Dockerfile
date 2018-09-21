@@ -21,10 +21,19 @@ RUN apk update && \
 
 RUN cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS
 
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache
+RUN pip install xmltramp2
+
 ENV SRC_PATH=/usr/src/ebi-webservice-clients/webservice-clients-master
 ENV CLIENT_PATH=/usr/src/ebi-webservice-clients
 WORKDIR $CLIENT_PATH
-ENV PATH="$CLIENT_PATH/perl/:${PATH}"
+ENV PATH="$CLIENT_PATH/perl/:$CLIENT_PATH/python/:${PATH}"
 
 RUN ZIP=master.zip && \
   wget https://github.com/ebi-wp/webservice-clients/archive/$ZIP -O /tmp/$ZIP && \
@@ -32,8 +41,10 @@ RUN ZIP=master.zip && \
   chmod -R 755 $CLIENT_PATH/* && \
   rm /tmp/$ZIP
 
-RUN mkdir $CLIENT_PATH/perl 
-RUN cp $SRC_PATH/perl/lwp/*.pl $CLIENT_PATH/perl/  
-RUN cp $SRC_PATH/LICENSE $CLIENT_PATH/  
+RUN mkdir $CLIENT_PATH/perl
+RUN cp $SRC_PATH/perl/lwp/*.pl $CLIENT_PATH/perl/
+RUN mkdir $CLIENT_PATH/python
+RUN cp $SRC_PATH/python/auto-generated/*.py $CLIENT_PATH/python/
+RUN cp $SRC_PATH/LICENSE $CLIENT_PATH/
 RUN chmod +x $CLIENT_PATH/perl/*.*
-
+RUN chmod +x $CLIENT_PATH/python/*.*
