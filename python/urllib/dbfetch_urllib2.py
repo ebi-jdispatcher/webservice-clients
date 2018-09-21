@@ -225,7 +225,7 @@ def getFormatStyles(db, format):
 
 
 # Get an entry.
-def fetchData(query, format='default', style='default'):
+def fetchData(query, format='default', style='raw'):
     printDebugMessage('fetchData', 'Begin', 1)
     requestUrl = baseUrl + '/' + query.replace(':', '/') + '/' + format + '?style=' + style
     result = restRequest(requestUrl)
@@ -234,7 +234,7 @@ def fetchData(query, format='default', style='default'):
 
 
 # Get a set of entries.
-def fetchBatch(db, idListStr, format='default', style='default'):
+def fetchBatch(db, idListStr, format='default', style='raw'):
     printDebugMessage('fetchBatch', 'Begin', 1)
     requestUrl = baseUrl + '/' + db + '/' + idListStr + '/' + format + '?style=' + style
     result = restRequest(requestUrl)
