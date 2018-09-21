@@ -10,14 +10,14 @@ LABEL    base_image="ebi-wp:EBI Web Service" \
     software.version="1.0.0" \
     version="1" \
     about.copyright="Copyright EMBL-EBI 2018" \
-    about.license="Apache-2.0" \     
-    about.license_file="/usr/src/doc/LICENSE" \ 
+    about.license="Apache-2.0" \
+    about.license_file="/usr/src/doc/LICENSE" \
     about.tags="ebi" \
     extra.identifier.biotools="ebi_tools"
 
 # Dependencies
 RUN apk update && \
-    apk add expat-dev 
+    apk add expat-dev
 
 RUN cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS
 
