@@ -29,13 +29,14 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/radar_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/radar'
 
 # Load libraries
 import platform, os, re, sys, time, urllib, urllib2
 from xmltramp2 import xmltramp
 from optparse import OptionParser
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/radar'
 
 # Set interval for checking status
 checkInterval = 10

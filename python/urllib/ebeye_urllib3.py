@@ -27,8 +27,6 @@
 # http://www.ebi.ac.uk/ebisearch/swagger.ebi
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Service base URL
-baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
 import platform, os, sys, io, gzip, urllib
@@ -42,6 +40,9 @@ try:
     unicode('')
 except NameError:
     unicode = str
+
+# Service base URL
+baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Output level
 outputLevel = 1

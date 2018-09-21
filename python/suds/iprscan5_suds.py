@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
-# 
+#
 # Copyright 2010-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
 # InterProScan 5 (SOAP) service, Python client using SUDS.
 #
@@ -27,8 +27,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# WSDL URL for service
-wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/iprscan5?wsdl'
 
 # Load libraries
 import base64, platform, os, suds, sys, time, urllib2
@@ -36,6 +34,9 @@ import logging
 from suds import WebFault
 from suds.client import Client
 from optparse import OptionParser
+
+# WSDL URL for service
+wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/iprscan5?wsdl'
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -54,7 +55,7 @@ usage = "Usage: %prog [options...] [seqFile]"
 description = """Identify protein family, domain and signal signatures in a
 protein sequence using InterProScan. For more information on InterProScan 5
 refer to http://www.ebi.ac.uk/interpro/"""
-epilog = """For further information about the InterProScan 5 (SOAP) web service, see 
+epilog = """For further information about the InterProScan 5 (SOAP) web service, see
 http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_soap."""
 version = "$Id$"
 # Process command-line options
@@ -233,7 +234,7 @@ server = client.service
 clientRevision = '$Revision$'
 clientVersion = '0'
 if len(clientRevision) > 11:
-    clientVersion = clientRevision[11:-2] 
+    clientVersion = clientRevision[11:-2]
 userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) suds/%s Python-urllib/%s' % (
     clientVersion, os.path.basename( __file__ ),
     platform.python_version(), platform.system(),
@@ -296,7 +297,7 @@ elif options.email and not options.jobid:
     # Add the other options (if defined)
     if options.appl:
         params['appl'] = {'string':options.appl}
-    
+
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
     if options.async: # Async mode

@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
-# 
+#
 # Copyright 2008-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
 # InterProScan (SOAP) service, Python client using SOAPpy.
 #
@@ -28,8 +28,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/06_programming/python
 # ======================================================================
-# WSDL URL for service
-wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl'
 
 # Load libraries
 import base64, platform, os, SOAPpy, sys, time
@@ -37,12 +35,15 @@ import warnings
 from SOAPpy import WSDL
 from optparse import OptionParser
 
+# WSDL URL for service
+wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/iprscan?wsdl'
+
 # Suppress all deprecation warnings (not recommended for development)
 warnings.simplefilter('ignore', DeprecationWarning)
 
 print >>sys.stderr, """
 =============================================================================
-NB: the service used by this client was decommissioned on Wednesday 9th April 
+NB: the service used by this client was decommissioned on Wednesday 9th April
 2014. See http://www.ebi.ac.uk/Tools/webservices/ for replacement services.
 =============================================================================
 """
@@ -58,10 +59,10 @@ numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
-description = """Identify protein family, domain and signal signatures in a 
-protein sequence using InterProScan. For more information on InterProScan 
+description = """Identify protein family, domain and signal signatures in a
+protein sequence using InterProScan. For more information on InterProScan
 refer to http://www.ebi.ac.uk/Tools/pfa/iprscan"""
-epilog = """For further information about the InterProScan (SOAP) web service, see 
+epilog = """For further information about the InterProScan (SOAP) web service, see
 http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan_soap."""
 version = "$Id$"
 # Process command-line options
@@ -236,7 +237,7 @@ def printGetResultTypes(jobId):
 clientRevision = '$Revision$'
 clientVersion = '0'
 if len(clientRevision) > 11:
-    clientVersion = clientRevision[11:-2] 
+    clientVersion = clientRevision[11:-2]
 userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
     clientVersion, os.path.basename( __file__ ),
     platform.python_version(), platform.system(),

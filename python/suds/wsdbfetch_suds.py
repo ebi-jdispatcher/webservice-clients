@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
-# 
+#
 # Copyright 2010-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
 # WSDbfetch document/literal SOAP service, Python client using suds.
 #
@@ -26,8 +26,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/dbfetch
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# WSDL URL for service.
-wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl'
 
 # Load libraries
 import platform, os, suds, sys, urllib2
@@ -35,6 +33,9 @@ import logging
 from suds import WebFault
 from suds.client import Client
 from optparse import OptionParser
+
+# WSDL URL for service.
+wsdlUrl = 'http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?wsdl'
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -53,7 +54,7 @@ usage = """
   %prog getSupportedDBs [options...]
   %prog getSupportedFormats [options...]
   %prog getSupportedStyles [options...]"""
-description = """Fetch database entries using entry identifiers. For more information on dbfetch 
+description = """Fetch database entries using entry identifiers. For more information on dbfetch
 refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
 epilog = """For further information about the WSDbfetch (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
 version = "$Id$"
@@ -173,7 +174,7 @@ dbfetch = client.service
 clientRevision = '$Revision$'
 clientVersion = '0'
 if len(clientRevision) > 11:
-    clientVersion = clientRevision[11:-2] 
+    clientVersion = clientRevision[11:-2]
 userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) suds/%s Python-urllib/%s' % (
     clientVersion, os.path.basename( __file__ ),
     platform.python_version(), platform.system(),

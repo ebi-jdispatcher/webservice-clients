@@ -11,8 +11,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/psisearch_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psisearch'
 
 # Load libraries
 import platform, os, re, sys, time, urllib
@@ -25,6 +23,9 @@ try:
     unicode('')
 except NameError:
     unicode = str
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psisearch'
 
 # Set interval for checking status
 checkInterval = 10

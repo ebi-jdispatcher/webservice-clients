@@ -1,21 +1,21 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
-# 
+#
 # Copyright 2010-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
 # NCBI BLAST SOAP service, Python client using SUDS.
 #
@@ -27,8 +27,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# WSDL URL for service
-wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Load libraries
 import base64, platform, os, suds, sys, time, urllib2
@@ -36,6 +34,9 @@ import logging
 from suds import WebFault
 from suds.client import Client
 from optparse import OptionParser
+
+# WSDL URL for service
+wsdlUrl = 'http://www.ebi.ac.uk/Tools/services/soap/ncbiblast?wsdl'
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +52,7 @@ numOpts = len(sys.argv)
 
 # Usage message
 usage = "Usage: %prog [options...] [seqFile]"
-description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information 
+description = """Rapid sequence database search programs utilizing the BLAST algorithm. For more information
 on NCBI BLAST refer to http://www.ebi.ac.uk/Tools/sss/ncbiblast"""
 epilog = """For further information about the NCBI BLAST (SOAP) web service, see http://www.ebi.ac.uk/Tools/webservices/services/sss/ncbi_blast_soap.
 """
@@ -240,7 +241,7 @@ server = client.service
 clientRevision = '$Revision$'
 clientVersion = '0'
 if len(clientRevision) > 11:
-    clientVersion = clientRevision[11:-2] 
+    clientVersion = clientRevision[11:-2]
 userAgent = 'EBI-Sample-Client/%s (%s; Python %s; %s) suds/%s Python-urllib/%s' % (
     clientVersion, os.path.basename( __file__ ),
     platform.python_version(), platform.system(),
@@ -320,7 +321,7 @@ elif options.email and not options.jobid:
         params['gapext'] = options.gapext
     if options.compstats:
         params['compstats'] = options.compstats
-    
+
     # Submit the job
     jobid = serviceRun(options.email, options.title, params)
     if options.async: # Async mode

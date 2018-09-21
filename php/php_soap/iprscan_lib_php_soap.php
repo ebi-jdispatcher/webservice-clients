@@ -1,5 +1,5 @@
 <?php
-# $Id$
+
 # ======================================================================
 # 
 # Copyright 2008-2018 EMBL - European Bioinformatics Institute

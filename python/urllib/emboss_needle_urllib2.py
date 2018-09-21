@@ -28,12 +28,14 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/psa/emboss_needle_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_needle'
+
 # Load libraries
 import platform, os, re, sys, time, urllib, urllib2
 from xmltramp2 import xmltramp
 from optparse import OptionParser
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/emboss_needle'
 
 # Set interval for checking status
 checkInterval = 10

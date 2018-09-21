@@ -28,13 +28,14 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/pfa/iprscan5_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-# baseUrl = 'https://ashdev-2:33330/Tools/services/rest/pfamscan'
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pfamscan'
+
 # Load libraries
 import platform, os, re, sys, time, urllib, urllib2
 from xmltramp2 import xmltramp
 from optparse import OptionParser
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/pfamscan'
 
 # Set interval for checking status
 checkInterval = 10

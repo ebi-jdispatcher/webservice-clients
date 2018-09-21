@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # $Id: dbfetch_urllib2.py 2468 2013-01-25 14:01:01Z hpm $
 # ======================================================================
-# 
+#
 # Copyright 2009-2018 EMBL - European Bioinformatics Institute
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # ======================================================================
-# EB-eye (REST) using urllib2 and xmltramp 
+# EB-eye (REST) using urllib2 and xmltramp
 # (http://www.aaronsw.com/2002/xmltramp/).
 #
 # Tested with:
@@ -28,8 +28,6 @@
 # http://www.ebi.ac.uk/ebisearch/swagger.ebi
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Service base URL
-baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Load libraries
 import platform, os, sys, urllib2, urllib
@@ -37,6 +35,9 @@ from optparse import OptionParser
 from xmltramp2 import xmltramp
 from gzip import GzipFile
 from StringIO import StringIO
+
+# Service base URL
+baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest'
 
 # Output level
 outputLevel = 1
@@ -49,23 +50,23 @@ usage = """
   %prog getDomainDetails  <domain>
 
   %prog getNumberOfResults <domain> <query>
-  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ] 
+  %prog getResults        <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort ]
   %prog getFacetedResults <domain> <query> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth ]
 
   %prog getEntries        <domain> <entryids> <fields> [OPTIONS: --fieldurl | --viewurl]
-  
+
   %prog getDomainsReferencedInDomain <domain>
   %prog getDomainsReferencedInEntry  <domain> <entryid>
   %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets]
-  
+
   %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
-  
+
   %prog getAutoComplete   <domain> <term>
 
   %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
   %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
 
-description = """Search at EMBL-EBI in All results using the EB-eye search engine. For more information on EB-eye 
+description = """Search at EMBL-EBI in All results using the EB-eye search engine. For more information on EB-eye
 refer to http://www.ebi.ac.uk/ebisearch/"""
 version = "$Id: dbfetch_urllib2.py 2468 2013-01-25 14:01:01Z hpm $"
 # Process command-line options

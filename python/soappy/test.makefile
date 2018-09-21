@@ -1,4 +1,4 @@
-# $Id$
+
 # ======================================================================
 # 
 # Copyright 2010-2018 EMBL - European Bioinformatics Institute

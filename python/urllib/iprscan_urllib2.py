@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
 #
 # Copyright 2009-2018 EMBL - European Bioinformatics Institute
@@ -29,13 +29,14 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/iprscan_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/iprscan'
 
 # Load libraries
 import platform, os, re, sys, time, urllib, urllib2
 from xmltramp2 import xmltramp
 from optparse import OptionParser
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/iprscan'
 
 print >> sys.stderr, """
 =============================================================================

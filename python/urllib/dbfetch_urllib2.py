@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# $Id$
+
 # ======================================================================
 #
 # Copyright 2009-2018 EMBL - European Bioinformatics Institute
@@ -28,8 +28,6 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Service base URL
-baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Load libraries
 import platform, os, sys, urllib2
@@ -37,6 +35,9 @@ from xmltramp2 import xmltramp
 from optparse import OptionParser
 from gzip import GzipFile
 from StringIO import StringIO
+
+# Service base URL
+baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Output level
 outputLevel = 1

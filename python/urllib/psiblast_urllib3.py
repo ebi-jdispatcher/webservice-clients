@@ -11,14 +11,15 @@
 # http://www.ebi.ac.uk/Tools/webservices/services/sss/psiblast_rest
 # http://www.ebi.ac.uk/Tools/webservices/tutorials/python
 # ======================================================================
-# Base URL for service
-baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psiblast'
 
 # Load libraries
 import platform, os, re, sys, time, urllib
 from optparse import OptionParser
 from xmltramp2 import xmltramp
 import urllib.request as urllib2
+
+# Base URL for service
+baseUrl = 'http://www.ebi.ac.uk/Tools/services/rest/psiblast'
 
 # allow unicode(str) to be used in python 3
 try:
