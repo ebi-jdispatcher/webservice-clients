@@ -1,0 +1,3 @@
+emboss_needle
+EMBOSS needle
+Pairwise sequence alignment with Needle.

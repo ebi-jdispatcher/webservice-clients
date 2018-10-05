@@ -1,0 +1,4 @@
+--sequence         	string 	One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted.
+--outputtype       	string 	Output type
+--species          	string 	Uses the specified species table for quantile comparisons
+--positiveresidues 	string 	By default, SAPS treats only lysine (K) and arginine (R) as positively charged residues. Alternatively, Histidine (H) can also be treated as positively charged in all parts of the program involving the charge alphabet.

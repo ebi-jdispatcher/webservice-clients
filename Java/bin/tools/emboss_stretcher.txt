@@ -1,0 +1,3 @@
+emboss_stretcher
+EMBOSS stretcher
+Pairwise sequence alignment with Stretcher.

@@ -1,0 +1,11 @@
+--format           	string 	Format for generated multiple sequence alignment.
+--matrix           	string 	Protein comparison matrix to be used when adding sequences to the alignment.
+--gapopen          	float  	Penalty for first base/residue in a gap.
+--gapext           	float  	Penalty for each additional base/residue in a gap.
+--order            	string 	The order in which the sequences appear in the final alignment
+--nbtree           	integer	Tree Rebuilding Number
+--treeout          	boolean	Generate guide tree file
+--maxiterate       	integer	Maximum number of iterations to perform when refining the alignment
+--ffts             	string 	Perform fast fourier transform
+--stype            	string 	Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+--sequence         	string 	Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.

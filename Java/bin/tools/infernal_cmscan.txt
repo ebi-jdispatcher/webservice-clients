@@ -1,0 +1,3 @@
+infernal_cmscan
+Infernal CM Scan
+RNA analysis with Infernal CM Scan.

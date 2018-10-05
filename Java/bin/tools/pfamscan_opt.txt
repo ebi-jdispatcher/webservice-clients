@@ -1,0 +1,5 @@
+--database         	string 	The database(s) to search.
+--evalue           	double 	Expectation value cut-off.
+--asp              	boolean	Predict active site residues for Pfam-A matches.
+--format           	string 	Output format
+--sequence         	string 	The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.

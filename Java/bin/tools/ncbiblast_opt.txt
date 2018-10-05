@@ -1,0 +1,19 @@
+--program          	command	The BLAST program to be used for the Sequence Similarity Search.
+--task             	string 	Task option (only selectable for blastn)
+--matrix           	string 	(Protein searches) The substitution matrix used for scoring alignments when searching the database.
+--alignments       	integer	Maximum number of match alignments reported in the result output.
+--scores           	integer	Maximum number of match score summaries reported in the result output.
+--exp              	string 	Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+--dropoff          	integer	The amount a score can drop before gapped extension of word hits is halted
+--match_scores     	string 	(Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
+--gapopen          	integer	Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
+--gapext           	integer	Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
+--filter           	string 	Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+--seqrange         	string 	Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
+--gapalign         	boolean	This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
+--compstats        	string 	Use composition-based statistics.
+--align            	integer	Formating for the alignments
+--transltable      	integer	Query Genetic code to use in translation
+--stype            	string 	Indicates if the sequence is protein or DNA/RNA.
+--sequence         	string 	The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+--database         	string 	Database

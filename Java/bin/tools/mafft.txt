@@ -1,0 +1,3 @@
+mafft
+Mafft
+Multiple sequence alignment with Mafft.

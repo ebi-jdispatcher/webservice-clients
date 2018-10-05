@@ -1,0 +1,221 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ebiRestClients" default="main" basedir=".">
+    <description>
+        Create a Java Project (JAR) with Ant build script
+    </description>
+    
+    <property name="src.dir" location="src"/>
+    <property name="dist.dir" location="./"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="build.dir" location="bin"/>
+
+    <!-- Add new tool HERE -->
+    <target name="jar" depends="compile, copy-dependencies" description="package, output to JAR">
+
+        <copy file="src/logback.xml" tofile="${build.dir}/logback.xml"></copy>
+        <antcall target="jar-client">
+            <param name="client" value="clustalo"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="kalign"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="mafft"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="muscle"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="mview"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="prank"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="tcoffee"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_matcher"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_needle"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_stretcher"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="genewise"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="lalign"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="promoterwise"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="wise2dba"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="simple_phylogeny"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="iprscan5"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="pfamscan"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="phobius"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="pratt"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="radar"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="hmmer3_hmmscan"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="hmmer3_phmmer"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="infernal_cmscan"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="mapmi"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_seqret"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="seqcksum"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="fasta"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="fastm"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="psiblast"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="psisearch"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="ncbiblast"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_cpgplot"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_isochore"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_newcpgreport"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_pepinfo"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_pepstats"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_pepwindow"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_dotmatcher"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_dotpath"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_dottup"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_polydot"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="saps"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_backtranambig"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_backtranseq"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_sixpack"/>
+        </antcall>
+        <antcall target="jar-client">
+            <param name="client" value="emboss_transeq"/>
+        </antcall>
+</target>
+
+    <!-- Package project files with sources -->
+    <target name="sources">
+        <zip destfile="${lib.dir}/rest-sources.zip"
+             basedir="."
+             excludes="bin/**, dist/**, output/**, resources/**, target/**, java-rest-ant.iml"
+        />
+    </target>
+
+    <!-- ivy start -->
+    <!-- ivy to get dependencies and copy to project lib folder -->
+    <target name="resolve" depends="ivy" description="retrieve dependencies with ivy">
+        <ivy:retrieve/>
+    </target>
+
+    <!-- install ivy -->
+    <target name="ivy" description="Install ivy">
+        <mkdir dir="${user.home}/.ant/lib"/>
+        <get dest="${user.home}/.ant/lib/ivy.jar"
+             src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.4.0-rc1/ivy-2.4.0-rc1.jar"/>
+    </target>
+    <!-- ivy end -->
+
+    <target name="init-dirs" depends="resolve">
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <path id="classpath">
+        <fileset dir="${basedir}/">
+            <include name="${lib.dir}/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Need classpath to run this -->
+    <target name="compile" depends="init-dirs" description="compile the source ">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath"/>
+    </target>
+
+    <!-- Group all dependencies into a big dependency.jar -->
+    <target name="copy-dependencies">
+
+        <mkdir dir="${lib.dir}"/>
+        <jar jarfile="${lib.dir}/dependencies-all.jar">
+            <zipgroupfileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </zipgroupfileset>
+        </jar>
+    </target>
+
+    <!-- A template to generate a Jar file -->
+    <target name="jar-client">
+        <jar jarfile="${dist.dir}/${client}.jar"
+             basedir="${build.dir}"
+             includes="logback.xml tools/** restclient/** restclient/stubs/**">
+            <manifest>
+                <attribute name="Main-Class" value="restclient.RestClient"/>
+            </manifest>
+            <zipfileset src="${lib.dir}/dependencies-all.jar" excludes="META-INF/*.SF"/>
+        </jar>
+    </target>
+
+    <target name="clean" description="clean up">
+    </target>
+
+    <!-- Default, run this -->
+    <target name="main" depends="clean, compile, jar, sources"/>
+
+</project>

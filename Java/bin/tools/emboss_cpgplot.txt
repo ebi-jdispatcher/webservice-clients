@@ -1,0 +1,3 @@
+emboss_cpgplot
+EMBOSS cpgplot
+Sequence statistics and plots with cpgplot.

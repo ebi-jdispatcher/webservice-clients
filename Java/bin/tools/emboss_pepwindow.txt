@@ -1,0 +1,3 @@
+emboss_pepwindow
+EMBOSS pepwindow
+Sequence statistics and plots with pepwindow.

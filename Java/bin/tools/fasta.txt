@@ -1,0 +1,3 @@
+fasta
+FASTA
+Sequence similarity search with FASTA.

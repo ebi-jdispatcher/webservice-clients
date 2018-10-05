@@ -1,0 +1,3 @@
+emboss_pepstats
+EMBOSS pepstats
+Sequence statistics and plots with pepstats.

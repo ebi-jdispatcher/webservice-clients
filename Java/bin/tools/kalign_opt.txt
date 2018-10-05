@@ -1,0 +1,7 @@
+--stype            	string 	Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+--format           	string 	Format for generated multiple sequence alignment.
+--gapopen          	float  	The penalty for opening/closing a gap. Half the value will be subtracted from the alignment score when opening, and half when closing a gap.
+--gapext           	float  	Penalty for extending a gap
+--termgap          	float  	Penalty to extend gaps from the N/C terminal of protein or 5'/3' terminal of nucleotide sequences
+--bonus            	float  	A bonus score that is added to each pair of aligned residues
+--sequence         	string 	Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 2000 sequences and 2MB of data.

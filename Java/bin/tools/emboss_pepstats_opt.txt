@@ -1,0 +1,3 @@
+--sequence         	string 	The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
+--termini          	boolean	Include charges from the N-terminus and C-terminus when calculating the Isoelectric Point
+--mono             	boolean	Use weight from the most abundant (prinicpal) isotope of each amino acid when calculating molecular weights. By default this is not enabled, so the average isotope weight is used instead.

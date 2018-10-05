@@ -1,0 +1,11 @@
+--scorethr         	integer	Score threshold. The minimum score for a candidate hairpin.
+--longext          	integer	Long match extention (bp).
+--shortext         	integer	Short match extention (bp).
+--maxmis           	integer	Maximum mature mismatches.
+--mismatchpen      	integer	Mature mismatch penalty.
+--bowtie           	integer	Maximum allowed matches per candidate genome (Bowtie-m). 0 for disable.
+--excludecan       	boolean	Exclude candidates in loop. Binary toggle to exclude mature.
+--maxloop          	integer	Maximum loop overlap. Maximum allowed mature basepairs overlapping loop.
+--sequence         	string 	The query sequence(s) can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+--metazoa_species  	string 	Ensembl Metazoa Species
+--ensembl_species  	string 	Ensembl Species

@@ -1,0 +1,3 @@
+seqcksum
+EMBOSS seqcksum
+Sequenc operations with seqcksum.

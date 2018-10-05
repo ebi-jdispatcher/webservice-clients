@@ -1,0 +1,3 @@
+emboss_newcpgreport
+EMBOSS newcpgreport
+Sequence statistics and plots with newcpgreport.
