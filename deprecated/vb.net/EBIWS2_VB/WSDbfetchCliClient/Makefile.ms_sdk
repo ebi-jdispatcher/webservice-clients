@@ -1,0 +1,54 @@
+
+# ======================================================================
+#
+# Makefile to build VB.NET WSDbfetch client using MS .NET SDK.
+#
+# ======================================================================
+
+# VB.NET compiler
+VBC = vbc
+# VB.NET compiler flags
+VBFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: WSDbfetchCliClient
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### WSDbfetch command-line client ###
+
+WSDbfetchCliClient: $(DEBUGBINDIR)\WSDbfetchCliClient.exe $(RELEASEBINDIR)\WSDbfetchCliClient.exe
+
+$(DEBUGBINDIR)\WSDbfetchCliClient.exe: $(DEBUGBINDIR) WSDbfetchCliClient.vb $(DEBUGBINDIR)\EbiWS.dll
+	$(VBC) $(VBFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.vb
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\WSDbfetchCliClient.exe: $(RELEASEBINDIR) WSDbfetchCliClient.vb $(RELEASEBINDIR)\EbiWS.dll
+	$(VBC) $(VBFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ WSDbfetchCliClient.vb
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

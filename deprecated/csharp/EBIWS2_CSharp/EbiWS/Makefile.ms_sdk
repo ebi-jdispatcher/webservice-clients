@@ -1,0 +1,349 @@
+
+# ======================================================================
+# 
+# Copyright 2009-2018 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# ======================================================================
+#
+# Makefile to build C# EBI Web Services client library using MS .NET SDK.
+#
+# ======================================================================
+
+# C# compiler
+CSC = csc
+# C# compiler flags
+CSFLAGS = 
+
+# WSDL to C# tool
+WSDL2CS = wsdl
+# WSDL to C# flags
+WSDL2CSFLAGS = /namespace:EbiWS
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+# Directory for generated stubs code
+STUBSRCDIR = WebReferences
+
+# Base URL of Tool WSDLs
+WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
+
+all: EbiWS
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### EbiWS ###
+
+EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
+
+coreSrc = AssemblyInfo.cs \
+AbstractWsClient.cs \
+CensorClient.cs \
+ClustalOClient.cs \
+ClustalW2Client.cs \
+ClustalW2PhylogenyClient.cs \
+DaliliteClient.cs \
+DbClustalClient.cs \
+EBeyeClient.cs \
+EmbossBacktranambigClient.cs \
+EmbossBacktranseqClient.cs \
+EmbossCpgplotClient.cs \
+EmbossIsochoreClient.cs \
+EmbossMatcherClient.cs \
+EmbossNeedleClient.cs \
+EmbossNewcpgreportClient.cs \
+EmbossPepinfoClient.cs \
+EmbossPepstatsClient.cs \
+EmbossPepwindowClient.cs \
+EmbossSeqretClient.cs \
+EmbossSixpackClient.cs \
+EmbossStretcherClient.cs \
+EmbossTranseqClient.cs \
+EmbossWaterClient.cs \
+FastaClient.cs \
+FastmClient.cs \
+FingerPRINTScanClient.cs \
+GeneWiseClient.cs \
+HmmerHmmscanClient.cs \
+IPRScan5Client.cs \
+IPRScanClient.cs \
+KalignClient.cs \
+LalignClient.cs \
+MafftClient.cs \
+MapMiClient.cs \
+MaxsproutClient.cs \
+MuscleClient.cs \
+MViewClient.cs \
+NcbiBlastClient.cs \
+PhobiusClient.cs \
+PrattClient.cs \
+PromoterWiseClient.cs \
+PsiBlastClient.cs \
+PsiSearchClient.cs \
+PsScanClient.cs \
+RadarClient.cs \
+ReadseqClient.cs \
+SapsClient.cs \
+SeqCksumClient.cs \
+TcoffeeClient.cs \
+Wise2DBAClient.cs \
+WSDbfetchClient.cs \
+WuBlastClient.cs
+
+stubSrc = \
+$(STUBSRCDIR)\CensorWs\Reference.cs \
+$(STUBSRCDIR)\ClustalOWs\Reference.cs \
+$(STUBSRCDIR)\ClustalW2PhylogenyWs\Reference.cs \
+$(STUBSRCDIR)\ClustalW2Ws\Reference.cs \
+$(STUBSRCDIR)\DaliliteWs\Reference.cs \
+$(STUBSRCDIR)\DbClustalWs\Reference.cs \
+$(STUBSRCDIR)\EBeyeWs\Reference.cs \
+$(STUBSRCDIR)\EmbossBacktranambigWs\Reference.cs \
+$(STUBSRCDIR)\EmbossBacktranseqWs\Reference.cs \
+$(STUBSRCDIR)\EmbossCpgplotWs\Reference.cs \
+$(STUBSRCDIR)\EmbossIsochoreWs\Reference.cs \
+$(STUBSRCDIR)\EmbossMatcherWs\Reference.cs \
+$(STUBSRCDIR)\EmbossNeedleWs\Reference.cs \
+$(STUBSRCDIR)\EmbossNewcpgreportWs\Reference.cs \
+$(STUBSRCDIR)\EmbossPepinfoWs\Reference.cs \
+$(STUBSRCDIR)\EmbossPepstatsWs\Reference.cs \
+$(STUBSRCDIR)\EmbossPepwindowWs\Reference.cs \
+$(STUBSRCDIR)\EmbossSeqretWs\Reference.cs \
+$(STUBSRCDIR)\EmbossSixpackWs\Reference.cs \
+$(STUBSRCDIR)\EmbossStretcherWs\Reference.cs \
+$(STUBSRCDIR)\EmbossTranseqWs\Reference.cs \
+$(STUBSRCDIR)\EmbossWaterWs\Reference.cs \
+$(STUBSRCDIR)\FastaWs\Reference.cs \
+$(STUBSRCDIR)\FastmWs\Reference.cs \
+$(STUBSRCDIR)\FingerPRINTScanWs\Reference.cs \
+$(STUBSRCDIR)\GeneWiseWs\Reference.cs \
+$(STUBSRCDIR)\HmmerHmmscanWs\Reference.cs \
+$(STUBSRCDIR)\IPRScan5Ws\Reference.cs \
+$(STUBSRCDIR)\IPRScanWs\Reference.cs \
+$(STUBSRCDIR)\KalignWs\Reference.cs \
+$(STUBSRCDIR)\LalignWs\Reference.cs \
+$(STUBSRCDIR)\MafftWs\Reference.cs \
+$(STUBSRCDIR)\MapMiWs\Reference.cs \
+$(STUBSRCDIR)\MaxsproutWs\Reference.cs \
+$(STUBSRCDIR)\MuscleWs\Reference.cs \
+$(STUBSRCDIR)\MViewWs\Reference.cs \
+$(STUBSRCDIR)\NcbiBlastWs\Reference.cs \
+$(STUBSRCDIR)\PhobiusWs\Reference.cs \
+$(STUBSRCDIR)\PrankWs\Reference.cs \
+$(STUBSRCDIR)\PrattWs\Reference.cs \
+$(STUBSRCDIR)\PromoterWiseWs\Reference.cs \
+$(STUBSRCDIR)\PsiBlastWs\Reference.cs \
+$(STUBSRCDIR)\PsiSearchWs\Reference.cs \
+$(STUBSRCDIR)\PsScanWs\Reference.cs \
+$(STUBSRCDIR)\RadarWs\Reference.cs \
+$(STUBSRCDIR)\ReadseqWs\Reference.cs \
+$(STUBSRCDIR)\SapsWs\Reference.cs \
+$(STUBSRCDIR)\SeqCksumWs\Reference.cs \
+$(STUBSRCDIR)\TcoffeeWs\Reference.cs \
+$(STUBSRCDIR)\Wise2DBAWs\Reference.cs \
+$(STUBSRCDIR)\WSDbfetchWs\Reference.cs \
+$(STUBSRCDIR)\WuBlastWs\Reference.cs
+
+### Build library ###
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(coreSrc) $(stubSrc)
+	$(CSC) $(CSFLAGS) /debug /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
+	$(CSC) $(CSFLAGS) /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+### Generate web service stubs ###
+
+# Collation target to generate stubs, but not compile.
+stubs: $(stubSrc)
+
+$(STUBSRCDIR)\CensorWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).CensorWs /out:$@ "$(WSDLBASE)/censor?wsdl"
+
+$(STUBSRCDIR)\ClustalOWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalOWs /out:$@ "$(WSDLBASE)/clustalo?wsdl"
+
+$(STUBSRCDIR)\ClustalW2PhylogenyWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2PhylogenyWs /out:$@ "$(WSDLBASE)/clustalw2_phylogeny?wsdl"
+
+$(STUBSRCDIR)\ClustalW2Ws\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ClustalW2Ws /out:$@ "$(WSDLBASE)/clustalw2?wsdl"
+
+$(STUBSRCDIR)\DaliliteWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).DaliliteWs /out:$@ "$(WSDLBASE)/dalilite?wsdl"
+
+$(STUBSRCDIR)\DbClustalWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).DbClustalWs /out:$@ "$(WSDLBASE)/dbclustal?wsdl"
+
+$(STUBSRCDIR)\EBeyeWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EBeyeWs /out:$@ "http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl"
+
+$(STUBSRCDIR)\EmbossBacktranambigWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranambigWs /out:$@ "$(WSDLBASE)/emboss_backtranambig?wsdl"
+
+$(STUBSRCDIR)\EmbossBacktranseqWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossBacktranseqWs /out:$@ "$(WSDLBASE)/emboss_backtranseq?wsdl"
+
+$(STUBSRCDIR)\EmbossCpgplotWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossCpgplotWs /out:$@ "$(WSDLBASE)/emboss_cpgplot?wsdl"
+
+$(STUBSRCDIR)\EmbossIsochoreWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossIsochoreWs /out:$@ "$(WSDLBASE)/emboss_isochore?wsdl"
+
+$(STUBSRCDIR)\EmbossMatcherWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossMatcherWs /out:$@ "$(WSDLBASE)/emboss_matcher?wsdl"
+
+$(STUBSRCDIR)\EmbossNeedleWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNeedleWs /out:$@ "$(WSDLBASE)/emboss_needle?wsdl"
+
+$(STUBSRCDIR)\EmbossNewcpgreportWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossNewcpgreportWs /out:$@ "$(WSDLBASE)/emboss_newcpgreport?wsdl"
+
+$(STUBSRCDIR)\EmbossPepinfoWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepinfoWs /out:$@ "$(WSDLBASE)/emboss_pepinfo?wsdl"
+
+$(STUBSRCDIR)\EmbossPepstatsWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepstatsWs /out:$@ "$(WSDLBASE)/emboss_pepstats?wsdl"
+
+$(STUBSRCDIR)\EmbossPepwindowWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossPepwindowWs /out:$@ "$(WSDLBASE)/emboss_pepwindow?wsdl"
+
+$(STUBSRCDIR)\EmbossSixpackWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossSixpackWs /out:$@ "$(WSDLBASE)/emboss_sixpack?wsdl"
+
+$(STUBSRCDIR)\EmbossSeqretWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossSeqretWs /out:$@ "$(WSDLBASE)/emboss_seqret?wsdl"
+
+$(STUBSRCDIR)\EmbossStretcherWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossStretcherWs /out:$@ "$(WSDLBASE)/emboss_stretcher?wsdl"
+
+$(STUBSRCDIR)\EmbossTranseqWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossTranseqWs /out:$@ "$(WSDLBASE)/emboss_transeq?wsdl"
+
+$(STUBSRCDIR)\EmbossWaterWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).EmbossWaterWs /out:$@ "$(WSDLBASE)/emboss_water?wsdl"
+
+$(STUBSRCDIR)\FastaWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).FastaWs /out:$@ "$(WSDLBASE)/fasta?wsdl"
+
+$(STUBSRCDIR)\FastmWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).FastmWs /out:$@ "$(WSDLBASE)/fastm?wsdl"
+
+$(STUBSRCDIR)\FingerPRINTScanWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).FingerPRINTScanWs /out:$@ "$(WSDLBASE)/fingerprintscan?wsdl"
+
+$(STUBSRCDIR)\GeneWiseWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).GeneWiseWs /out:$@ "$(WSDLBASE)/genewise?wsdl"
+
+$(STUBSRCDIR)\HmmerHmmscanWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).HmmerHmmscanWs /out:$@ "$(WSDLBASE)/hmmer_hmmscan?wsdl"
+
+$(STUBSRCDIR)\IPRScan5Ws\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScan5Ws /out:$@ "$(WSDLBASE)/iprscan5?wsdl"
+
+$(STUBSRCDIR)\IPRScanWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).IPRScanWs /out:$@ "$(WSDLBASE)/iprscan?wsdl"
+
+$(STUBSRCDIR)\KalignWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).KalignWs /out:$@ "$(WSDLBASE)/kalign?wsdl"
+
+$(STUBSRCDIR)\LalignWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).LalignWs /out:$@ "$(WSDLBASE)/lalign?wsdl"
+
+$(STUBSRCDIR)\MafftWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MafftWs /out:$@ "$(WSDLBASE)/mafft?wsdl"
+
+$(STUBSRCDIR)\MapMiWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MapMiWs /out:$@ "$(WSDLBASE)/mapmi?wsdl"
+
+$(STUBSRCDIR)\MaxsproutWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MaxsproutWs /out:$@ "$(WSDLBASE)/maxsprout?wsdl"
+
+$(STUBSRCDIR)\MuscleWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MuscleWs /out:$@ "$(WSDLBASE)/muscle?wsdl"
+
+$(STUBSRCDIR)\MViewWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).MViewWs /out:$@ "$(WSDLBASE)/mview?wsdl"
+
+$(STUBSRCDIR)\NcbiBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+
+$(STUBSRCDIR)\PhobiusWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PhobiusWs /out:$@ "$(WSDLBASE)/phobius?wsdl"
+
+$(STUBSRCDIR)\PrankWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PrankWs /out:$@ "$(WSDLBASE)/prank?wsdl"
+
+$(STUBSRCDIR)\PrattWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PrattWs /out:$@ "$(WSDLBASE)/pratt?wsdl"
+
+$(STUBSRCDIR)\PromoterWiseWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PromoterWiseWs /out:$@ "$(WSDLBASE)/promoterwise?wsdl"
+
+$(STUBSRCDIR)\PsiBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsiBlastWs /out:$@ "$(WSDLBASE)/psiblast?wsdl"
+
+$(STUBSRCDIR)\PsiSearchWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsiSearchWs /out:$@ "$(WSDLBASE)/psisearch?wsdl"
+
+$(STUBSRCDIR)\PsScanWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).PsScanWs /out:$@ "$(WSDLBASE)/ps_scan?wsdl"
+
+$(STUBSRCDIR)\RadarWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).RadarWs /out:$@ "$(WSDLBASE)/radar?wsdl"
+
+$(STUBSRCDIR)\ReadseqWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).ReadseqWs /out:$@ "$(WSDLBASE)/readseq?wsdl"
+
+$(STUBSRCDIR)\SapsWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).SapsWs /out:$@ "$(WSDLBASE)/saps?wsdl"
+
+$(STUBSRCDIR)\SeqCksumWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).SeqCksumWs /out:$@ "$(WSDLBASE)/seqcksum?wsdl"
+
+$(STUBSRCDIR)\TcoffeeWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).TcoffeeWs /out:$@ "$(WSDLBASE)/tcoffee?wsdl"
+
+$(STUBSRCDIR)\Wise2DBAWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).Wise2DBAWs /out:$@ "$(WSDLBASE)/wise2dba?wsdl"
+
+$(STUBSRCDIR)\WSDbfetchWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl"
+
+$(STUBSRCDIR)\WuBlastWs\Reference.cs:
+	$(WSDL2CS) $(WSDL2CSFLAGS).WuBlastWs /out:$@ "$(WSDLBASE)/wublast?wsdl"
+
+### Clean-up ###
+
+clean:
+
+distclean: clean
+	del /Q /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)
+
+clean-stubs:
+	cd $(STUBSRCDIR)
+	del /Q /f /s *.cs
+	del /Q /f /s *.map

@@ -1,0 +1,54 @@
+
+# ======================================================================
+#
+# Makefile to build VB.NET InterProScan client using MS .NET SDK.
+#
+# ======================================================================
+
+# VB.NET compiler
+VBC = vbc
+# VB.NET compiler flags
+VBFLAGS = 
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+
+# Core assembly project
+EBIWS = ..\EbiWS
+
+all: IPRScanCliClient
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### InterProScan command-line client ###
+
+IPRScanCliClient: $(DEBUGBINDIR)\IPRScanCliClient.exe $(RELEASEBINDIR)\IPRScanCliClient.exe
+
+$(DEBUGBINDIR)\IPRScanCliClient.exe: $(DEBUGBINDIR) IPRScanCliClient.vb $(DEBUGBINDIR)\EbiWS.dll
+	$(VBC) $(VBFLAGS) /debug /target:exe /reference:$(DEBUGBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.vb
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(DEBUGBINDIR)\EbiWS.dll* $(DEBUGBINDIR)
+
+$(RELEASEBINDIR)\IPRScanCliClient.exe: $(RELEASEBINDIR) IPRScanCliClient.vb $(RELEASEBINDIR)\EbiWS.dll
+	$(VBC) $(VBFLAGS) /target:exe /reference:$(RELEASEBINDIR)\EbiWS.dll /out:$@ IPRScanCliClient.vb
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll
+	copy $(EBIWS)\$(RELEASEBINDIR)\EbiWS.dll* $(RELEASEBINDIR)
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)

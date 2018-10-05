@@ -1,0 +1,88 @@
+
+# ======================================================================
+#
+# Makefile to build VB.NET EBI Web Services client library using MS .NET SDK.
+#
+# ======================================================================
+
+# VB.NET compiler
+VBC = vbc
+# VB.NET compiler flags
+VBFLAGS = 
+
+# WSDL to VB.NET tool
+WSDL2VB = wsdl
+# WSDL to VB.NET flags
+WSDL2VBFLAGS = /language:VB /namespace:EbiWS
+
+# Directory for compiled binaries
+BINDIR = bin
+DEBUGBINDIR = $(BINDIR)\Debug
+RELEASEBINDIR = $(BINDIR)\Release
+# Directory for generated stubs code
+STUBSRCDIR = WebReferences
+
+# Base URL of Tool WSDLs
+WSDLBASE = http://www.ebi.ac.uk/Tools/services/soap
+
+all: EbiWS
+
+$(BINDIR):
+	mkdir $(BINDIR)
+
+$(DEBUGBINDIR): $(BINDIR)
+	mkdir $(DEBUGBINDIR)
+
+$(RELEASEBINDIR): $(BINDIR)
+	mkdir $(RELEASEBINDIR)
+
+### EbiWS ###
+
+EbiWS: $(DEBUGBINDIR)\EbiWS.dll $(RELEASEBINDIR)\EbiWS.dll
+
+coreSrc = AbstractWsClient.vb \
+IPRScanClient.vb \
+NcbiBlastClient.vb \
+WSDbfetchClient.vb
+
+stubSrc = \
+$(STUBSRCDIR)\IPRScanWs\Reference.vb \
+$(STUBSRCDIR)\NcbiBlastWs\Reference.vb \
+$(STUBSRCDIR)\WSDbfetchWs\Reference.vb
+
+### Build library ###
+
+$(DEBUGBINDIR)\EbiWS.dll: $(DEBUGBINDIR) $(coreSrc) $(stubSrc)
+	$(VBC) $(VBFLAGS) /debug /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+$(RELEASEBINDIR)\EbiWS.dll: $(RELEASEBINDIR) $(coreSrc) $(stubSrc)
+	$(VBC) $(VBFLAGS) /target:library /out:$@ $(coreSrc) $(stubSrc)
+
+### Generate web service stubs ###
+
+# Collation target to generate stubs, but not compile.
+stubs: $(stubSrc)
+
+$(STUBSRCDIR)\IPRScanWs\Reference.vb:
+	$(WSDL2VB) $(WSDL2VBFLAGS).IPRScanWs /out:$@ "$(WSDLBASE)/iprscan?wsdl"
+
+$(STUBSRCDIR)\NcbiBlastWs\Reference.vb:
+	$(WSDL2VB) $(WSDL2VBFLAGS).NcbiBlastWs /out:$@ "$(WSDLBASE)/ncbiblast?wsdl"
+
+$(STUBSRCDIR)\WSDbfetchWs\Reference.vb:
+	$(WSDL2VB) $(WSDL2VBFLAGS).WSDbfetchWs /out:$@ "http://www.ebi.ac.uk/ws/services/WSDbfetchDoclit?sawsdl"
+
+### Clean-up ###
+
+clean:
+
+distclean: clean
+	del /f $(DEBUGBINDIR)\*.* $(RELEASEBINDIR)\*.*
+	rmdir $(DEBUGBINDIR)
+	rmdir $(RELEASEBINDIR)
+	rmdir $(BINDIR)
+
+clean-stubs:
+	cd $(STUBSRCDIR)
+	del /f /s *.vb
+	del /f /s *.map

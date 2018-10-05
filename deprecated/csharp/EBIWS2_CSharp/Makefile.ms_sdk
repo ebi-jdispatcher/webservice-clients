@@ -1,0 +1,320 @@
+
+# ======================================================================
+# 
+# Copyright 2009-2018 EMBL - European Bioinformatics Institute
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# ======================================================================
+#
+# Makefile to build C# EBI Web Services clients using MS .NET SDK.
+#
+# ----------------------------------------------------------------------
+# Run as:
+#   nmake -f Makefile.ms_sdk
+#
+# Main targets are: all, clean and distclean
+# ======================================================================
+
+all: EbiWS \
+CensorCliClient\bin\Release\CensorCliClient.exe \
+ClustalOCliClient\bin\Release\ClustalOCliClient.exe \
+ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe \
+ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe \
+DaliliteCliClient\bin\Release\DaliliteCliClient.exe \
+DbClustalCliClient\bin\Release\DbClustalCliClient.exe \
+EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe \
+EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe \
+EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe \
+EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe \
+EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe \
+EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe \
+EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe \
+EmbossSeqretCliClient\bin\Release\EmbossSeqretCliClient.exe \
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe \
+EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe \
+EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe \
+EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe \
+FastaCliClient\bin\Release\FastaCliClient.exe \
+FastmCliClient\bin\Release\FastmCliClient.exe \
+FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe \
+GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe \
+HmmerHmmscanCliClient\bin\Release\HmmerHmmscanCliClient.exe \
+IPRScan5CliClient\bin\Release\IPRScan5CliClient.exe \
+IPRScanCliClient\bin\Release\IPRScanCliClient.exe \
+KalignCliClient\bin\Release\KalignCliClient.exe \
+LalignCliClient\bin\Release\LalignCliClient.exe \
+MafftCliClient\bin\Release\MafftCliClient.exe \
+MapMiCliClient\bin\Release\MapMiCliClient.exe \
+MaxsproutCliClient\bin\Release\MaxsproutCliClient.exe \
+MuscleCliClient\bin\Release\MuscleCliClient.exe \
+MViewCliClient\bin\Release\MViewCliClient.exe \
+NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe \
+PhobiusCliClient\bin\Release\PhobiusCliClient.exe \
+PrattCliClient\bin\Release\PrattCliClient.exe \
+PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe \
+PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe \
+PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe \
+PsScanCliClient\bin\Release\PsScanCliClient.exe \
+RadarCliClient\bin\Release\RadarCliClient.exe \
+ReadseqCliClient\bin\Release\ReadseqCliClient.exe \
+SapsCliClient\bin\Release\SapsCliClient.exe \
+SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe \
+TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe \
+Wise2DBACliClient\bin\Release\Wise2DBACliClient.exe \
+WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe \
+WuBlastCliClient\bin\Release\WuBlastCliClient.exe
+
+EbiWS\bin\Release\EbiWS.dll:
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk
+
+CensorCliClient\bin\Release\CensorCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd CensorCliClient && $(MAKE) /f Makefile.ms_sdk
+
+ClustalOCliClient\bin\Release\ClustalOCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk
+
+ClustalW2CliClient\bin\Release\ClustalW2CliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk
+
+ClustalW2PhylogenyCliClient\bin\Release\ClustalW2PhylogenyCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk
+
+DaliliteCliClient\bin\Release\DaliliteCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk
+
+DbClustalCliClient\bin\Release\DbClustalCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossBacktranseqCliClient\bin\Release\EmbossBacktranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossBacktranambigCliClient\bin\Release\EmbossBacktranambigCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossMatcherCliClient\bin\Release\EmbossMatcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossNeedleCliClient\bin\Release\EmbossNeedleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossSixpackCliClient\bin\Release\EmbossSixpackCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossSeqretCliClient\bin\Release\EmbossSeqretCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossStretcherCliClient\bin\Release\EmbossStretcherCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossTranseqCliClient\bin\Release\EmbossTranseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossPepinfoCliClient\bin\Release\EmbossPepinfoCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossPepstatsCliClient\bin\Release\EmbossPepstatsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossPepwindowCliClient\bin\Release\EmbossPepwindowCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk
+
+EmbossWaterCliClient\bin\Release\EmbossWaterCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk
+
+FastaCliClient\bin\Release\FastaCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk
+
+FastmCliClient\bin\Release\FastmCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk
+
+FingerPRINTScanCliClient\bin\Release\FingerPRINTScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk
+	
+GeneWiseCliClient\bin\Release\GeneWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk
+
+HmmerHmmscanCliClient\bin\Release\HmmerHmmscanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk
+
+IPRScan5CliClient\bin\Release\IPRScan5CliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk
+
+IPRScanCliClient\bin\Release\IPRScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk
+
+KalignCliClient\bin\Release\KalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk
+
+LalignCliClient\bin\Release\LalignCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MafftCliClient\bin\Release\MafftCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MapMiCliClient\bin\Release\MapMiCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MaxsproutCliClient\bin\Release\MaxsproutCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MuscleCliClient\bin\Release\MuscleCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk
+
+MViewCliClient\bin\Release\MViewCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk
+
+NcbiBlastCliClient\bin\Release\NcbiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PhobiusCliClient\bin\Release\PhobiusCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PrattCliClient\bin\Release\PrattCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PromoterWiseCliClient\bin\Release\PromoterWiseCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PsiBlastCliClient\bin\Release\PsiBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PsiSearchCliClient\bin\Release\PsiSearchCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk
+
+PsScanCliClient\bin\Release\PsScanCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk
+
+RadarCliClient\bin\Release\RadarCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk
+
+ReadseqCliClient\bin\Release\ReadseqCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk
+
+SapsCliClient\bin\Release\SapsCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk
+
+SeqCksumCliClient\bin\Release\SeqCksumCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk
+
+TcoffeeCliClient\bin\Release\TcoffeeCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk
+
+Wise2DBACliClient\bin\Release\Wise2DBACliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd Wise2DBACliClient && $(MAKE) /f Makefile.ms_sdk
+	
+WSDbfetchCliClient\bin\Release\WSDbfetchCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk
+
+WuBlastCliClient\bin\Release\WuBlastCliClient.exe: EbiWS\bin\Release\EbiWS.dll
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk
+
+clean:
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk clean
+	cd CensorCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd Wise2DBACliClient && $(MAKE) /f Makefile.ms_sdk clean	
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk clean
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk clean
+
+distclean:
+	cd EbiWS && $(MAKE) /f Makefile.ms_sdk distclean
+	cd CensorCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ClustalOCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ClustalW2CliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ClustalW2PhylogenyCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd DaliliteCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd DbClustalCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossBacktranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossBacktranambigCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossMatcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossNeedleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepinfoCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepstatsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossPepwindowCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossSeqretCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossSixpackCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossStretcherCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossTranseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd EmbossWaterCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd FastaCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd FastmCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd FingerPRINTScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd GeneWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd HmmerHmmscanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd IPRScan5CliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd IPRScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd KalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd LalignCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MafftCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MapMiCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MuscleCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MaxsproutCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd MViewCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd NcbiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PhobiusCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PrattCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PromoterWiseCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsiBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsiSearchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd PsScanCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd RadarCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd ReadseqCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd SapsCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd SeqCksumCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd TcoffeeCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd Wise2DBACliClient && $(MAKE) /f Makefile.ms_sdk distclean	
+	cd WSDbfetchCliClient && $(MAKE) /f Makefile.ms_sdk distclean
+	cd WuBlastCliClient && $(MAKE) /f Makefile.ms_sdk distclean

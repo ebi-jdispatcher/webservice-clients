@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{07D427FC-3EFC-48A0-9DC7-7D2DDDBBD4DD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>EbiWS</AssemblyName>
+    <RootNamespace>EbiWS</RootNamespace>
+    <newfilesearch>OnLoad</newfilesearch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AbstractWsClient.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CensorClient.cs" />
+    <Compile Include="WebReferences\CensorWs\Reference.cs" />
+    <Compile Include="ClustalOClient.cs" />
+    <Compile Include="WebReferences\ClustalOWs\Reference.cs" />
+    <Compile Include="ClustalW2Client.cs" />
+    <Compile Include="WebReferences\ClustalW2Ws\Reference.cs" />
+    <Compile Include="ClustalW2PhylogenyClient.cs" />
+    <Compile Include="WebReferences\ClustalW2PhylogenyWs\Reference.cs" />
+    <Compile Include="DaliliteClient.cs" />
+    <Compile Include="WebReferences\DaliliteWs\Reference.cs" />
+    <Compile Include="DbClustalClient.cs" />
+    <Compile Include="WebReferences\DbClustalWs\Reference.cs" />
+    <Compile Include="EBeyeClient.cs" />
+    <Compile Include="WebReferences\EBeyeWs\Reference.cs" />
+    <Compile Include="EmbossBacktranambigClient.cs" />
+    <Compile Include="WebReferences\EmbossBacktranambigWs\Reference.cs" />
+    <Compile Include="EmbossBacktranseqClient.cs" />
+    <Compile Include="WebReferences\EmbossBacktranseqWs\Reference.cs" />
+    <Compile Include="EmbossCpgplotClient.cs" />
+    <Compile Include="WebReferences\EmbossCpgplotWs\Reference.cs" />
+    <Compile Include="EmbossIsochoreClient.cs" />
+    <Compile Include="WebReferences\EmbossIsochoreWs\Reference.cs" />
+    <Compile Include="EmbossMatcherClient.cs" />
+    <Compile Include="WebReferences\EmbossMatcherWs\Reference.cs" />
+    <Compile Include="EmbossNeedleClient.cs" />
+    <Compile Include="WebReferences\EmbossNeedleWs\Reference.cs" />
+    <Compile Include="EmbossNewcpgreportClient.cs" />
+    <Compile Include="WebReferences\EmbossNewcpgreportWs\Reference.cs" />
+    <Compile Include="EmbossPepinfoClient.cs" />
+    <Compile Include="WebReferences\EmbossPepinfoWs\Reference.cs" />
+    <Compile Include="EmbossPepstatsClient.cs" />
+    <Compile Include="WebReferences\EmbossPepstatsWs\Reference.cs" />
+    <Compile Include="EmbossPepwindowClient.cs" />
+    <Compile Include="WebReferences\EmbossPepwindowWs\Reference.cs" />
+    <Compile Include="EmbossSeqretClient.cs" />
+    <Compile Include="WebReferences\EmbossSeqretWs\Reference.cs" />
+    <Compile Include="EmbossSixpackClient.cs" />
+    <Compile Include="WebReferences\EmbossSixpackWs\Reference.cs" />
+    <Compile Include="EmbossStretcherClient.cs" />
+    <Compile Include="WebReferences\EmbossStretcherWs\Reference.cs" />
+    <Compile Include="EmbossTranseqClient.cs" />
+    <Compile Include="WebReferences\EmbossTranseqWs\Reference.cs" />
+    <Compile Include="EmbossWaterClient.cs" />
+    <Compile Include="WebReferences\EmbossWaterWs\Reference.cs" />
+    <Compile Include="FastaClient.cs" />
+    <Compile Include="WebReferences\FastaWs\Reference.cs" />
+    <Compile Include="FastmClient.cs" />
+    <Compile Include="WebReferences\FastmWs\Reference.cs" />
+    <Compile Include="FingerPRINTScanClient.cs" />
+    <Compile Include="WebReferences\FingerPRINTScanWs\Reference.cs" />
+    <Compile Include="GeneWiseClient.cs" />
+    <Compile Include="WebReferences\GeneWiseWs\Reference.cs" />
+    <Compile Include="HmmerHmmscanClient.cs" />
+    <Compile Include="WebReferences\HmmerHmmscanWs\Reference.cs" />
+    <Compile Include="IPRScan5Client.cs" />
+    <Compile Include="WebReferences\IPRScan5Ws\Reference.cs" />
+    <Compile Include="IPRScanClient.cs" />
+    <Compile Include="WebReferences\IPRScanWs\Reference.cs" />
+    <Compile Include="KalignClient.cs" />
+    <Compile Include="WebReferences\KalignWs\Reference.cs" />
+    <Compile Include="LalignClient.cs" />
+    <Compile Include="WebReferences\LalignWs\Reference.cs" />
+    <Compile Include="MafftClient.cs" />
+    <Compile Include="WebReferences\MafftWs\Reference.cs" />
+    <Compile Include="MapMiClient.cs" />
+    <Compile Include="WebReferences\MapMiWs\Reference.cs" />
+    <Compile Include="MaxsproutClient.cs" />
+    <Compile Include="WebReferences\MaxsproutWs\Reference.cs" />
+    <Compile Include="MuscleClient.cs" />
+    <Compile Include="WebReferences\MuscleWs\Reference.cs" />
+    <Compile Include="MViewClient.cs" />
+    <Compile Include="WebReferences\MViewWs\Reference.cs" />
+    <Compile Include="NcbiBlastClient.cs" />
+    <Compile Include="WebReferences\NcbiBlastWs\Reference.cs" />
+    <Compile Include="PhobiusClient.cs" />
+    <Compile Include="WebReferences\PhobiusWs\Reference.cs" />
+    <Compile Include="WebReferences\PrankWs\Reference.cs" />
+    <Compile Include="PrattClient.cs" />
+    <Compile Include="WebReferences\PrattWs\Reference.cs" />
+    <Compile Include="PromoterWiseClient.cs" />
+    <Compile Include="WebReferences\PromoterWiseWs\Reference.cs" />
+    <Compile Include="PsiBlastClient.cs" />
+    <Compile Include="WebReferences\PsiBlastWs\Reference.cs" />
+    <Compile Include="PsiSearchClient.cs" />
+    <Compile Include="WebReferences\PsiSearchWs\Reference.cs" />
+    <Compile Include="PsScanClient.cs" />
+    <Compile Include="WebReferences\PsScanWs\Reference.cs" />
+    <Compile Include="RadarClient.cs" />
+    <Compile Include="WebReferences\RadarWs\Reference.cs" />
+    <Compile Include="ReadseqClient.cs" />
+    <Compile Include="WebReferences\ReadseqWs\Reference.cs" />
+    <Compile Include="SapsClient.cs" />
+    <Compile Include="WebReferences\SapsWs\Reference.cs" />
+    <Compile Include="SeqCksumClient.cs" />
+    <Compile Include="WebReferences\SeqCksumWs\Reference.cs" />
+    <Compile Include="TcoffeeClient.cs" />
+    <Compile Include="WebReferences\TcoffeeWs\Reference.cs" />
+    <Compile Include="Wise2DBAClient.cs" />
+    <Compile Include="WebReferences\Wise2DBAWs\Reference.cs" />
+    <Compile Include="WSDbfetchClient.cs" />
+    <Compile Include="WebReferences\WSDbfetchWs\Reference.cs" />
+    <Compile Include="WuBlastClient.cs" />
+    <Compile Include="WebReferences\WuBlastWs\Reference.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="WebReferences\CensorWs\Reference.map" />
+    <None Include="WebReferences\ClustalOWs\Reference.map" />
+    <None Include="WebReferences\ClustalW2Ws\Reference.map" />
+    <None Include="WebReferences\ClustalW2PhylogenyWs\Reference.map" />
+    <None Include="WebReferences\DaliliteWs\Reference.map" />
+    <None Include="WebReferences\DbClustalWs\Reference.map" />
+    <None Include="WebReferences\EBeyeWs\Reference.map" />
+    <None Include="WebReferences\EmbossBacktranambigWs\Reference.map" />
+    <None Include="WebReferences\EmbossBacktranseqWs\Reference.map" />
+    <None Include="WebReferences\EmbossCpgplotWs\Reference.map" />
+    <None Include="WebReferences\EmbossIsochoreWs\Reference.map" />
+    <None Include="WebReferences\EmbossMatcherWs\Reference.map" />
+    <None Include="WebReferences\EmbossNeedleWs\Reference.map" />
+    <None Include="WebReferences\EmbossNewcpgreportWs\Reference.map" />
+    <None Include="WebReferences\EmbossPepinfoWs\Reference.map" />
+    <None Include="WebReferences\EmbossPepstatsWs\Reference.map" />
+    <None Include="WebReferences\EmbossPepwindowWs\Reference.map" />
+    <None Include="WebReferences\EmbossSeqretWs\Reference.map" />
+    <None Include="WebReferences\EmbossSixpackWs\Reference.map" />
+    <None Include="WebReferences\EmbossStretcherWs\Reference.map" />
+    <None Include="WebReferences\EmbossTranseqWs\Reference.map" />
+    <None Include="WebReferences\EmbossWaterWs\Reference.map" />
+    <None Include="WebReferences\FastaWs\Reference.map" />
+    <None Include="WebReferences\FastmWs\Reference.map" />
+    <None Include="WebReferences\FingerPRINTScanWs\Reference.map" />
+    <None Include="WebReferences\GeneWiseWs\Reference.map" />
+    <None Include="WebReferences\HmmerHmmscanWs\Reference.map" />
+    <None Include="WebReferences\IPRScan5Ws\Reference.map" />
+    <None Include="WebReferences\IPRScanWs\Reference.map" />
+    <None Include="WebReferences\KalignWs\Reference.map" />
+    <None Include="WebReferences\LalignWs\Reference.map" />
+    <None Include="WebReferences\MafftWs\Reference.map" />
+    <None Include="WebReferences\MapMiWs\Reference.map" />
+    <None Include="WebReferences\MaxsproutWs\Reference.map" />
+    <None Include="WebReferences\MuscleWs\Reference.map" />
+    <None Include="WebReferences\MViewWs\Reference.map" />
+    <None Include="WebReferences\NcbiBlastWs\Reference.map" />
+    <None Include="WebReferences\PhobiusWs\Reference.map" />
+    <None Include="WebReferences\PrankWs\Reference.map" />
+    <None Include="WebReferences\PrattWs\Reference.map" />
+    <None Include="WebReferences\PromoterWiseWs\Reference.map" />
+    <None Include="WebReferences\PsiBlastWs\Reference.map" />
+    <None Include="WebReferences\PsiSearchWs\Reference.map" />
+    <None Include="WebReferences\PsScanWs\Reference.map" />
+    <None Include="WebReferences\RadarWs\Reference.map" />
+    <None Include="WebReferences\ReadseqWs\Reference.map" />
+    <None Include="WebReferences\SapsWs\Reference.map" />
+    <None Include="WebReferences\SeqCksumWs\Reference.map" />
+    <None Include="WebReferences\TcoffeeWs\Reference.map" />
+    <None Include="WebReferences\Wise2DBAWs\Reference.map" />
+    <None Include="WebReferences\WSDbfetchWs\Reference.map" />
+    <None Include="WebReferences\WuBlastWs\Reference.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+</Project>
