@@ -23,6 +23,13 @@ in C#, Visual Basic .NET, Ruby and PHP, using a variety of different REST/SOAP l
 
 ## Running the clients
 
+[Download the clients](https://github.com/ebi-wp/webservice-clients/archive/master.zip) 
+or clone the repository:
+
+```bash
+git clone https://github.com/ebi-wp/webservice-clients.git
+```
+
 ### Perl clients [![perl](https://img.shields.io/badge/perl-5.22.0+-blue.svg?style=flat)]()
 
 In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as two dependencies 
@@ -91,13 +98,11 @@ docker pull ebiwp/webservice-clients
 
 Then run the Perl (or Python and Java) Clients with:
 ```
-# example
 docker run --rm -it ebiwp/webservice-clients ncbiblast.pl --help
 ```
 
 You can control input/output with `--volumes` or simply `-v`:
 ```
-# example
 docker run --rm -it -v `pwd`:/results -w /results ebiwp/webservice-clients ncbiblast.pl  \
   --email <your@email.com> --stype protein --database uniprotkb_swissprot --program blastp sp:pak4_human
 ```
