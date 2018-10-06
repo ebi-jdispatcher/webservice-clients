@@ -10,12 +10,12 @@
 *.log
 
 # Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
+#*.jar
+#*.war
+#*.ear
+#*.zip
+#*.tar.gz
+#*.rar
 
 ### macOS template
 *.DS_Store
