@@ -143,7 +143,7 @@ public class RestClient {
                 .getPath())
                 .getName();
 
-        URL url = Resources.getResource(resourcesDir + "emboss_transeq.txt");
+        URL url = Resources.getResource(resourcesDir + "tool.txt");
         String[] toolInfo = Resources.toString(url, Charset.defaultCharset()).split("\n");
 
         toolId = toolInfo[0];
@@ -243,9 +243,9 @@ public class RestClient {
     private void loadToolSpecificOptions() throws IOException {
 
         optionalParametersMessage = Resources.toString(Resources.getResource(
-                        resourcesDir + "emboss_transeq_opt.txt"), Charset.defaultCharset());
+                        resourcesDir + "optional.txt"), Charset.defaultCharset());
         requiredParametersMessage = Resources.toString(Resources.getResource(
-                        resourcesDir + "emboss_transeq_req.txt"), Charset.defaultCharset());
+                        resourcesDir + "required.txt"), Charset.defaultCharset());
 
         ClientUtils.parseOptionsFromFormattedString(requiredOptions, requiredParametersMessage);
         ClientUtils.parseOptionsFromFormattedString(optionalOptions, optionalParametersMessage);

@@ -202,6 +202,9 @@
 
     <!-- A template to generate a Jar file -->
     <target name="jar-client">
+        <copy file="bin/tools/${client}.txt" tofile="${build.dir}/tools/tool.txt" overwrite="true"></copy>
+        <copy file="bin/tools/${client}_opt.txt" toFile="${build.dir}/tools/optional.txt" overwrite="true"></copy>
+        <copy file="bin/tools/${client}_req.txt" toFile="${build.dir}/tools/required.txt" overwrite="true"></copy>
         <jar jarfile="${dist.dir}/${client}.jar"
              basedir="${build.dir}"
              includes="logback.xml tools/** restclient/** restclient/stubs/**">
