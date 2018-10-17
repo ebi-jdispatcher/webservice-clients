@@ -44,7 +44,7 @@ WORKDIR /webservice-clients-generator
 RUN pip install -r requirements.txt
 RUN python clientsgenerator.py python,perl,java
 WORKDIR /webservice-clients-generator/dist
-RUN wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/python/dbfetch.py
+RUN wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/python/dbfetch.py \
  && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/perl/dbfetch.pl
 # TODO Get dbfetch Java client
 RUN ant; exit 0
