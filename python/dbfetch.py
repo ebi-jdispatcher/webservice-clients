@@ -57,9 +57,12 @@ usage = """
   %prog getSupportedStyles [options...]"""
 description = """Fetch database entries using entry identifiers. For more information on dbfetch
 refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
-epilog = """For further information about the WSDbfetch (SOAP) web service, see
-http://www.ebi.ac.uk/Tools/webservices/services/dbfetch."""
-version = "$Id$"
+epilog = """\
+Further information:
+  https://www.ebi.ac.uk/Tools/webservices
+Support/Feedback:
+  https://www.ebi.ac.uk/support/"""
+version = "1.0"
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
 parser.add_option('--quiet', action='store_true', help='decrease output level')

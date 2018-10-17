@@ -753,8 +753,8 @@ Fetching an entry: fetchData
 
   $scriptName fetchData <dbName:id> [format [style]]
 
-  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT), 
-             use \@fileName to read identifiers from a file or \@- to read 
+  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
+             use \@fileName to read identifiers from a file or \@- to read
              identifiers from STDIN.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
@@ -770,15 +770,19 @@ Fetching entries: fetchBatch
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
+Further information:
+
+  https://www.ebi.ac.uk/Tools/webservices
+
 Support/Feedback:
 
-  http://www.ebi.ac.uk/support/
+  https://www.ebi.ac.uk/support/
 EOF
 }
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any 
+Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut
