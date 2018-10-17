@@ -124,10 +124,10 @@ def restRequest(url):
         }
         req = Request(url, None, http_headers)
         resp = urlopen(req)
-        encoding = resp.info().getheader('Content-Encoding')
+        encoding = resp.info().get('Content-Encoding')
         result = None
         if encoding == None or encoding == 'identity':
-            result = resp.read()
+            result = resp.read().decode('utf-8')
         elif encoding == 'gzip':
             result = resp.read()
             printDebugMessage('restRequest', 'result: ' + result, 21)
