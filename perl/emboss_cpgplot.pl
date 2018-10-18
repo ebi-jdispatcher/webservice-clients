@@ -86,8 +86,8 @@ GetOptions(
     'sequence=s'      => \$params{'sequence'},       # One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. Partially formatted sequences are not accepted.
     'window=i'        => \$params{'window'},         # The percentage CG content and the Observed frequency of CG is calculated within a window whose size is set by this parameter. The window is moved down the sequence and these statistics are calculated at each position that the window is moved to
     'minlen=i'        => \$params{'minlen'},         # This sets the minimum length that a CpG island has to be before it is reported.
-    'minoe=d'         => \$params{'minoe'},          # This sets the minimum average observed to expected ratio of C plus G to CpG in a set of 10 windows that are required before a CpG island is reported.
-    'minpc=d'         => \$params{'minpc'},          # This sets the minimum average percentage of G plus C a set of 10 windows that are required before a CpG island is reported.
+    'minoe=f'         => \$params{'minoe'},          # This sets the minimum average observed to expected ratio of C plus G to CpG in a set of 10 windows that are required before a CpG island is reported.
+    'minpc=f'         => \$params{'minpc'},          # This sets the minimum average percentage of G plus C a set of 10 windows that are required before a CpG island is reported.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -935,10 +935,10 @@ Sequence statistics and plots with cpgplot.
                                  at each position that the window is moved to
   --minlen              : int  : This sets the minimum length that a CpG island has to be before it is
                                  reported.
-  --minoe               : int  : This sets the minimum average observed to expected ratio of C plus G
+  --minoe               : flo  : This sets the minimum average observed to expected ratio of C plus G
                                  to CpG in a set of 10 windows that are required before a CpG island is
                                  reported.
-  --minpc               : int  : This sets the minimum average percentage of G plus C a set of 10
+  --minpc               : flo  : This sets the minimum average percentage of G plus C a set of 10
                                  windows that are required before a CpG island is reported.
 [General]
   -h, --help            :      : prints this help text

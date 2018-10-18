@@ -84,7 +84,7 @@ GetOptions(
 
     # Tool specific options
     'database=s'      => \$params{'database'},       # The database(s) to search.
-    'evalue=d'        => \$params{'evalue'},         # Expectation value cut-off.
+    'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off.
     'asp'             => \$params{'asp'},            # Predict active site residues for Pfam-A matches.
     'format=s'        => \$params{'format'},         # Output format
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
@@ -932,7 +932,7 @@ Protein function analysis with PfamScan.
 
 [Optional]
   --database            : str  : The database(s) to search.
-  --evalue              : int  : Expectation value cut-off.
+  --evalue              : flo  : Expectation value cut-off.
   --asp                 : bool : Predict active site residues for Pfam-A matches.
   --format              : str  : Output format
   --sequence            : str  : The input sequence can be entered directly into this form. The

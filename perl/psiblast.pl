@@ -86,8 +86,8 @@ GetOptions(
     'matrix=s'        => \$params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
     'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
     'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
-    'expthr=d'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'psithr=d'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in PSSM at each iteration.
+    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'psithr=f'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in PSSM at each iteration.
     'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
     'alignments=i'    => \$params{'alignments'},     # Maximum number of match alignments reported in the result output.
     'alignView=i'     => \$params{'alignView'},      # Formating for the alignments
@@ -949,10 +949,10 @@ Sequence similarity search with PSI-Blast.
                                  Increasing the gap extension penalty favors short gaps in the final
                                  alignment, conversly decreasing the gap extension penalty favors long
                                  gaps in the final alignment.
-  --expthr              : int  : Limits the number of scores and alignments reported based on the
+  --expthr              : flo  : Limits the number of scores and alignments reported based on the
                                  expectation value. This is the maximum number of times the match is
                                  expected to occur by chance.
-  --psithr              : int  : Expectation value threshold for automatic selection of matched
+  --psithr              : flo  : Expectation value threshold for automatic selection of matched
                                  sequences for inclusion in PSSM at each iteration.
   --scores              : int  : Maximum number of match score summaries reported in the result output.
   --alignments          : int  : Maximum number of match alignments reported in the result output.

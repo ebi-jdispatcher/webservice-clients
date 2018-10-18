@@ -88,7 +88,7 @@ GetOptions(
     'match_scores=s'  => \$params{'match_scores'},   # Specify match/mismatch scores for DNA comparisons.
     'gapopen=i'       => \$params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
     'gapext=i'        => \$params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
-    'expthr=d'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
     'format=s'        => \$params{'format'},         # Pairwise sequences format
     'graphics'        => \$params{'graphics'},       # Generates a visual output
     'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
@@ -941,7 +941,7 @@ Pairwise sequence alignment with Lalign.
   --match_scores        : str  : Specify match/mismatch scores for DNA comparisons.
   --gapopen             : int  : Pairwise alignment score for the first residue in a gap.
   --gapext              : int  : Pairwise alignment score for each additional residue in a gap.
-  --expthr              : int  : Limits the number of scores and alignments reported based on the
+  --expthr              : flo  : Limits the number of scores and alignments reported based on the
                                  expectation value. This is the maximum number of times the match is
                                  expected to occur by chance.
   --format              : str  : Pairwise sequences format

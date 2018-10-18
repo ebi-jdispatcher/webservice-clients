@@ -90,8 +90,8 @@ GetOptions(
     'gapopen=i'       => \$params{'gapopen'},        # Score for the first residue in a gap.
     'gapext=i'        => \$params{'gapext'},         # Score for each additional residue in a gap.
     'hsps'            => \$params{'hsps'},           # Turn on/off the display of all significant alignments between query and library sequence.
-    'expupperlim=d'   => \$params{'expupperlim'},    # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'explowlim=d'     => \$params{'explowlim'},      # Limit the number of scores and alignments reported based on the expectation value. This is the minimum number of times the match is expected to occur by chance. This allows closely related matches to be excluded from the result in favor of more distant relationships.
+    'expupperlim=f'   => \$params{'expupperlim'},    # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'explowlim=f'     => \$params{'explowlim'},      # Limit the number of scores and alignments reported based on the expectation value. This is the minimum number of times the match is expected to occur by chance. This allows closely related matches to be excluded from the result in favor of more distant relationships.
     'strand=s'        => \$params{'strand'},         # For nucleotide sequences specify the sequence strand to be used for the search. By default both upper (provided) and lower (reverse complement of provided) strands are used, for single stranded sequences searching with only the upper or lower strand may provide better results.
     'hist'            => \$params{'hist'},           # Turn on/off the histogram in the FASTA result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
     'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
@@ -980,10 +980,10 @@ Sequence similarity search with FASTA.
   --gapext              : int  : Score for each additional residue in a gap.
   --hsps                : bool : Turn on/off the display of all significant alignments between query
                                  and library sequence.
-  --expupperlim         : int  : Limits the number of scores and alignments reported based on the
+  --expupperlim         : flo  : Limits the number of scores and alignments reported based on the
                                  expectation value. This is the maximum number of times the match is
                                  expected to occur by chance.
-  --explowlim           : int  : Limit the number of scores and alignments reported based on the
+  --explowlim           : flo  : Limit the number of scores and alignments reported based on the
                                  expectation value. This is the minimum number of times the match is
                                  expected to occur by chance. This allows closely related matches to be
                                  excluded from the result in favor of more distant relationships.

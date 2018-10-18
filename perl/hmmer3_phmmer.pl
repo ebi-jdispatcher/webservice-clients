@@ -97,7 +97,7 @@ GetOptions(
     'nobias'          => \$params{'nobias'},         # Filters
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \$params{'database'},       # Sequence Database
-    'evalue=d'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
+    'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
@@ -962,7 +962,7 @@ Protein function analysis with HMMER 3 phmmer.
   --nobias              : bool : Filters
   --alignView           : bool : Output alignment in result
   --database            : str  : Sequence Database
-  --evalue              : int  : Expectation value cut-off for reporting target profiles in the per-
+  --evalue              : flo  : Expectation value cut-off for reporting target profiles in the per-
                                  target output.
   --sequence            : str  : The input sequence can be entered directly into this form. The
                                  sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A

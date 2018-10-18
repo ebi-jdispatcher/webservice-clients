@@ -86,9 +86,9 @@ GetOptions(
     'matrix=s'        => \$params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
     'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap opening penalty will decrease the number of gaps in the final alignment.
     'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favours short gaps in the final alignment, conversly, decreasing the gap extension penalty favours long gaps in the final alignment.
-    'expthr=d'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This value is the maximum number of times the match is expected to occur by chance.
+    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This value is the maximum number of times the match is expected to occur by chance.
     'mask'            => \$params{'mask'},           # Turn on/off the sequence masking for HOEs in PSSM constructions. This option allows you to mask sequence characters beyond the alignment region when constructing the PSSM, reducing over-extension errors.
-    'psithr=d'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in the PSSM at each iteration.
+    'psithr=f'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in the PSSM at each iteration.
     'scores=i'        => \$params{'scores'},         # Maximum number of alignment score summaries reported in the result output.
     'alignments=i'    => \$params{'alignments'},     # Maximum number of alignments reported in the result output.
     'hsps'            => \$params{'hsps'},           # Turn on/off the display of all significant alignments between query and database sequence.
@@ -972,13 +972,13 @@ Sequence similarity search with PSI-Search.
                                  Increasing the gap extension penalty favours short gaps in the final
                                  alignment, conversly, decreasing the gap extension penalty favours
                                  long gaps in the final alignment.
-  --expthr              : int  : Limits the number of scores and alignments reported based on the
+  --expthr              : flo  : Limits the number of scores and alignments reported based on the
                                  expectation value. This value is the maximum number of times the match
                                  is expected to occur by chance.
   --mask                : bool : Turn on/off the sequence masking for HOEs in PSSM constructions. This
                                  option allows you to mask sequence characters beyond the alignment
                                  region when constructing the PSSM, reducing over-extension errors.
-  --psithr              : int  : Expectation value threshold for automatic selection of matched
+  --psithr              : flo  : Expectation value threshold for automatic selection of matched
                                  sequences for inclusion in the PSSM at each iteration.
   --scores              : int  : Maximum number of alignment score summaries reported in the result
                                  output.
