@@ -950,7 +950,7 @@ FASTM
 Sequence similarity search with FASTM.
 
 [Required]
-  --email               : str  : e-mail address
+  --email               : str  : E-mail address.
 
 [Optional]
   --program             : str  : The FASTA program to be used for the Sequence Similarity Search
@@ -1015,23 +1015,23 @@ Sequence similarity search with FASTM.
                                  sensitivity of the search. Lower values lead to more sensitive, but
                                  slower searches.
 [General]
-  -h, --help            :      : prints this help text
-  --async               :      : forces to make an asynchronous query
-  --email               : str  : e-mail address
-  --title               : str  : title for job
-  --status              :      : get job status
-  --resultTypes         :      : get available result types for job
-  --polljob             :      : poll for the status of a job
-  --pollFreq            : int  : poll frequency in seconds (default 3s)
-  --jobid               : str  : jobid that was returned when an asynchronous job
+  -h, --help            :      : Prints this help text.
+  --async               :      : Forces to make an asynchronous query.
+  --title               : str  : Title for job.
+  --status              :      : Get job status.
+  --resultTypes         :      : Get available result types for job.
+  --polljob             :      : Poll for the status of a job.
+  --pollFreq            : int  : Poll frequency in seconds (default 3s).
+  --jobid               : str  : JobId that was returned when an asynchronous job
                                  was submitted.
-  --outfile             : str  : file name for results (default is jobid;
-                                 "-" for STDOUT)
-  --outformat           : str  : result format to retrieve
-  --params              :      : list input parameters
-  --paramDetail         : str  : display details for input parameter
-  --quiet               :      : decrease output
-  --verbose             :      : increase output
+  --outfile             : str  : File name for results (default is jobid;
+                                 "-" for STDOUT).
+  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
+                                 values.
+  --params              :      : List input parameters.
+  --paramDetail         : str  : Display details for input parameter.
+  --quiet               :      : Decrease output.
+  --verbose             :      : Increase output.
 
 Synchronous job:
 
