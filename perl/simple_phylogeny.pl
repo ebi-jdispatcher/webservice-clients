@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,12 +83,12 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'tree=s'          => \$params{'tree'},           # Determines the outputs that the Simple Phylogeny tool produces.
-    'kimura'          => \$params{'kimura'},         # Controls whether Simple Phylogeny attempts to correct for multiple substitutions at the same site. This is recommended to be set 'on' for more divergent sequences and has the effect of stretching branch lengths. For very divergent sequences the distances cannot be reliably corrected.
-    'tossgaps'        => \$params{'tossgaps'},       # With this option enabled columns where any of the sequences in the input have a gap will be excluded, forcing the alignment to use only positions where information can be included from all sequences.
-    'clustering=s'    => \$params{'clustering'},     # Clustering Methods
-    'pim'             => \$params{'pim'},            # Output the percentage identity matrix
-    'sequence=s'      => \$params{'sequence'},       # Phylogeny using an alignment directly entered into the input box in a supported format. Alignment formats supported include Clustal, FASTA and MSF. Partially formatted or unaligned sequences are not accepted. Adding a return to the end of the sequence may help the Simple Phylogeny tool understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a limit of 500 sequences and 1MB of data.
+    'tree=s'          => \$tool_params{'tree'},           # Determines the outputs that the Simple Phylogeny tool produces.
+    'kimura'          => \$tool_params{'kimura'},         # Controls whether Simple Phylogeny attempts to correct for multiple substitutions at the same site. This is recommended to be set 'on' for more divergent sequences and has the effect of stretching branch lengths. For very divergent sequences the distances cannot be reliably corrected.
+    'tossgaps'        => \$tool_params{'tossgaps'},       # With this option enabled columns where any of the sequences in the input have a gap will be excluded, forcing the alignment to use only positions where information can be included from all sequences.
+    'clustering=s'    => \$tool_params{'clustering'},     # Clustering Methods
+    'pim'             => \$tool_params{'pim'},            # Output the percentage identity matrix
+    'sequence=s'      => \$tool_params{'sequence'},       # Phylogeny using an alignment directly entered into the input box in a supported format. Alignment formats supported include Clustal, FASTA and MSF. Partially formatted or unaligned sequences are not accepted. Adding a return to the end of the sequence may help the Simple Phylogeny tool understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

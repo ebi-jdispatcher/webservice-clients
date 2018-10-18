@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,12 +83,12 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'frame=s'         => \$params{'frame'},          # The frames to be translated. The order of the frames follows the Staden convention: Frame -1 is the reverse-complement of the sequence having the same codon phase as frame 1. Frame -2 is the same phase as frame 2. Frame -3 is the same phase as frame 3.
-    'codontable=s'    => \$params{'codontable'},     # Which genetic code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
-    'regions=s'       => \$params{'regions'},        # Which regions of the user's DNA molecule are to be translated.
-    'trim'            => \$params{'trim'},           # Remove '*' and 'X' (stop and ambiguity) symbols from the end of the translation.
-    'reverse'         => \$params{'reverse'},        # Choose this option if you wish to reverse and complement your input sequence before frame translation.
-    'sequence=s'      => \$params{'sequence'},       # Any input formats accepted by EMBOSS can be used, the full list of sequence formats accepted as input by EMBOSS tools can be accessed via the link below. Word processor files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
+    'frame=s'         => \$tool_params{'frame'},          # The frames to be translated. The order of the frames follows the Staden convention: Frame -1 is the reverse-complement of the sequence having the same codon phase as frame 1. Frame -2 is the same phase as frame 2. Frame -3 is the same phase as frame 3.
+    'codontable=s'    => \$tool_params{'codontable'},     # Which genetic code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
+    'regions=s'       => \$tool_params{'regions'},        # Which regions of the user's DNA molecule are to be translated.
+    'trim'            => \$tool_params{'trim'},           # Remove '*' and 'X' (stop and ambiguity) symbols from the end of the translation.
+    'reverse'         => \$tool_params{'reverse'},        # Choose this option if you wish to reverse and complement your input sequence before frame translation.
+    'sequence=s'      => \$tool_params{'sequence'},       # Any input formats accepted by EMBOSS can be used, the full list of sequence formats accepted as input by EMBOSS tools can be accessed via the link below. Word processor files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

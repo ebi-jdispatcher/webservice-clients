@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,16 +83,16 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'matrix=s'        => \$params{'matrix'},         # Default substitution scoring matrices.
-    'match_scores=s'  => \$params{'match_scores'},   # Specify match/mismatch scores for DNA comparisons.
-    'gapopen=i'       => \$params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
-    'gapext=i'        => \$params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
-    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'format=s'        => \$params{'format'},         # Pairwise sequences format
-    'graphics'        => \$params{'graphics'},       # Generates a visual output
-    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'matrix=s'        => \$tool_params{'matrix'},         # Default substitution scoring matrices.
+    'match_scores=s'  => \$tool_params{'match_scores'},   # Specify match/mismatch scores for DNA comparisons.
+    'gapopen=i'       => \$tool_params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
+    'gapext=i'        => \$tool_params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
+    'expthr=f'        => \$tool_params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'format=s'        => \$tool_params{'format'},         # Pairwise sequences format
+    'graphics'        => \$tool_params{'graphics'},       # Generates a visual output
+    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

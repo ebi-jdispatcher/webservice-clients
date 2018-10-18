@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,10 +83,10 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$params{'sequence'},       # One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted.
-    'outputtype=s'    => \$params{'outputtype'},     # Output type
-    'species=s'       => \$params{'species'},        # Uses the specified species table for quantile comparisons
-    'positiveresidues=s'=> \$params{'positiveresidues'},# By default, SAPS treats only lysine (K) and arginine (R) as positively charged residues. Alternatively, Histidine (H) can also be treated as positively charged in all parts of the program involving the charge alphabet.
+    'sequence=s'      => \$tool_params{'sequence'},       # One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted.
+    'outputtype=s'    => \$tool_params{'outputtype'},     # Output type
+    'species=s'       => \$tool_params{'species'},        # Uses the specified species table for quantile comparisons
+    'positiveresidues=s'=> \$tool_params{'positiveresidues'},# By default, SAPS treats only lysine (K) and arginine (R) as positively charged residues. Alternatively, Histidine (H) can also be treated as positively charged in all parts of the program involving the charge alphabet.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

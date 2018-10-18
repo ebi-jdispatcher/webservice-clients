@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,11 +83,11 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$params{'sequence'},       # Two or more aligned sequences are required. There is currently a sequence input limit of 500 sequences and 1MB of data.
-    'wordsize=i'      => \$params{'wordsize'},       # Word size.
-    'gap=i'           => \$params{'gap'},            # This specifies the size of the gap that is used to separate the individual dotplots in the display. The size is measured in residues, as displayed in the output.
-    'boxit'           => \$params{'boxit'},          # Draw a box around dotplot.
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$tool_params{'sequence'},       # Two or more aligned sequences are required. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'wordsize=i'      => \$tool_params{'wordsize'},       # Word size.
+    'gap=i'           => \$tool_params{'gap'},            # This specifies the size of the gap that is used to separate the individual dotplots in the display. The size is measured in residues, as displayed in the output.
+    'boxit'           => \$tool_params{'boxit'},          # Draw a box around dotplot.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

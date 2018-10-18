@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,20 +83,20 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'incE=s'          => \$params{'incE'},           # Significance E-values[Model]
-    'incdomE=s'       => \$params{'incdomE'},        # Significance E-values[Hit]
-    'E=s'             => \$params{'E'},              # Report E-values[Model]
-    'domE=s'          => \$params{'domE'},           # Report E-values[Hit]
-    'incT=s'          => \$params{'incT'},           # Significance bit scores[Sequence]
-    'incdomT=s'       => \$params{'incdomT'},        # Significance bit scores[Hit]
-    'T=s'             => \$params{'T'},              # Report bit scores[Sequence]
-    'domT=s'          => \$params{'domT'},           # Report bit scores[Hit]
-    'cut_ga'          => \$params{'cut_ga'},         # Use the gathering threshold.
-    'nobias'          => \$params{'nobias'},         # Filters
-    'hmmdbparam=s'    => \$params{'hmmdbparam'},     # hmmdbparam
-    'alignView'       => \$params{'alignView'},      # Output alignment in result
-    'database=s'      => \$params{'database'},       # HMM Database
-    'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'incE=s'          => \$tool_params{'incE'},           # Significance E-values[Model]
+    'incdomE=s'       => \$tool_params{'incdomE'},        # Significance E-values[Hit]
+    'E=s'             => \$tool_params{'E'},              # Report E-values[Model]
+    'domE=s'          => \$tool_params{'domE'},           # Report E-values[Hit]
+    'incT=s'          => \$tool_params{'incT'},           # Significance bit scores[Sequence]
+    'incdomT=s'       => \$tool_params{'incdomT'},        # Significance bit scores[Hit]
+    'T=s'             => \$tool_params{'T'},              # Report bit scores[Sequence]
+    'domT=s'          => \$tool_params{'domT'},           # Report bit scores[Hit]
+    'cut_ga'          => \$tool_params{'cut_ga'},         # Use the gathering threshold.
+    'nobias'          => \$tool_params{'nobias'},         # Filters
+    'hmmdbparam=s'    => \$tool_params{'hmmdbparam'},     # hmmdbparam
+    'alignView'       => \$tool_params{'alignView'},      # Output alignment in result
+    'database=s'      => \$tool_params{'database'},       # HMM Database
+    'sequence=s'      => \$tool_params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

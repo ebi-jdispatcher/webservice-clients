@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,9 +83,9 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
-    'termini'         => \$params{'termini'},        # Include charges from the N-terminus and C-terminus when calculating the Isoelectric Point
-    'mono'            => \$params{'mono'},           # Use weight from the most abundant (prinicpal) isotope of each amino acid when calculating molecular weights. By default this is not enabled, so the average isotope weight is used instead.
+    'sequence=s'      => \$tool_params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
+    'termini'         => \$tool_params{'termini'},        # Include charges from the N-terminus and C-terminus when calculating the Isoelectric Point
+    'mono'            => \$tool_params{'mono'},           # Use weight from the most abundant (prinicpal) isotope of each amino acid when calculating molecular weights. By default this is not enabled, so the average isotope weight is used instead.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

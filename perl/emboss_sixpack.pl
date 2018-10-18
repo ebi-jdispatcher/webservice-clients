@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,12 +83,12 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'codontable=s'    => \$params{'codontable'},     # Which Genetic Code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
-    'firstorf'        => \$params{'firstorf'},       # Count the beginning of a sequence as a possible ORF, even if it's inferior to the minimal ORF size.
-    'lastorf'         => \$params{'lastorf'},        # Count the end of a sequence as a possible ORF, even if it's not finishing with a STOP, or inferior to the minimal ORF size.
-    'reverse'         => \$params{'reverse'},        # Choose this option if you wish to reverse and compliment your sequence.
-    'orfminsize=s'    => \$params{'orfminsize'},     # Minimum size of Open Reading Frames (ORFs) to display in the translations.
-    'sequence=s'      => \$params{'sequence'},       # A DNA sequence can be entered or pasted into this box. Ideally use a known sequence format such as fasta or EMBL, text pasted from word processors may contain meta-characters that cause problems.
+    'codontable=s'    => \$tool_params{'codontable'},     # Which Genetic Code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
+    'firstorf'        => \$tool_params{'firstorf'},       # Count the beginning of a sequence as a possible ORF, even if it's inferior to the minimal ORF size.
+    'lastorf'         => \$tool_params{'lastorf'},        # Count the end of a sequence as a possible ORF, even if it's not finishing with a STOP, or inferior to the minimal ORF size.
+    'reverse'         => \$tool_params{'reverse'},        # Choose this option if you wish to reverse and compliment your sequence.
+    'orfminsize=s'    => \$tool_params{'orfminsize'},     # Minimum size of Open Reading Frames (ORFs) to display in the translations.
+    'sequence=s'      => \$tool_params{'sequence'},       # A DNA sequence can be entered or pasted into this box. Ideally use a known sequence format such as fasta or EMBL, text pasted from word processors may contain meta-characters that cause problems.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

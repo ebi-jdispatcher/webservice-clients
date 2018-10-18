@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,11 +83,11 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'database=s'      => \$params{'database'},       # The database(s) to search.
-    'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off.
-    'asp'             => \$params{'asp'},            # Predict active site residues for Pfam-A matches.
-    'format=s'        => \$params{'format'},         # Output format
-    'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$tool_params{'database'},       # The database(s) to search.
+    'evalue=f'        => \$tool_params{'evalue'},         # Expectation value cut-off.
+    'asp'             => \$tool_params{'asp'},            # Predict active site residues for Pfam-A matches.
+    'format=s'        => \$tool_params{'format'},         # Output format
+    'sequence=s'      => \$tool_params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

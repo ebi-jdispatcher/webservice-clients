@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,17 +83,17 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'scorethr=i'      => \$params{'scorethr'},       # Score threshold. The minimum score for a candidate hairpin.
-    'longext=i'       => \$params{'longext'},        # Long match extention (bp).
-    'shortext=i'      => \$params{'shortext'},       # Short match extention (bp).
-    'maxmis=i'        => \$params{'maxmis'},         # Maximum mature mismatches.
-    'mismatchpen=i'   => \$params{'mismatchpen'},    # Mature mismatch penalty.
-    'bowtie=i'        => \$params{'bowtie'},         # Maximum allowed matches per candidate genome (Bowtie-m). 0 for disable.
-    'excludecan'      => \$params{'excludecan'},     # Exclude candidates in loop. Binary toggle to exclude mature.
-    'maxloop=i'       => \$params{'maxloop'},        # Maximum loop overlap. Maximum allowed mature basepairs overlapping loop.
-    'sequence=s'      => \$params{'sequence'},       # The query sequence(s) can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
-    'metazoa_species=s'=> \$params{'metazoa_species'},# Ensembl Metazoa Species
-    'ensembl_species=s'=> \$params{'ensembl_species'},# Ensembl Species
+    'scorethr=i'      => \$tool_params{'scorethr'},       # Score threshold. The minimum score for a candidate hairpin.
+    'longext=i'       => \$tool_params{'longext'},        # Long match extention (bp).
+    'shortext=i'      => \$tool_params{'shortext'},       # Short match extention (bp).
+    'maxmis=i'        => \$tool_params{'maxmis'},         # Maximum mature mismatches.
+    'mismatchpen=i'   => \$tool_params{'mismatchpen'},    # Mature mismatch penalty.
+    'bowtie=i'        => \$tool_params{'bowtie'},         # Maximum allowed matches per candidate genome (Bowtie-m). 0 for disable.
+    'excludecan'      => \$tool_params{'excludecan'},     # Exclude candidates in loop. Binary toggle to exclude mature.
+    'maxloop=i'       => \$tool_params{'maxloop'},        # Maximum loop overlap. Maximum allowed mature basepairs overlapping loop.
+    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence(s) can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'metazoa_species=s'=> \$tool_params{'metazoa_species'},# Ensembl Metazoa Species
+    'ensembl_species=s'=> \$tool_params{'ensembl_species'},# Ensembl Species
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

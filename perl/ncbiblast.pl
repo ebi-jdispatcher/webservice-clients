@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,25 +83,25 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'program=s'       => \$params{'program'},        # The BLAST program to be used for the Sequence Similarity Search.
-    'task=s'          => \$params{'task'},           # Task option (only selectable for blastn)
-    'matrix=s'        => \$params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database.
-    'alignments=i'    => \$params{'alignments'},     # Maximum number of match alignments reported in the result output.
-    'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
-    'exp=s'           => \$params{'exp'},            # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'dropoff=i'       => \$params{'dropoff'},        # The amount a score can drop before gapped extension of word hits is halted
-    'match_scores=s'  => \$params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
-    'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
-    'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
-    'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
-    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
-    'gapalign'        => \$params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
-    'compstats=s'     => \$params{'compstats'},      # Use composition-based statistics.
-    'align=i'         => \$params{'align'},          # Formating for the alignments
-    'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
-    'stype=s'         => \$params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
-    'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # Database
+    'program=s'       => \$tool_params{'program'},        # The BLAST program to be used for the Sequence Similarity Search.
+    'task=s'          => \$tool_params{'task'},           # Task option (only selectable for blastn)
+    'matrix=s'        => \$tool_params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database.
+    'alignments=i'    => \$tool_params{'alignments'},     # Maximum number of match alignments reported in the result output.
+    'scores=i'        => \$tool_params{'scores'},         # Maximum number of match score summaries reported in the result output.
+    'exp=s'           => \$tool_params{'exp'},            # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'dropoff=i'       => \$tool_params{'dropoff'},        # The amount a score can drop before gapped extension of word hits is halted
+    'match_scores=s'  => \$tool_params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
+    'gapopen=i'       => \$tool_params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
+    'gapext=i'        => \$tool_params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
+    'filter=s'        => \$tool_params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
+    'gapalign'        => \$tool_params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
+    'compstats=s'     => \$tool_params{'compstats'},      # Use composition-based statistics.
+    'align=i'         => \$tool_params{'align'},          # Formating for the alignments
+    'transltable=i'   => \$tool_params{'transltable'},    # Query Genetic code to use in translation
+    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
+    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$tool_params{'database'},       # Database
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

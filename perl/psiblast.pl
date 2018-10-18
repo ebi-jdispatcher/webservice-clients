@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,25 +83,25 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'matrix=s'        => \$params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
-    'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
-    'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
-    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'psithr=f'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in PSSM at each iteration.
-    'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
-    'alignments=i'    => \$params{'alignments'},     # Maximum number of match alignments reported in the result output.
-    'alignView=i'     => \$params{'alignView'},      # Formating for the alignments
-    'dropoff=i'       => \$params{'dropoff'},        # The amount a score can drop before extension of word hits is halted
-    'finaldropoff=i'  => \$params{'finaldropoff'},   # Dropoff value for final gapped alignment
-    'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
-    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
-    'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
-    'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-BLAST iteration.
-    'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers of the hits from the previous iteration to use to construct the search PSSM for this iteration.
-    'cpfile=f'        => \$params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.
-    'umode=s'         => \$params{'umode'},          # Usage mode for PHI-BLAST functionality
-    'patfile=f'       => \$params{'patfile'},        # Pattern file for PHI-BLAST functionality. This file needs to be in the style of a prosite entry file, with at least an ID line, PA line and optional HI line.
+    'matrix=s'        => \$tool_params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
+    'gapopen=i'       => \$tool_params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
+    'gapext=i'        => \$tool_params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
+    'expthr=f'        => \$tool_params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'psithr=f'        => \$tool_params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in PSSM at each iteration.
+    'scores=i'        => \$tool_params{'scores'},         # Maximum number of match score summaries reported in the result output.
+    'alignments=i'    => \$tool_params{'alignments'},     # Maximum number of match alignments reported in the result output.
+    'alignView=i'     => \$tool_params{'alignView'},      # Formating for the alignments
+    'dropoff=i'       => \$tool_params{'dropoff'},        # The amount a score can drop before extension of word hits is halted
+    'finaldropoff=i'  => \$tool_params{'finaldropoff'},   # Dropoff value for final gapped alignment
+    'filter=s'        => \$tool_params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
+    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$tool_params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'previousjobid=s' => \$tool_params{'previousjobid'},  # The job identifier for the previous PSI-BLAST iteration.
+    'selectedHits=f'  => \$tool_params{'selectedHits'},   # List of identifiers of the hits from the previous iteration to use to construct the search PSSM for this iteration.
+    'cpfile=f'        => \$tool_params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.
+    'umode=s'         => \$tool_params{'umode'},          # Usage mode for PHI-BLAST functionality
+    'patfile=f'       => \$tool_params{'patfile'},        # Pattern file for PHI-BLAST functionality. This file needs to be in the style of a prosite entry file, with at least an ID line, PA line and optional HI line.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

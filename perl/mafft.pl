@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,17 +83,17 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'format=s'        => \$params{'format'},         # Format for generated multiple sequence alignment.
-    'matrix=s'        => \$params{'matrix'},         # Protein comparison matrix to be used when adding sequences to the alignment.
-    'gapopen=f'       => \$params{'gapopen'},        # Penalty for first base/residue in a gap.
-    'gapext=f'        => \$params{'gapext'},         # Penalty for each additional base/residue in a gap.
-    'order=s'         => \$params{'order'},          # The order in which the sequences appear in the final alignment
-    'nbtree=i'        => \$params{'nbtree'},         # Tree Rebuilding Number
-    'treeout'         => \$params{'treeout'},        # Generate guide tree file
-    'maxiterate=i'    => \$params{'maxiterate'},     # Maximum number of iterations to perform when refining the alignment
-    'ffts=s'          => \$params{'ffts'},           # Perform fast fourier transform
-    'stype=s'         => \$params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'format=s'        => \$tool_params{'format'},         # Format for generated multiple sequence alignment.
+    'matrix=s'        => \$tool_params{'matrix'},         # Protein comparison matrix to be used when adding sequences to the alignment.
+    'gapopen=f'       => \$tool_params{'gapopen'},        # Penalty for first base/residue in a gap.
+    'gapext=f'        => \$tool_params{'gapext'},         # Penalty for each additional base/residue in a gap.
+    'order=s'         => \$tool_params{'order'},          # The order in which the sequences appear in the final alignment
+    'nbtree=i'        => \$tool_params{'nbtree'},         # Tree Rebuilding Number
+    'treeout'         => \$tool_params{'treeout'},        # Generate guide tree file
+    'maxiterate=i'    => \$tool_params{'maxiterate'},     # Maximum number of iterations to perform when refining the alignment
+    'ffts=s'          => \$tool_params{'ffts'},           # Perform fast fourier transform
+    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

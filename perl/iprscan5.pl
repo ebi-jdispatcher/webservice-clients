@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,10 +83,10 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'goterms'         => \$params{'goterms'},        # Switch on look-up of corresponding Gene Ontology annotations
-    'pathways'        => \$params{'pathways'},       # Switch on look-up of corresponding pathway annotations
-    'appl=s'          => \$params{'appl'},           # A number of different protein sequence applications are launched. These applications search against specific databases and have preconfigured cut off thresholds.
-    'sequence=s'      => \$params{'sequence'},       # Your protein sequence can be entered directly into this form in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'goterms'         => \$tool_params{'goterms'},        # Switch on look-up of corresponding Gene Ontology annotations
+    'pathways'        => \$tool_params{'pathways'},       # Switch on look-up of corresponding pathway annotations
+    'appl=s'          => \$tool_params{'appl'},           # A number of different protein sequence applications are launched. These applications search against specific databases and have preconfigured cut off thresholds.
+    'sequence=s'      => \$tool_params{'sequence'},       # Your protein sequence can be entered directly into this form in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

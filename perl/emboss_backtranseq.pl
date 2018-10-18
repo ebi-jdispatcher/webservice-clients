@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,8 +83,8 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'codontable=s'    => \$params{'codontable'},     # Codon usage table name
-    'sequence=s'      => \$params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'codontable=s'    => \$tool_params{'codontable'},     # Codon usage table name
+    'sequence=s'      => \$tool_params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

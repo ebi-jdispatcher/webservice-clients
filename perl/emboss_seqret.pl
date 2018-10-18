@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,15 +83,15 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA.
-    'inputformat=s'   => \$params{'inputformat'},    # Input format name
-    'outputformat=s'  => \$params{'outputformat'},   # Output format name.
-    'feature'         => \$params{'feature'},        # Use feature information
-    'firstonly'       => \$params{'firstonly'},      # Read one sequence and stop
-    'reverse'         => \$params{'reverse'},        # Reverse-complement of input DNA sequences
-    'outputcase=s'    => \$params{'outputcase'},     # Change alphabet case for output sequences.
-    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell EMBOSS seqret to only use residues 34 to 89, inclusive.
-    'sequence=a'      => \$params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 2MB.
+    'stype=s'         => \$tool_params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA.
+    'inputformat=s'   => \$tool_params{'inputformat'},    # Input format name
+    'outputformat=s'  => \$tool_params{'outputformat'},   # Output format name.
+    'feature'         => \$tool_params{'feature'},        # Use feature information
+    'firstonly'       => \$tool_params{'firstonly'},      # Read one sequence and stop
+    'reverse'         => \$tool_params{'reverse'},        # Reverse-complement of input DNA sequences
+    'outputcase=s'    => \$tool_params{'outputcase'},     # Change alphabet case for output sequences.
+    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell EMBOSS seqret to only use residues 34 to 89, inclusive.
+    'sequence=a'      => \$tool_params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 2MB.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

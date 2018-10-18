@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,9 +83,9 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'format=s'        => \$params{'format'},         # Format for generated multiple sequence alignment.
-    'tree=s'          => \$params{'tree'},           # The guide tree to output
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'format=s'        => \$tool_params{'format'},         # Format for generated multiple sequence alignment.
+    'tree=s'          => \$tool_params{'tree'},           # The guide tree to output
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

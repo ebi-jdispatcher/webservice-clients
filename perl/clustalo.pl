@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,18 +83,18 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'guidetreeout'    => \$params{'guidetreeout'},   # Output guide tree.
-    'dismatout'       => \$params{'dismatout'},      # Output distance matrix. This is only calculated if the mBed-like clustering guide tree is set to false.
-    'dealign'         => \$params{'dealign'},        # Remove any existing alignment (gaps) from input sequences.
-    'mbed'            => \$params{'mbed'},           # This option uses a sample of the input sequences and then represents all sequences as vectors to these sequences, enabling much more rapid generation of the guide tree, especially when the number of sequences is large.
-    'mbediteration'   => \$params{'mbediteration'},  # Use mBed-like clustering during subsequent iterations.
-    'iterations=i'    => \$params{'iterations'},     # Number of (combined guide-tree/HMM) iterations.
-    'gtiterations=i'  => \$params{'gtiterations'},   # Having set the number of combined iterations, this parameter can be changed to limit the number of guide tree iterations within the combined iterations.
-    'hmmiterations=i' => \$params{'hmmiterations'},  # Having set the number of combined iterations, this parameter can be changed to limit the number of HMM iterations within the combined iterations.
-    'outfmt=s'        => \$params{'outfmt'},         # Format for generated multiple sequence alignment.
-    'order=s'         => \$params{'order'},          # The order in which the sequences appear in the final alignment
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this box. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 4000 sequences and 4MB of data.
+    'guidetreeout'    => \$tool_params{'guidetreeout'},   # Output guide tree.
+    'dismatout'       => \$tool_params{'dismatout'},      # Output distance matrix. This is only calculated if the mBed-like clustering guide tree is set to false.
+    'dealign'         => \$tool_params{'dealign'},        # Remove any existing alignment (gaps) from input sequences.
+    'mbed'            => \$tool_params{'mbed'},           # This option uses a sample of the input sequences and then represents all sequences as vectors to these sequences, enabling much more rapid generation of the guide tree, especially when the number of sequences is large.
+    'mbediteration'   => \$tool_params{'mbediteration'},  # Use mBed-like clustering during subsequent iterations.
+    'iterations=i'    => \$tool_params{'iterations'},     # Number of (combined guide-tree/HMM) iterations.
+    'gtiterations=i'  => \$tool_params{'gtiterations'},   # Having set the number of combined iterations, this parameter can be changed to limit the number of guide tree iterations within the combined iterations.
+    'hmmiterations=i' => \$tool_params{'hmmiterations'},  # Having set the number of combined iterations, this parameter can be changed to limit the number of HMM iterations within the combined iterations.
+    'outfmt=s'        => \$tool_params{'outfmt'},         # Format for generated multiple sequence alignment.
+    'order=s'         => \$tool_params{'order'},          # The order in which the sequences appear in the final alignment
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this box. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 4000 sequences and 4MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

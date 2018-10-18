@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,30 +83,30 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'minPerc=i'       => \$params{'minPerc'},        # Set the minimum percentage of the input sequences that should match a pattern (C%). If you set this to, say 80, Pratt will only report patterns matching at least 80 % of the sequences input.
-    'patternPosition=s'=> \$params{'patternPosition'},# Pattern position in sequence (PP parameter)
-    'maxPatternLength=i'=> \$params{'maxPatternLength'},# Maximum pattern length (PL parameter) allows you to set the maximum length of a pattern. The length of the pattern C-x(2,4)-[DE] is 1+4+1=6. The memory requirement of Pratt depends on L; a higher L value gives higher memory requirement.
-    'maxNumPatternSymbols=i'=> \$params{'maxNumPatternSymbols'},# Maximum number of pattern symbols (PN parameter). Using this you can set the maximum number of symbols in a pattern. The pattern C-x(2,4)-[DE] has 2 symbols (C and [DE]). When PN is increased, Pratt will require more memory.
-    'maxNumWildcard=i'=> \$params{'maxNumWildcard'}, # Maximum length of a widecard (x). Using this option you can set the maximum length of a wildcard (PX parameter). Increasing this will increase the time used by Pratt, and also slightly the memory required.
-    'maxNumFlexSpaces=i'=> \$params{'maxNumFlexSpaces'},# Maximum length of flexible spaces. Using this option you can set the maximum number of flexible wildcards (matching a variable number of arbitrary sequence symbols) (FN parameter). Increasing this will increase the time used by Pratt.
-    'maxFlexibility=i'=> \$params{'maxFlexibility'}, # Maximum flexibility. You can set the maximum flexibility of a flexible wildcard (matching a variable number of arbitrary sequence symbols) (FL parameter). For instance x(2,4) and x(10,12) has flexibility 2, and x(10) has flexibility 0. Increasing this will increase the time used by Pratt.
-    'maxFlexProduct=i'=> \$params{'maxFlexProduct'}, # Maximum flex. product. Using this option you can set an upper limit on the product of a flexibilities for a pattern (FP parameter). This is related to the memory requirements of the search, and increasing the limit, increases the memory usage.
-    'patternSymbolFile'=> \$params{'patternSymbolFile'},# Pattern Symbol File (BI parameter)
-    'numPatternSymbols=i'=> \$params{'numPatternSymbols'},# Number of pattern symbols used in the initial search (BN parameter).
-    'patternScoring=s'=> \$params{'patternScoring'}, # Pattern scoring (S parameter)
-    'patternGraph=s'  => \$params{'patternGraph'},   # Pattern Graph (G parameter) allows the use of an alignment or a query sequence to restrict the pattern search.
-    'searchGreediness=i'=> \$params{'searchGreediness'},# Using the greediness parameter (E) you can adjust the greediness of the search. Setting E to 0 (zero), the search will be exhaustive. Increasing E increases the greediness, and decreases the time used in the search.
-    'patternRefinement'=> \$params{'patternRefinement'},# Pattern Refinement (R parameter). When the R option is switched on, patterns found during the initial pattern search are input to a refinement algorithm where more ambiguous pattern symbols can be added.
-    'genAmbigSymbols' => \$params{'genAmbigSymbols'},# Generalise ambiguous symbols (RG parameter). If the RG option is switched on, then ambiguous symbols listed in the symbols file are used. If RG is off, only the letters needed to match the input sequences are included in the ambiguous pattern positions.
-    'patternFormat'   => \$params{'patternFormat'},  # PROSITE Pattern Format (OP parameter). When switched on, patterns will be output in PROSITE style (for instance C-x(2,4)-[DE]). When switched off, patterns are output in a simpler consensus pattern style (for instance Cxx--[DE] where x matches exactly one arbitrary sequence symbol and - matches zero or one arbitrary sequence symbol).
-    'maxNumPatterns=i'=> \$params{'maxNumPatterns'}, # Maximum number of patterns (ON parameter) between 1 and 100.
-    'maxNumAlignments=i'=> \$params{'maxNumAlignments'},# Maximum number of alignments (OA parameter) between 1 and 100.
-    'printPatterns'   => \$params{'printPatterns'},  # Print Patterns in sequences (M parameter) If the M option is set, then Pratt will print out the location of the sequence segments matching each of the (maximum 52) best patterns. The patterns are given labels A, B,...Z,a,b,...z in order of decreasing pattern score. Each sequence is printed on a line, one character per K-tuple in the sequence. If pattern with label C matches the third K-tuple in a sequence C is printed out. If several patterns match in the same K-tuple, only the best will be printed.
-    'printingRatio=i' => \$params{'printingRatio'},  # Printing ratio (MR parameter). sets the K value (ratio) used for printing the summary information about where in each sequence the pattern matches are found.
-    'printVertically' => \$params{'printVertically'},# Print vertically (MV parameter). if set, the output is printed vertically instead of horizontally, vertical output can be better for large sequence sets.
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned.
-    'sequence=s'      => \$params{'sequence'},       # The input set of up to 100 sequences can be entered directly into this form. The sequences can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequences are not accepted. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'ppfile=f'        => \$params{'ppfile'},         # Pattern restriction file. The restriction file limits the sequence range via the start/end parameter and is in the format '>Sequence (start, end)'. If parameter PP is off, the restiction file will be ignored.
+    'minPerc=i'       => \$tool_params{'minPerc'},        # Set the minimum percentage of the input sequences that should match a pattern (C%). If you set this to, say 80, Pratt will only report patterns matching at least 80 % of the sequences input.
+    'patternPosition=s'=> \$tool_params{'patternPosition'},# Pattern position in sequence (PP parameter)
+    'maxPatternLength=i'=> \$tool_params{'maxPatternLength'},# Maximum pattern length (PL parameter) allows you to set the maximum length of a pattern. The length of the pattern C-x(2,4)-[DE] is 1+4+1=6. The memory requirement of Pratt depends on L; a higher L value gives higher memory requirement.
+    'maxNumPatternSymbols=i'=> \$tool_params{'maxNumPatternSymbols'},# Maximum number of pattern symbols (PN parameter). Using this you can set the maximum number of symbols in a pattern. The pattern C-x(2,4)-[DE] has 2 symbols (C and [DE]). When PN is increased, Pratt will require more memory.
+    'maxNumWildcard=i'=> \$tool_params{'maxNumWildcard'}, # Maximum length of a widecard (x). Using this option you can set the maximum length of a wildcard (PX parameter). Increasing this will increase the time used by Pratt, and also slightly the memory required.
+    'maxNumFlexSpaces=i'=> \$tool_params{'maxNumFlexSpaces'},# Maximum length of flexible spaces. Using this option you can set the maximum number of flexible wildcards (matching a variable number of arbitrary sequence symbols) (FN parameter). Increasing this will increase the time used by Pratt.
+    'maxFlexibility=i'=> \$tool_params{'maxFlexibility'}, # Maximum flexibility. You can set the maximum flexibility of a flexible wildcard (matching a variable number of arbitrary sequence symbols) (FL parameter). For instance x(2,4) and x(10,12) has flexibility 2, and x(10) has flexibility 0. Increasing this will increase the time used by Pratt.
+    'maxFlexProduct=i'=> \$tool_params{'maxFlexProduct'}, # Maximum flex. product. Using this option you can set an upper limit on the product of a flexibilities for a pattern (FP parameter). This is related to the memory requirements of the search, and increasing the limit, increases the memory usage.
+    'patternSymbolFile'=> \$tool_params{'patternSymbolFile'},# Pattern Symbol File (BI parameter)
+    'numPatternSymbols=i'=> \$tool_params{'numPatternSymbols'},# Number of pattern symbols used in the initial search (BN parameter).
+    'patternScoring=s'=> \$tool_params{'patternScoring'}, # Pattern scoring (S parameter)
+    'patternGraph=s'  => \$tool_params{'patternGraph'},   # Pattern Graph (G parameter) allows the use of an alignment or a query sequence to restrict the pattern search.
+    'searchGreediness=i'=> \$tool_params{'searchGreediness'},# Using the greediness parameter (E) you can adjust the greediness of the search. Setting E to 0 (zero), the search will be exhaustive. Increasing E increases the greediness, and decreases the time used in the search.
+    'patternRefinement'=> \$tool_params{'patternRefinement'},# Pattern Refinement (R parameter). When the R option is switched on, patterns found during the initial pattern search are input to a refinement algorithm where more ambiguous pattern symbols can be added.
+    'genAmbigSymbols' => \$tool_params{'genAmbigSymbols'},# Generalise ambiguous symbols (RG parameter). If the RG option is switched on, then ambiguous symbols listed in the symbols file are used. If RG is off, only the letters needed to match the input sequences are included in the ambiguous pattern positions.
+    'patternFormat'   => \$tool_params{'patternFormat'},  # PROSITE Pattern Format (OP parameter). When switched on, patterns will be output in PROSITE style (for instance C-x(2,4)-[DE]). When switched off, patterns are output in a simpler consensus pattern style (for instance Cxx--[DE] where x matches exactly one arbitrary sequence symbol and - matches zero or one arbitrary sequence symbol).
+    'maxNumPatterns=i'=> \$tool_params{'maxNumPatterns'}, # Maximum number of patterns (ON parameter) between 1 and 100.
+    'maxNumAlignments=i'=> \$tool_params{'maxNumAlignments'},# Maximum number of alignments (OA parameter) between 1 and 100.
+    'printPatterns'   => \$tool_params{'printPatterns'},  # Print Patterns in sequences (M parameter) If the M option is set, then Pratt will print out the location of the sequence segments matching each of the (maximum 52) best patterns. The patterns are given labels A, B,...Z,a,b,...z in order of decreasing pattern score. Each sequence is printed on a line, one character per K-tuple in the sequence. If pattern with label C matches the third K-tuple in a sequence C is printed out. If several patterns match in the same K-tuple, only the best will be printed.
+    'printingRatio=i' => \$tool_params{'printingRatio'},  # Printing ratio (MR parameter). sets the K value (ratio) used for printing the summary information about where in each sequence the pattern matches are found.
+    'printVertically' => \$tool_params{'printVertically'},# Print vertically (MV parameter). if set, the output is printed vertically instead of horizontally, vertical output can be better for large sequence sets.
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned.
+    'sequence=s'      => \$tool_params{'sequence'},       # The input set of up to 100 sequences can be entered directly into this form. The sequences can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequences are not accepted. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'ppfile=f'        => \$tool_params{'ppfile'},         # Pattern restriction file. The restriction file limits the sequence range via the start/end parameter and is in the format '>Sequence (start, end)'. If parameter PP is off, the restiction file will be ignored.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

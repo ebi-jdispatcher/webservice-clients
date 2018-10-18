@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,11 +83,11 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'format=s'        => \$params{'format'},         # Format for generated multiple sequence alignment.
-    'matrix=s'        => \$params{'matrix'},         # Matrix series to use when generating the multiple sequence alignment. The program goes through the chosen matrix series, spanning the full range of amino acid distances.
-    'order=s'         => \$params{'order'},          # The order in which the sequences appear in the final alignment
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'format=s'        => \$tool_params{'format'},         # Format for generated multiple sequence alignment.
+    'matrix=s'        => \$tool_params{'matrix'},         # Matrix series to use when generating the multiple sequence alignment. The program goes through the chosen matrix series, spanning the full range of amino acid distances.
+    'order=s'         => \$tool_params{'order'},          # The order in which the sequences appear in the final alignment
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

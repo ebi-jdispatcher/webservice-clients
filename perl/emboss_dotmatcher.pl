@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,12 +83,12 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'matrix=s'        => \$params{'matrix'},         # Default substitution scoring matrices.
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'windowsize=i'    => \$params{'windowsize'},     # Window size over which to test threshold
-    'threshold=i'     => \$params{'threshold'},      # Threshold
+    'matrix=s'        => \$tool_params{'matrix'},         # Default substitution scoring matrices.
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'windowsize=i'    => \$tool_params{'windowsize'},     # Window size over which to test threshold
+    'threshold=i'     => \$tool_params{'threshold'},      # Threshold
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,9 +83,9 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
-    'windowsize=i'    => \$params{'windowsize'},     # Window size for averaging (smoothing) the hydropathy plot. Use an integer between 1 and 200.
-    'normalize'       => \$params{'normalize'},      # Normalize data values (mean = 0.0, standard deviation = 1.0)
+    'sequence=s'      => \$tool_params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
+    'windowsize=i'    => \$tool_params{'windowsize'},     # Window size for averaging (smoothing) the hydropathy plot. Use an integer between 1 and 200.
+    'normalize'       => \$tool_params{'normalize'},      # Normalize data values (mean = 0.0, standard deviation = 1.0)
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

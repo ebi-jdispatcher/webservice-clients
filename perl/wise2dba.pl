@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,10 +83,10 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'para'            => \$params{'para'},           # Show parameters in output alignmment, as in genewise.
-    'pretty'          => \$params{'pretty'},         # Show pretty ASCII alignment viewing, as in genewise.
-    'asequence=s'     => \$params{'asequence'},      # The first DNA sequence to be aligned can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
-    'bsequence=s'     => \$params{'bsequence'},      # The second DNA sequence to be aligned can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'para'            => \$tool_params{'para'},           # Show parameters in output alignmment, as in genewise.
+    'pretty'          => \$tool_params{'pretty'},         # Show pretty ASCII alignment viewing, as in genewise.
+    'asequence=s'     => \$tool_params{'asequence'},      # The first DNA sequence to be aligned can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'bsequence=s'     => \$tool_params{'bsequence'},      # The second DNA sequence to be aligned can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

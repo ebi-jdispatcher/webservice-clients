@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,13 +83,13 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'matrix=s'        => \$params{'matrix'},         # Default substitution scoring matrices.
-    'gapopen=i'       => \$params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
-    'gapext=i'        => \$params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
-    'format=s'        => \$params{'format'},         # Pairwise sequences format
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'matrix=s'        => \$tool_params{'matrix'},         # Default substitution scoring matrices.
+    'gapopen=i'       => \$tool_params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
+    'gapext=i'        => \$tool_params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
+    'format=s'        => \$tool_params{'format'},         # Pairwise sequences format
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

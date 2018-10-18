@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,24 +83,24 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
-    'informat=s'      => \$params{'informat'},       # Format of the input sequence similarity search result or multiple sequence alignment to be processed.
-    'outputformat=s'  => \$params{'outputformat'},   # Output format for the alignment.
-    'htmlmarkup=s'    => \$params{'htmlmarkup'},     # Amount of HTML markup to be used in the result.
-    'css'             => \$params{'css'},            # Use Cascading Style Sheets
-    'pcid=s'          => \$params{'pcid'},           # Compute percent identities with respect to
-    'alignment'       => \$params{'alignment'},      # Show or hide the aligned sequences.
-    'ruler'           => \$params{'ruler'},          # Show or hide the ruler showing the sequence coordinates.
-    'width=i'         => \$params{'width'},          # Width of output alignment.
-    'coloring=s'      => \$params{'coloring'},       # Basic style of coloring
-    'colormap=s'      => \$params{'colormap'},       # Color map
-    'groupmap=s'      => \$params{'groupmap'},       # Group map
-    'consensus'       => \$params{'consensus'},      # Show or hide consensus sequence derived from the alignment.
-    'concoloring=s'   => \$params{'concoloring'},    # Basic style of consensus coloring
-    'concolormap=s'   => \$params{'concolormap'},    # Consensus color map
-    'congroupmap=s'   => \$params{'congroupmap'},    # Consensus group map
-    'congaps'         => \$params{'congaps'},        # Count gaps during consensus compuatations
-    'sequence=a'      => \$params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
+    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+    'informat=s'      => \$tool_params{'informat'},       # Format of the input sequence similarity search result or multiple sequence alignment to be processed.
+    'outputformat=s'  => \$tool_params{'outputformat'},   # Output format for the alignment.
+    'htmlmarkup=s'    => \$tool_params{'htmlmarkup'},     # Amount of HTML markup to be used in the result.
+    'css'             => \$tool_params{'css'},            # Use Cascading Style Sheets
+    'pcid=s'          => \$tool_params{'pcid'},           # Compute percent identities with respect to
+    'alignment'       => \$tool_params{'alignment'},      # Show or hide the aligned sequences.
+    'ruler'           => \$tool_params{'ruler'},          # Show or hide the ruler showing the sequence coordinates.
+    'width=i'         => \$tool_params{'width'},          # Width of output alignment.
+    'coloring=s'      => \$tool_params{'coloring'},       # Basic style of coloring
+    'colormap=s'      => \$tool_params{'colormap'},       # Color map
+    'groupmap=s'      => \$tool_params{'groupmap'},       # Group map
+    'consensus'       => \$tool_params{'consensus'},      # Show or hide consensus sequence derived from the alignment.
+    'concoloring=s'   => \$tool_params{'concoloring'},    # Basic style of consensus coloring
+    'concolormap=s'   => \$tool_params{'concolormap'},    # Consensus color map
+    'congroupmap=s'   => \$tool_params{'congroupmap'},    # Consensus group map
+    'congaps'         => \$tool_params{'congaps'},        # Count gaps during consensus compuatations
+    'sequence=a'      => \$tool_params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

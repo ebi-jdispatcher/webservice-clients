@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,9 +83,9 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$params{'sequence'},       # The sequence to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF, or PHYLIP format. Partially formatted sequences are not accepted.
-    'window=i'        => \$params{'window'},         # 
-    'shift=i'         => \$params{'shift'},          # 
+    'sequence=s'      => \$tool_params{'sequence'},       # The sequence to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF, or PHYLIP format. Partially formatted sequences are not accepted.
+    'window=i'        => \$tool_params{'window'},         # 
+    'shift=i'         => \$tool_params{'shift'},          # 
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,9 +83,9 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'format=s'        => \$params{'format'},         # Output format
-    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'format=s'        => \$tool_params{'format'},         # Output format
+    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$tool_params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

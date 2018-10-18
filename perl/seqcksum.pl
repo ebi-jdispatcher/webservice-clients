@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+ed529d0
 
 =cut
 
@@ -83,10 +83,10 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$params{'stype'},          # Indicates if the sequences are protein or nucleotide (DNA/RNA).
-    'cksmethod=s'     => \$params{'cksmethod'},      # A number of different checksum methods for sequences are launched.
-    'length'          => \$params{'length'},         # Turn on/off the display of asequence length.
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequences are protein or nucleotide (DNA/RNA).
+    'cksmethod=s'     => \$tool_params{'cksmethod'},      # A number of different checksum methods for sequences are launched.
+    'length'          => \$tool_params{'length'},         # Turn on/off the display of asequence length.
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

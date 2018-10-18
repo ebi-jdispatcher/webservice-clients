@@ -47,7 +47,7 @@ https://github.com/ebi-wp/webservice-clients-generator
 
 =head1 VERSION
 
-798c88f
+11631e1
 
 =cut
 
@@ -83,43 +83,43 @@ my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. The sequences must be in FASTA format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 500 sequences or 1MB of data.
-    'data_file=f'     => \$params{'data_file'},      # A file containing valid sequences in FASTA format can be used as input for the sequence similarity search. Word processors files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
-    'tree_file=f'     => \$params{'tree_file'},      # Tree file in Newick Binary Format.
-    'do_njtree'       => \$params{'do_njtree'},      # compute guide tree from input alignment
-    'do_clustalw_tree'=> \$params{'do_clustalw_tree'},# compute guide tree using Clustalw2
-    'model_file=f'    => \$params{'model_file'},     # Structure Model File.
-    'output_format=s' => \$params{'output_format'},  # Format for output alignment file
-    'trust_insertions'=> \$params{'trust_insertions'},# Trust inferred insertions and do not allow their later matching
-    'show_insertions_with_dots'=> \$params{'show_insertions_with_dots'},# Show gaps created by insertions as dots, deletions as dashes
-    'use_log_space'   => \$params{'use_log_space'},  # Use log space for probabilities; slower but necessary for large numbers of sequences
-    'use_codon_model' => \$params{'use_codon_model'},# Use codon substutition model for alignment; requires DNA, multiples of three in length
-    'translate_DNA'   => \$params{'translate_DNA'},  # Translate DNA sequences to proteins and backtranslate results
-    'mt_translate_DNA'=> \$params{'mt_translate_DNA'},# Translate DNA sequences to mt proteins, align and backtranslate results
-    'gap_rate=f'      => \$params{'gap_rate'},       # Gap Opening Rate
-    'gap_extension=f' => \$params{'gap_extension'},  # Gap Extension Probability
-    'tn93_kappa=f'    => \$params{'tn93_kappa'},     # Parameter kappa for Tamura-Nei DNA substitution model
-    'tn93_rho=f'      => \$params{'tn93_rho'},       # Parameter rho for Tamura-Nei DNA substitution model
-    'guide_pairwise_distance=f'=> \$params{'guide_pairwise_distance'},# Fixed pairwise distance used for generating scoring matrix in guide tree computation
-    'max_pairwise_distance=f'=> \$params{'max_pairwise_distance'},# Maximum pairwise distance allowed in progressive steps of multiple alignment; allows making matching more stringent or flexible
-    'branch_length_scaling=f'=> \$params{'branch_length_scaling'},# Factor for scaling all branch lengths
-    'branch_length_fixed=f'=> \$params{'branch_length_fixed'},# Fixed value for all branch lengths
-    'branch_length_maximum=f'=> \$params{'branch_length_maximum'},# Upper limit for branch lengths
-    'use_real_branch_lengths'=> \$params{'use_real_branch_lengths'},# Use real branch lengths; using this can be harmful as scoring matrices became flat for large distances; rather use max_pairwise_distance
-    'do_no_posterior' => \$params{'do_no_posterior'},# Do not compute posterior probability; much faster if those not needed
-    'run_once'        => \$params{'run_once'},       # Do not iterate alignment
-    'run_twice'       => \$params{'run_twice'},      # Iterate alignment
-    'penalise_terminal_gaps'=> \$params{'penalise_terminal_gaps'},# Penalise terminal gaps as any other gap
-    'do_posterior_only'=> \$params{'do_posterior_only'},# Compute posterior probabilities for given *aligned* sequences; may be unstable but useful
-    'use_chaos_anchors'=> \$params{'use_chaos_anchors'},# Use chaos anchors to massively speed up alignments; DNA only
-    'minimum_anchor_distance=i'=> \$params{'minimum_anchor_distance'},# Minimum chaos anchor distance
-    'maximum_anchor_distance=i'=> \$params{'maximum_anchor_distance'},# Maximum chaos anchor distance
-    'skip_anchor_distance=i'=> \$params{'skip_anchor_distance'},# Chaos anchor skip distance
-    'drop_anchor_distance=i'=> \$params{'drop_anchor_distance'},# Chaos anchor drop distance
-    'output_ancestors'=> \$params{'output_ancestors'},# Output ancestral sequences and probability profiles; note additional files
-    'noise_level=i'   => \$params{'noise_level'},    # Noise level; progress and debugging information
-    'stay_quiet'      => \$params{'stay_quiet'},     # Stay quiet; disable all progress information
-    'random_seed=i'   => \$params{'random_seed'},    # Set seed for random number generator; not recommended
+    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. The sequences must be in FASTA format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 500 sequences or 1MB of data.
+    'data_file=f'     => \$tool_params{'data_file'},      # A file containing valid sequences in FASTA format can be used as input for the sequence similarity search. Word processors files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
+    'tree_file=f'     => \$tool_params{'tree_file'},      # Tree file in Newick Binary Format.
+    'do_njtree'       => \$tool_params{'do_njtree'},      # compute guide tree from input alignment
+    'do_clustalw_tree'=> \$tool_params{'do_clustalw_tree'},# compute guide tree using Clustalw2
+    'model_file=f'    => \$tool_params{'model_file'},     # Structure Model File.
+    'output_format=s' => \$tool_params{'output_format'},  # Format for output alignment file
+    'trust_insertions'=> \$tool_params{'trust_insertions'},# Trust inferred insertions and do not allow their later matching
+    'show_insertions_with_dots'=> \$tool_params{'show_insertions_with_dots'},# Show gaps created by insertions as dots, deletions as dashes
+    'use_log_space'   => \$tool_params{'use_log_space'},  # Use log space for probabilities; slower but necessary for large numbers of sequences
+    'use_codon_model' => \$tool_params{'use_codon_model'},# Use codon substutition model for alignment; requires DNA, multiples of three in length
+    'translate_DNA'   => \$tool_params{'translate_DNA'},  # Translate DNA sequences to proteins and backtranslate results
+    'mt_translate_DNA'=> \$tool_params{'mt_translate_DNA'},# Translate DNA sequences to mt proteins, align and backtranslate results
+    'gap_rate=f'      => \$tool_params{'gap_rate'},       # Gap Opening Rate
+    'gap_extension=f' => \$tool_params{'gap_extension'},  # Gap Extension Probability
+    'tn93_kappa=f'    => \$tool_params{'tn93_kappa'},     # Parameter kappa for Tamura-Nei DNA substitution model
+    'tn93_rho=f'      => \$tool_params{'tn93_rho'},       # Parameter rho for Tamura-Nei DNA substitution model
+    'guide_pairwise_distance=f'=> \$tool_params{'guide_pairwise_distance'},# Fixed pairwise distance used for generating scoring matrix in guide tree computation
+    'max_pairwise_distance=f'=> \$tool_params{'max_pairwise_distance'},# Maximum pairwise distance allowed in progressive steps of multiple alignment; allows making matching more stringent or flexible
+    'branch_length_scaling=f'=> \$tool_params{'branch_length_scaling'},# Factor for scaling all branch lengths
+    'branch_length_fixed=f'=> \$tool_params{'branch_length_fixed'},# Fixed value for all branch lengths
+    'branch_length_maximum=f'=> \$tool_params{'branch_length_maximum'},# Upper limit for branch lengths
+    'use_real_branch_lengths'=> \$tool_params{'use_real_branch_lengths'},# Use real branch lengths; using this can be harmful as scoring matrices became flat for large distances; rather use max_pairwise_distance
+    'do_no_posterior' => \$tool_params{'do_no_posterior'},# Do not compute posterior probability; much faster if those not needed
+    'run_once'        => \$tool_params{'run_once'},       # Do not iterate alignment
+    'run_twice'       => \$tool_params{'run_twice'},      # Iterate alignment
+    'penalise_terminal_gaps'=> \$tool_params{'penalise_terminal_gaps'},# Penalise terminal gaps as any other gap
+    'do_posterior_only'=> \$tool_params{'do_posterior_only'},# Compute posterior probabilities for given *aligned* sequences; may be unstable but useful
+    'use_chaos_anchors'=> \$tool_params{'use_chaos_anchors'},# Use chaos anchors to massively speed up alignments; DNA only
+    'minimum_anchor_distance=i'=> \$tool_params{'minimum_anchor_distance'},# Minimum chaos anchor distance
+    'maximum_anchor_distance=i'=> \$tool_params{'maximum_anchor_distance'},# Maximum chaos anchor distance
+    'skip_anchor_distance=i'=> \$tool_params{'skip_anchor_distance'},# Chaos anchor skip distance
+    'drop_anchor_distance=i'=> \$tool_params{'drop_anchor_distance'},# Chaos anchor drop distance
+    'output_ancestors'=> \$tool_params{'output_ancestors'},# Output ancestral sequences and probability profiles; note additional files
+    'noise_level=i'   => \$tool_params{'noise_level'},    # Noise level; progress and debugging information
+    'stay_quiet'      => \$tool_params{'stay_quiet'},     # Stay quiet; disable all progress information
+    'random_seed=i'   => \$tool_params{'random_seed'},    # Set seed for random number generator; not recommended
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
