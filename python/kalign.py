@@ -63,7 +63,7 @@ usage = u'''`Usage: %prog [options...] [seqFile]'''
 description = u'''Multiple sequence alignment with Kalign.'''
 epilog = u'''For further information about the Kalign web service, see
 https://www.ebi.ac.uk/tools/webservices/services/msa/kalign_rest.'''
-version = u'798c88f'
+version = u'e4a1c6c'
 
 # Process command-line options
 parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
@@ -177,7 +177,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(ex.read())[0][0])
+        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
         quit()
     printDebugMessage(u'restRequest', u'End', 11)
     return result
