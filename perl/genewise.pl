@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -577,7 +573,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -625,8 +621,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -658,12 +654,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -980,120 +978,118 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-Genewise
-=============
+EMBL-EBI Genewise Python Client:
 
 Pairwise sequence alignment with Genewise.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --para                : bool : Show parameters in the output alignmment, as in genewise.
-  --pretty              : bool : Show pretty ASCII alignment viewing, as in genewise.
-  --genes               : bool : Show gene structure, as in genewise
-  --trans               : bool : Show protein translation, breaking at frameshifts.
-  --cdna                : bool : Show cDNA, as in genewise.
-  --embl                : bool : EMBL feature table format with CDS key.
-  --ace                 : bool : Show Ace file gene structure, as in genewise.
-  --gff                 : bool : Show Gene Feature Format file, as in genewise.
-  --diana               : bool : Show EMBL FT format suitable for diana.
-  --init                : str  : Model in local/global mode. You should only put the model in global
-                                 mode if you expect your protein homolog to have homology from start to
-                                 end to the gene in the DNA sequence.
-  --splice              : str  : Using splice model or GT/AG? Use the full blown model for splice
-                                 sites, or a simplistic GT/AG. Generally if you are using a DNA
-                                 sequence which is from human or worm, then leave this on. If you are
-                                 using a very different (eg plant) species, switch it off.
-  --random              : str  : The probability of the model has to compared to an alternative model
-                                 (in fact to all alternative models which are possible) to allow proper
-                                 Bayesian inference. This causes considerable difficulty in these
-                                 algorithms because from a algorithmical point of view we would
-                                 probably like to use an alternative model which is a single state,
-                                 like the random model in profile-HMMs, where we can simply 'log-odd'
-                                 the scored model, whereas from a biological point of view we probably
-                                 want to use a full gene predicting alternative model. In addition we
-                                 need to account for the fact that the protein HMM or protein homolog
-                                 probably does not extend over all the gene sequence, nor in fact does
-                                 the gene have to be the only gene in the DNA sequence. This means that
-                                 there are very good splice sites/poly-pyrimidine tracts outside of the
-                                 'matched' alignment can severely de-rail the alignment.
-  --alg                 : str  : The solutions is different in the genewise21:93 compared to the
-                                 genewise 6:23 algorithms. (1) In 6:23 we force the external match
-                                 portions of the homology model to be identical to the alternative
-                                 model, thus cancelling each other out. This is a pretty gross
-                                 approximation and is sort of equivalent to the intron tie'ing. It
-                                 makes things algorithmically easier... However this means a) 6:23 is
-                                 nowhere near a probabilistic model and b) you really have to used a
-                                 tied intron model in 6:23 otherwise very bad edge effects (final
-                                 introns being ridiculously long) occur. (2) In 21:93 we have a full
-                                 probabilistic model on each side of the homology segment. This is not
-                                 reported in the -pretty output but you can see it in the -alb output
-                                 if you like. Do not trust the gene model outside of the homology
-                                 segment however. By having these external gene model parts we can use
-                                 all the gene model features safe in the knowledge that if the homology
-                                 segments do not justify the match then the external part of the model
-                                 will soak up the additional intron/py-tract/splice site biases.
-  --asequence           : str  : The protein sequence can be entered directly into this form. The
-                                 sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,
-                                 NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A
-                                 partially formatted sequence is not accepted. Adding a return to the
-                                 end of the sequence may help certain applications understand the
-                                 input. Note that directly using data from word processors may yield
-                                 unpredictable results as hidden/control characters may be present.
-                                 There is a limit of 1MB for the sequence entry.
-  --bsequence           : str  : The DNA sequence to be compared can be entered directly into the form.
-                                 The sequence must be in a recognised format eg. GCG, FASTA, EMBL,
-                                 GenBank. Partially formatted sequences are not accepted. Adding a
-                                 return to the end of the sequence may help certain applications
-                                 understand the input. Note that directly using data from word
-                                 processors may yield unpredictable results as hidden/control
-                                 characters may be present. There is a limit of 1MB for the sequence
-                                 entry.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --para                Show parameters in the output alignmment, as in genewise.
+  --pretty              Show pretty ASCII alignment viewing, as in genewise.
+  --genes               Show gene structure, as in genewise
+  --trans               Show protein translation, breaking at frameshifts.
+  --cdna                Show cDNA, as in genewise.
+  --embl                EMBL feature table format with CDS key.
+  --ace                 Show Ace file gene structure, as in genewise.
+  --gff                 Show Gene Feature Format file, as in genewise.
+  --diana               Show EMBL FT format suitable for diana.
+  --init                Model in local/global mode. You should only put the model in
+                        global mode if you expect your protein homolog to have
+                        homology from start to end to the gene in the DNA sequence.
+  --splice              Using splice model or GT/AG? Use the full blown model for
+                        splice sites, or a simplistic GT/AG. Generally if you are
+                        using a DNA sequence which is from human or worm, then leave
+                        this on. If you are using a very different (eg plant)
+                        species, switch it off.
+  --random              The probability of the model has to compared to an
+                        alternative model (in fact to all alternative models which
+                        are possible) to allow proper Bayesian inference. This
+                        causes considerable difficulty in these algorithms because
+                        from a algorithmical point of view we would probably like to
+                        use an alternative model which is a single state, like the
+                        random model in profile-HMMs, where we can simply 'log-odd'
+                        the scored model, whereas from a biological point of view we
+                        probably want to use a full gene predicting alternative
+                        model. In addition we need to account for the fact that the
+                        protein HMM or protein homolog probably does not extend over
+                        all the gene sequence, nor in fact does the gene have to be
+                        the only gene in the DNA sequence. This means that there are
+                        very good splice sites/poly-pyrimidine tracts outside of the
+                        'matched' alignment can severely de-rail the alignment.
+  --alg                 The solutions is different in the genewise21:93 compared to
+                        the genewise 6:23 algorithms. (1) In 6:23 we force the
+                        external match portions of the homology model to be
+                        identical to the alternative model, thus cancelling each
+                        other out. This is a pretty gross approximation and is sort
+                        of equivalent to the intron tie'ing. It makes things
+                        algorithmically easier... However this means a) 6:23 is
+                        nowhere near a probabilistic model and b) you really have to
+                        used a tied intron model in 6:23 otherwise very bad edge
+                        effects (final introns being ridiculously long) occur. (2)
+                        In 21:93 we have a full probabilistic model on each side of
+                        the homology segment. This is not reported in the -pretty
+                        output but you can see it in the -alb output if you like. Do
+                        not trust the gene model outside of the homology segment
+                        however. By having these external gene model parts we can
+                        use all the gene model features safe in the knowledge that
+                        if the homology segments do not justify the match then the
+                        external part of the model will soak up the additional
+                        intron/py-tract/splice site biases.
+  --asequence           The protein sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
+                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
+                        only) format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present. There is a limit of 1MB for the sequence entry.
+  --bsequence           The DNA sequence to be compared can be entered directly into
+                        the form. The sequence must be in a recognised format eg.
+                        GCG, FASTA, EMBL, GenBank. Partially formatted sequences are
+                        not accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present. There is a limit of 1MB for the sequence entry.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

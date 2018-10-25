@@ -20,12 +20,19 @@
 # Python Client Automatically generated with:
 # https://github.com/ebi-wp/webservice-clients-generator
 #
-# FASTM (REST) web service Python client.
+# FASTM (REST) web service Python client using xmltramp2.
+#
+# For further information see:
+# https://www.ebi.ac.uk/Tools/webservices/
 #
 ###############################################################################
 
 from __future__ import print_function
-import platform, os, sys, time
+
+import os
+import sys
+import time
+import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
 
@@ -58,15 +65,8 @@ debugLevel = 0
 # Number of option arguments.
 numOpts = len(sys.argv)
 
-# Usage message
-usage = u'''`Usage: %prog [options...] [seqFile]'''
-description = u'''Sequence similarity search with FASTM.'''
-epilog = u'''For further information about the FASTM web service, see
-https://www.ebi.ac.uk/tools/webservices/services/sss/fastm_rest.'''
-version = u'e4a1c6c'
-
 # Process command-line options
-parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
+parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--program', help=('The FASTA program to be used for the Sequence Similarity Search'))
@@ -131,22 +131,23 @@ parser.add_option('--ktup', help=('FASTA uses a rapid word-based lookup strategy
                   'sensitivity of the search. Lower values lead to more sensitive, but'
                   'slower searches.'))
 # General options
-parser.add_option('--email', help='e-mail address')
-parser.add_option('--title', help='job title')
-parser.add_option('--outfile', help='file name for results')
-parser.add_option('--outformat', help='output format for results')
-parser.add_option('--async', action='store_true', help='asynchronous mode')
-parser.add_option('--jobid', help='job identifier')
-parser.add_option('--polljob', action="store_true", help='get job result')
-parser.add_option('--pollFreq', type='int', default=3, help='poll frequency in seconds (default 3s)')
-parser.add_option('--status', action="store_true", help='get job status')
-parser.add_option('--resultTypes', action='store_true', help='get result types')
-parser.add_option('--params', action='store_true', help='list input parameters')
-parser.add_option('--paramDetail', help='get details for parameter')
-parser.add_option('--quiet', action='store_true', help='decrease output level')
-parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseURL', default=baseUrl, help='Base URL for service')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--async', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.')
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--baseURL', default=baseUrl, help='Base URL for service.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debug output level.')
 
 (options, args) = parser.parse_args()
 
@@ -177,7 +178,7 @@ def getUserAgent():
     printDebugMessage(u'getUserAgent', u'Begin', 11)
     # Agent string for urllib2 library.
     urllib_agent = u'Python-urllib/%s' % urllib_version
-    clientRevision = u'$Revision: 2107 $'
+    clientRevision = u'$Revision: 2018 $'
     clientVersion = u'0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
@@ -209,7 +210,6 @@ def restRequest(url):
         if (len(resp) > 0 and contenttype != u"image/png;charset=UTF-8"
                 and contenttype != u"image/jpeg;charset=UTF-8"
                 and contenttype != u"application/gzip;charset=UTF-8"):
-
             try:
                 result = unicode(resp, u'utf-8')
             except UnicodeDecodeError:
@@ -267,7 +267,6 @@ def printGetParameterDetails(paramName):
         print(value.value)
         if unicode(value.defaultValue) == u'true':
             print(u'default')
-        print
         print(u"\t" + unicode(value.label))
         if hasattr(value, u'properties'):
             for wsProperty in value.properties:
@@ -322,8 +321,14 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    if outputLevel > 0:
+        print("Getting status for job %s" % jobId)
     status = serviceGetStatus(jobId)
-    print(status)
+    if outputLevel > 0:
+        print(status)
+    if outputLevel > 0 and status == "FINISHED":
+        print("To get results: python %s --polljob --jobid %s"
+              "" % (os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetStatus', u'End', 1)
 
 
@@ -342,17 +347,31 @@ def serviceGetResultTypes(jobId):
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
-    resultTypeList = serviceGetResultTypes(jobId)
-    for resultType in resultTypeList:
-        print(resultType[u'identifier'])
-        if (hasattr(resultType, u'label')):
-            print(u"\t", resultType[u'label'])
-        if (hasattr(resultType, u'description')):
-            print(u"\t", resultType[u'description'])
-        if (hasattr(resultType, u'mediaType')):
-            print(u"\t", resultType[u'mediaType'])
-        if (hasattr(resultType, u'fileSuffix')):
-            print(u"\t", resultType[u'fileSuffix'])
+    if outputLevel > 0:
+        print("Getting result types for job %s" % jobId)
+    status = serviceGetStatus(jobId)
+    if status == 'PENDING' or status == 'RUNNING' and outputLevel > 0:
+        print("Error: Job status is %s. "
+              "To get result types the job must be finished." % status)
+    else:
+        resultTypeList = serviceGetResultTypes(jobId)
+        if outputLevel > 0:
+            print("Available result types:")
+        for resultType in resultTypeList:
+            print(resultType[u'identifier'])
+            if hasattr(resultType, u'label'):
+                print(u"\t", resultType[u'label'])
+            if hasattr(resultType, u'description'):
+                print(u"\t", resultType[u'description'])
+            if hasattr(resultType, u'mediaType'):
+                print(u"\t", resultType[u'mediaType'])
+            if hasattr(resultType, u'fileSuffix'):
+                print(u"\t", resultType[u'fileSuffix'])
+        if outputLevel > 0:
+            print("To get results:\n  python %s --polljob --jobid %s\n"
+                  "  python %s --polljob --outformat <type> --jobid %s"
+                  "" % (os.path.basename(__file__), jobId,
+                        os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetResultTypes', u'End', 1)
 
 
@@ -373,17 +392,20 @@ def clientPoll(jobId):
     result = u'PENDING'
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
-        print(result, file=sys.stderr)
+        if outputLevel > 0:
+            print(result, file=sys.stderr)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
 
 # Get result for a jobid
-# function modified by Mana to allow more than one output file written when 'outformat' is defined.
+# Allows more than one output file written when 'outformat' is defined.
 def getResult(jobId):
     printDebugMessage(u'getResult', u'Begin', 1)
     printDebugMessage(u'getResult', u'jobId: ' + jobId, 1)
+    if outputLevel > 1:
+        print("Getting results for job %s" % jobId)
     # Check status and wait if necessary
     clientPoll(jobId)
     # Get available result types
@@ -407,6 +429,8 @@ def getResult(jobId):
                 outformat_type = None
 
             if not outformat_type or outformat_type == unicode(resultType[u'identifier']):
+                if outputLevel > 1:
+                    print("Getting %s" % unicode(resultType[u'identifier']))
                 # Get the result
                 result = serviceGetResult(jobId, unicode(resultType[u'identifier']))
                 if (unicode(resultType[u'mediaType']) == u"image/png"
@@ -420,7 +444,8 @@ def getResult(jobId):
 
                 fh.write(result)
                 fh.close()
-                print(filename)
+                if outputLevel > 0:
+                    print("Creating result file: " + filename)
     printDebugMessage(u'getResult', u'End', 1)
 
 
@@ -434,9 +459,131 @@ def readFile(filename):
     return data
 
 
+def print_usage():
+    print("""\
+EMBL-EBI FASTM Python Client:
+
+Sequence similarity search with FASTM.
+
+[General]
+  -h, --help            Prints this help text.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output - DEBUG mode.
+
+[Optional]
+  --program             The FASTA program to be used for the Sequence Similarity
+                        Search
+  --stype               Indicates if the query sequence is protein, DNA or RNA. Used
+                        to force FASTA to interpret the input sequence as specified
+                        type of sequence (via. the '-p', '-n' or '-U' options), this
+                        prevents issues when using nucleotide sequences that contain
+                        many ambiguous residues.
+  --matrix              The comparison matrix to be used to score alignments when
+                        searching the database
+  --match_scores        Specify match/mismatch scores for DNA comparisons. The
+                        default is '+5/-4'. '+3/-2' can perform better in some
+                        cases.
+  --gapopen             Score for the first residue in a gap.
+  --gapext              Score for each additional residue in a gap.
+  --hsps                Turn on/off the display of all significant alignments
+                        between query and library sequence.
+  --expupperlim         Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --explowlim           Limit the number of scores and alignments reported based on
+                        the expectation value. This is the minimum number of times
+                        the match is expected to occur by chance. This allows
+                        closely related matches to be excluded from the result in
+                        favor of more distant relationships.
+  --strand              For nucleotide sequences specify the sequence strand to be
+                        used for the search. By default both upper (provided) and
+                        lower (reverse complement of provided) strands are used, for
+                        single stranded sequences searching with only the upper or
+                        lower strand may provide better results.
+  --hist                Turn on/off the histogram in the FASTA result. The histogram
+                        gives a qualitative view of how well the statistical theory
+                        fits the similarity scores calculated by the program.
+  --scores              Maximum number of match score summaries reported in the
+                        result output.
+  --alignments          Maximum number of match alignments reported in the result
+                        output.
+  --scoreformat         Different score report formats.
+  --stats               The statistical routines assume that the library contains a
+                        large sample of unrelated sequences. Options to select what
+                        method to use include regression, maximum likelihood
+                        estimates, shuffles, or combinations of these.
+  --seqrange            Specify a range or section of the input sequence to use in
+                        the search. Example: Specifying '34-89' in an input sequence
+                        of total length 100, will tell FASTA to only use residues 34
+                        to 89, inclusive.
+  --dbrange             Specify the sizes of the sequences in a database to search
+                        against. For example: 100-250 will search all sequences in a
+                        database with length between 100 and 250 residues,
+                        inclusive.
+  --filter              Filter regions of low sequence complexity. This can avoid
+                        issues with low complexity sequences where matches are found
+                        due to composition rather then meaningful sequence
+                        similarity. However in some cases filtering also masks
+                        regions of interest and so should be used with caution.
+  --sequence            The input set of peptide or nucleotide sequence fragments
+                        are described using a modified fasta sequence format. This
+                        comprises a fasta header line with an identifier for the set
+                        of sequences and optionally a description, followed by the
+                        individual sequences each starting on a newline and
+                        separated with commas. Partially formatted sequences are not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time
+  --ktup                FASTA uses a rapid word-based lookup strategy to speed the
+                        initial phase of the similarity search. The KTUP is used to
+                        control the sensitivity of the search. Lower values lead to
+                        more sensitive, but slower searches.
+
+Synchronous job:
+  The results/errors are returned as soon as the job is finished.
+  Usage: python fastm.py --email <your@email.com> [options...] <SequenceFile>
+  Returns: results as an attachment
+
+Asynchronous job:
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
+  Usage: python fastm.py --async --email <your@email.com> [options...] <SequenceFile>
+  Returns: jobid
+
+  Use the jobid to query for the status of the job. If the job is finished,
+  it also returns the results/errors.
+  Usage: python fastm.py --polljob --jobid <jobId> [--outfile string]
+  Returns: string indicating the status of the job and if applicable, results
+  as an attachment.
+
+Further information:
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
+
+Support/Feedback:
+  https://www.ebi.ac.uk/support/""")
+
+
 # No options... print help.
 if numOpts < 2:
-    parser.print_help()
+    print_usage()
+elif options.help:
+    print_usage()
 # List parameters
 elif options.params:
     printGetParameters()
@@ -504,14 +651,23 @@ elif options.email and not options.jobid:
         params['database'] = options.database
     if options.ktup:
         params['ktup'] = options.ktup
-# Submit the job
-    jobid = serviceRun(options.email, options.title, params)
+
+
+    # Submit the job
+    jobId = serviceRun(options.email, options.title, params)
     if options.async: # Async mode
-        print(jobid)
-    else: # Sync mode
-        print(jobid, file=sys.stderr)
-        time.sleep(5)
-        getResult(jobid)
+        print(jobId)
+        if outputLevel > 0:
+            print("To check status: python %s --status --jobid %s"
+                  "" % (os.path.basename(__file__), jobId))
+    else:
+        # Sync mode
+        if outputLevel > 0:
+            print("JobId: " + jobId, file=sys.stderr)
+        else:
+            print(jobId)
+        time.sleep(pollFreq)
+        getResult(jobId)
 # Get job status
 elif options.status and options.jobid:
     printGetStatus(options.jobid)
@@ -522,9 +678,9 @@ elif options.resultTypes and options.jobid:
 elif options.polljob and options.jobid:
     getResult(options.jobid)
 else:
-    # Checks for 'email' parameter; added by Mana.
+    # Checks for 'email' parameter
     if not options.email:
         print('\nParameter "--email" is missing in your command. It is required!\n')
 
     print(u'Error: unrecognised argument combination', file=sys.stderr)
-    parser.print_help()
+    print_usage()

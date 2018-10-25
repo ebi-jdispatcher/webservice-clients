@@ -20,12 +20,19 @@
 # Python Client Automatically generated with:
 # https://github.com/ebi-wp/webservice-clients-generator
 #
-# PRATT (REST) web service Python client.
+# PRATT (REST) web service Python client using xmltramp2.
+#
+# For further information see:
+# https://www.ebi.ac.uk/Tools/webservices/
 #
 ###############################################################################
 
 from __future__ import print_function
-import platform, os, sys, time
+
+import os
+import sys
+import time
+import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
 
@@ -58,15 +65,8 @@ debugLevel = 0
 # Number of option arguments.
 numOpts = len(sys.argv)
 
-# Usage message
-usage = u'''`Usage: %prog [options...] [seqFile]'''
-description = u'''Protein function analysis with Pratt.'''
-epilog = u'''For further information about the PRATT web service, see
-https://www.ebi.ac.uk/tools/webservices/services/pfa/pratt_rest.'''
-version = u'e4a1c6c'
-
 # Process command-line options
-parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
+parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--minPerc', help=('Set the minimum percentage of the input sequences that should match a'
@@ -147,22 +147,23 @@ parser.add_option('--ppfile', help=('Pattern restriction file. The restriction f
                   '(start, end). If parameter PP is off, the restiction file will be'
                   'ignored.'))
 # General options
-parser.add_option('--email', help='e-mail address')
-parser.add_option('--title', help='job title')
-parser.add_option('--outfile', help='file name for results')
-parser.add_option('--outformat', help='output format for results')
-parser.add_option('--async', action='store_true', help='asynchronous mode')
-parser.add_option('--jobid', help='job identifier')
-parser.add_option('--polljob', action="store_true", help='get job result')
-parser.add_option('--pollFreq', type='int', default=3, help='poll frequency in seconds (default 3s)')
-parser.add_option('--status', action="store_true", help='get job status')
-parser.add_option('--resultTypes', action='store_true', help='get result types')
-parser.add_option('--params', action='store_true', help='list input parameters')
-parser.add_option('--paramDetail', help='get details for parameter')
-parser.add_option('--quiet', action='store_true', help='decrease output level')
-parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseURL', default=baseUrl, help='Base URL for service')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--async', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.')
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--baseURL', default=baseUrl, help='Base URL for service.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debug output level.')
 
 (options, args) = parser.parse_args()
 
@@ -193,7 +194,7 @@ def getUserAgent():
     printDebugMessage(u'getUserAgent', u'Begin', 11)
     # Agent string for urllib2 library.
     urllib_agent = u'Python-urllib/%s' % urllib_version
-    clientRevision = u'$Revision: 2107 $'
+    clientRevision = u'$Revision: 2018 $'
     clientVersion = u'0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
@@ -225,7 +226,6 @@ def restRequest(url):
         if (len(resp) > 0 and contenttype != u"image/png;charset=UTF-8"
                 and contenttype != u"image/jpeg;charset=UTF-8"
                 and contenttype != u"application/gzip;charset=UTF-8"):
-
             try:
                 result = unicode(resp, u'utf-8')
             except UnicodeDecodeError:
@@ -283,7 +283,6 @@ def printGetParameterDetails(paramName):
         print(value.value)
         if unicode(value.defaultValue) == u'true':
             print(u'default')
-        print
         print(u"\t" + unicode(value.label))
         if hasattr(value, u'properties'):
             for wsProperty in value.properties:
@@ -338,8 +337,14 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    if outputLevel > 0:
+        print("Getting status for job %s" % jobId)
     status = serviceGetStatus(jobId)
-    print(status)
+    if outputLevel > 0:
+        print(status)
+    if outputLevel > 0 and status == "FINISHED":
+        print("To get results: python %s --polljob --jobid %s"
+              "" % (os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetStatus', u'End', 1)
 
 
@@ -358,17 +363,31 @@ def serviceGetResultTypes(jobId):
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
-    resultTypeList = serviceGetResultTypes(jobId)
-    for resultType in resultTypeList:
-        print(resultType[u'identifier'])
-        if (hasattr(resultType, u'label')):
-            print(u"\t", resultType[u'label'])
-        if (hasattr(resultType, u'description')):
-            print(u"\t", resultType[u'description'])
-        if (hasattr(resultType, u'mediaType')):
-            print(u"\t", resultType[u'mediaType'])
-        if (hasattr(resultType, u'fileSuffix')):
-            print(u"\t", resultType[u'fileSuffix'])
+    if outputLevel > 0:
+        print("Getting result types for job %s" % jobId)
+    status = serviceGetStatus(jobId)
+    if status == 'PENDING' or status == 'RUNNING' and outputLevel > 0:
+        print("Error: Job status is %s. "
+              "To get result types the job must be finished." % status)
+    else:
+        resultTypeList = serviceGetResultTypes(jobId)
+        if outputLevel > 0:
+            print("Available result types:")
+        for resultType in resultTypeList:
+            print(resultType[u'identifier'])
+            if hasattr(resultType, u'label'):
+                print(u"\t", resultType[u'label'])
+            if hasattr(resultType, u'description'):
+                print(u"\t", resultType[u'description'])
+            if hasattr(resultType, u'mediaType'):
+                print(u"\t", resultType[u'mediaType'])
+            if hasattr(resultType, u'fileSuffix'):
+                print(u"\t", resultType[u'fileSuffix'])
+        if outputLevel > 0:
+            print("To get results:\n  python %s --polljob --jobid %s\n"
+                  "  python %s --polljob --outformat <type> --jobid %s"
+                  "" % (os.path.basename(__file__), jobId,
+                        os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetResultTypes', u'End', 1)
 
 
@@ -389,17 +408,20 @@ def clientPoll(jobId):
     result = u'PENDING'
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
-        print(result, file=sys.stderr)
+        if outputLevel > 0:
+            print(result, file=sys.stderr)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
 
 # Get result for a jobid
-# function modified by Mana to allow more than one output file written when 'outformat' is defined.
+# Allows more than one output file written when 'outformat' is defined.
 def getResult(jobId):
     printDebugMessage(u'getResult', u'Begin', 1)
     printDebugMessage(u'getResult', u'jobId: ' + jobId, 1)
+    if outputLevel > 1:
+        print("Getting results for job %s" % jobId)
     # Check status and wait if necessary
     clientPoll(jobId)
     # Get available result types
@@ -423,6 +445,8 @@ def getResult(jobId):
                 outformat_type = None
 
             if not outformat_type or outformat_type == unicode(resultType[u'identifier']):
+                if outputLevel > 1:
+                    print("Getting %s" % unicode(resultType[u'identifier']))
                 # Get the result
                 result = serviceGetResult(jobId, unicode(resultType[u'identifier']))
                 if (unicode(resultType[u'mediaType']) == u"image/png"
@@ -436,7 +460,8 @@ def getResult(jobId):
 
                 fh.write(result)
                 fh.close()
-                print(filename)
+                if outputLevel > 0:
+                    print("Creating result file: " + filename)
     printDebugMessage(u'getResult', u'End', 1)
 
 
@@ -450,9 +475,147 @@ def readFile(filename):
     return data
 
 
+def print_usage():
+    print("""\
+EMBL-EBI PRATT Python Client:
+
+Protein function analysis with Pratt.
+
+[General]
+  -h, --help            Prints this help text.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output - DEBUG mode.
+
+[Optional]
+  --minPerc             Set the minimum percentage of the input sequences that
+                        should match a pattern (C%). If you set this to, say 80,
+                        Pratt will only report patterns matching at least 80 % of
+                        the sequences input.
+  --patternPosition     Pattern position in sequence (PP parameter)
+  --maxPatternLength    Maximum pattern length (PL parameter) allows you to set the
+                        maximum length of a pattern. The length of the pattern
+                        C-x(2,4)-[DE] is 1+4+1=6. The memory requirement of Pratt
+                        depends on L; a higher L value gives higher memory
+                        requirement.
+  --maxNumPatternSymbols Maximum number of pattern symbols (PN parameter). Using this
+                        you can set the maximum number of symbols in a pattern. The
+                        pattern C-x(2,4)-[DE] has 2 symbols (C and [DE]). When PN is
+                        increased, Pratt will require more memory.
+  --maxNumWildcard      Maximum length of a widecard (x). Using this option you can
+                        set the maximum length of a wildcard (PX parameter).
+                        Increasing this will increase the time used by Pratt, and
+                        also slightly the memory required.
+  --maxNumFlexSpaces    Maximum length of flexible spaces. Using this option you can
+                        set the maximum number of flexible wildcards (matching a
+                        variable number of arbitrary sequence symbols) (FN
+                        parameter). Increasing this will increase the time used by
+                        Pratt.
+  --maxFlexibility      Maximum flexibility. You can set the maximum flexibility of
+                        a flexible wildcard (matching a variable number of arbitrary
+                        sequence symbols) (FL parameter). For instance x(2,4) and
+                        x(10,12) has flexibility 2, and x(10) has flexibility 0.
+                        Increasing this will increase the time used by Pratt.
+  --maxFlexProduct      Maximum flex. product. Using this option you can set an
+                        upper limit on the product of a flexibilities for a pattern
+                        (FP parameter). This is related to the memory requirements
+                        of the search, and increasing the limit, increases the
+                        memory usage.
+  --patternSymbolFile   Pattern Symbol File (BI parameter)
+  --numPatternSymbols   Number of pattern symbols used in the initial search (BN
+                        parameter).
+  --patternScoring      Pattern scoring (S parameter)
+  --patternGraph        Pattern Graph (G parameter) allows the use of an alignment
+                        or a query sequence to restrict the pattern search.
+  --searchGreediness    Using the greediness parameter (E) you can adjust the
+                        greediness of the search. Setting E to 0 (zero), the search
+                        will be exhaustive. Increasing E increases the greediness,
+                        and decreases the time used in the search.
+  --patternRefinement   Pattern Refinement (R parameter). When the R option is
+                        switched on, patterns found during the initial pattern
+                        search are input to a refinement algorithm where more
+                        ambiguous pattern symbols can be added.
+  --genAmbigSymbols     Generalise ambiguous symbols (RG parameter). If the RG
+                        option is switched on, then ambiguous symbols listed in the
+                        symbols file are used. If RG is off, only the letters needed
+                        to match the input sequences are included in the ambiguous
+                        pattern positions.
+  --patternFormat       PROSITE Pattern Format (OP parameter). When switched on,
+                        patterns will be output in PROSITE style (for instance
+                        C-x(2,4)-[DE]). When switched off, patterns are output in a
+                        simpler consensus pattern style (for instance Cxx--[DE]
+                        where x matches exactly one arbitrary sequence symbol and -
+                        matches zero or one arbitrary sequence symbol).
+  --maxNumPatterns      Maximum number of patterns (ON parameter) between 1 and 100.
+  --maxNumAlignments    Maximum number of alignments (OA parameter) between 1 and
+                        100.
+  --printPatterns       Print Patterns in sequences (M parameter) If the M option is
+                        set, then Pratt will print out the location of the sequence
+                        segments matching each of the (maximum 52) best patterns.
+                        The patterns are given labels A, B,...Z,a,b,...z in order of
+                        decreasing pattern score. Each sequence is printed on a
+                        line, one character per K-tuple in the sequence. If pattern
+                        with label C matches the third K-tuple in a sequence C is
+                        printed out. If several patterns match in the same K-tuple,
+                        only the best will be printed.
+  --printingRatio       Printing ratio (MR parameter). sets the K value (ratio) used
+                        for printing the summary information about where in each
+                        sequence the pattern matches are found.
+  --printVertically     Print vertically (MV parameter). if set, the output is
+                        printed vertically instead of horizontally, vertical output
+                        can be better for large sequence sets.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            The input set of up to 100 sequences can be entered directly
+                        into this form. The sequences can be in FASTA or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequences
+                        are not accepted. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present.
+  --ppfile              Pattern restriction file. The restriction file limits the
+                        sequence range via the start/end parameter and is in the
+                        format '>Sequence (start, end)'. If parameter PP is off, the
+                        restiction file will be ignored.
+
+Synchronous job:
+  The results/errors are returned as soon as the job is finished.
+  Usage: python pratt.py --email <your@email.com> [options...] <SequenceFile>
+  Returns: results as an attachment
+
+Asynchronous job:
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
+  Usage: python pratt.py --async --email <your@email.com> [options...] <SequenceFile>
+  Returns: jobid
+
+  Use the jobid to query for the status of the job. If the job is finished,
+  it also returns the results/errors.
+  Usage: python pratt.py --polljob --jobid <jobId> [--outfile string]
+  Returns: string indicating the status of the job and if applicable, results
+  as an attachment.
+
+Further information:
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
+
+Support/Feedback:
+  https://www.ebi.ac.uk/support/""")
+
+
 # No options... print help.
 if numOpts < 2:
-    parser.print_help()
+    print_usage()
+elif options.help:
+    print_usage()
 # List parameters
 elif options.params:
     printGetParameters()
@@ -534,14 +697,23 @@ elif options.email and not options.jobid:
         params['sequence'] = options.sequence
     if options.ppfile:
         params['ppfile'] = options.ppfile
-# Submit the job
-    jobid = serviceRun(options.email, options.title, params)
+
+
+    # Submit the job
+    jobId = serviceRun(options.email, options.title, params)
     if options.async: # Async mode
-        print(jobid)
-    else: # Sync mode
-        print(jobid, file=sys.stderr)
-        time.sleep(5)
-        getResult(jobid)
+        print(jobId)
+        if outputLevel > 0:
+            print("To check status: python %s --status --jobid %s"
+                  "" % (os.path.basename(__file__), jobId))
+    else:
+        # Sync mode
+        if outputLevel > 0:
+            print("JobId: " + jobId, file=sys.stderr)
+        else:
+            print(jobId)
+        time.sleep(pollFreq)
+        getResult(jobId)
 # Get job status
 elif options.status and options.jobid:
     printGetStatus(options.jobid)
@@ -552,9 +724,9 @@ elif options.resultTypes and options.jobid:
 elif options.polljob and options.jobid:
     getResult(options.jobid)
 else:
-    # Checks for 'email' parameter; added by Mana.
+    # Checks for 'email' parameter
     if not options.email:
         print('\nParameter "--email" is missing in your command. It is required!\n')
 
     print(u'Error: unrecognised argument combination', file=sys.stderr)
-    parser.print_help()
+    print_usage()

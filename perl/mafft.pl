@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -573,7 +569,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -621,8 +617,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -654,12 +650,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -928,80 +926,74 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-Mafft
-=============
+EMBL-EBI Mafft Python Client:
 
 Multiple sequence alignment with Mafft.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --format              : str  : Format for generated multiple sequence alignment.
-  --matrix              : str  : Protein comparison matrix to be used when adding sequences to the
-                                 alignment.
-  --gapopen             : flo  : Penalty for first base/residue in a gap.
-  --gapext              : flo  : Penalty for each additional base/residue in a gap.
-  --order               : str  : The order in which the sequences appear in the final alignment
-  --nbtree              : int  : Tree Rebuilding Number
-  --treeout             : bool : Generate guide tree file
-  --maxiterate          : int  : Maximum number of iterations to perform when refining the alignment
-  --ffts                : str  : Perform fast fourier transform
-  --stype               : str  : Indicates if the sequences to align are protein or nucleotide
-                                 (DNA/RNA).
-  --sequence            : str  : Three or more sequences to be aligned can be entered directly into
-                                 this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only),
-                                 GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only)
-                                 format. Partially formatted sequences are not accepted. Adding a
-                                 return to the end of the sequence may help certain applications
-                                 understand the input. Note that directly using data from word
-                                 processors may yield unpredictable results as hidden/control
-                                 characters may be present. There is currently a sequence input limit
-                                 of 500 sequences and 1MB of data.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --format              Format for generated multiple sequence alignment.
+  --matrix              Protein comparison matrix to be used when adding sequences
+                        to the alignment.
+  --gapopen             Penalty for first base/residue in a gap.
+  --gapext              Penalty for each additional base/residue in a gap.
+  --order               The order in which the sequences appear in the final
+                        alignment
+  --nbtree              Tree Rebuilding Number
+  --treeout             Generate guide tree file
+  --maxiterate          Maximum number of iterations to perform when refining the
+                        alignment
+  --ffts                Perform fast fourier transform
+  --stype               Indicates if the sequences to align are protein or
+                        nucleotide (DNA/RNA).
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 500 sequences and 1MB of data.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

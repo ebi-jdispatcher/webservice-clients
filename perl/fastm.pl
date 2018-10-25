@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -583,7 +579,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -631,8 +627,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -664,12 +660,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -944,120 +942,121 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-FASTM
-=============
+EMBL-EBI FASTM Python Client:
 
 Sequence similarity search with FASTM.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --program             : str  : The FASTA program to be used for the Sequence Similarity Search
-  --stype               : str  : Indicates if the query sequence is protein, DNA or RNA. Used to force
-                                 FASTA to interpret the input sequence as specified type of sequence
-                                 (via. the '-p', '-n' or '-U' options), this prevents issues when using
-                                 nucleotide sequences that contain many ambiguous residues.
-  --matrix              : str  : The comparison matrix to be used to score alignments when searching
-                                 the database
-  --match_scores        : str  : Specify match/mismatch scores for DNA comparisons. The default is
-                                 '+5/-4'. '+3/-2' can perform better in some cases.
-  --gapopen             : int  : Score for the first residue in a gap.
-  --gapext              : int  : Score for each additional residue in a gap.
-  --hsps                : bool : Turn on/off the display of all significant alignments between query
-                                 and library sequence.
-  --expupperlim         : flo  : Limits the number of scores and alignments reported based on the
-                                 expectation value. This is the maximum number of times the match is
-                                 expected to occur by chance.
-  --explowlim           : flo  : Limit the number of scores and alignments reported based on the
-                                 expectation value. This is the minimum number of times the match is
-                                 expected to occur by chance. This allows closely related matches to be
-                                 excluded from the result in favor of more distant relationships.
-  --strand              : str  : For nucleotide sequences specify the sequence strand to be used for
-                                 the search. By default both upper (provided) and lower (reverse
-                                 complement of provided) strands are used, for single stranded
-                                 sequences searching with only the upper or lower strand may provide
-                                 better results.
-  --hist                : bool : Turn on/off the histogram in the FASTA result. The histogram gives a
-                                 qualitative view of how well the statistical theory fits the
-                                 similarity scores calculated by the program.
-  --scores              : int  : Maximum number of match score summaries reported in the result output.
-  --alignments          : int  : Maximum number of match alignments reported in the result output.
-  --scoreformat         : str  : Different score report formats.
-  --stats               : str  : The statistical routines assume that the library contains a large
-                                 sample of unrelated sequences. Options to select what method to use
-                                 include regression, maximum likelihood estimates, shuffles, or
-                                 combinations of these.
-  --seqrange            : str  : Specify a range or section of the input sequence to use in the search.
-                                 Example: Specifying '34-89' in an input sequence of total length 100,
-                                 will tell FASTA to only use residues 34 to 89, inclusive.
-  --dbrange             : str  : Specify the sizes of the sequences in a database to search against.
-                                 For example: 100-250 will search all sequences in a database with
-                                 length between 100 and 250 residues, inclusive.
-  --filter              : str  : Filter regions of low sequence complexity. This can avoid issues with
-                                 low complexity sequences where matches are found due to composition
-                                 rather then meaningful sequence similarity. However in some cases
-                                 filtering also masks regions of interest and so should be used with
-                                 caution.
-  --sequence            : str  : The input set of peptide or nucleotide sequence fragments are
-                                 described using a modified fasta sequence format. This comprises a
-                                 fasta header line with an identifier for the set of sequences and
-                                 optionally a description, followed by the individual sequences each
-                                 starting on a newline and separated with commas. Partially formatted
-                                 sequences are not accepted. Adding a return to the end of the sequence
-                                 may help certain applications understand the input. Note that directly
-                                 using data from word processors may yield unpredictable results as
-                                 hidden/control characters may be present.
-  --database            : str  : The databases to run the sequence similarity search against. Multiple
-                                 databases can be used at the same time
-  --ktup                : int  : FASTA uses a rapid word-based lookup strategy to speed the initial
-                                 phase of the similarity search. The KTUP is used to control the
-                                 sensitivity of the search. Lower values lead to more sensitive, but
-                                 slower searches.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --program             The FASTA program to be used for the Sequence Similarity
+                        Search
+  --stype               Indicates if the query sequence is protein, DNA or RNA. Used
+                        to force FASTA to interpret the input sequence as specified
+                        type of sequence (via. the '-p', '-n' or '-U' options), this
+                        prevents issues when using nucleotide sequences that contain
+                        many ambiguous residues.
+  --matrix              The comparison matrix to be used to score alignments when
+                        searching the database
+  --match_scores        Specify match/mismatch scores for DNA comparisons. The
+                        default is '+5/-4'. '+3/-2' can perform better in some
+                        cases.
+  --gapopen             Score for the first residue in a gap.
+  --gapext              Score for each additional residue in a gap.
+  --hsps                Turn on/off the display of all significant alignments
+                        between query and library sequence.
+  --expupperlim         Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --explowlim           Limit the number of scores and alignments reported based on
+                        the expectation value. This is the minimum number of times
+                        the match is expected to occur by chance. This allows
+                        closely related matches to be excluded from the result in
+                        favor of more distant relationships.
+  --strand              For nucleotide sequences specify the sequence strand to be
+                        used for the search. By default both upper (provided) and
+                        lower (reverse complement of provided) strands are used, for
+                        single stranded sequences searching with only the upper or
+                        lower strand may provide better results.
+  --hist                Turn on/off the histogram in the FASTA result. The histogram
+                        gives a qualitative view of how well the statistical theory
+                        fits the similarity scores calculated by the program.
+  --scores              Maximum number of match score summaries reported in the
+                        result output.
+  --alignments          Maximum number of match alignments reported in the result
+                        output.
+  --scoreformat         Different score report formats.
+  --stats               The statistical routines assume that the library contains a
+                        large sample of unrelated sequences. Options to select what
+                        method to use include regression, maximum likelihood
+                        estimates, shuffles, or combinations of these.
+  --seqrange            Specify a range or section of the input sequence to use in
+                        the search. Example: Specifying '34-89' in an input sequence
+                        of total length 100, will tell FASTA to only use residues 34
+                        to 89, inclusive.
+  --dbrange             Specify the sizes of the sequences in a database to search
+                        against. For example: 100-250 will search all sequences in a
+                        database with length between 100 and 250 residues,
+                        inclusive.
+  --filter              Filter regions of low sequence complexity. This can avoid
+                        issues with low complexity sequences where matches are found
+                        due to composition rather then meaningful sequence
+                        similarity. However in some cases filtering also masks
+                        regions of interest and so should be used with caution.
+  --sequence            The input set of peptide or nucleotide sequence fragments
+                        are described using a modified fasta sequence format. This
+                        comprises a fasta header line with an identifier for the set
+                        of sequences and optionally a description, followed by the
+                        individual sequences each starting on a newline and
+                        separated with commas. Partially formatted sequences are not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time
+  --ktup                FASTA uses a rapid word-based lookup strategy to speed the
+                        initial phase of the similarity search. The KTUP is used to
+                        control the sensitivity of the search. Lower values lead to
+                        more sensitive, but slower searches.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

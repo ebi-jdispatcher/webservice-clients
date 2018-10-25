@@ -20,12 +20,19 @@
 # Python Client Automatically generated with:
 # https://github.com/ebi-wp/webservice-clients-generator
 #
-# Prank (REST) web service Python client.
+# Prank (REST) web service Python client using xmltramp2.
+#
+# For further information see:
+# https://www.ebi.ac.uk/Tools/webservices/
 #
 ###############################################################################
 
 from __future__ import print_function
-import platform, os, sys, time
+
+import os
+import sys
+import time
+import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
 
@@ -58,15 +65,8 @@ debugLevel = 0
 # Number of option arguments.
 numOpts = len(sys.argv)
 
-# Usage message
-usage = u'''`Usage: %prog [options...] [seqFile]'''
-description = u'''Multiple sequence alignment with Prank.'''
-epilog = u'''For further information about the Prank web service, see
-https://www.ebi.ac.uk/tools/webservices/services/msa/prank_rest.'''
-version = u'e4a1c6c'
-
 # Process command-line options
-parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
+parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--sequence', help=('Three or more sequences to be aligned can be entered directly into'
@@ -125,22 +125,23 @@ parser.add_option('--noise_level', help=('Noise level; progress and debugging in
 parser.add_option('--stay_quiet', help=('Stay quiet; disable all progress information'))
 parser.add_option('--random_seed', help=('Set seed for random number generator; not recommended'))
 # General options
-parser.add_option('--email', help='e-mail address')
-parser.add_option('--title', help='job title')
-parser.add_option('--outfile', help='file name for results')
-parser.add_option('--outformat', help='output format for results')
-parser.add_option('--async', action='store_true', help='asynchronous mode')
-parser.add_option('--jobid', help='job identifier')
-parser.add_option('--polljob', action="store_true", help='get job result')
-parser.add_option('--pollFreq', type='int', default=3, help='poll frequency in seconds (default 3s)')
-parser.add_option('--status', action="store_true", help='get job status')
-parser.add_option('--resultTypes', action='store_true', help='get result types')
-parser.add_option('--params', action='store_true', help='list input parameters')
-parser.add_option('--paramDetail', help='get details for parameter')
-parser.add_option('--quiet', action='store_true', help='decrease output level')
-parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseURL', default=baseUrl, help='Base URL for service')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--async', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.')
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--baseURL', default=baseUrl, help='Base URL for service.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debug output level.')
 
 (options, args) = parser.parse_args()
 
@@ -171,7 +172,7 @@ def getUserAgent():
     printDebugMessage(u'getUserAgent', u'Begin', 11)
     # Agent string for urllib2 library.
     urllib_agent = u'Python-urllib/%s' % urllib_version
-    clientRevision = u'$Revision: 2107 $'
+    clientRevision = u'$Revision: 2018 $'
     clientVersion = u'0'
     if len(clientRevision) > 11:
         clientVersion = clientRevision[11:-2]
@@ -203,7 +204,6 @@ def restRequest(url):
         if (len(resp) > 0 and contenttype != u"image/png;charset=UTF-8"
                 and contenttype != u"image/jpeg;charset=UTF-8"
                 and contenttype != u"application/gzip;charset=UTF-8"):
-
             try:
                 result = unicode(resp, u'utf-8')
             except UnicodeDecodeError:
@@ -261,7 +261,6 @@ def printGetParameterDetails(paramName):
         print(value.value)
         if unicode(value.defaultValue) == u'true':
             print(u'default')
-        print
         print(u"\t" + unicode(value.label))
         if hasattr(value, u'properties'):
             for wsProperty in value.properties:
@@ -316,8 +315,14 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    if outputLevel > 0:
+        print("Getting status for job %s" % jobId)
     status = serviceGetStatus(jobId)
-    print(status)
+    if outputLevel > 0:
+        print(status)
+    if outputLevel > 0 and status == "FINISHED":
+        print("To get results: python %s --polljob --jobid %s"
+              "" % (os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetStatus', u'End', 1)
 
 
@@ -336,17 +341,31 @@ def serviceGetResultTypes(jobId):
 # Print list of available result types for a job.
 def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
-    resultTypeList = serviceGetResultTypes(jobId)
-    for resultType in resultTypeList:
-        print(resultType[u'identifier'])
-        if (hasattr(resultType, u'label')):
-            print(u"\t", resultType[u'label'])
-        if (hasattr(resultType, u'description')):
-            print(u"\t", resultType[u'description'])
-        if (hasattr(resultType, u'mediaType')):
-            print(u"\t", resultType[u'mediaType'])
-        if (hasattr(resultType, u'fileSuffix')):
-            print(u"\t", resultType[u'fileSuffix'])
+    if outputLevel > 0:
+        print("Getting result types for job %s" % jobId)
+    status = serviceGetStatus(jobId)
+    if status == 'PENDING' or status == 'RUNNING' and outputLevel > 0:
+        print("Error: Job status is %s. "
+              "To get result types the job must be finished." % status)
+    else:
+        resultTypeList = serviceGetResultTypes(jobId)
+        if outputLevel > 0:
+            print("Available result types:")
+        for resultType in resultTypeList:
+            print(resultType[u'identifier'])
+            if hasattr(resultType, u'label'):
+                print(u"\t", resultType[u'label'])
+            if hasattr(resultType, u'description'):
+                print(u"\t", resultType[u'description'])
+            if hasattr(resultType, u'mediaType'):
+                print(u"\t", resultType[u'mediaType'])
+            if hasattr(resultType, u'fileSuffix'):
+                print(u"\t", resultType[u'fileSuffix'])
+        if outputLevel > 0:
+            print("To get results:\n  python %s --polljob --jobid %s\n"
+                  "  python %s --polljob --outformat <type> --jobid %s"
+                  "" % (os.path.basename(__file__), jobId,
+                        os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetResultTypes', u'End', 1)
 
 
@@ -367,17 +386,20 @@ def clientPoll(jobId):
     result = u'PENDING'
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
-        print(result, file=sys.stderr)
+        if outputLevel > 0:
+            print(result, file=sys.stderr)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
 
 # Get result for a jobid
-# function modified by Mana to allow more than one output file written when 'outformat' is defined.
+# Allows more than one output file written when 'outformat' is defined.
 def getResult(jobId):
     printDebugMessage(u'getResult', u'Begin', 1)
     printDebugMessage(u'getResult', u'jobId: ' + jobId, 1)
+    if outputLevel > 1:
+        print("Getting results for job %s" % jobId)
     # Check status and wait if necessary
     clientPoll(jobId)
     # Get available result types
@@ -401,6 +423,8 @@ def getResult(jobId):
                 outformat_type = None
 
             if not outformat_type or outformat_type == unicode(resultType[u'identifier']):
+                if outputLevel > 1:
+                    print("Getting %s" % unicode(resultType[u'identifier']))
                 # Get the result
                 result = serviceGetResult(jobId, unicode(resultType[u'identifier']))
                 if (unicode(resultType[u'mediaType']) == u"image/png"
@@ -414,7 +438,8 @@ def getResult(jobId):
 
                 fh.write(result)
                 fh.close()
-                print(filename)
+                if outputLevel > 0:
+                    print("Creating result file: " + filename)
     printDebugMessage(u'getResult', u'End', 1)
 
 
@@ -428,9 +453,122 @@ def readFile(filename):
     return data
 
 
+def print_usage():
+    print("""\
+EMBL-EBI Prank Python Client:
+
+Multiple sequence alignment with Prank.
+
+[General]
+  -h, --help            Prints this help text.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output - DEBUG mode.
+
+[Optional]
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. The sequences must be in FASTA
+                        format. Partially formatted sequences are not accepted.
+                        Adding a return to the end of the sequence may help certain
+                        applications understand the input. Note that directly using
+                        data from word processors may yield unpredictable results as
+                        hidden/control characters may be present. There is a limit
+                        of 500 sequences or 1MB of data.
+  --data_file           A file containing valid sequences in FASTA format can be
+                        used as input for the sequence similarity search. Word
+                        processors files may yield unpredictable results as
+                        hidden/control characters may be present in the files. It is
+                        best to save files with the Unix format option to avoid
+                        hidden Windows characters.
+  --tree_file           Tree file in Newick Binary Format.
+  --do_njtree           compute guide tree from input alignment
+  --do_clustalw_tree    compute guide tree using Clustalw2
+  --model_file          Structure Model File.
+  --output_format       Format for output alignment file
+  --trust_insertions    Trust inferred insertions and do not allow their later
+                        matching
+  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes
+  --use_log_space       Use log space for probabilities; slower but necessary for
+                        large numbers of sequences
+  --use_codon_model     Use codon substutition model for alignment; requires DNA,
+                        multiples of three in length
+  --translate_DNA       Translate DNA sequences to proteins and backtranslate
+                        results
+  --mt_translate_DNA    Translate DNA sequences to mt proteins, align and
+                        backtranslate results
+  --gap_rate            Gap Opening Rate
+  --gap_extension       Gap Extension Probability
+  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model
+  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model
+  --guide_pairwise_distance Fixed pairwise distance used for generating scoring matrix
+                        in guide tree computation
+  --max_pairwise_distance Maximum pairwise distance allowed in progressive steps of
+                        multiple alignment; allows making matching more stringent or
+                        flexible
+  --branch_length_scaling Factor for scaling all branch lengths
+  --branch_length_fixed Fixed value for all branch lengths
+  --branch_length_maximum Upper limit for branch lengths
+  --use_real_branch_lengths Use real branch lengths; using this can be harmful as
+                        scoring matrices became flat for large distances; rather use
+                        max_pairwise_distance
+  --do_no_posterior     Do not compute posterior probability; much faster if those
+                        not needed
+  --run_once            Do not iterate alignment
+  --run_twice           Iterate alignment
+  --penalise_terminal_gaps Penalise terminal gaps as any other gap
+  --do_posterior_only   Compute posterior probabilities for given *aligned*
+                        sequences; may be unstable but useful
+  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only
+  --minimum_anchor_distance Minimum chaos anchor distance
+  --maximum_anchor_distance Maximum chaos anchor distance
+  --skip_anchor_distance Chaos anchor skip distance
+  --drop_anchor_distance Chaos anchor drop distance
+  --output_ancestors    Output ancestral sequences and probability profiles; note
+                        additional files
+  --noise_level         Noise level; progress and debugging information
+  --stay_quiet          Stay quiet; disable all progress information
+  --random_seed         Set seed for random number generator; not recommended
+
+Synchronous job:
+  The results/errors are returned as soon as the job is finished.
+  Usage: python prank.py --email <your@email.com> [options...] <SequenceFile>
+  Returns: results as an attachment
+
+Asynchronous job:
+  Use this if you want to retrieve the results at a later time. The results
+  are stored for up to 24 hours.
+  Usage: python prank.py --async --email <your@email.com> [options...] <SequenceFile>
+  Returns: jobid
+
+  Use the jobid to query for the status of the job. If the job is finished,
+  it also returns the results/errors.
+  Usage: python prank.py --polljob --jobid <jobId> [--outfile string]
+  Returns: string indicating the status of the job and if applicable, results
+  as an attachment.
+
+Further information:
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
+
+Support/Feedback:
+  https://www.ebi.ac.uk/support/""")
+
+
 # No options... print help.
 if numOpts < 2:
-    parser.print_help()
+    print_usage()
+elif options.help:
+    print_usage()
 # List parameters
 elif options.params:
     printGetParameters()
@@ -560,14 +698,23 @@ elif options.email and not options.jobid:
         params['stay_quiet'] = False
     if options.random_seed:
         params['random_seed'] = options.random_seed
-# Submit the job
-    jobid = serviceRun(options.email, options.title, params)
+
+
+    # Submit the job
+    jobId = serviceRun(options.email, options.title, params)
     if options.async: # Async mode
-        print(jobid)
-    else: # Sync mode
-        print(jobid, file=sys.stderr)
-        time.sleep(5)
-        getResult(jobid)
+        print(jobId)
+        if outputLevel > 0:
+            print("To check status: python %s --status --jobid %s"
+                  "" % (os.path.basename(__file__), jobId))
+    else:
+        # Sync mode
+        if outputLevel > 0:
+            print("JobId: " + jobId, file=sys.stderr)
+        else:
+            print(jobId)
+        time.sleep(pollFreq)
+        getResult(jobId)
 # Get job status
 elif options.status and options.jobid:
     printGetStatus(options.jobid)
@@ -578,9 +725,9 @@ elif options.resultTypes and options.jobid:
 elif options.polljob and options.jobid:
     getResult(options.jobid)
 else:
-    # Checks for 'email' parameter; added by Mana.
+    # Checks for 'email' parameter
     if not options.email:
         print('\nParameter "--email" is missing in your command. It is required!\n')
 
     print(u'Error: unrecognised argument combination', file=sys.stderr)
-    parser.print_help()
+    print_usage()

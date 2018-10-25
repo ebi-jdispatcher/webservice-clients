@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -581,7 +577,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -629,8 +625,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -662,12 +658,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -931,104 +929,101 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-PSI-Blast
-=============
+EMBL-EBI PSI-Blast Python Client:
 
 Sequence similarity search with PSI-Blast.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --matrix              : str  : The comparison matrix to be used to score alignments when searching
-                                 the database
-  --gapopen             : int  : Penalty taken away from the score when a gap is created in sequence.
-                                 Increasing the gap openning penalty will decrease the number of gaps
-                                 in the final alignment.
-  --gapext              : int  : Penalty taken away from the score for each base or residue in the gap.
-                                 Increasing the gap extension penalty favors short gaps in the final
-                                 alignment, conversly decreasing the gap extension penalty favors long
-                                 gaps in the final alignment.
-  --expthr              : flo  : Limits the number of scores and alignments reported based on the
-                                 expectation value. This is the maximum number of times the match is
-                                 expected to occur by chance.
-  --psithr              : flo  : Expectation value threshold for automatic selection of matched
-                                 sequences for inclusion in PSSM at each iteration.
-  --scores              : int  : Maximum number of match score summaries reported in the result output.
-  --alignments          : int  : Maximum number of match alignments reported in the result output.
-  --alignView           : int  : Formating for the alignments
-  --dropoff             : int  : The amount a score can drop before extension of word hits is halted
-  --finaldropoff        : int  : Dropoff value for final gapped alignment
-  --filter              : str  : Filter regions of low sequence complexity. This can avoid issues with
-                                 low complexity sequences where matches are found due to composition
-                                 rather than meaningful sequence similarity. However in some cases
-                                 filtering also masks regions of interest and so should be used with
-                                 caution.
-  --seqrange            : str  : Specify a range or section of the input sequence to use in the search.
-                                 Example: Specifying '34-89' in an input sequence of total length 100,
-                                 will tell BLAST to only use residues 34 to 89, inclusive.
-  --sequence            : str  : The query sequence can be entered directly into this form. The
-                                 sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-
-                                 Prot format. A partially formatted sequence is not accepted. Adding a
-                                 return to the end of the sequence may help certain applications
-                                 understand the input. Note that directly using data from word
-                                 processors may yield unpredictable results as hidden/control
-                                 characters may be present.
-  --database            : str  : The databases to run the sequence similarity search against. Multiple
-                                 databases can be used at the same time
-  --previousjobid       : str  : The job identifier for the previous PSI-BLAST iteration.
-  --selectedHits        : fil  : List of identifiers of the hits from the previous iteration to use to
-                                 construct the search PSSM for this iteration.
-  --cpfile              : fil  : Checkpoint file from the previous iteration. Must be in ASN.1 Binary
-                                 Format.
-  --umode               : str  : Usage mode for PHI-BLAST functionality
-  --patfile             : fil  : Pattern file for PHI-BLAST functionality. This file needs to be in the
-                                 style of a prosite entry file, with at least an ID line, PA line and
-                                 optional HI line.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --matrix              The comparison matrix to be used to score alignments when
+                        searching the database
+  --gapopen             Penalty taken away from the score when a gap is created in
+                        sequence. Increasing the gap openning penalty will decrease
+                        the number of gaps in the final alignment.
+  --gapext              Penalty taken away from the score for each base or residue
+                        in the gap. Increasing the gap extension penalty favors
+                        short gaps in the final alignment, conversly decreasing the
+                        gap extension penalty favors long gaps in the final
+                        alignment.
+  --expthr              Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --psithr              Expectation value threshold for automatic selection of
+                        matched sequences for inclusion in PSSM at each iteration.
+  --scores              Maximum number of match score summaries reported in the
+                        result output.
+  --alignments          Maximum number of match alignments reported in the result
+                        output.
+  --alignView           Formating for the alignments
+  --dropoff             The amount a score can drop before extension of word hits is
+                        halted
+  --finaldropoff        Dropoff value for final gapped alignment
+  --filter              Filter regions of low sequence complexity. This can avoid
+                        issues with low complexity sequences where matches are found
+                        due to composition rather than meaningful sequence
+                        similarity. However in some cases filtering also masks
+                        regions of interest and so should be used with caution.
+  --seqrange            Specify a range or section of the input sequence to use in
+                        the search. Example: Specifying '34-89' in an input sequence
+                        of total length 100, will tell BLAST to only use residues 34
+                        to 89, inclusive.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time
+  --previousjobid       The job identifier for the previous PSI-BLAST iteration.
+  --selectedHits        List of identifiers of the hits from the previous iteration
+                        to use to construct the search PSSM for this iteration.
+  --cpfile              Checkpoint file from the previous iteration. Must be in
+                        ASN.1 Binary Format.
+  --umode               Usage mode for PHI-BLAST functionality
+  --patfile             Pattern file for PHI-BLAST functionality. This file needs to
+                        be in the style of a prosite entry file, with at least an ID
+                        line, PA line and optional HI line.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

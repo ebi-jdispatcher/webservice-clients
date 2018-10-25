@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -599,7 +595,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -647,8 +643,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -680,12 +676,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -1050,114 +1048,112 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-Prank
-=============
+EMBL-EBI Prank Python Client:
 
 Multiple sequence alignment with Prank.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --sequence            : str  : Three or more sequences to be aligned can be entered directly into
-                                 this form. The sequences must be in FASTA format. Partially formatted
-                                 sequences are not accepted. Adding a return to the end of the sequence
-                                 may help certain applications understand the input. Note that directly
-                                 using data from word processors may yield unpredictable results as
-                                 hidden/control characters may be present. There is a limit of 500
-                                 sequences or 1MB of data.
-  --data_file           : fil  : A file containing valid sequences in FASTA format can be used as input
-                                 for the sequence similarity search. Word processors files may yield
-                                 unpredictable results as hidden/control characters may be present in
-                                 the files. It is best to save files with the Unix format option to
-                                 avoid hidden Windows characters.
-  --tree_file           : fil  : Tree file in Newick Binary Format.
-  --do_njtree           : bool : compute guide tree from input alignment
-  --do_clustalw_tree    : bool : compute guide tree using Clustalw2
-  --model_file          : fil  : Structure Model File.
-  --output_format       : str  : Format for output alignment file
-  --trust_insertions    : bool : Trust inferred insertions and do not allow their later matching
-  --show_insertions_with_dots : bool : Show gaps created by insertions as dots, deletions as dashes
-  --use_log_space       : bool : Use log space for probabilities; slower but necessary for large
-                                 numbers of sequences
-  --use_codon_model     : bool : Use codon substutition model for alignment; requires DNA, multiples of
-                                 three in length
-  --translate_DNA       : bool : Translate DNA sequences to proteins and backtranslate results
-  --mt_translate_DNA    : bool : Translate DNA sequences to mt proteins, align and backtranslate
-                                 results
-  --gap_rate            : flo  : Gap Opening Rate
-  --gap_extension       : flo  : Gap Extension Probability
-  --tn93_kappa          : flo  : Parameter kappa for Tamura-Nei DNA substitution model
-  --tn93_rho            : flo  : Parameter rho for Tamura-Nei DNA substitution model
-  --guide_pairwise_distance : flo  : Fixed pairwise distance used for generating scoring matrix in guide
-                                 tree computation
-  --max_pairwise_distance : flo  : Maximum pairwise distance allowed in progressive steps of multiple
-                                 alignment; allows making matching more stringent or flexible
-  --branch_length_scaling : flo  : Factor for scaling all branch lengths
-  --branch_length_fixed : flo  : Fixed value for all branch lengths
-  --branch_length_maximum : flo  : Upper limit for branch lengths
-  --use_real_branch_lengths : bool : Use real branch lengths; using this can be harmful as scoring matrices
-                                 became flat for large distances; rather use max_pairwise_distance
-  --do_no_posterior     : bool : Do not compute posterior probability; much faster if those not needed
-  --run_once            : bool : Do not iterate alignment
-  --run_twice           : bool : Iterate alignment
-  --penalise_terminal_gaps : bool : Penalise terminal gaps as any other gap
-  --do_posterior_only   : bool : Compute posterior probabilities for given *aligned* sequences; may be
-                                 unstable but useful
-  --use_chaos_anchors   : bool : Use chaos anchors to massively speed up alignments; DNA only
-  --minimum_anchor_distance : int  : Minimum chaos anchor distance
-  --maximum_anchor_distance : int  : Maximum chaos anchor distance
-  --skip_anchor_distance : int  : Chaos anchor skip distance
-  --drop_anchor_distance : int  : Chaos anchor drop distance
-  --output_ancestors    : bool : Output ancestral sequences and probability profiles; note additional
-                                 files
-  --noise_level         : int  : Noise level; progress and debugging information
-  --stay_quiet          : bool : Stay quiet; disable all progress information
-  --random_seed         : int  : Set seed for random number generator; not recommended
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. The sequences must be in FASTA
+                        format. Partially formatted sequences are not accepted.
+                        Adding a return to the end of the sequence may help certain
+                        applications understand the input. Note that directly using
+                        data from word processors may yield unpredictable results as
+                        hidden/control characters may be present. There is a limit
+                        of 500 sequences or 1MB of data.
+  --data_file           A file containing valid sequences in FASTA format can be
+                        used as input for the sequence similarity search. Word
+                        processors files may yield unpredictable results as
+                        hidden/control characters may be present in the files. It is
+                        best to save files with the Unix format option to avoid
+                        hidden Windows characters.
+  --tree_file           Tree file in Newick Binary Format.
+  --do_njtree           compute guide tree from input alignment
+  --do_clustalw_tree    compute guide tree using Clustalw2
+  --model_file          Structure Model File.
+  --output_format       Format for output alignment file
+  --trust_insertions    Trust inferred insertions and do not allow their later
+                        matching
+  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes
+  --use_log_space       Use log space for probabilities; slower but necessary for
+                        large numbers of sequences
+  --use_codon_model     Use codon substutition model for alignment; requires DNA,
+                        multiples of three in length
+  --translate_DNA       Translate DNA sequences to proteins and backtranslate
+                        results
+  --mt_translate_DNA    Translate DNA sequences to mt proteins, align and
+                        backtranslate results
+  --gap_rate            Gap Opening Rate
+  --gap_extension       Gap Extension Probability
+  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model
+  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model
+  --guide_pairwise_distance Fixed pairwise distance used for generating scoring matrix
+                        in guide tree computation
+  --max_pairwise_distance Maximum pairwise distance allowed in progressive steps of
+                        multiple alignment; allows making matching more stringent or
+                        flexible
+  --branch_length_scaling Factor for scaling all branch lengths
+  --branch_length_fixed Fixed value for all branch lengths
+  --branch_length_maximum Upper limit for branch lengths
+  --use_real_branch_lengths Use real branch lengths; using this can be harmful as
+                        scoring matrices became flat for large distances; rather use
+                        max_pairwise_distance
+  --do_no_posterior     Do not compute posterior probability; much faster if those
+                        not needed
+  --run_once            Do not iterate alignment
+  --run_twice           Iterate alignment
+  --penalise_terminal_gaps Penalise terminal gaps as any other gap
+  --do_posterior_only   Compute posterior probabilities for given *aligned*
+                        sequences; may be unstable but useful
+  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only
+  --minimum_anchor_distance Minimum chaos anchor distance
+  --maximum_anchor_distance Maximum chaos anchor distance
+  --skip_anchor_distance Chaos anchor skip distance
+  --drop_anchor_distance Chaos anchor drop distance
+  --output_ancestors    Output ancestral sequences and probability profiles; note
+                        additional files
+  --noise_level         Noise level; progress and debugging information
+  --stay_quiet          Stay quiet; disable all progress information
+  --random_seed         Set seed for random number generator; not recommended
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

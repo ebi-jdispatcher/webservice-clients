@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -567,7 +563,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -615,8 +611,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -648,12 +644,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -917,73 +915,67 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBOSS cpgplot
-=============
+EMBL-EBI EMBOSS cpgplot Python Client:
 
 Sequence statistics and plots with cpgplot.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --sequence            : str  : One or more sequences to be analysed can be entered directly into this
-                                 form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or
-                                 PHYLIP format. Partially formatted sequences are not accepted.
-  --window              : int  : The percentage CG content and the Observed frequency of CG is
-                                 calculated within a window whose size is set by this parameter. The
-                                 window is moved down the sequence and these statistics are calculated
-                                 at each position that the window is moved to
-  --minlen              : int  : This sets the minimum length that a CpG island has to be before it is
-                                 reported.
-  --minoe               : flo  : This sets the minimum average observed to expected ratio of C plus G
-                                 to CpG in a set of 10 windows that are required before a CpG island is
-                                 reported.
-  --minpc               : flo  : This sets the minimum average percentage of G plus C a set of 10
-                                 windows that are required before a CpG island is reported.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --sequence            One or more sequences to be analysed can be entered directly
+                        into this form. Sequences can be in GCG, FASTA, EMBL,
+                        GenBank, PIR, NBRF or PHYLIP format. Partially formatted
+                        sequences are not accepted.
+  --window              The percentage CG content and the Observed frequency of CG
+                        is calculated within a window whose size is set by this
+                        parameter. The window is moved down the sequence and these
+                        statistics are calculated at each position that the window
+                        is moved to
+  --minlen              This sets the minimum length that a CpG island has to be
+                        before it is reported.
+  --minoe               This sets the minimum average observed to expected ratio of
+                        C plus G to CpG in a set of 10 windows that are required
+                        before a CpG island is reported.
+  --minpc               This sets the minimum average percentage of G plus C a set
+                        of 10 windows that are required before a CpG island is
+                        reported.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

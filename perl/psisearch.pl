@@ -45,10 +45,6 @@ limitations under the License.
 Perl Client Automatically generated with:
 https://github.com/ebi-wp/webservice-clients-generator
 
-=head1 VERSION
-
-ed529d0
-
 =cut
 
 # ======================================================================
@@ -581,7 +577,7 @@ sub print_job_status {
     my $result = &rest_get_status($jobid);
     print "$result\n";
     if ($result eq 'FINISHED' && $outputLevel > 0) {
-        print STDERR "To get results: $scriptName --polljob --jobid " . $jobid
+        print STDERR "To get results: perl $scriptName --polljob --jobid " . $jobid
             . "\n";
     }
     print_debug_message('print_job_status', 'End', 1);
@@ -629,8 +625,8 @@ sub print_result_types {
         }
         if ($status eq 'FINISHED' && $outputLevel > 0) {
             print STDERR "\n", 'To get results:', "\n",
-                "  $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
-                "  $scriptName --polljob --outformat <type> --jobid "
+                "  perl $scriptName --polljob --jobid " . $params{'jobid'} . "\n",
+                "  perl $scriptName --polljob --outformat <type> --jobid "
                     . $params{'jobid'} . "\n";
         }
     }
@@ -662,12 +658,14 @@ sub submit_job {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
-                "To check status: $scriptName --status --jobid $jobid\n";
+                "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
+        } else {
+            print STDERR "$jobid\n";
         }
         usleep($checkInterval);
         &get_results($jobid);
@@ -954,113 +952,110 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-PSI-Search
-=============
+EMBL-EBI PSI-Search Python Client:
 
 Sequence similarity search with PSI-Search.
 
-[Required]
-  --email               : str  : E-mail address.
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
 
 [Optional]
-  --matrix              : str  : The comparison matrix to be used to score alignments when searching
-                                 the database
-  --gapopen             : int  : Penalty taken away from the score when a gap is created in sequence.
-                                 Increasing the gap opening penalty will decrease the number of gaps in
-                                 the final alignment.
-  --gapext              : int  : Penalty taken away from the score for each base or residue in the gap.
-                                 Increasing the gap extension penalty favours short gaps in the final
-                                 alignment, conversly, decreasing the gap extension penalty favours
-                                 long gaps in the final alignment.
-  --expthr              : flo  : Limits the number of scores and alignments reported based on the
-                                 expectation value. This value is the maximum number of times the match
-                                 is expected to occur by chance.
-  --mask                : bool : Turn on/off the sequence masking for HOEs in PSSM constructions. This
-                                 option allows you to mask sequence characters beyond the alignment
-                                 region when constructing the PSSM, reducing over-extension errors.
-  --psithr              : flo  : Expectation value threshold for automatic selection of matched
-                                 sequences for inclusion in the PSSM at each iteration.
-  --scores              : int  : Maximum number of alignment score summaries reported in the result
-                                 output.
-  --alignments          : int  : Maximum number of alignments reported in the result output.
-  --hsps                : bool : Turn on/off the display of all significant alignments between query
-                                 and database sequence.
-  --scoreformat         : str  : Different score formats.
-  --filter              : str  : Filter regions of low sequence complexity. This can avoid issues with
-                                 low complexity sequences where matches are found due to composition
-                                 rather then meaningful sequence similarity. However in some cases
-                                 filtering also masks regions of interest and so should be used with
-                                 caution.
-  --hist                : bool : Turn on/off the histogram in the PSI-Search result. The histogram
-                                 gives a qualitative view of how well the statistical theory fits the
-                                 similarity scores calculated by the program.
-  --annotfeats          : bool : Turn on/off annotation features. Annotation features shows features
-                                 from UniProtKB, such as variants, active sites, phospho-sites and
-                                 binding sites that have been found in the aligned region of the
-                                 database hit. To see the annotation features in the results after this
-                                 has been enabled, select sequences of interest and click to 'Show'
-                                 Alignments. This option also enables a new result tab (Domain
-                                 Diagrams) that highlights domain regions.
-  --sequence            : str  : The query sequence can be entered directly into this form. The
-                                 sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-
-                                 Prot format. A partially formatted sequence is not accepted. Adding a
-                                 return to the end of the sequence may help certain applications
-                                 understand the input. Note that directly using data from word
-                                 processors may yield unpredictable results as hidden/control
-                                 characters may be present.
-  --database            : str  : The databases to run the sequence similarity search against. Multiple
-                                 databases can be selected at the same time.
-  --previousjobid       : str  : The job identifier for the previous PSI-Search iteration.
-  --selectedHits        : fil  : List of identifiers from the hits of the previous iteration to use to
-                                 construct the search PSSM for this iteration.
-  --bdrfile             : fil  : Boundary file containing boundary information for pre-selected
-                                 sequences.Used for hardmask to clean HOEs.
-  --cpfile              : fil  : Checkpoint file from the previous iteration. Must be in ASN.1 Binary
-                                 Format.
-[General]
-  -h, --help            :      : Prints this help text.
-  --async               :      : Forces to make an asynchronous query.
-  --title               : str  : Title for job.
-  --status              :      : Get job status.
-  --resultTypes         :      : Get available result types for job.
-  --polljob             :      : Poll for the status of a job.
-  --pollFreq            : int  : Poll frequency in seconds (default 3s).
-  --jobid               : str  : JobId that was returned when an asynchronous job
-                                 was submitted.
-  --outfile             : str  : File name for results (default is jobid;
-                                 "-" for STDOUT).
-  --outformat           : str  : Result format(s) to retrieve. It accepts comma-separated
-                                 values.
-  --params              :      : List input parameters.
-  --paramDetail         : str  : Display details for input parameter.
-  --quiet               :      : Decrease output.
-  --verbose             :      : Increase output.
+  --matrix              The comparison matrix to be used to score alignments when
+                        searching the database
+  --gapopen             Penalty taken away from the score when a gap is created in
+                        sequence. Increasing the gap opening penalty will decrease
+                        the number of gaps in the final alignment.
+  --gapext              Penalty taken away from the score for each base or residue
+                        in the gap. Increasing the gap extension penalty favours
+                        short gaps in the final alignment, conversly, decreasing the
+                        gap extension penalty favours long gaps in the final
+                        alignment.
+  --expthr              Limits the number of scores and alignments reported based on
+                        the expectation value. This value is the maximum number of
+                        times the match is expected to occur by chance.
+  --mask                Turn on/off the sequence masking for HOEs in PSSM
+                        constructions. This option allows you to mask sequence
+                        characters beyond the alignment region when constructing the
+                        PSSM, reducing over-extension errors.
+  --psithr              Expectation value threshold for automatic selection of
+                        matched sequences for inclusion in the PSSM at each
+                        iteration.
+  --scores              Maximum number of alignment score summaries reported in the
+                        result output.
+  --alignments          Maximum number of alignments reported in the result output.
+  --hsps                Turn on/off the display of all significant alignments
+                        between query and database sequence.
+  --scoreformat         Different score formats.
+  --filter              Filter regions of low sequence complexity. This can avoid
+                        issues with low complexity sequences where matches are found
+                        due to composition rather then meaningful sequence
+                        similarity. However in some cases filtering also masks
+                        regions of interest and so should be used with caution.
+  --hist                Turn on/off the histogram in the PSI-Search result. The
+                        histogram gives a qualitative view of how well the
+                        statistical theory fits the similarity scores calculated by
+                        the program.
+  --annotfeats          Turn on/off annotation features. Annotation features shows
+                        features from UniProtKB, such as variants, active sites,
+                        phospho-sites and binding sites that have been found in the
+                        aligned region of the database hit. To see the annotation
+                        features in the results after this has been enabled, select
+                        sequences of interest and click to 'Show' Alignments. This
+                        option also enables a new result tab (Domain Diagrams) that
+                        highlights domain regions.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be selected at the same time.
+  --previousjobid       The job identifier for the previous PSI-Search iteration.
+  --selectedHits        List of identifiers from the hits of the previous iteration
+                        to use to construct the search PSSM for this iteration.
+  --bdrfile             Boundary file containing boundary information for pre-
+                        selected sequences.Used for hardmask to clean HOEs.
+  --cpfile              Checkpoint file from the previous iteration. Must be in
+                        ASN.1 Binary Format.
 
 Synchronous job:
-
   The results/errors are returned as soon as the job is finished.
-  Usage: $scriptName --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
   Returns: results as an attachment
 
 Asynchronous job:
-
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: $scriptName --async --email <your\@email> [options...] seqFile
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
   Returns: jobid
 
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
-  Usage: $scriptName --polljob --jobid <jobId> [--outfile string]
+  Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
   Returns: string indicating the status of the job and if applicable, results
   as an attachment.
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }
