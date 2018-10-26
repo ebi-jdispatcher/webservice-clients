@@ -1,29 +1,29 @@
 # EMBL-EBI Web Services Clients
 
-This repository provides a collection of Sample Web Service Clients to consume 
+This repository provides a collection of Sample Web Service Clients to consume
 EBI's Job Dispatcher Web Service tools via REST and SOAP APIs.
 
-The RESTful API interface for the Job Dispatcher Web Services is available at 
-[https://www.ebi.ac.uk/Tools/common/tools/help/]()
+The RESTful API interface for the Job Dispatcher Web Services is available at
+[https://www.ebi.ac.uk/Tools/common/tools/help/](https://www.ebi.ac.uk/Tools/common/tools/help/)
 
 ## Sample Clients
 
-A collection of REST sample clients for the EBI Job Dispatcher Web Services in Python, Perl and Java. 
-These clients are generated from the service (XML) description with 
-[https://github.com/ebi-wp/webservice-clients-generator]()
+A collection of REST sample clients for the EBI Job Dispatcher Web Services in Python, Perl and Java.
+These clients are generated from the service (XML) description with
+[https://github.com/ebi-wp/webservice-clients-generator](https://github.com/ebi-wp/webservice-clients-generator)
 
 * [Perl](perl)
 * [Python](python)
 * [Java](java)
 
-*Note:* A number of "older" REST and SOAP clients in a range of programming languages is now [deprecated](deprecated) 
+*Note:* A number of "older" REST and SOAP clients in a range of programming languages is now [deprecated](deprecated)
 but still available for those who might be interested. In addition to Perl, Python and Java, clients are available
 in C#, Visual Basic .NET, Ruby and PHP, using a variety of different REST/SOAP libraries.
 
 
 ## Running the clients
 
-[Download the clients](https://github.com/ebi-wp/webservice-clients/archive/master.zip) 
+[Download the clients](https://github.com/ebi-wp/webservice-clients/archive/master.zip)
 or clone the repository:
 
 ```bash
@@ -32,7 +32,7 @@ git clone https://github.com/ebi-wp/webservice-clients.git
 
 ### Perl clients [![perl](https://img.shields.io/badge/perl-5.22.0+-blue.svg?style=flat)]()
 
-In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as two dependencies 
+In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as two dependencies
 (LWP and XML::Simple). Install these with:
 
 ```bash
@@ -49,9 +49,9 @@ perl clustalo.pl --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:
 
 ### Python clients [![python](https://img.shields.io/badge/python-3.5+-blue.svg?style=flat)]()
 
-Specially if you have no root access to your machine, you might need to 
+Specially if you have no root access to your machine, you might need to
 use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
-Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed. 
+Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed.
 
 ```bash
 virtualenv -p `which python` env
@@ -72,8 +72,8 @@ python clustalo.py --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,s
 
 ### Java clients [![java](https://img.shields.io/badge/java-1.8+-blue.svg?style=flat)]()
 
-In order to run Java clients, Java (tested version 1.8.0_161") as well as ant (tested version 1.10.5), 
-needs to installed. 
+In order to run Java clients, Java (tested version 1.8.0_161") as well as ant (tested version 1.10.5),
+needs to installed.
 
 The Java source code needs to be compiled with `ant` as follows:
 ```bash
@@ -89,7 +89,7 @@ java -jar clustalo.jar --email <your@email.com> --sequence sp:wap_rat,sp:wap_mou
 
 ## Running clients with Docker
 
-You can run the Sample Clients with Docker. We provide a docker container at 
+You can run the Sample Clients with Docker. We provide a docker container at
 https://hub.docker.com/r/ebiwp/webservice-clients/. Pull the `webservice-clients` container from Docker Hub:
 
 ```
