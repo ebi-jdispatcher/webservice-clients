@@ -114,12 +114,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -250,7 +251,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -976,6 +977,9 @@ Multiple sequence alignment viewing with MView.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mview
 
 [Optional]
   --stype               Indicates if the sequences to align are protein or
@@ -984,19 +988,19 @@ Multiple sequence alignment viewing with MView.
                         multiple sequence alignment to be processed.
   --outputformat        Output format for the alignment.
   --htmlmarkup          Amount of HTML markup to be used in the result.
-  --css                 Use Cascading Style Sheets
-  --pcid                Compute percent identities with respect to
+  --css                 Use Cascading Style Sheets.
+  --pcid                Compute percent identities with respect to.
   --alignment           Show or hide the aligned sequences.
   --ruler               Show or hide the ruler showing the sequence coordinates.
   --width               Width of output alignment.
-  --coloring            Basic style of coloring
-  --colormap            Color map
-  --groupmap            Group map
+  --coloring            Basic style of coloring.
+  --colormap            Color map.
+  --groupmap            Group map.
   --consensus           Show or hide consensus sequence derived from the alignment.
-  --concoloring         Basic style of consensus coloring
-  --concolormap         Consensus color map
-  --congroupmap         Consensus group map
-  --congaps             Count gaps during consensus compuatations
+  --concoloring         Basic style of consensus coloring.
+  --concolormap         Consensus color map.
+  --congroupmap         Consensus group map.
+  --congaps             Count gaps during consensus compuatations.
   --sequence            Sequence similarity search result (e.g. BLAST or FASTA
                         search report) or a multiple sequence alignment.
 

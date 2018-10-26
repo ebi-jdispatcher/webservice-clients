@@ -94,8 +94,8 @@ parser.add_option('--params', action='store_true', help='List input parameters.'
 parser.add_option('--paramDetail', help='Get details for parameter.')
 parser.add_option('--quiet', action='store_true', help='Decrease output level.')
 parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--baseURL', default=baseUrl, help='Base URL for service.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debug output level.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
 
 (options, args) = parser.parse_args()
 
@@ -113,6 +113,9 @@ if options.debugLevel:
 
 if options.pollFreq:
     pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 
 # Debug print
@@ -211,14 +214,15 @@ def printGetParameterDetails(paramName):
     doc = serviceGetParameterDetails(paramName)
     print(unicode(doc.name) + u"\t" + unicode(doc.type))
     print(doc.description)
-    for value in doc.values:
-        print(value.value)
-        if unicode(value.defaultValue) == u'true':
-            print(u'default')
-        print(u"\t" + unicode(value.label))
-        if hasattr(value, u'properties'):
-            for wsProperty in value.properties:
-                print(u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value))
+    if hasattr(doc, 'values'):
+        for value in doc.values:
+            print(value.value)
+            if unicode(value.defaultValue) == u'true':
+                print(u'default')
+            print(u"\t" + unicode(value.label))
+            if hasattr(value, u'properties'):
+                for wsProperty in value.properties:
+                    print(u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value))
     printDebugMessage(u'printGetParameterDetails', u'End', 1)
 
 
@@ -247,7 +251,7 @@ def serviceRun(email, title, params):
         jobId = unicode(reqH.read(), u'utf-8')
         reqH.close()
     except HTTPError as ex:
-        print(xmltramp.parse(ex.read())[0][0])
+        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
         quit()
     printDebugMessage(u'serviceRun', u'jobId: ' + jobId, 2)
     printDebugMessage(u'serviceRun', u'End', 1)
@@ -297,29 +301,25 @@ def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
     if outputLevel > 0:
         print("Getting result types for job %s" % jobId)
-    status = serviceGetStatus(jobId)
-    if status == 'PENDING' or status == 'RUNNING' and outputLevel > 0:
-        print("Error: Job status is %s. "
-              "To get result types the job must be finished." % status)
-    else:
-        resultTypeList = serviceGetResultTypes(jobId)
-        if outputLevel > 0:
-            print("Available result types:")
-        for resultType in resultTypeList:
-            print(resultType[u'identifier'])
-            if hasattr(resultType, u'label'):
-                print(u"\t", resultType[u'label'])
-            if hasattr(resultType, u'description'):
-                print(u"\t", resultType[u'description'])
-            if hasattr(resultType, u'mediaType'):
-                print(u"\t", resultType[u'mediaType'])
-            if hasattr(resultType, u'fileSuffix'):
-                print(u"\t", resultType[u'fileSuffix'])
-        if outputLevel > 0:
-            print("To get results:\n  python %s --polljob --jobid %s\n"
-                  "  python %s --polljob --outformat <type> --jobid %s"
-                  "" % (os.path.basename(__file__), jobId,
-                        os.path.basename(__file__), jobId))
+
+    resultTypeList = serviceGetResultTypes(jobId)
+    if outputLevel > 0:
+        print("Available result types:")
+    for resultType in resultTypeList:
+        print(resultType[u'identifier'])
+        if hasattr(resultType, u'label'):
+            print(u"\t", resultType[u'label'])
+        if hasattr(resultType, u'description'):
+            print(u"\t", resultType[u'description'])
+        if hasattr(resultType, u'mediaType'):
+            print(u"\t", resultType[u'mediaType'])
+        if hasattr(resultType, u'fileSuffix'):
+            print(u"\t", resultType[u'fileSuffix'])
+    if outputLevel > 0:
+        print("To get results:\n  python %s --polljob --jobid %s\n"
+              "  python %s --polljob --outformat <type> --jobid %s"
+              "" % (os.path.basename(__file__), jobId,
+                    os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetResultTypes', u'End', 1)
 
 
@@ -414,7 +414,7 @@ EMBL-EBI EMBOSS backtranambig Python Client:
 Sequence translations with backtranambig.
 
 [General]
-  -h, --help            Prints this help text.
+  -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
   --title               Title for job.
   --status              Get job status.
@@ -427,7 +427,10 @@ Sequence translations with backtranambig.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
-  --verbose             Increase output - DEBUG mode.
+  --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_backtranambig
 
 [Optional]
   --codontable          Which genetic code table to use. These are kept synchronised
@@ -481,12 +484,12 @@ elif options.paramDetail:
 elif options.email and not options.jobid:
     params = {}
     if len(args) > 0:
-        if os.access(args[0], os.R_OK):  # Read file into content
+        if os.path.exists(args[0]):  # Read file into content
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
     elif options.sequence:  # Specified via option
-        if os.access(options.sequence, os.R_OK):  # Read file into content
+        if os.path.exists(options.sequence):  # Read file into content
             params[u'sequence'] = readFile(options.sequence)
         else:  # Argument is a sequence id
             params[u'sequence'] = options.sequence
@@ -514,14 +517,21 @@ elif options.email and not options.jobid:
         time.sleep(pollFreq)
         getResult(jobId)
 # Get job status
-elif options.status and options.jobid:
+elif options.jobid and options.status:
     printGetStatus(options.jobid)
-# List result types for job
-elif options.resultTypes and options.jobid:
-    printGetResultTypes(options.jobid)
-# Get results for job
-elif options.polljob and options.jobid:
-    getResult(options.jobid)
+
+elif options.jobid and (options.resultTypes or options.polljob):
+    status = serviceGetStatus(jobId)
+    if status == 'PENDING' or status == 'RUNNING':
+        print("Error: Job status is %s. "
+              "To get result types the job must be finished." % status)
+        quit()
+    # List result types for job
+    if options.resultTypes:
+        printGetResultTypes(options.jobid)
+    # Get results for job
+    elif options.polljob:
+        getResult(options.jobid)
 else:
     # Checks for 'email' parameter
     if not options.email:

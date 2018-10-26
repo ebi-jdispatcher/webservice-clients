@@ -1,1 +1,15 @@
- --email             	string	User email address
+  --codontable          Which Genetic Code table to use. These are kept synchronised
+                        with those maintained at the NCBI's Taxonomy Browser.
+  --firstorf            Count the beginning of a sequence as a possible ORF, even if
+                        it's inferior to the minimal ORF size.
+  --lastorf             Count the end of a sequence as a possible ORF, even if it's
+                        not finishing with a STOP, or inferior to the minimal ORF
+                        size.
+  --reverse             Choose this option if you wish to reverse and compliment
+                        your sequence.
+  --orfminsize          Minimum size of Open Reading Frames (ORFs) to display in the
+                        translations.
+  --sequence            A DNA sequence can be entered or pasted into this box.
+                        Ideally use a known sequence format such as fasta or EMBL,
+                        text pasted from word processors may contain meta-characters
+                        that cause problems.

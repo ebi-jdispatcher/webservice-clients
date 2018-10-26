@@ -115,12 +115,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -251,7 +252,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -953,11 +954,14 @@ Sequence similarity search with NCBI Blast.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/ncbiblast
 
 [Optional]
   --program             The BLAST program to be used for the Sequence Similarity
                         Search.
-  --task                Task option (only selectable for blastn)
+  --task                Task option (only selectable for blastn).
   --matrix              (Protein searches) The substitution matrix used for scoring
                         alignments when searching the database.
   --alignments          Maximum number of match alignments reported in the result
@@ -968,7 +972,7 @@ Sequence similarity search with NCBI Blast.
                         the expectation value. This is the maximum number of times
                         the match is expected to occur by chance.
   --dropoff             The amount a score can drop before gapped extension of word
-                        hits is halted
+                        hits is halted.
   --match_scores        (Nucleotide searches) The match score is the bonus to the
                         alignment score when matching the same base. The mismatch is
                         the penalty when failing to match.
@@ -996,8 +1000,8 @@ Sequence similarity search with NCBI Blast.
                         individual HSP where two sequence match each other, and thus
                         will not produce alignments with gaps.
   --compstats           Use composition-based statistics.
-  --align               Formating for the alignments
-  --transltable         Query Genetic code to use in translation
+  --align               Formating for the alignments.
+  --transltable         Query Genetic code to use in translation.
   --stype               Indicates if the sequence is protein or DNA/RNA.
   --sequence            The query sequence can be entered directly into this form.
                         The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
@@ -1008,7 +1012,7 @@ Sequence similarity search with NCBI Blast.
                         directly using data from word processors may yield
                         unpredictable results as hidden/control characters may be
                         present.
-  --database            Database
+  --database            Database.
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.

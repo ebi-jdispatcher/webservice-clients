@@ -107,12 +107,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -243,7 +244,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -945,6 +946,9 @@ Multiple sequence alignment with Mafft.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mafft
 
 [Optional]
   --format              Format for generated multiple sequence alignment.
@@ -953,12 +957,12 @@ Multiple sequence alignment with Mafft.
   --gapopen             Penalty for first base/residue in a gap.
   --gapext              Penalty for each additional base/residue in a gap.
   --order               The order in which the sequences appear in the final
-                        alignment
-  --nbtree              Tree Rebuilding Number
-  --treeout             Generate guide tree file
+                        alignment.
+  --nbtree              Tree Rebuilding Number.
+  --treeout             Generate guide tree file.
   --maxiterate          Maximum number of iterations to perform when refining the
-                        alignment
-  --ffts                Perform fast fourier transform
+                        alignment.
+  --ffts                Perform fast fourier transform.
   --stype               Indicates if the sequences to align are protein or
                         nucleotide (DNA/RNA).
   --sequence            Three or more sequences to be aligned can be entered

@@ -115,12 +115,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -251,7 +252,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -948,10 +949,13 @@ Sequence similarity search with PSI-Blast.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/psiblast
 
 [Optional]
   --matrix              The comparison matrix to be used to score alignments when
-                        searching the database
+                        searching the database.
   --gapopen             Penalty taken away from the score when a gap is created in
                         sequence. Increasing the gap openning penalty will decrease
                         the number of gaps in the final alignment.
@@ -969,10 +973,10 @@ Sequence similarity search with PSI-Blast.
                         result output.
   --alignments          Maximum number of match alignments reported in the result
                         output.
-  --alignView           Formating for the alignments
+  --alignView           Formating for the alignments.
   --dropoff             The amount a score can drop before extension of word hits is
-                        halted
-  --finaldropoff        Dropoff value for final gapped alignment
+                        halted.
+  --finaldropoff        Dropoff value for final gapped alignment.
   --filter              Filter regions of low sequence complexity. This can avoid
                         issues with low complexity sequences where matches are found
                         due to composition rather than meaningful sequence
@@ -991,13 +995,13 @@ Sequence similarity search with PSI-Blast.
                         unpredictable results as hidden/control characters may be
                         present.
   --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be used at the same time
+                        Multiple databases can be used at the same time.
   --previousjobid       The job identifier for the previous PSI-BLAST iteration.
   --selectedHits        List of identifiers of the hits from the previous iteration
                         to use to construct the search PSSM for this iteration.
   --cpfile              Checkpoint file from the previous iteration. Must be in
                         ASN.1 Binary Format.
-  --umode               Usage mode for PHI-BLAST functionality
+  --umode               Usage mode for PHI-BLAST functionality.
   --patfile             Pattern file for PHI-BLAST functionality. This file needs to
                         be in the style of a prosite entry file, with at least an ID
                         line, PA line and optional HI line.

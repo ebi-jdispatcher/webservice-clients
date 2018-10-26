@@ -107,12 +107,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -243,7 +244,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -945,6 +946,9 @@ RNA analysis with MapMi.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mapmi
 
 [Optional]
   --scorethr            Score threshold. The minimum score for a candidate hairpin.
@@ -965,8 +969,8 @@ RNA analysis with MapMi.
                         directly using data from word processors may yield
                         unpredictable results as hidden/control characters may be
                         present. There is a limit of 1MB for the sequence entry.
-  --metazoa_species     Ensembl Metazoa Species
-  --ensembl_species     Ensembl Species
+  --metazoa_species     Ensembl Metazoa Species.
+  --ensembl_species     Ensembl Species.
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.

@@ -110,12 +110,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -246,7 +247,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -960,21 +961,24 @@ Protein function analysis with HMMER 3 hmmscan.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan
 
 [Optional]
-  --incE                Significance E-values[Model]
-  --incdomE             Significance E-values[Hit]
-  --E                   Report E-values[Model]
-  --domE                Report E-values[Hit]
-  --incT                Significance bit scores[Sequence]
-  --incdomT             Significance bit scores[Hit]
-  --T                   Report bit scores[Sequence]
-  --domT                Report bit scores[Hit]
+  --incE                Significance E-values[Model].
+  --incdomE             Significance E-values[Hit].
+  --E                   Report E-values[Model].
+  --domE                Report E-values[Hit].
+  --incT                Significance bit scores[Sequence].
+  --incdomT             Significance bit scores[Hit].
+  --T                   Report bit scores[Sequence].
+  --domT                Report bit scores[Hit].
   --cut_ga              Use the gathering threshold.
-  --nobias              Filters
-  --hmmdbparam          hmmdbparam
-  --alignView           Output alignment in result
-  --database            HMM Database
+  --nobias              Filters.
+  --hmmdbparam          hmmdbparam.
+  --alignView           Output alignment in result.
+  --database            HMM Database.
   --sequence            The input sequence can be entered directly into this form.
                         The sequence can be be in FASTA or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.

@@ -1,1 +1,51 @@
- --email             	string	User email address
+  --matrix              The comparison matrix to be used to score alignments when
+                        searching the database.
+  --gapopen             Penalty taken away from the score when a gap is created in
+                        sequence. Increasing the gap openning penalty will decrease
+                        the number of gaps in the final alignment.
+  --gapext              Penalty taken away from the score for each base or residue
+                        in the gap. Increasing the gap extension penalty favors
+                        short gaps in the final alignment, conversly decreasing the
+                        gap extension penalty favors long gaps in the final
+                        alignment.
+  --expthr              Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --psithr              Expectation value threshold for automatic selection of
+                        matched sequences for inclusion in PSSM at each iteration.
+  --scores              Maximum number of match score summaries reported in the
+                        result output.
+  --alignments          Maximum number of match alignments reported in the result
+                        output.
+  --alignView           Formating for the alignments.
+  --dropoff             The amount a score can drop before extension of word hits is
+                        halted.
+  --finaldropoff        Dropoff value for final gapped alignment.
+  --filter              Filter regions of low sequence complexity. This can avoid
+                        issues with low complexity sequences where matches are found
+                        due to composition rather than meaningful sequence
+                        similarity. However in some cases filtering also masks
+                        regions of interest and so should be used with caution.
+  --seqrange            Specify a range or section of the input sequence to use in
+                        the search. Example: Specifying '34-89' in an input sequence
+                        of total length 100, will tell BLAST to only use residues 34
+                        to 89, inclusive.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time.
+  --previousjobid       The job identifier for the previous PSI-BLAST iteration.
+  --selectedHits        List of identifiers of the hits from the previous iteration
+                        to use to construct the search PSSM for this iteration.
+  --cpfile              Checkpoint file from the previous iteration. Must be in
+                        ASN.1 Binary Format.
+  --umode               Usage mode for PHI-BLAST functionality.
+  --patfile             Pattern file for PHI-BLAST functionality. This file needs to
+                        be in the style of a prosite entry file, with at least an ID
+                        line, PA line and optional HI line.

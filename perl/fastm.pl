@@ -117,12 +117,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -253,7 +254,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -961,17 +962,20 @@ Sequence similarity search with FASTM.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/fastm
 
 [Optional]
   --program             The FASTA program to be used for the Sequence Similarity
-                        Search
+                        Search.
   --stype               Indicates if the query sequence is protein, DNA or RNA. Used
                         to force FASTA to interpret the input sequence as specified
                         type of sequence (via. the '-p', '-n' or '-U' options), this
                         prevents issues when using nucleotide sequences that contain
                         many ambiguous residues.
   --matrix              The comparison matrix to be used to score alignments when
-                        searching the database
+                        searching the database.
   --match_scores        Specify match/mismatch scores for DNA comparisons. The
                         default is '+5/-4'. '+3/-2' can perform better in some
                         cases.
@@ -1029,7 +1033,7 @@ Sequence similarity search with FASTM.
                         unpredictable results as hidden/control characters may be
                         present.
   --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be used at the same time
+                        Multiple databases can be used at the same time.
   --ktup                FASTA uses a rapid word-based lookup strategy to speed the
                         initial phase of the similarity search. The KTUP is used to
                         control the sensitivity of the search. Lower values lead to

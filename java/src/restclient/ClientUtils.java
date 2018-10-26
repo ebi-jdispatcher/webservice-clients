@@ -41,21 +41,23 @@ import java.util.List;
 public class ClientUtils {
 
 
-    private static final Logger log = LoggerFactory.getLogger(ClientUtils.class);
+//    private static final Logger log = LoggerFactory.getLogger(ClientUtils.class);
 
     /**
      * Check if Http response code is as expected
      *
      * @param response
      */
-    public static boolean isResponseCorrect(ClientResponse response) {
+    public static boolean isResponseCorrect(ClientResponse response, int debugLevel) {
         if (response == null) {
             return false;
         } else if (response.getStatus() != 200) {
 
-            log.error(response.toString());
+            printDebugMessage("isResponseCorrect", response.toString(),
+                    41, debugLevel);
             WsError wsError = response.getEntity(WsError.class);
-            log.error(wsError.getError() + "\n");
+            printDebugMessage("isResponseCorrect", wsError.getError() + "\n",
+                    41, debugLevel);
 
             return false;
         }
@@ -76,7 +78,8 @@ public class ClientUtils {
         marshaller.marshal(result, System.out);
     }
 
-    public static List<WsResultType> processUserOutputFormats(String cli, List<WsResultType> allResultTypes) {
+    public static List<WsResultType> processUserOutputFormats(String cli, List<WsResultType> allResultTypes,
+                                                              int debugLevel) {
         List<WsResultType> resultTypes;
         resultTypes = new ArrayList<>();
 
@@ -89,10 +92,15 @@ public class ClientUtils {
             if (suffix != null) {
                 resultType.setFileSuffix(ClientUtils.getSuffixFor(identifier, allResultTypes));
             } else {
-                log.error("Incorrect output format identifier: " + identifier);
-                log.info("Correct identifiers: ");
-                allResultTypes.stream().forEach(ws -> log.info(ws.getIdentifier()));
-
+                printDebugMessage("processUserOutputFormats",
+                        "Incorrect output format identifier: " + identifier,
+                        41, debugLevel);
+                printDebugMessage("processUserOutputFormats",
+                        "Correct identifiers: ", 11, debugLevel);
+//                allResultTypes.stream().forEach(ws -> log.info(ws.getIdentifier()));
+//                allResultTypes.stream()
+//                        .forEach(ws -> printDebugMessage("processUserOutputFormats", ws.getIdentifier(), 11,
+// debugLevel));
                 System.exit(1);
             }
 
@@ -112,23 +120,29 @@ public class ClientUtils {
      * @throws IOException
      * @throws ServiceException
      */
-    public static boolean getStatusInIntervals(RestClient client, String jobid, Long interval) throws InterruptedException, IOException, ServiceException {
+    public static boolean getStatusInIntervals(RestClient client, String jobid, int interval,
+                                               int outputLevel, int debugLevel)
+            throws InterruptedException, IOException, ServiceException {
 
         String status = null;
-        log.info("Update status: every {} seconds.", interval / 1000);
+        printDebugMessage("getStatusInIntervals",
+                String.format("Update status: every %s seconds.", interval), 11, debugLevel);
+        if (outputLevel > 0)
+            System.out.println("Getting status for job " + jobid);
 
         while (status == null || !status.equals("FINISHED")) {
             Thread.sleep(interval);
             status = client.checkStatus(jobid);
-            log.info("Status: " + status);
+            if (outputLevel > 0)
+                System.out.println(status);
+            printDebugMessage("getStatusInIntervals", "Status: " + status,
+                    11, debugLevel);
             if (status.equals("FAILURE")) {
                 return false;
             }
-
         }
-
-        log.info("Synchronous job execution has finished. ");
-
+        printDebugMessage("getStatusInIntervals", "Synchronous job execution has finished.",
+                11, debugLevel);
         return true;
     }
 
@@ -179,5 +193,15 @@ public class ClientUtils {
             String[] fields = line.split("\t");
             options.addOption(fields[0].replace("--", "").trim(), fields[1].trim(), true, fields[2].trim());
         }
+    }
+
+
+    /**
+     * Print debug message
+     */
+    public static void printDebugMessage(String functionName, String message,
+                                         int level, int debugLevel) {
+        if (level <= debugLevel)
+            System.out.println("[" + functionName + "] " + message);
     }
 }

@@ -99,12 +99,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -235,7 +236,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -937,15 +938,18 @@ Sequence statistics and plots with pepwindow.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_pepwindow
 
 [Optional]
   --sequence            The sequence to be analysed can be entered directly into
                         this form. The sequence can be in GCG, FASTA, PIR, NBRF,
                         PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
-                        sequences are not accepted..
+                        sequences are not accepted.
   --windowsize          Window size for averaging (smoothing) the hydropathy plot.
                         Use an integer between 1 and 200.
-  --normalize           Normalize data values (mean = 0.0, standard deviation = 1.0)
+  --normalize           Normalize data values (mean = 0.0, standard deviation = 1.0).
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.

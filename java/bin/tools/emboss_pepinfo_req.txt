@@ -1,1 +1,7 @@
- --email             	string	User email address
+  --sequence            The sequence to be analysed can be entered directly into
+                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
+                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
+                        sequences are not accepted.
+  --hwindow             This sets the window size for averaging (smoothing) the
+                        hydropathy plots. By default a window size of 9 is used,
+                        please use an integer between 1 and 200.

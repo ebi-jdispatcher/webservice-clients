@@ -156,7 +156,7 @@
     <target name="sources">
         <zip destfile="${lib.dir}/rest-sources.zip"
              basedir="."
-             excludes="bin/**, dist/**, output/**, resources/**, target/**, java-rest-ant.iml"
+             excludes="bin/**, dist/**, output/**, resources/**, target/**, java-rest-ant.iml, ${lib.dir}/rest-sources.zip"
         />
     </target>
 

@@ -101,12 +101,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -237,7 +238,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -939,9 +940,12 @@ Sequence statistics and plots with dottup.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_dottup
 
 [Optional]
-  --stype               Defines the type of the sequences to be aligned
+  --stype               Defines the type of the sequences to be aligned.
   --asequence           A free text (raw) list of sequences is simply a block of
                         characters representing several DNA/RNA or Protein
                         sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide
@@ -962,7 +966,7 @@ Sequence statistics and plots with dottup.
                         directly using data from word processors may yield
                         unpredictable results as hidden/control characters may be
                         present.
-  --wordsize            Word size
+  --wordsize            Word size.
   --boxit               Draw a box around dotplot.
 
 Synchronous job:

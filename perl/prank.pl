@@ -133,12 +133,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -269,7 +270,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -1067,6 +1068,9 @@ Multiple sequence alignment with Prank.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/prank
 
 [Optional]
   --sequence            Three or more sequences to be aligned can be entered
@@ -1084,53 +1088,53 @@ Multiple sequence alignment with Prank.
                         best to save files with the Unix format option to avoid
                         hidden Windows characters.
   --tree_file           Tree file in Newick Binary Format.
-  --do_njtree           compute guide tree from input alignment
-  --do_clustalw_tree    compute guide tree using Clustalw2
+  --do_njtree           compute guide tree from input alignment.
+  --do_clustalw_tree    compute guide tree using Clustalw2.
   --model_file          Structure Model File.
-  --output_format       Format for output alignment file
+  --output_format       Format for output alignment file.
   --trust_insertions    Trust inferred insertions and do not allow their later
-                        matching
-  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes
+                        matching.
+  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes.
   --use_log_space       Use log space for probabilities; slower but necessary for
-                        large numbers of sequences
+                        large numbers of sequences.
   --use_codon_model     Use codon substutition model for alignment; requires DNA,
-                        multiples of three in length
+                        multiples of three in length.
   --translate_DNA       Translate DNA sequences to proteins and backtranslate
-                        results
+                        results.
   --mt_translate_DNA    Translate DNA sequences to mt proteins, align and
-                        backtranslate results
-  --gap_rate            Gap Opening Rate
-  --gap_extension       Gap Extension Probability
-  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model
-  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model
+                        backtranslate results.
+  --gap_rate            Gap Opening Rate.
+  --gap_extension       Gap Extension Probability.
+  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model.
+  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model.
   --guide_pairwise_distance Fixed pairwise distance used for generating scoring matrix
-                        in guide tree computation
+                        in guide tree computation.
   --max_pairwise_distance Maximum pairwise distance allowed in progressive steps of
                         multiple alignment; allows making matching more stringent or
-                        flexible
-  --branch_length_scaling Factor for scaling all branch lengths
-  --branch_length_fixed Fixed value for all branch lengths
-  --branch_length_maximum Upper limit for branch lengths
+                        flexible.
+  --branch_length_scaling Factor for scaling all branch lengths.
+  --branch_length_fixed Fixed value for all branch lengths.
+  --branch_length_maximum Upper limit for branch lengths.
   --use_real_branch_lengths Use real branch lengths; using this can be harmful as
                         scoring matrices became flat for large distances; rather use
-                        max_pairwise_distance
+                        max_pairwise_distance.
   --do_no_posterior     Do not compute posterior probability; much faster if those
-                        not needed
-  --run_once            Do not iterate alignment
-  --run_twice           Iterate alignment
-  --penalise_terminal_gaps Penalise terminal gaps as any other gap
+                        not needed.
+  --run_once            Do not iterate alignment.
+  --run_twice           Iterate alignment.
+  --penalise_terminal_gaps Penalise terminal gaps as any other gap.
   --do_posterior_only   Compute posterior probabilities for given *aligned*
-                        sequences; may be unstable but useful
-  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only
-  --minimum_anchor_distance Minimum chaos anchor distance
-  --maximum_anchor_distance Maximum chaos anchor distance
-  --skip_anchor_distance Chaos anchor skip distance
-  --drop_anchor_distance Chaos anchor drop distance
+                        sequences; may be unstable but useful.
+  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only.
+  --minimum_anchor_distance Minimum chaos anchor distance.
+  --maximum_anchor_distance Maximum chaos anchor distance.
+  --skip_anchor_distance Chaos anchor skip distance.
+  --drop_anchor_distance Chaos anchor drop distance.
   --output_ancestors    Output ancestral sequences and probability profiles; note
-                        additional files
-  --noise_level         Noise level; progress and debugging information
-  --stay_quiet          Stay quiet; disable all progress information
-  --random_seed         Set seed for random number generator; not recommended
+                        additional files.
+  --noise_level         Noise level; progress and debugging information.
+  --stay_quiet          Stay quiet; disable all progress information.
+  --random_seed         Set seed for random number generator; not recommended.
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.

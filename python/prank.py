@@ -140,8 +140,8 @@ parser.add_option('--params', action='store_true', help='List input parameters.'
 parser.add_option('--paramDetail', help='Get details for parameter.')
 parser.add_option('--quiet', action='store_true', help='Decrease output level.')
 parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--baseURL', default=baseUrl, help='Base URL for service.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debug output level.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
 
 (options, args) = parser.parse_args()
 
@@ -159,6 +159,9 @@ if options.debugLevel:
 
 if options.pollFreq:
     pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 
 # Debug print
@@ -257,14 +260,15 @@ def printGetParameterDetails(paramName):
     doc = serviceGetParameterDetails(paramName)
     print(unicode(doc.name) + u"\t" + unicode(doc.type))
     print(doc.description)
-    for value in doc.values:
-        print(value.value)
-        if unicode(value.defaultValue) == u'true':
-            print(u'default')
-        print(u"\t" + unicode(value.label))
-        if hasattr(value, u'properties'):
-            for wsProperty in value.properties:
-                print(u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value))
+    if hasattr(doc, 'values'):
+        for value in doc.values:
+            print(value.value)
+            if unicode(value.defaultValue) == u'true':
+                print(u'default')
+            print(u"\t" + unicode(value.label))
+            if hasattr(value, u'properties'):
+                for wsProperty in value.properties:
+                    print(u"\t" + unicode(wsProperty.key) + u"\t" + unicode(wsProperty.value))
     printDebugMessage(u'printGetParameterDetails', u'End', 1)
 
 
@@ -293,7 +297,7 @@ def serviceRun(email, title, params):
         jobId = unicode(reqH.read(), u'utf-8')
         reqH.close()
     except HTTPError as ex:
-        print(xmltramp.parse(ex.read())[0][0])
+        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
         quit()
     printDebugMessage(u'serviceRun', u'jobId: ' + jobId, 2)
     printDebugMessage(u'serviceRun', u'End', 1)
@@ -343,29 +347,25 @@ def printGetResultTypes(jobId):
     printDebugMessage(u'printGetResultTypes', u'Begin', 1)
     if outputLevel > 0:
         print("Getting result types for job %s" % jobId)
-    status = serviceGetStatus(jobId)
-    if status == 'PENDING' or status == 'RUNNING' and outputLevel > 0:
-        print("Error: Job status is %s. "
-              "To get result types the job must be finished." % status)
-    else:
-        resultTypeList = serviceGetResultTypes(jobId)
-        if outputLevel > 0:
-            print("Available result types:")
-        for resultType in resultTypeList:
-            print(resultType[u'identifier'])
-            if hasattr(resultType, u'label'):
-                print(u"\t", resultType[u'label'])
-            if hasattr(resultType, u'description'):
-                print(u"\t", resultType[u'description'])
-            if hasattr(resultType, u'mediaType'):
-                print(u"\t", resultType[u'mediaType'])
-            if hasattr(resultType, u'fileSuffix'):
-                print(u"\t", resultType[u'fileSuffix'])
-        if outputLevel > 0:
-            print("To get results:\n  python %s --polljob --jobid %s\n"
-                  "  python %s --polljob --outformat <type> --jobid %s"
-                  "" % (os.path.basename(__file__), jobId,
-                        os.path.basename(__file__), jobId))
+
+    resultTypeList = serviceGetResultTypes(jobId)
+    if outputLevel > 0:
+        print("Available result types:")
+    for resultType in resultTypeList:
+        print(resultType[u'identifier'])
+        if hasattr(resultType, u'label'):
+            print(u"\t", resultType[u'label'])
+        if hasattr(resultType, u'description'):
+            print(u"\t", resultType[u'description'])
+        if hasattr(resultType, u'mediaType'):
+            print(u"\t", resultType[u'mediaType'])
+        if hasattr(resultType, u'fileSuffix'):
+            print(u"\t", resultType[u'fileSuffix'])
+    if outputLevel > 0:
+        print("To get results:\n  python %s --polljob --jobid %s\n"
+              "  python %s --polljob --outformat <type> --jobid %s"
+              "" % (os.path.basename(__file__), jobId,
+                    os.path.basename(__file__), jobId))
     printDebugMessage(u'printGetResultTypes', u'End', 1)
 
 
@@ -460,7 +460,7 @@ EMBL-EBI Prank Python Client:
 Multiple sequence alignment with Prank.
 
 [General]
-  -h, --help            Prints this help text.
+  -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
   --title               Title for job.
   --status              Get job status.
@@ -473,7 +473,10 @@ Multiple sequence alignment with Prank.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
-  --verbose             Increase output - DEBUG mode.
+  --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/prank
 
 [Optional]
   --sequence            Three or more sequences to be aligned can be entered
@@ -491,53 +494,53 @@ Multiple sequence alignment with Prank.
                         best to save files with the Unix format option to avoid
                         hidden Windows characters.
   --tree_file           Tree file in Newick Binary Format.
-  --do_njtree           compute guide tree from input alignment
-  --do_clustalw_tree    compute guide tree using Clustalw2
+  --do_njtree           compute guide tree from input alignment.
+  --do_clustalw_tree    compute guide tree using Clustalw2.
   --model_file          Structure Model File.
-  --output_format       Format for output alignment file
+  --output_format       Format for output alignment file.
   --trust_insertions    Trust inferred insertions and do not allow their later
-                        matching
-  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes
+                        matching.
+  --show_insertions_with_dots Show gaps created by insertions as dots, deletions as dashes.
   --use_log_space       Use log space for probabilities; slower but necessary for
-                        large numbers of sequences
+                        large numbers of sequences.
   --use_codon_model     Use codon substutition model for alignment; requires DNA,
-                        multiples of three in length
+                        multiples of three in length.
   --translate_DNA       Translate DNA sequences to proteins and backtranslate
-                        results
+                        results.
   --mt_translate_DNA    Translate DNA sequences to mt proteins, align and
-                        backtranslate results
-  --gap_rate            Gap Opening Rate
-  --gap_extension       Gap Extension Probability
-  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model
-  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model
+                        backtranslate results.
+  --gap_rate            Gap Opening Rate.
+  --gap_extension       Gap Extension Probability.
+  --tn93_kappa          Parameter kappa for Tamura-Nei DNA substitution model.
+  --tn93_rho            Parameter rho for Tamura-Nei DNA substitution model.
   --guide_pairwise_distance Fixed pairwise distance used for generating scoring matrix
-                        in guide tree computation
+                        in guide tree computation.
   --max_pairwise_distance Maximum pairwise distance allowed in progressive steps of
                         multiple alignment; allows making matching more stringent or
-                        flexible
-  --branch_length_scaling Factor for scaling all branch lengths
-  --branch_length_fixed Fixed value for all branch lengths
-  --branch_length_maximum Upper limit for branch lengths
+                        flexible.
+  --branch_length_scaling Factor for scaling all branch lengths.
+  --branch_length_fixed Fixed value for all branch lengths.
+  --branch_length_maximum Upper limit for branch lengths.
   --use_real_branch_lengths Use real branch lengths; using this can be harmful as
                         scoring matrices became flat for large distances; rather use
-                        max_pairwise_distance
+                        max_pairwise_distance.
   --do_no_posterior     Do not compute posterior probability; much faster if those
-                        not needed
-  --run_once            Do not iterate alignment
-  --run_twice           Iterate alignment
-  --penalise_terminal_gaps Penalise terminal gaps as any other gap
+                        not needed.
+  --run_once            Do not iterate alignment.
+  --run_twice           Iterate alignment.
+  --penalise_terminal_gaps Penalise terminal gaps as any other gap.
   --do_posterior_only   Compute posterior probabilities for given *aligned*
-                        sequences; may be unstable but useful
-  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only
-  --minimum_anchor_distance Minimum chaos anchor distance
-  --maximum_anchor_distance Maximum chaos anchor distance
-  --skip_anchor_distance Chaos anchor skip distance
-  --drop_anchor_distance Chaos anchor drop distance
+                        sequences; may be unstable but useful.
+  --use_chaos_anchors   Use chaos anchors to massively speed up alignments; DNA only.
+  --minimum_anchor_distance Minimum chaos anchor distance.
+  --maximum_anchor_distance Maximum chaos anchor distance.
+  --skip_anchor_distance Chaos anchor skip distance.
+  --drop_anchor_distance Chaos anchor drop distance.
   --output_ancestors    Output ancestral sequences and probability profiles; note
-                        additional files
-  --noise_level         Noise level; progress and debugging information
-  --stay_quiet          Stay quiet; disable all progress information
-  --random_seed         Set seed for random number generator; not recommended
+                        additional files.
+  --noise_level         Noise level; progress and debugging information.
+  --stay_quiet          Stay quiet; disable all progress information.
+  --random_seed         Set seed for random number generator; not recommended.
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
@@ -579,12 +582,12 @@ elif options.paramDetail:
 elif options.email and not options.jobid:
     params = {}
     if len(args) > 0:
-        if os.access(args[0], os.R_OK):  # Read file into content
+        if os.path.exists(args[0]):  # Read file into content
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
     elif options.sequence:  # Specified via option
-        if os.access(options.sequence, os.R_OK):  # Read file into content
+        if os.path.exists(options.sequence):  # Read file into content
             params[u'sequence'] = readFile(options.sequence)
         else:  # Argument is a sequence id
             params[u'sequence'] = options.sequence
@@ -716,14 +719,21 @@ elif options.email and not options.jobid:
         time.sleep(pollFreq)
         getResult(jobId)
 # Get job status
-elif options.status and options.jobid:
+elif options.jobid and options.status:
     printGetStatus(options.jobid)
-# List result types for job
-elif options.resultTypes and options.jobid:
-    printGetResultTypes(options.jobid)
-# Get results for job
-elif options.polljob and options.jobid:
-    getResult(options.jobid)
+
+elif options.jobid and (options.resultTypes or options.polljob):
+    status = serviceGetStatus(jobId)
+    if status == 'PENDING' or status == 'RUNNING':
+        print("Error: Job status is %s. "
+              "To get result types the job must be finished." % status)
+        quit()
+    # List result types for job
+    if options.resultTypes:
+        printGetResultTypes(options.jobid)
+    # Get results for job
+    elif options.polljob:
+        getResult(options.jobid)
 else:
     # Checks for 'email' parameter
     if not options.email:

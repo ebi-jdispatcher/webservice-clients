@@ -120,12 +120,13 @@ GetOptions(
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
-    'debugLevel=i'    => \$params{'debugLevel'},     # Debug output level
+    'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
+if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -256,7 +257,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -988,13 +989,16 @@ Protein function analysis with Pratt.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --debugLevel          Debugging level.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/pratt
 
 [Optional]
   --minPerc             Set the minimum percentage of the input sequences that
                         should match a pattern (C%). If you set this to, say 80,
                         Pratt will only report patterns matching at least 80 % of
                         the sequences input.
-  --patternPosition     Pattern position in sequence (PP parameter)
+  --patternPosition     Pattern position in sequence (PP parameter).
   --maxPatternLength    Maximum pattern length (PL parameter) allows you to set the
                         maximum length of a pattern. The length of the pattern
                         C-x(2,4)-[DE] is 1+4+1=6. The memory requirement of Pratt
@@ -1023,10 +1027,10 @@ Protein function analysis with Pratt.
                         (FP parameter). This is related to the memory requirements
                         of the search, and increasing the limit, increases the
                         memory usage.
-  --patternSymbolFile   Pattern Symbol File (BI parameter)
+  --patternSymbolFile   Pattern Symbol File (BI parameter).
   --numPatternSymbols   Number of pattern symbols used in the initial search (BN
                         parameter).
-  --patternScoring      Pattern scoring (S parameter)
+  --patternScoring      Pattern scoring (S parameter).
   --patternGraph        Pattern Graph (G parameter) allows the use of an alignment
                         or a query sequence to restrict the pattern search.
   --searchGreediness    Using the greediness parameter (E) you can adjust the
