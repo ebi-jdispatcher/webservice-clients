@@ -1,3 +1,0 @@
-emboss_seqret
-EMBOSS seqret
-Sequenc format conversion with seqret.

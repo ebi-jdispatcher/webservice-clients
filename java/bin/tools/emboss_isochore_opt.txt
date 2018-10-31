@@ -1,3 +1,0 @@
---sequence         	string 	The sequence to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF, or PHYLIP format. Partially formatted sequences are not accepted.
---window           	integer	
---shift            	integer	

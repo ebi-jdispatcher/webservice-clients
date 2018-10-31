@@ -69,15 +69,15 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--guidetreeout', help=('Output guide tree.'))
-parser.add_option('--dismatout', help=('Output distance matrix. This is only calculated if the mBed-like'
+parser.add_option('--guidetreeout', action='store_true', help=('Output guide tree.'))
+parser.add_option('--dismatout', action='store_true', help=('Output distance matrix. This is only calculated if the mBed-like'
                   'clustering guide tree is set to false.'))
-parser.add_option('--dealign', help=('Remove any existing alignment (gaps) from input sequences.'))
-parser.add_option('--mbed', help=('This option uses a sample of the input sequences and then represents'
+parser.add_option('--dealign', action='store_true', help=('Remove any existing alignment (gaps) from input sequences.'))
+parser.add_option('--mbed', action='store_true', help=('This option uses a sample of the input sequences and then represents'
                   'all sequences as vectors to these sequences, enabling much more rapid'
                   'generation of the guide tree, especially when the number of sequences'
                   'is large.'))
-parser.add_option('--mbediteration', help=('Use mBed-like clustering during subsequent iterations.'))
+parser.add_option('--mbediteration', action='store_true', help=('Use mBed-like clustering during subsequent iterations.'))
 parser.add_option('--iterations', help=('Number of (combined guide-tree/HMM) iterations.'))
 parser.add_option('--gtiterations', help=('Having set the number of combined iterations, this parameter can be'
                   'changed to limit the number of guide tree iterations within the'
@@ -292,9 +292,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -360,7 +360,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -432,24 +432,19 @@ EMBL-EBI Clustal Omega Python Client:
 
 Multiple sequence alignment with Clustal Omega.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/clustalo
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this box. Sequences can be in GCG, FASTA, EMBL
+                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 4000 sequences and 4MB of data.
 
 [Optional]
   --guidetreeout        Output guide tree.
@@ -471,29 +466,40 @@ Multiple sequence alignment with Clustal Omega.
   --outfmt              Format for generated multiple sequence alignment.
   --order               The order in which the sequences appear in the final
                         alignment.
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this box. Sequences can be in GCG, FASTA, EMBL
-                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 4000 sequences and 4MB of data.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/clustalo
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python clustalo.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python clustalo.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python clustalo.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python clustalo.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python clustalo.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python clustalo.py --polljob --jobid <jobId> [--outfile string]

@@ -1,3 +1,0 @@
-simple_phylogeny
-Simple Phylogeny
-Generating Phylogenetic Trees with Simple Phylogeny.

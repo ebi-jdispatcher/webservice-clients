@@ -69,8 +69,8 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--goterms', help=('Switch on look-up of corresponding Gene Ontology annotations'))
-parser.add_option('--pathways', help=('Switch on look-up of corresponding pathway annotations'))
+parser.add_option('--goterms', action='store_true', help=('Switch on look-up of corresponding Gene Ontology annotations'))
+parser.add_option('--pathways', action='store_true', help=('Switch on look-up of corresponding pathway annotations'))
 parser.add_option('--appl', help=('A number of different protein sequence applications are launched.'
                   'These applications search against specific databases and have'
                   'preconfigured cut off thresholds.'))
@@ -275,9 +275,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -343,7 +343,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -415,6 +415,23 @@ EMBL-EBI InterProScan 5 Python Client:
 
 Protein function analysis with InterProScan 5.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            Your protein sequence can be entered directly into this form
+                        in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot
+                        format. A partially formatted sequence is not accepted.
+                        Adding a return to the end of the sequence may help certain
+                        applications understand the input. Note that directly using
+                        data from word processors may yield unpredictable results as
+                        hidden/control characters may be present.
+
+[Optional]
+  --goterms             Switch on look-up of corresponding Gene Ontology annotations.
+  --pathways            Switch on look-up of corresponding pathway annotations.
+  --appl                A number of different protein sequence applications are
+                        launched. These applications search against specific
+                        databases and have preconfigured cut off thresholds.
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -428,37 +445,26 @@ Protein function analysis with InterProScan 5.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/iprscan5
 
-[Optional]
-  --goterms             Switch on look-up of corresponding Gene Ontology annotations.
-  --pathways            Switch on look-up of corresponding pathway annotations.
-  --appl                A number of different protein sequence applications are
-                        launched. These applications search against specific
-                        databases and have preconfigured cut off thresholds.
-  --sequence            Your protein sequence can be entered directly into this form
-                        in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot
-                        format. A partially formatted sequence is not accepted.
-                        Adding a return to the end of the sequence may help certain
-                        applications understand the input. Note that directly using
-                        data from word processors may yield unpredictable results as
-                        hidden/control characters may be present.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python iprscan5.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python iprscan5.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python iprscan5.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python iprscan5.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python iprscan5.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python iprscan5.py --polljob --jobid <jobId> [--outfile string]

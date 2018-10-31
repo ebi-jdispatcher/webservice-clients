@@ -309,9 +309,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -377,7 +377,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -449,24 +449,18 @@ EMBL-EBI PSI-Blast Python Client:
 
 Sequence similarity search with PSI-Blast.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/psiblast
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time.
 
 [Optional]
   --matrix              The comparison matrix to be used to score alignments when
@@ -501,16 +495,6 @@ Sequence similarity search with PSI-Blast.
                         the search. Example: Specifying '34-89' in an input sequence
                         of total length 100, will tell BLAST to only use residues 34
                         to 89, inclusive.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot format. A partially formatted sequence
-                        is not accepted. Adding a return to the end of the sequence
-                        may help certain applications understand the input. Note
-                        that directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be used at the same time.
   --previousjobid       The job identifier for the previous PSI-BLAST iteration.
   --selectedHits        List of identifiers of the hits from the previous iteration
                         to use to construct the search PSSM for this iteration.
@@ -521,17 +505,39 @@ Sequence similarity search with PSI-Blast.
                         be in the style of a prosite entry file, with at least an ID
                         line, PA line and optional HI line.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/psiblast
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python psiblast.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python psiblast.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python psiblast.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python psiblast.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python psiblast.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python psiblast.py --polljob --jobid <jobId> [--outfile string]

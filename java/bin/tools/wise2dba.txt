@@ -1,3 +1,0 @@
-wise2dba
-Wise2dba
-Pairwise sequence alignment with Wise2dba.

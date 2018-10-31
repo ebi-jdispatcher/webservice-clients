@@ -278,9 +278,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -346,7 +346,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -418,30 +418,14 @@ EMBL-EBI EMBOSS cpgplot Python Client:
 
 Sequence statistics and plots with cpgplot.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/emboss_cpgplot
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --sequence            One or more sequences to be analysed can be entered directly
                         into this form. Sequences can be in GCG, FASTA, EMBL,
                         GenBank, PIR, NBRF or PHYLIP format. Partially formatted
                         sequences are not accepted.
+
+[Optional]
   --window              The percentage CG content and the Observed frequency of CG
                         is calculated within a window whose size is set by this
                         parameter. The window is moved down the sequence and these
@@ -456,17 +440,39 @@ Sequence statistics and plots with cpgplot.
                         of 10 windows that are required before a CpG island is
                         reported.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_cpgplot
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_cpgplot.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_cpgplot.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_cpgplot.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_cpgplot.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_cpgplot.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_cpgplot.py --polljob --jobid <jobId> [--outfile string]

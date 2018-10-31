@@ -98,7 +98,7 @@ parser.add_option('--filter', help=('Filter regions of low sequence complexity. 
 parser.add_option('--seqrange', help=('Specify a range or section of the input sequence to use in the search.'
                   'Example: Specifying 34-89 in an input sequence of total length 100,'
                   'will tell BLAST to only use residues 34 to 89, inclusive.'))
-parser.add_option('--gapalign', help=('This is a true/false setting that tells the program the perform'
+parser.add_option('--gapalign', action='store_true', help=('This is a true/false setting that tells the program the perform'
                   'optimised alignments within regions involving gaps. If set to true,'
                   'the program will perform an alignment using gaps. Otherwise, if it is'
                   'set to false, it will report only individual HSP where two sequence'
@@ -310,9 +310,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -378,7 +378,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -450,28 +450,23 @@ EMBL-EBI NCBI Blast Python Client:
 
 Sequence similarity search with NCBI Blast.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/ncbiblast
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --program             The BLAST program to be used for the Sequence Similarity
                         Search.
+  --stype               Indicates if the sequence is protein or DNA/RNA.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
+                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
+                        only) format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            Database.
+
+[Optional]
   --task                Task option (only selectable for blastn).
   --matrix              (Protein searches) The substitution matrix used for scoring
                         alignments when searching the database.
@@ -513,29 +508,40 @@ Sequence similarity search with NCBI Blast.
   --compstats           Use composition-based statistics.
   --align               Formating for the alignments.
   --transltable         Query Genetic code to use in translation.
-  --stype               Indicates if the sequence is protein or DNA/RNA.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
-                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
-                        only) format. A partially formatted sequence is not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            Database.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/ncbiblast
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python ncbiblast.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python ncbiblast.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python ncbiblast.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python ncbiblast.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python ncbiblast.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python ncbiblast.py --polljob --jobid <jobId> [--outfile string]

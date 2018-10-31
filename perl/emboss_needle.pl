@@ -75,20 +75,19 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'matrix=s'        => \$tool_params{'matrix'},         # Default substitution scoring matrices.
-    'gapopen=f'       => \$tool_params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
-    'gapext=f'        => \$tool_params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
-    'endweight'       => \$tool_params{'endweight'},      # Apply end gap penalty
-    'endopen=f'       => \$tool_params{'endopen'},        # Score taken away when an end gap is created.
-    'endextend=f'     => \$tool_params{'endextend'},      # Penalty is added to the end gap penalty for each base or residue in the end gap. This is how long end gaps are penalized.
-    'format=s'        => \$tool_params{'format'},         # Pairwise sequences format
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'matrix=s'        => \$params{'matrix'},         # Default substitution scoring matrices.
+    'gapopen=f'       => \$params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
+    'gapext=f'        => \$params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
+    'endweight'       => \$params{'endweight'},      # Apply end gap penalty
+    'endopen=f'       => \$params{'endopen'},        # Score taken away when an end gap is created.
+    'endextend=f'     => \$params{'endextend'},      # Penalty is added to the end gap penalty for each base or residue in the end gap. This is how long end gaps are penalized.
+    'format=s'        => \$params{'format'},         # Pairwise sequences format
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -104,8 +103,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -120,7 +119,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -637,13 +635,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -711,10 +709,10 @@ sub load_params {
 
 
     if ($params{'endweight'}) {
-        $tool_params{'endweight'} = 1;
+        $params{'endweight'} = 1;
     }
     else {
-        $tool_params{'endweight'} = 0;
+        $params{'endweight'} = 0;
     }
 
 
@@ -926,40 +924,12 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS needle Python Client:
+EMBL-EBI EMBOSS needle Perl Client:
 
 Pairwise sequence alignment with Needle.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/emboss_needle
-
-[Optional]
-  --matrix              Default substitution scoring matrices.
-  --gapopen             Pairwise alignment score for the first residue in a gap.
-  --gapext              Pairwise alignment score for each additional residue in a
-                        gap.
-  --endweight           Apply end gap penalty.
-  --endopen             Score taken away when an end gap is created.
-  --endextend           Penalty is added to the end gap penalty for each base or
-                        residue in the end gap. This is how long end gaps are
-                        penalized.
-  --format              Pairwise sequences format.
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Defines the type of the sequences to be aligned.
   --asequence           A free text (raw) list of sequences is simply a block of
                         characters representing several DNA/RNA or Protein
@@ -982,17 +952,51 @@ Pairwise sequence alignment with Needle.
                         unpredictable results as hidden/control characters may be
                         present.
 
+[Optional]
+  --matrix              Default substitution scoring matrices.
+  --gapopen             Pairwise alignment score for the first residue in a gap.
+  --gapext              Pairwise alignment score for each additional residue in a
+                        gap.
+  --endweight           Apply end gap penalty.
+  --endopen             Score taken away when an end gap is created.
+  --endextend           Penalty is added to the end gap penalty for each base or
+                        residue in the end gap. This is how long end gaps are
+                        penalized.
+  --format              Pairwise sequences format.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_needle
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

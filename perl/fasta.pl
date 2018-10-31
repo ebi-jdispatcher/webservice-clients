@@ -75,34 +75,33 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'program=s'       => \$tool_params{'program'},        # The FASTA program to be used for the Sequence Similarity Search
-    'stype=s'         => \$tool_params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA. Used to force FASTA to interpret the input sequence as specified type of sequence (via. the '-p', '-n' or '-U' options), this prevents issues when using nucleotide sequences that contain many ambiguous residues.
-    'matrix=s'        => \$tool_params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database. Target identity is the average alignment identity the matrix would produce in the absence of homology and can be used to compare different matrix types. Alignment boundaries are more accurate when the alignment identity matches the target identity percentage.
-    'match_scores=s'  => \$tool_params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
-    'gapopen=i'       => \$tool_params{'gapopen'},        # Score for the first residue in a gap.
-    'gapext=i'        => \$tool_params{'gapext'},         # Score for each additional residue in a gap.
-    'hsps'            => \$tool_params{'hsps'},           # Turn on/off the display of all significant alignments between query and library sequence.
-    'expupperlim=f'   => \$tool_params{'expupperlim'},    # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'explowlim=f'     => \$tool_params{'explowlim'},      # Limit the number of scores and alignments reported based on the expectation value. This is the minimum number of times the match is expected to occur by chance. This allows closely related matches to be excluded from the result in favor of more distant relationships.
-    'strand=s'        => \$tool_params{'strand'},         # For nucleotide sequences specify the sequence strand to be used for the search. By default both upper (provided) and lower (reverse complement of provided) strands are used, for single stranded sequences searching with only the upper or lower strand may provide better results.
-    'hist'            => \$tool_params{'hist'},           # Turn on/off the histogram in the FASTA result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
-    'scores=i'        => \$tool_params{'scores'},         # Maximum number of match score summaries reported in the result output.
-    'alignments=i'    => \$tool_params{'alignments'},     # Maximum number of match alignments reported in the result output.
-    'scoreformat=s'   => \$tool_params{'scoreformat'},    # Different score report formats.
-    'stats=s'         => \$tool_params{'stats'},          # The statistical routines assume that the library contains a large sample of unrelated sequences. Options to select what method to use include regression, maximum likelihood estimates, shuffles, or combinations of these.
-    'annotfeats'      => \$tool_params{'annotfeats'},     # Turn on/off annotation features. Annotation features shows features from UniProtKB, such as variants, active sites, phospho-sites and binding sites that have been found in the aligned region of the database hit. To see the annotation features in the results after this has been enabled, select sequences of interest and click to 'Show' Alignments. This option also enables a new result tab (Domain Diagrams) that highlights domain regions.
-    'annotsym=s'      => \$tool_params{'annotsym'},       # Specify the annotation symbols.
-    'dbrange=s'       => \$tool_params{'dbrange'},        # Specify the sizes of the sequences in a database to search against. For example: 100-250 will search all sequences in a database with length between 100 and 250 residues, inclusive.
-    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell FASTA to only use residues 34 to 89, inclusive.
-    'filter=s'        => \$tool_params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
-    'transltable=i'   => \$tool_params{'transltable'},    # Query Genetic code to use in translation
-    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$tool_params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
-    'ktup=i'          => \$tool_params{'ktup'},           # FASTA uses a rapid word-based lookup strategy to speed the initial phase of the similarity search. The KTUP is used to control the sensitivity of the search. Lower values lead to more sensitive, but slower searches.
+    'program=s'       => \$params{'program'},        # The FASTA program to be used for the Sequence Similarity Search
+    'stype=s'         => \$params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA. Used to force FASTA to interpret the input sequence as specified type of sequence (via. the '-p', '-n' or '-U' options), this prevents issues when using nucleotide sequences that contain many ambiguous residues.
+    'matrix=s'        => \$params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database. Target identity is the average alignment identity the matrix would produce in the absence of homology and can be used to compare different matrix types. Alignment boundaries are more accurate when the alignment identity matches the target identity percentage.
+    'match_scores=s'  => \$params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
+    'gapopen=i'       => \$params{'gapopen'},        # Score for the first residue in a gap.
+    'gapext=i'        => \$params{'gapext'},         # Score for each additional residue in a gap.
+    'hsps'            => \$params{'hsps'},           # Turn on/off the display of all significant alignments between query and library sequence.
+    'expupperlim=f'   => \$params{'expupperlim'},    # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'explowlim=f'     => \$params{'explowlim'},      # Limit the number of scores and alignments reported based on the expectation value. This is the minimum number of times the match is expected to occur by chance. This allows closely related matches to be excluded from the result in favor of more distant relationships.
+    'strand=s'        => \$params{'strand'},         # For nucleotide sequences specify the sequence strand to be used for the search. By default both upper (provided) and lower (reverse complement of provided) strands are used, for single stranded sequences searching with only the upper or lower strand may provide better results.
+    'hist'            => \$params{'hist'},           # Turn on/off the histogram in the FASTA result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
+    'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
+    'alignments=i'    => \$params{'alignments'},     # Maximum number of match alignments reported in the result output.
+    'scoreformat=s'   => \$params{'scoreformat'},    # Different score report formats.
+    'stats=s'         => \$params{'stats'},          # The statistical routines assume that the library contains a large sample of unrelated sequences. Options to select what method to use include regression, maximum likelihood estimates, shuffles, or combinations of these.
+    'annotfeats'      => \$params{'annotfeats'},     # Turn on/off annotation features. Annotation features shows features from UniProtKB, such as variants, active sites, phospho-sites and binding sites that have been found in the aligned region of the database hit. To see the annotation features in the results after this has been enabled, select sequences of interest and click to 'Show' Alignments. This option also enables a new result tab (Domain Diagrams) that highlights domain regions.
+    'annotsym=s'      => \$params{'annotsym'},       # Specify the annotation symbols.
+    'dbrange=s'       => \$params{'dbrange'},        # Specify the sizes of the sequences in a database to search against. For example: 100-250 will search all sequences in a database with length between 100 and 250 residues, inclusive.
+    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell FASTA to only use residues 34 to 89, inclusive.
+    'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+    'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
+    'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'ktup=i'          => \$params{'ktup'},           # FASTA uses a rapid word-based lookup strategy to speed the initial phase of the similarity search. The KTUP is used to control the sensitivity of the search. Lower values lead to more sensitive, but slower searches.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -118,8 +117,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -134,7 +133,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -651,13 +649,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -725,22 +723,22 @@ sub load_params {
 
 
     if ($params{'hsps'}) {
-        $tool_params{'hsps'} = 1;
+        $params{'hsps'} = 1;
     }
     else {
-        $tool_params{'hsps'} = 0;
+        $params{'hsps'} = 0;
     }
     if ($params{'hist'}) {
-        $tool_params{'hist'} = 1;
+        $params{'hist'} = 1;
     }
     else {
-        $tool_params{'hist'} = 0;
+        $params{'hist'} = 0;
     }
     if ($params{'annotfeats'}) {
-        $tool_params{'annotfeats'} = 1;
+        $params{'annotfeats'} = 1;
     }
     else {
-        $tool_params{'annotfeats'} = 0;
+        $params{'annotfeats'} = 0;
     }
 
 
@@ -952,30 +950,12 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI FASTA Python Client:
+EMBL-EBI FASTA Perl Client:
 
 Sequence similarity search with FASTA.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/fasta
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --program             The FASTA program to be used for the Sequence Similarity
                         Search.
   --stype               Indicates if the query sequence is protein, DNA or RNA. Used
@@ -983,6 +963,19 @@ Sequence similarity search with FASTA.
                         type of sequence (via. the '-p', '-n' or '-U' options), this
                         prevents issues when using nucleotide sequences that contain
                         many ambiguous residues.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
+                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
+                        only) format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time.
+
+[Optional]
   --matrix              (Protein searches) The substitution matrix used for scoring
                         alignments when searching the database. Target identity is
                         the average alignment identity the matrix would produce in
@@ -1045,33 +1038,44 @@ Sequence similarity search with FASTA.
                         similarity. However in some cases filtering also masks
                         regions of interest and so should be used with caution.
   --transltable         Query Genetic code to use in translation.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
-                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
-                        only) format. A partially formatted sequence is not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be used at the same time.
   --ktup                FASTA uses a rapid word-based lookup strategy to speed the
                         initial phase of the similarity search. The KTUP is used to
                         control the sensitivity of the search. Lower values lead to
                         more sensitive, but slower searches.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/fasta
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

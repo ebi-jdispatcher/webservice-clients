@@ -75,29 +75,28 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'program=s'       => \$tool_params{'program'},        # The BLAST program to be used for the Sequence Similarity Search.
-    'task=s'          => \$tool_params{'task'},           # Task option (only selectable for blastn)
-    'matrix=s'        => \$tool_params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database.
-    'alignments=i'    => \$tool_params{'alignments'},     # Maximum number of match alignments reported in the result output.
-    'scores=i'        => \$tool_params{'scores'},         # Maximum number of match score summaries reported in the result output.
-    'exp=s'           => \$tool_params{'exp'},            # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'dropoff=i'       => \$tool_params{'dropoff'},        # The amount a score can drop before gapped extension of word hits is halted
-    'match_scores=s'  => \$tool_params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
-    'gapopen=i'       => \$tool_params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
-    'gapext=i'        => \$tool_params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
-    'filter=s'        => \$tool_params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
-    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
-    'gapalign'        => \$tool_params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
-    'compstats=s'     => \$tool_params{'compstats'},      # Use composition-based statistics.
-    'align=i'         => \$tool_params{'align'},          # Formating for the alignments
-    'transltable=i'   => \$tool_params{'transltable'},    # Query Genetic code to use in translation
-    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
-    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$tool_params{'database'},       # Database
+    'program=s'       => \$params{'program'},        # The BLAST program to be used for the Sequence Similarity Search.
+    'task=s'          => \$params{'task'},           # Task option (only selectable for blastn)
+    'matrix=s'        => \$params{'matrix'},         # (Protein searches) The substitution matrix used for scoring alignments when searching the database.
+    'alignments=i'    => \$params{'alignments'},     # Maximum number of match alignments reported in the result output.
+    'scores=i'        => \$params{'scores'},         # Maximum number of match score summaries reported in the result output.
+    'exp=s'           => \$params{'exp'},            # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'dropoff=i'       => \$params{'dropoff'},        # The amount a score can drop before gapped extension of word hits is halted
+    'match_scores=s'  => \$params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
+    'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
+    'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
+    'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
+    'gapalign'        => \$params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
+    'compstats=s'     => \$params{'compstats'},      # Use composition-based statistics.
+    'align=i'         => \$params{'align'},          # Formating for the alignments
+    'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
+    'stype=s'         => \$params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
+    'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$params{'database'},       # Database
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -113,8 +112,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -129,7 +128,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -646,13 +644,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -720,10 +718,10 @@ sub load_params {
 
 
     if ($params{'gapalign'}) {
-        $tool_params{'gapalign'} = 1;
+        $params{'gapalign'} = 1;
     }
     else {
-        $tool_params{'gapalign'} = 0;
+        $params{'gapalign'} = 0;
     }
 
 
@@ -935,32 +933,27 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI NCBI Blast Python Client:
+EMBL-EBI NCBI Blast Perl Client:
 
 Sequence similarity search with NCBI Blast.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/ncbiblast
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --program             The BLAST program to be used for the Sequence Similarity
                         Search.
+  --stype               Indicates if the sequence is protein or DNA/RNA.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
+                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
+                        only) format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            Database.
+
+[Optional]
   --task                Task option (only selectable for blastn).
   --matrix              (Protein searches) The substitution matrix used for scoring
                         alignments when searching the database.
@@ -1002,29 +995,40 @@ Sequence similarity search with NCBI Blast.
   --compstats           Use composition-based statistics.
   --align               Formating for the alignments.
   --transltable         Query Genetic code to use in translation.
-  --stype               Indicates if the sequence is protein or DNA/RNA.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
-                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
-                        only) format. A partially formatted sequence is not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            Database.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/ncbiblast
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

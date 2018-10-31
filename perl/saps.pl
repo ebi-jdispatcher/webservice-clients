@@ -75,14 +75,13 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$tool_params{'sequence'},       # One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted.
-    'outputtype=s'    => \$tool_params{'outputtype'},     # Output type
-    'species=s'       => \$tool_params{'species'},        # Uses the specified species table for quantile comparisons
-    'positiveresidues=s'=> \$tool_params{'positiveresidues'},# By default, SAPS treats only lysine (K) and arginine (R) as positively charged residues. Alternatively, Histidine (H) can also be treated as positively charged in all parts of the program involving the charge alphabet.
+    'sequence=s'      => \$params{'sequence'},       # One or more sequences to be analysed can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted.
+    'outputtype=s'    => \$params{'outputtype'},     # Output type
+    'species=s'       => \$params{'species'},        # Uses the specified species table for quantile comparisons
+    'positiveresidues=s'=> \$params{'positiveresidues'},# By default, SAPS treats only lysine (K) and arginine (R) as positively charged residues. Alternatively, Histidine (H) can also be treated as positively charged in all parts of the program involving the charge alphabet.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -98,8 +97,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -114,7 +113,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -631,13 +629,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -915,9 +913,25 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI SAPS Python Client:
+EMBL-EBI SAPS Perl Client:
 
 Sequence statistics and plots with SAPS.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            One or more sequences to be analysed can be entered directly
+                        into this form. Sequences can be in GCG, FASTA, EMBL
+                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted.
+
+[Optional]
+  --outputtype          Output type.
+  --species             Uses the specified species table for quantile comparisons.
+  --positiveresidues    By default, SAPS treats only lysine (K) and arginine (R) as
+                        positively charged residues. Alternatively, Histidine (H)
+                        can also be treated as positively charged in all parts of
+                        the program involving the charge alphabet.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -934,34 +948,24 @@ Sequence statistics and plots with SAPS.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/saps
 
-[Optional]
-  --sequence            One or more sequences to be analysed can be entered directly
-                        into this form. Sequences can be in GCG, FASTA, EMBL
-                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted.
-  --outputtype          Output type.
-  --species             Uses the specified species table for quantile comparisons.
-  --positiveresidues    By default, SAPS treats only lysine (K) and arginine (R) as
-                        positively charged residues. Alternatively, Histidine (H)
-                        can also be treated as positively charged in all parts of
-                        the program involving the charge alphabet.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

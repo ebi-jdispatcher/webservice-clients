@@ -75,47 +75,46 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. The sequences must be in FASTA format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 500 sequences or 1MB of data.
-    'data_file=f'     => \$tool_params{'data_file'},      # A file containing valid sequences in FASTA format can be used as input for the sequence similarity search. Word processors files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
-    'tree_file=f'     => \$tool_params{'tree_file'},      # Tree file in Newick Binary Format.
-    'do_njtree'       => \$tool_params{'do_njtree'},      # compute guide tree from input alignment
-    'do_clustalw_tree'=> \$tool_params{'do_clustalw_tree'},# compute guide tree using Clustalw2
-    'model_file=f'    => \$tool_params{'model_file'},     # Structure Model File.
-    'output_format=s' => \$tool_params{'output_format'},  # Format for output alignment file
-    'trust_insertions'=> \$tool_params{'trust_insertions'},# Trust inferred insertions and do not allow their later matching
-    'show_insertions_with_dots'=> \$tool_params{'show_insertions_with_dots'},# Show gaps created by insertions as dots, deletions as dashes
-    'use_log_space'   => \$tool_params{'use_log_space'},  # Use log space for probabilities; slower but necessary for large numbers of sequences
-    'use_codon_model' => \$tool_params{'use_codon_model'},# Use codon substutition model for alignment; requires DNA, multiples of three in length
-    'translate_DNA'   => \$tool_params{'translate_DNA'},  # Translate DNA sequences to proteins and backtranslate results
-    'mt_translate_DNA'=> \$tool_params{'mt_translate_DNA'},# Translate DNA sequences to mt proteins, align and backtranslate results
-    'gap_rate=f'      => \$tool_params{'gap_rate'},       # Gap Opening Rate
-    'gap_extension=f' => \$tool_params{'gap_extension'},  # Gap Extension Probability
-    'tn93_kappa=f'    => \$tool_params{'tn93_kappa'},     # Parameter kappa for Tamura-Nei DNA substitution model
-    'tn93_rho=f'      => \$tool_params{'tn93_rho'},       # Parameter rho for Tamura-Nei DNA substitution model
-    'guide_pairwise_distance=f'=> \$tool_params{'guide_pairwise_distance'},# Fixed pairwise distance used for generating scoring matrix in guide tree computation
-    'max_pairwise_distance=f'=> \$tool_params{'max_pairwise_distance'},# Maximum pairwise distance allowed in progressive steps of multiple alignment; allows making matching more stringent or flexible
-    'branch_length_scaling=f'=> \$tool_params{'branch_length_scaling'},# Factor for scaling all branch lengths
-    'branch_length_fixed=f'=> \$tool_params{'branch_length_fixed'},# Fixed value for all branch lengths
-    'branch_length_maximum=f'=> \$tool_params{'branch_length_maximum'},# Upper limit for branch lengths
-    'use_real_branch_lengths'=> \$tool_params{'use_real_branch_lengths'},# Use real branch lengths; using this can be harmful as scoring matrices became flat for large distances; rather use max_pairwise_distance
-    'do_no_posterior' => \$tool_params{'do_no_posterior'},# Do not compute posterior probability; much faster if those not needed
-    'run_once'        => \$tool_params{'run_once'},       # Do not iterate alignment
-    'run_twice'       => \$tool_params{'run_twice'},      # Iterate alignment
-    'penalise_terminal_gaps'=> \$tool_params{'penalise_terminal_gaps'},# Penalise terminal gaps as any other gap
-    'do_posterior_only'=> \$tool_params{'do_posterior_only'},# Compute posterior probabilities for given *aligned* sequences; may be unstable but useful
-    'use_chaos_anchors'=> \$tool_params{'use_chaos_anchors'},# Use chaos anchors to massively speed up alignments; DNA only
-    'minimum_anchor_distance=i'=> \$tool_params{'minimum_anchor_distance'},# Minimum chaos anchor distance
-    'maximum_anchor_distance=i'=> \$tool_params{'maximum_anchor_distance'},# Maximum chaos anchor distance
-    'skip_anchor_distance=i'=> \$tool_params{'skip_anchor_distance'},# Chaos anchor skip distance
-    'drop_anchor_distance=i'=> \$tool_params{'drop_anchor_distance'},# Chaos anchor drop distance
-    'output_ancestors'=> \$tool_params{'output_ancestors'},# Output ancestral sequences and probability profiles; note additional files
-    'noise_level=i'   => \$tool_params{'noise_level'},    # Noise level; progress and debugging information
-    'stay_quiet'      => \$tool_params{'stay_quiet'},     # Stay quiet; disable all progress information
-    'random_seed=i'   => \$tool_params{'random_seed'},    # Set seed for random number generator; not recommended
+    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. The sequences must be in FASTA format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 500 sequences or 1MB of data.
+    'data_file=f'     => \$params{'data_file'},      # A file containing valid sequences in FASTA format can be used as input for the sequence similarity search. Word processors files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
+    'tree_file=f'     => \$params{'tree_file'},      # Tree file in Newick Binary Format.
+    'do_njtree'       => \$params{'do_njtree'},      # compute guide tree from input alignment
+    'do_clustalw_tree'=> \$params{'do_clustalw_tree'},# compute guide tree using Clustalw2
+    'model_file=f'    => \$params{'model_file'},     # Structure Model File.
+    'output_format=s' => \$params{'output_format'},  # Format for output alignment file
+    'trust_insertions'=> \$params{'trust_insertions'},# Trust inferred insertions and do not allow their later matching
+    'show_insertions_with_dots'=> \$params{'show_insertions_with_dots'},# Show gaps created by insertions as dots, deletions as dashes
+    'use_log_space'   => \$params{'use_log_space'},  # Use log space for probabilities; slower but necessary for large numbers of sequences
+    'use_codon_model' => \$params{'use_codon_model'},# Use codon substutition model for alignment; requires DNA, multiples of three in length
+    'translate_DNA'   => \$params{'translate_DNA'},  # Translate DNA sequences to proteins and backtranslate results
+    'mt_translate_DNA'=> \$params{'mt_translate_DNA'},# Translate DNA sequences to mt proteins, align and backtranslate results
+    'gap_rate=f'      => \$params{'gap_rate'},       # Gap Opening Rate
+    'gap_extension=f' => \$params{'gap_extension'},  # Gap Extension Probability
+    'tn93_kappa=f'    => \$params{'tn93_kappa'},     # Parameter kappa for Tamura-Nei DNA substitution model
+    'tn93_rho=f'      => \$params{'tn93_rho'},       # Parameter rho for Tamura-Nei DNA substitution model
+    'guide_pairwise_distance=f'=> \$params{'guide_pairwise_distance'},# Fixed pairwise distance used for generating scoring matrix in guide tree computation
+    'max_pairwise_distance=f'=> \$params{'max_pairwise_distance'},# Maximum pairwise distance allowed in progressive steps of multiple alignment; allows making matching more stringent or flexible
+    'branch_length_scaling=f'=> \$params{'branch_length_scaling'},# Factor for scaling all branch lengths
+    'branch_length_fixed=f'=> \$params{'branch_length_fixed'},# Fixed value for all branch lengths
+    'branch_length_maximum=f'=> \$params{'branch_length_maximum'},# Upper limit for branch lengths
+    'use_real_branch_lengths'=> \$params{'use_real_branch_lengths'},# Use real branch lengths; using this can be harmful as scoring matrices became flat for large distances; rather use max_pairwise_distance
+    'do_no_posterior' => \$params{'do_no_posterior'},# Do not compute posterior probability; much faster if those not needed
+    'run_once'        => \$params{'run_once'},       # Do not iterate alignment
+    'run_twice'       => \$params{'run_twice'},      # Iterate alignment
+    'penalise_terminal_gaps'=> \$params{'penalise_terminal_gaps'},# Penalise terminal gaps as any other gap
+    'do_posterior_only'=> \$params{'do_posterior_only'},# Compute posterior probabilities for given *aligned* sequences; may be unstable but useful
+    'use_chaos_anchors'=> \$params{'use_chaos_anchors'},# Use chaos anchors to massively speed up alignments; DNA only
+    'minimum_anchor_distance=i'=> \$params{'minimum_anchor_distance'},# Minimum chaos anchor distance
+    'maximum_anchor_distance=i'=> \$params{'maximum_anchor_distance'},# Maximum chaos anchor distance
+    'skip_anchor_distance=i'=> \$params{'skip_anchor_distance'},# Chaos anchor skip distance
+    'drop_anchor_distance=i'=> \$params{'drop_anchor_distance'},# Chaos anchor drop distance
+    'output_ancestors'=> \$params{'output_ancestors'},# Output ancestral sequences and probability profiles; note additional files
+    'noise_level=i'   => \$params{'noise_level'},    # Noise level; progress and debugging information
+    'stay_quiet'      => \$params{'stay_quiet'},     # Stay quiet; disable all progress information
+    'random_seed=i'   => \$params{'random_seed'},    # Set seed for random number generator; not recommended
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -131,8 +130,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -147,7 +146,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -664,13 +662,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -738,106 +736,106 @@ sub load_params {
 
 
     if ($params{'do_njtree'}) {
-        $tool_params{'do_njtree'} = 1;
+        $params{'do_njtree'} = 1;
     }
     else {
-        $tool_params{'do_njtree'} = 0;
+        $params{'do_njtree'} = 0;
     }
     if ($params{'do_clustalw_tree'}) {
-        $tool_params{'do_clustalw_tree'} = 1;
+        $params{'do_clustalw_tree'} = 1;
     }
     else {
-        $tool_params{'do_clustalw_tree'} = 0;
+        $params{'do_clustalw_tree'} = 0;
     }
     if ($params{'trust_insertions'}) {
-        $tool_params{'trust_insertions'} = 1;
+        $params{'trust_insertions'} = 1;
     }
     else {
-        $tool_params{'trust_insertions'} = 0;
+        $params{'trust_insertions'} = 0;
     }
     if ($params{'show_insertions_with_dots'}) {
-        $tool_params{'show_insertions_with_dots'} = 1;
+        $params{'show_insertions_with_dots'} = 1;
     }
     else {
-        $tool_params{'show_insertions_with_dots'} = 0;
+        $params{'show_insertions_with_dots'} = 0;
     }
     if ($params{'use_log_space'}) {
-        $tool_params{'use_log_space'} = 1;
+        $params{'use_log_space'} = 1;
     }
     else {
-        $tool_params{'use_log_space'} = 0;
+        $params{'use_log_space'} = 0;
     }
     if ($params{'use_codon_model'}) {
-        $tool_params{'use_codon_model'} = 1;
+        $params{'use_codon_model'} = 1;
     }
     else {
-        $tool_params{'use_codon_model'} = 0;
+        $params{'use_codon_model'} = 0;
     }
     if ($params{'translate_DNA'}) {
-        $tool_params{'translate_DNA'} = 1;
+        $params{'translate_DNA'} = 1;
     }
     else {
-        $tool_params{'translate_DNA'} = 0;
+        $params{'translate_DNA'} = 0;
     }
     if ($params{'mt_translate_DNA'}) {
-        $tool_params{'mt_translate_DNA'} = 1;
+        $params{'mt_translate_DNA'} = 1;
     }
     else {
-        $tool_params{'mt_translate_DNA'} = 0;
+        $params{'mt_translate_DNA'} = 0;
     }
     if ($params{'use_real_branch_lengths'}) {
-        $tool_params{'use_real_branch_lengths'} = 1;
+        $params{'use_real_branch_lengths'} = 1;
     }
     else {
-        $tool_params{'use_real_branch_lengths'} = 0;
+        $params{'use_real_branch_lengths'} = 0;
     }
     if ($params{'do_no_posterior'}) {
-        $tool_params{'do_no_posterior'} = 1;
+        $params{'do_no_posterior'} = 1;
     }
     else {
-        $tool_params{'do_no_posterior'} = 0;
+        $params{'do_no_posterior'} = 0;
     }
     if ($params{'run_once'}) {
-        $tool_params{'run_once'} = 1;
+        $params{'run_once'} = 1;
     }
     else {
-        $tool_params{'run_once'} = 0;
+        $params{'run_once'} = 0;
     }
     if ($params{'run_twice'}) {
-        $tool_params{'run_twice'} = 1;
+        $params{'run_twice'} = 1;
     }
     else {
-        $tool_params{'run_twice'} = 0;
+        $params{'run_twice'} = 0;
     }
     if ($params{'penalise_terminal_gaps'}) {
-        $tool_params{'penalise_terminal_gaps'} = 1;
+        $params{'penalise_terminal_gaps'} = 1;
     }
     else {
-        $tool_params{'penalise_terminal_gaps'} = 0;
+        $params{'penalise_terminal_gaps'} = 0;
     }
     if ($params{'do_posterior_only'}) {
-        $tool_params{'do_posterior_only'} = 1;
+        $params{'do_posterior_only'} = 1;
     }
     else {
-        $tool_params{'do_posterior_only'} = 0;
+        $params{'do_posterior_only'} = 0;
     }
     if ($params{'use_chaos_anchors'}) {
-        $tool_params{'use_chaos_anchors'} = 1;
+        $params{'use_chaos_anchors'} = 1;
     }
     else {
-        $tool_params{'use_chaos_anchors'} = 0;
+        $params{'use_chaos_anchors'} = 0;
     }
     if ($params{'output_ancestors'}) {
-        $tool_params{'output_ancestors'} = 1;
+        $params{'output_ancestors'} = 1;
     }
     else {
-        $tool_params{'output_ancestors'} = 0;
+        $params{'output_ancestors'} = 0;
     }
     if ($params{'stay_quiet'}) {
-        $tool_params{'stay_quiet'} = 1;
+        $params{'stay_quiet'} = 1;
     }
     else {
-        $tool_params{'stay_quiet'} = 0;
+        $params{'stay_quiet'} = 0;
     }
 
 
@@ -1049,30 +1047,12 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Prank Python Client:
+EMBL-EBI Prank Perl Client:
 
 Multiple sequence alignment with Prank.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/prank
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --sequence            Three or more sequences to be aligned can be entered
                         directly into this form. The sequences must be in FASTA
                         format. Partially formatted sequences are not accepted.
@@ -1081,6 +1061,8 @@ Multiple sequence alignment with Prank.
                         data from word processors may yield unpredictable results as
                         hidden/control characters may be present. There is a limit
                         of 500 sequences or 1MB of data.
+
+[Optional]
   --data_file           A file containing valid sequences in FASTA format can be
                         used as input for the sequence similarity search. Word
                         processors files may yield unpredictable results as
@@ -1136,17 +1118,39 @@ Multiple sequence alignment with Prank.
   --stay_quiet          Stay quiet; disable all progress information.
   --random_seed         Set seed for random number generator; not recommended.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/prank
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

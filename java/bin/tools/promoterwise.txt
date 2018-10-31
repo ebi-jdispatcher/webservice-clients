@@ -1,3 +1,0 @@
-promoterwise
-Promoterwise
-Pairwise sequence alignment with Promoterwise.

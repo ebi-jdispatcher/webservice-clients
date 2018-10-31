@@ -78,7 +78,7 @@ parser.add_option('--expthr', help=('Limits the number of scores and alignments 
                   'expectation value. This is the maximum number of times the match is'
                   'expected to occur by chance.'))
 parser.add_option('--format', help=('Pairwise sequences format'))
-parser.add_option('--graphics', help=('Generates a visual output'))
+parser.add_option('--graphics', action='store_true', help=('Generates a visual output'))
 parser.add_option('--asequence', help=('A free text (raw) list of sequences is simply a block of characters'
                   'representing several DNA/RNA or Protein sequences. A sequence can be'
                   'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
@@ -290,9 +290,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -358,7 +358,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -430,37 +430,9 @@ EMBL-EBI LALIGN Python Client:
 
 Pairwise sequence alignment with Lalign.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/lalign
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Defines the type of the sequences to be aligned.
-  --matrix              Default substitution scoring matrices.
-  --match_scores        Specify match/mismatch scores for DNA comparisons.
-  --gapopen             Pairwise alignment score for the first residue in a gap.
-  --gapext              Pairwise alignment score for each additional residue in a
-                        gap.
-  --expthr              Limits the number of scores and alignments reported based on
-                        the expectation value. This is the maximum number of times
-                        the match is expected to occur by chance.
-  --format              Pairwise sequences format.
-  --graphics            Generates a visual output.
   --asequence           A free text (raw) list of sequences is simply a block of
                         characters representing several DNA/RNA or Protein
                         sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide
@@ -482,17 +454,51 @@ Pairwise sequence alignment with Lalign.
                         unpredictable results as hidden/control characters may be
                         present.
 
+[Optional]
+  --matrix              Default substitution scoring matrices.
+  --match_scores        Specify match/mismatch scores for DNA comparisons.
+  --gapopen             Pairwise alignment score for the first residue in a gap.
+  --gapext              Pairwise alignment score for each additional residue in a
+                        gap.
+  --expthr              Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --format              Pairwise sequences format.
+  --graphics            Generates a visual output.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/lalign
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python lalign.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python lalign.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python lalign.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python lalign.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python lalign.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python lalign.py --polljob --jobid <jobId> [--outfile string]

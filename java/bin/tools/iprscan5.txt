@@ -1,3 +1,0 @@
-iprscan5
-InterProScan 5
-Protein function analysis with InterProScan 5.

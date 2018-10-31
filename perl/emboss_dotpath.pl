@@ -75,16 +75,15 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'wordsize=i'      => \$tool_params{'wordsize'},       # Word size
-    'overlaps'        => \$tool_params{'overlaps'},       # Displays the overlapping matches (in red) as well as the minimal set of non-overlapping matches.
-    'boxit'           => \$tool_params{'boxit'},          # Draw a box around dotplot.
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'wordsize=i'      => \$params{'wordsize'},       # Word size
+    'overlaps'        => \$params{'overlaps'},       # Displays the overlapping matches (in red) as well as the minimal set of non-overlapping matches.
+    'boxit'           => \$params{'boxit'},          # Draw a box around dotplot.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -100,8 +99,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -116,7 +115,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -633,13 +631,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -707,16 +705,16 @@ sub load_params {
 
 
     if ($params{'overlaps'}) {
-        $tool_params{'overlaps'} = 1;
+        $params{'overlaps'} = 1;
     }
     else {
-        $tool_params{'overlaps'} = 0;
+        $params{'overlaps'} = 0;
     }
     if ($params{'boxit'}) {
-        $tool_params{'boxit'} = 1;
+        $params{'boxit'} = 1;
     }
     else {
-        $tool_params{'boxit'} = 0;
+        $params{'boxit'} = 0;
     }
 
 
@@ -928,30 +926,12 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS dotpath Python Client:
+EMBL-EBI EMBOSS dotpath Perl Client:
 
 Sequence statistics and plots with dotpath.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/emboss_dotpath
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Defines the type of the sequences to be aligned.
   --asequence           A free text (raw) list of sequences is simply a block of
                         characters representing several DNA/RNA or Protein
@@ -973,22 +953,46 @@ Sequence statistics and plots with dotpath.
                         directly using data from word processors may yield
                         unpredictable results as hidden/control characters may be
                         present.
+
+[Optional]
   --wordsize            Word size.
   --overlaps            Displays the overlapping matches (in red) as well as the
                         minimal set of non-overlapping matches.
   --boxit               Draw a box around dotplot.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_dotpath
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

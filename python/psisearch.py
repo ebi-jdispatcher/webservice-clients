@@ -81,7 +81,7 @@ parser.add_option('--gapext', help=('Penalty taken away from the score for each 
 parser.add_option('--expthr', help=('Limits the number of scores and alignments reported based on the'
                   'expectation value. This value is the maximum number of times the match'
                   'is expected to occur by chance.'))
-parser.add_option('--mask', help=('Turn on/off the sequence masking for HOEs in PSSM constructions. This'
+parser.add_option('--mask', action='store_true', help=('Turn on/off the sequence masking for HOEs in PSSM constructions. This'
                   'option allows you to mask sequence characters beyond the alignment'
                   'region when constructing the PSSM, reducing over-extension errors.'))
 parser.add_option('--psithr', help=('Expectation value threshold for automatic selection of matched'
@@ -89,7 +89,7 @@ parser.add_option('--psithr', help=('Expectation value threshold for automatic s
 parser.add_option('--scores', help=('Maximum number of alignment score summaries reported in the result'
                   'output.'))
 parser.add_option('--alignments', help=('Maximum number of alignments reported in the result output.'))
-parser.add_option('--hsps', help=('Turn on/off the display of all significant alignments between query'
+parser.add_option('--hsps', action='store_true', help=('Turn on/off the display of all significant alignments between query'
                   'and database sequence.'))
 parser.add_option('--scoreformat', help=('Different score formats.'))
 parser.add_option('--filter', help=('Filter regions of low sequence complexity. This can avoid issues with'
@@ -97,10 +97,10 @@ parser.add_option('--filter', help=('Filter regions of low sequence complexity. 
                   'rather then meaningful sequence similarity. However in some cases'
                   'filtering also masks regions of interest and so should be used with'
                   'caution.'))
-parser.add_option('--hist', help=('Turn on/off the histogram in the PSI-Search result. The histogram'
+parser.add_option('--hist', action='store_true', help=('Turn on/off the histogram in the PSI-Search result. The histogram'
                   'gives a qualitative view of how well the statistical theory fits the'
                   'similarity scores calculated by the program.'))
-parser.add_option('--annotfeats', help=('Turn on/off annotation features. Annotation features shows features'
+parser.add_option('--annotfeats', action='store_true', help=('Turn on/off annotation features. Annotation features shows features'
                   'from UniProtKB, such as variants, active sites, phospho-sites and'
                   'binding sites that have been found in the aligned region of the'
                   'database hit. To see the annotation features in the results after this'
@@ -318,9 +318,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -386,7 +386,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -458,24 +458,18 @@ EMBL-EBI PSI-Search Python Client:
 
 Sequence similarity search with PSI-Search.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/psisearch
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be selected at the same time.
 
 [Optional]
   --matrix              The comparison matrix to be used to score alignments when
@@ -521,16 +515,6 @@ Sequence similarity search with PSI-Search.
                         sequences of interest and click to 'Show' Alignments. This
                         option also enables a new result tab (Domain Diagrams) that
                         highlights domain regions.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot format. A partially formatted sequence
-                        is not accepted. Adding a return to the end of the sequence
-                        may help certain applications understand the input. Note
-                        that directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be selected at the same time.
   --previousjobid       The job identifier for the previous PSI-Search iteration.
   --selectedHits        List of identifiers from the hits of the previous iteration
                         to use to construct the search PSSM for this iteration.
@@ -539,17 +523,39 @@ Sequence similarity search with PSI-Search.
   --cpfile              Checkpoint file from the previous iteration. Must be in
                         ASN.1 Binary Format.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/psisearch
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python psisearch.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python psisearch.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python psisearch.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python psisearch.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python psisearch.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python psisearch.py --polljob --jobid <jobId> [--outfile string]

@@ -75,25 +75,24 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'para'            => \$tool_params{'para'},           # Show parameters in the output alignmment, as in genewise.
-    'pretty'          => \$tool_params{'pretty'},         # Show pretty ASCII alignment viewing, as in genewise.
-    'genes'           => \$tool_params{'genes'},          # Show gene structure, as in genewise
-    'trans'           => \$tool_params{'trans'},          # Show protein translation, breaking at frameshifts.
-    'cdna'            => \$tool_params{'cdna'},           # Show cDNA, as in genewise.
-    'embl'            => \$tool_params{'embl'},           # EMBL feature table format with CDS key.
-    'ace'             => \$tool_params{'ace'},            # Show Ace file gene structure, as in genewise.
-    'gff'             => \$tool_params{'gff'},            # Show Gene Feature Format file, as in genewise.
-    'diana'           => \$tool_params{'diana'},          # Show EMBL FT format suitable for diana.
-    'init=s'          => \$tool_params{'init'},           # Model in local/global mode. You should only put the model in global mode if you expect your protein homolog to have homology from start to end to the gene in the DNA sequence.
-    'splice=s'        => \$tool_params{'splice'},         # Using splice model or GT/AG? Use the full blown model for splice sites, or a simplistic GT/AG. Generally if you are using a DNA sequence which is from human or worm, then leave this on. If you are using a very different (eg plant) species, switch it off.
-    'random=s'        => \$tool_params{'random'},         # The probability of the model has to compared to an alternative model (in fact to all alternative models which are possible) to allow proper Bayesian inference. This causes considerable difficulty in these algorithms because from a algorithmical point of view we would probably like to use an alternative model which is a single state, like the random model in profile-HMMs, where we can simply 'log-odd' the scored model, whereas from a biological point of view we probably want to use a full gene predicting alternative model. In addition we need to account for the fact that the protein HMM or protein homolog probably does not extend over all the gene sequence, nor in fact does the gene have to be the only gene in the DNA sequence. This means that there are very good splice sites/poly-pyrimidine tracts outside of the 'matched' alignment can severely de-rail the alignment.
-    'alg=s'           => \$tool_params{'alg'},            # The solutions is different in the genewise21:93 compared to the genewise 6:23 algorithms. (1) In 6:23 we force the external match portions of the homology model to be identical to the alternative model, thus cancelling each other out. This is a pretty gross approximation and is sort of equivalent to the intron tie'ing. It makes things algorithmically easier... However this means a) 6:23 is nowhere near a probabilistic model and b) you really have to used a tied intron model in 6:23 otherwise very bad edge effects (final introns being ridiculously long) occur. (2) In 21:93 we have a full probabilistic model on each side of the homology segment. This is not reported in the -pretty output but you can see it in the -alb output if you like. Do not trust the gene model outside of the homology segment however. By having these external gene model parts we can use all the gene model features safe in the knowledge that if the homology segments do not justify the match then the external part of the model will soak up the additional intron/py-tract/splice site biases.
-    'asequence=s'     => \$tool_params{'asequence'},      # The protein sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
-    'bsequence=s'     => \$tool_params{'bsequence'},      # The DNA sequence to be compared can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'para'            => \$params{'para'},           # Show parameters in the output alignmment, as in genewise.
+    'pretty'          => \$params{'pretty'},         # Show pretty ASCII alignment viewing, as in genewise.
+    'genes'           => \$params{'genes'},          # Show gene structure, as in genewise
+    'trans'           => \$params{'trans'},          # Show protein translation, breaking at frameshifts.
+    'cdna'            => \$params{'cdna'},           # Show cDNA, as in genewise.
+    'embl'            => \$params{'embl'},           # EMBL feature table format with CDS key.
+    'ace'             => \$params{'ace'},            # Show Ace file gene structure, as in genewise.
+    'gff'             => \$params{'gff'},            # Show Gene Feature Format file, as in genewise.
+    'diana'           => \$params{'diana'},          # Show EMBL FT format suitable for diana.
+    'init=s'          => \$params{'init'},           # Model in local/global mode. You should only put the model in global mode if you expect your protein homolog to have homology from start to end to the gene in the DNA sequence.
+    'splice=s'        => \$params{'splice'},         # Using splice model or GT/AG? Use the full blown model for splice sites, or a simplistic GT/AG. Generally if you are using a DNA sequence which is from human or worm, then leave this on. If you are using a very different (eg plant) species, switch it off.
+    'random=s'        => \$params{'random'},         # The probability of the model has to compared to an alternative model (in fact to all alternative models which are possible) to allow proper Bayesian inference. This causes considerable difficulty in these algorithms because from a algorithmical point of view we would probably like to use an alternative model which is a single state, like the random model in profile-HMMs, where we can simply 'log-odd' the scored model, whereas from a biological point of view we probably want to use a full gene predicting alternative model. In addition we need to account for the fact that the protein HMM or protein homolog probably does not extend over all the gene sequence, nor in fact does the gene have to be the only gene in the DNA sequence. This means that there are very good splice sites/poly-pyrimidine tracts outside of the 'matched' alignment can severely de-rail the alignment.
+    'alg=s'           => \$params{'alg'},            # The solutions is different in the genewise21:93 compared to the genewise 6:23 algorithms. (1) In 6:23 we force the external match portions of the homology model to be identical to the alternative model, thus cancelling each other out. This is a pretty gross approximation and is sort of equivalent to the intron tie'ing. It makes things algorithmically easier... However this means a) 6:23 is nowhere near a probabilistic model and b) you really have to used a tied intron model in 6:23 otherwise very bad edge effects (final introns being ridiculously long) occur. (2) In 21:93 we have a full probabilistic model on each side of the homology segment. This is not reported in the -pretty output but you can see it in the -alb output if you like. Do not trust the gene model outside of the homology segment however. By having these external gene model parts we can use all the gene model features safe in the knowledge that if the homology segments do not justify the match then the external part of the model will soak up the additional intron/py-tract/splice site biases.
+    'asequence=s'     => \$params{'asequence'},      # The protein sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'bsequence=s'     => \$params{'bsequence'},      # The DNA sequence to be compared can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -109,8 +108,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -125,7 +124,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -642,13 +640,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -716,58 +714,58 @@ sub load_params {
 
 
     if ($params{'para'}) {
-        $tool_params{'para'} = 1;
+        $params{'para'} = 1;
     }
     else {
-        $tool_params{'para'} = 0;
+        $params{'para'} = 0;
     }
     if ($params{'pretty'}) {
-        $tool_params{'pretty'} = 1;
+        $params{'pretty'} = 1;
     }
     else {
-        $tool_params{'pretty'} = 0;
+        $params{'pretty'} = 0;
     }
     if ($params{'genes'}) {
-        $tool_params{'genes'} = 1;
+        $params{'genes'} = 1;
     }
     else {
-        $tool_params{'genes'} = 0;
+        $params{'genes'} = 0;
     }
     if ($params{'trans'}) {
-        $tool_params{'trans'} = 1;
+        $params{'trans'} = 1;
     }
     else {
-        $tool_params{'trans'} = 0;
+        $params{'trans'} = 0;
     }
     if ($params{'cdna'}) {
-        $tool_params{'cdna'} = 1;
+        $params{'cdna'} = 1;
     }
     else {
-        $tool_params{'cdna'} = 0;
+        $params{'cdna'} = 0;
     }
     if ($params{'embl'}) {
-        $tool_params{'embl'} = 1;
+        $params{'embl'} = 1;
     }
     else {
-        $tool_params{'embl'} = 0;
+        $params{'embl'} = 0;
     }
     if ($params{'ace'}) {
-        $tool_params{'ace'} = 1;
+        $params{'ace'} = 1;
     }
     else {
-        $tool_params{'ace'} = 0;
+        $params{'ace'} = 0;
     }
     if ($params{'gff'}) {
-        $tool_params{'gff'} = 1;
+        $params{'gff'} = 1;
     }
     else {
-        $tool_params{'gff'} = 0;
+        $params{'gff'} = 0;
     }
     if ($params{'diana'}) {
-        $tool_params{'diana'} = 1;
+        $params{'diana'} = 1;
     }
     else {
-        $tool_params{'diana'} = 0;
+        $params{'diana'} = 0;
     }
 
 
@@ -979,28 +977,29 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Genewise Python Client:
+EMBL-EBI Genewise Perl Client:
 
 Pairwise sequence alignment with Genewise.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/genewise
+[Required (for job submission)]
+  --email               E-mail address.
+  --asequence           The protein sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
+                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
+                        only) format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present. There is a limit of 1MB for the sequence entry.
+  --bsequence           The DNA sequence to be compared can be entered directly into
+                        the form. The sequence must be in a recognised format eg.
+                        GCG, FASTA, EMBL, GenBank. Partially formatted sequences are
+                        not accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present. There is a limit of 1MB for the sequence entry.
 
 [Optional]
   --para                Show parameters in the output alignmment, as in genewise.
@@ -1054,35 +1053,40 @@ Pairwise sequence alignment with Genewise.
                         if the homology segments do not justify the match then the
                         external part of the model will soak up the additional
                         intron/py-tract/splice site biases.
-  --asequence           The protein sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, EMBL (Nucleotide only),
-                        GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein
-                        only) format. A partially formatted sequence is not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present. There is a limit of 1MB for the sequence entry.
-  --bsequence           The DNA sequence to be compared can be entered directly into
-                        the form. The sequence must be in a recognised format eg.
-                        GCG, FASTA, EMBL, GenBank. Partially formatted sequences are
-                        not accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present. There is a limit of 1MB for the sequence entry.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/genewise
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

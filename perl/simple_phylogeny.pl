@@ -75,16 +75,15 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'tree=s'          => \$tool_params{'tree'},           # Determines the outputs that the Simple Phylogeny tool produces.
-    'kimura'          => \$tool_params{'kimura'},         # Controls whether Simple Phylogeny attempts to correct for multiple substitutions at the same site. This is recommended to be set 'on' for more divergent sequences and has the effect of stretching branch lengths. For very divergent sequences the distances cannot be reliably corrected.
-    'tossgaps'        => \$tool_params{'tossgaps'},       # With this option enabled columns where any of the sequences in the input have a gap will be excluded, forcing the alignment to use only positions where information can be included from all sequences.
-    'clustering=s'    => \$tool_params{'clustering'},     # Clustering Methods
-    'pim'             => \$tool_params{'pim'},            # Output the percentage identity matrix
-    'sequence=s'      => \$tool_params{'sequence'},       # Phylogeny using an alignment directly entered into the input box in a supported format. Alignment formats supported include Clustal, FASTA and MSF. Partially formatted or unaligned sequences are not accepted. Adding a return to the end of the sequence may help the Simple Phylogeny tool understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a limit of 500 sequences and 1MB of data.
+    'tree=s'          => \$params{'tree'},           # Determines the outputs that the Simple Phylogeny tool produces.
+    'kimura'          => \$params{'kimura'},         # Controls whether Simple Phylogeny attempts to correct for multiple substitutions at the same site. This is recommended to be set 'on' for more divergent sequences and has the effect of stretching branch lengths. For very divergent sequences the distances cannot be reliably corrected.
+    'tossgaps'        => \$params{'tossgaps'},       # With this option enabled columns where any of the sequences in the input have a gap will be excluded, forcing the alignment to use only positions where information can be included from all sequences.
+    'clustering=s'    => \$params{'clustering'},     # Clustering Methods
+    'pim'             => \$params{'pim'},            # Output the percentage identity matrix
+    'sequence=s'      => \$params{'sequence'},       # Phylogeny using an alignment directly entered into the input box in a supported format. Alignment formats supported include Clustal, FASTA and MSF. Partially formatted or unaligned sequences are not accepted. Adding a return to the end of the sequence may help the Simple Phylogeny tool understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -100,8 +99,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -116,7 +115,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -633,13 +631,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -707,22 +705,22 @@ sub load_params {
 
 
     if ($params{'kimura'}) {
-        $tool_params{'kimura'} = 1;
+        $params{'kimura'} = 1;
     }
     else {
-        $tool_params{'kimura'} = 0;
+        $params{'kimura'} = 0;
     }
     if ($params{'tossgaps'}) {
-        $tool_params{'tossgaps'} = 1;
+        $params{'tossgaps'} = 1;
     }
     else {
-        $tool_params{'tossgaps'} = 0;
+        $params{'tossgaps'} = 0;
     }
     if ($params{'pim'}) {
-        $tool_params{'pim'} = 1;
+        $params{'pim'} = 1;
     }
     else {
-        $tool_params{'pim'} = 0;
+        $params{'pim'} = 0;
     }
 
 
@@ -934,9 +932,36 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Simple Phylogeny Python Client:
+EMBL-EBI Simple Phylogeny Perl Client:
 
 Generating Phylogenetic Trees with Simple Phylogeny.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            Phylogeny using an alignment directly entered into the input
+                        box in a supported format. Alignment formats supported
+                        include Clustal, FASTA and MSF. Partially formatted or
+                        unaligned sequences are not accepted. Adding a return to the
+                        end of the sequence may help the Simple Phylogeny tool
+                        understand the input. Note that directly using data from
+                        word processors may yield unpredictable results as
+                        hidden/control characters may be present. There is currently
+                        a limit of 500 sequences and 1MB of data.
+
+[Optional]
+  --tree                Determines the outputs that the Simple Phylogeny tool
+                        produces.
+  --kimura              Controls whether Simple Phylogeny attempts to correct for
+                        multiple substitutions at the same site. This is recommended
+                        to be set 'on' for more divergent sequences and has the
+                        effect of stretching branch lengths. For very divergent
+                        sequences the distances cannot be reliably corrected.
+  --tossgaps            With this option enabled columns where any of the sequences
+                        in the input have a gap will be excluded, forcing the
+                        alignment to use only positions where information can be
+                        included from all sequences.
+  --clustering          Clustering Methods.
+  --pim                 Output the percentage identity matrix.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -953,45 +978,24 @@ Generating Phylogenetic Trees with Simple Phylogeny.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/simple_phylogeny
 
-[Optional]
-  --tree                Determines the outputs that the Simple Phylogeny tool
-                        produces.
-  --kimura              Controls whether Simple Phylogeny attempts to correct for
-                        multiple substitutions at the same site. This is recommended
-                        to be set 'on' for more divergent sequences and has the
-                        effect of stretching branch lengths. For very divergent
-                        sequences the distances cannot be reliably corrected.
-  --tossgaps            With this option enabled columns where any of the sequences
-                        in the input have a gap will be excluded, forcing the
-                        alignment to use only positions where information can be
-                        included from all sequences.
-  --clustering          Clustering Methods.
-  --pim                 Output the percentage identity matrix.
-  --sequence            Phylogeny using an alignment directly entered into the input
-                        box in a supported format. Alignment formats supported
-                        include Clustal, FASTA and MSF. Partially formatted or
-                        unaligned sequences are not accepted. Adding a return to the
-                        end of the sequence may help the Simple Phylogeny tool
-                        understand the input. Note that directly using data from
-                        word processors may yield unpredictable results as
-                        hidden/control characters may be present. There is currently
-                        a limit of 500 sequences and 1MB of data.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

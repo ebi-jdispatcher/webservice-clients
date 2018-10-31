@@ -275,9 +275,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -343,7 +343,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -415,6 +415,23 @@ EMBL-EBI Muscle Python Client:
 
 Multiple sequence alignment with Muscle.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 500 sequences and 1MB of data.
+
+[Optional]
+  --format              Format for generated multiple sequence alignment.
+  --tree                The guide tree to output.
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -428,37 +445,26 @@ Multiple sequence alignment with Muscle.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/muscle
 
-[Optional]
-  --format              Format for generated multiple sequence alignment.
-  --tree                The guide tree to output.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 500 sequences and 1MB of data.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python muscle.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python muscle.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python muscle.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python muscle.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python muscle.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python muscle.py --polljob --jobid <jobId> [--outfile string]

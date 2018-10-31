@@ -75,15 +75,14 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'format=s'        => \$tool_params{'format'},         # Format for generated multiple sequence alignment.
-    'matrix=s'        => \$tool_params{'matrix'},         # Matrix series to use when generating the multiple sequence alignment. The program goes through the chosen matrix series, spanning the full range of amino acid distances.
-    'order=s'         => \$tool_params{'order'},          # The order in which the sequences appear in the final alignment
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'format=s'        => \$params{'format'},         # Format for generated multiple sequence alignment.
+    'matrix=s'        => \$params{'matrix'},         # Matrix series to use when generating the multiple sequence alignment. The program goes through the chosen matrix series, spanning the full range of amino acid distances.
+    'order=s'         => \$params{'order'},          # The order in which the sequences appear in the final alignment
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 500 sequences and 1MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -99,8 +98,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -115,7 +114,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -632,13 +630,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -916,9 +914,31 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI T-coffe Python Client:
+EMBL-EBI T-coffe Perl Client:
 
 Multiple sequence alignment with T-coffee.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 500 sequences and 1MB of data.
+
+[Optional]
+  --format              Format for generated multiple sequence alignment.
+  --matrix              Matrix series to use when generating the multiple sequence
+                        alignment. The program goes through the chosen matrix
+                        series, spanning the full range of amino acid distances.
+  --order               The order in which the sequences appear in the final
+                        alignment.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -935,40 +955,24 @@ Multiple sequence alignment with T-coffee.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/tcoffee
 
-[Optional]
-  --format              Format for generated multiple sequence alignment.
-  --matrix              Matrix series to use when generating the multiple sequence
-                        alignment. The program goes through the chosen matrix
-                        series, spanning the full range of amino acid distances.
-  --order               The order in which the sequences appear in the final
-                        alignment.
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 500 sequences and 1MB of data.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

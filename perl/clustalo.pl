@@ -75,22 +75,21 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'guidetreeout'    => \$tool_params{'guidetreeout'},   # Output guide tree.
-    'dismatout'       => \$tool_params{'dismatout'},      # Output distance matrix. This is only calculated if the mBed-like clustering guide tree is set to false.
-    'dealign'         => \$tool_params{'dealign'},        # Remove any existing alignment (gaps) from input sequences.
-    'mbed'            => \$tool_params{'mbed'},           # This option uses a sample of the input sequences and then represents all sequences as vectors to these sequences, enabling much more rapid generation of the guide tree, especially when the number of sequences is large.
-    'mbediteration'   => \$tool_params{'mbediteration'},  # Use mBed-like clustering during subsequent iterations.
-    'iterations=i'    => \$tool_params{'iterations'},     # Number of (combined guide-tree/HMM) iterations.
-    'gtiterations=i'  => \$tool_params{'gtiterations'},   # Having set the number of combined iterations, this parameter can be changed to limit the number of guide tree iterations within the combined iterations.
-    'hmmiterations=i' => \$tool_params{'hmmiterations'},  # Having set the number of combined iterations, this parameter can be changed to limit the number of HMM iterations within the combined iterations.
-    'outfmt=s'        => \$tool_params{'outfmt'},         # Format for generated multiple sequence alignment.
-    'order=s'         => \$tool_params{'order'},          # The order in which the sequences appear in the final alignment
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this box. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 4000 sequences and 4MB of data.
+    'guidetreeout'    => \$params{'guidetreeout'},   # Output guide tree.
+    'dismatout'       => \$params{'dismatout'},      # Output distance matrix. This is only calculated if the mBed-like clustering guide tree is set to false.
+    'dealign'         => \$params{'dealign'},        # Remove any existing alignment (gaps) from input sequences.
+    'mbed'            => \$params{'mbed'},           # This option uses a sample of the input sequences and then represents all sequences as vectors to these sequences, enabling much more rapid generation of the guide tree, especially when the number of sequences is large.
+    'mbediteration'   => \$params{'mbediteration'},  # Use mBed-like clustering during subsequent iterations.
+    'iterations=i'    => \$params{'iterations'},     # Number of (combined guide-tree/HMM) iterations.
+    'gtiterations=i'  => \$params{'gtiterations'},   # Having set the number of combined iterations, this parameter can be changed to limit the number of guide tree iterations within the combined iterations.
+    'hmmiterations=i' => \$params{'hmmiterations'},  # Having set the number of combined iterations, this parameter can be changed to limit the number of HMM iterations within the combined iterations.
+    'outfmt=s'        => \$params{'outfmt'},         # Format for generated multiple sequence alignment.
+    'order=s'         => \$params{'order'},          # The order in which the sequences appear in the final alignment
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this box. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 4000 sequences and 4MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -106,8 +105,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -122,7 +121,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -639,13 +637,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -713,34 +711,34 @@ sub load_params {
 
 
     if ($params{'guidetreeout'}) {
-        $tool_params{'guidetreeout'} = 1;
+        $params{'guidetreeout'} = 1;
     }
     else {
-        $tool_params{'guidetreeout'} = 0;
+        $params{'guidetreeout'} = 0;
     }
     if ($params{'dismatout'}) {
-        $tool_params{'dismatout'} = 1;
+        $params{'dismatout'} = 1;
     }
     else {
-        $tool_params{'dismatout'} = 0;
+        $params{'dismatout'} = 0;
     }
     if ($params{'dealign'}) {
-        $tool_params{'dealign'} = 1;
+        $params{'dealign'} = 1;
     }
     else {
-        $tool_params{'dealign'} = 0;
+        $params{'dealign'} = 0;
     }
     if ($params{'mbed'}) {
-        $tool_params{'mbed'} = 1;
+        $params{'mbed'} = 1;
     }
     else {
-        $tool_params{'mbed'} = 0;
+        $params{'mbed'} = 0;
     }
     if ($params{'mbediteration'}) {
-        $tool_params{'mbediteration'} = 1;
+        $params{'mbediteration'} = 1;
     }
     else {
-        $tool_params{'mbediteration'} = 0;
+        $params{'mbediteration'} = 0;
     }
 
 
@@ -952,28 +950,23 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Clustal Omega Python Client:
+EMBL-EBI Clustal Omega Perl Client:
 
 Multiple sequence alignment with Clustal Omega.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/clustalo
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this box. Sequences can be in GCG, FASTA, EMBL
+                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 4000 sequences and 4MB of data.
 
 [Optional]
   --guidetreeout        Output guide tree.
@@ -995,29 +988,40 @@ Multiple sequence alignment with Clustal Omega.
   --outfmt              Format for generated multiple sequence alignment.
   --order               The order in which the sequences appear in the final
                         alignment.
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this box. Sequences can be in GCG, FASTA, EMBL
-                        (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 4000 sequences and 4MB of data.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/clustalo
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

@@ -75,19 +75,18 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA.
-    'inputformat=s'   => \$tool_params{'inputformat'},    # Input format name
-    'outputformat=s'  => \$tool_params{'outputformat'},   # Output format name.
-    'feature'         => \$tool_params{'feature'},        # Use feature information
-    'firstonly'       => \$tool_params{'firstonly'},      # Read one sequence and stop
-    'reverse'         => \$tool_params{'reverse'},        # Reverse-complement of input DNA sequences
-    'outputcase=s'    => \$tool_params{'outputcase'},     # Change alphabet case for output sequences.
-    'seqrange=s'      => \$tool_params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell EMBOSS seqret to only use residues 34 to 89, inclusive.
-    'sequence=a'      => \$tool_params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 2MB.
+    'stype=s'         => \$params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA.
+    'inputformat=s'   => \$params{'inputformat'},    # Input format name
+    'outputformat=s'  => \$params{'outputformat'},   # Output format name.
+    'feature'         => \$params{'feature'},        # Use feature information
+    'firstonly'       => \$params{'firstonly'},      # Read one sequence and stop
+    'reverse'         => \$params{'reverse'},        # Reverse-complement of input DNA sequences
+    'outputcase=s'    => \$params{'outputcase'},     # Change alphabet case for output sequences.
+    'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell EMBOSS seqret to only use residues 34 to 89, inclusive.
+    'sequence=a'      => \$params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 2MB.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -103,8 +102,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -119,7 +118,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -636,13 +634,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -710,22 +708,22 @@ sub load_params {
 
 
     if ($params{'feature'}) {
-        $tool_params{'feature'} = 1;
+        $params{'feature'} = 1;
     }
     else {
-        $tool_params{'feature'} = 0;
+        $params{'feature'} = 0;
     }
     if ($params{'firstonly'}) {
-        $tool_params{'firstonly'} = 1;
+        $params{'firstonly'} = 1;
     }
     else {
-        $tool_params{'firstonly'} = 0;
+        $params{'firstonly'} = 0;
     }
     if ($params{'reverse'}) {
-        $tool_params{'reverse'} = 1;
+        $params{'reverse'} = 1;
     }
     else {
-        $tool_params{'reverse'} = 0;
+        $params{'reverse'} = 0;
     }
 
 
@@ -937,9 +935,34 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS seqret Python Client:
+EMBL-EBI EMBOSS seqret Perl Client:
 
 Sequenc format conversion with seqret.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Indicates if the query sequence is protein, DNA or RNA.
+  --sequence            One or more sequences to be translated can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is a limit of 2MB.
+
+[Optional]
+  --inputformat         Input format name.
+  --outputformat        Output format name.
+  --feature             Use feature information.
+  --firstonly           Read one sequence and stop.
+  --reverse             Reverse-complement of input DNA sequences.
+  --outputcase          Change alphabet case for output sequences.
+  --seqrange            Specify a range or section of the input sequence to use in
+                        the search. Example: Specifying '34-89' in an input sequence
+                        of total length 100, will tell EMBOSS seqret to only use
+                        residues 34 to 89, inclusive.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -956,43 +979,24 @@ Sequenc format conversion with seqret.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_seqret
 
-[Optional]
-  --stype               Indicates if the query sequence is protein, DNA or RNA.
-  --inputformat         Input format name.
-  --outputformat        Output format name.
-  --feature             Use feature information.
-  --firstonly           Read one sequence and stop.
-  --reverse             Reverse-complement of input DNA sequences.
-  --outputcase          Change alphabet case for output sequences.
-  --seqrange            Specify a range or section of the input sequence to use in
-                        the search. Example: Specifying '34-89' in an input sequence
-                        of total length 100, will tell EMBOSS seqret to only use
-                        residues 34 to 89, inclusive.
-  --sequence            One or more sequences to be translated can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is a limit of 2MB.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

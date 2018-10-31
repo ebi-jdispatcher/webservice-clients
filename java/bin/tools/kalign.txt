@@ -1,3 +1,0 @@
-kalign
-Kalign
-Multiple sequence alignment with Kalign.

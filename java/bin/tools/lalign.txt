@@ -1,3 +1,0 @@
-lalign
-LALIGN
-Pairwise sequence alignment with Lalign.

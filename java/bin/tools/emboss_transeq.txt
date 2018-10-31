@@ -1,3 +1,0 @@
-emboss_transeq
-EMBOSS transeq
-Sequence translations with transeq.

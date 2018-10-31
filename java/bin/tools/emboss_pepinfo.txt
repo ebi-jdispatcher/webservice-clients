@@ -1,3 +1,0 @@
-emboss_pepinfo
-EMBOSS pepinfo
-Sequence statistics and plots with pepinfo.

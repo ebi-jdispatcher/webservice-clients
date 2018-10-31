@@ -82,18 +82,18 @@ parser.add_option('--data_file', help=('A file containing valid sequences in FAS
                   'the files. It is best to save files with the Unix format option to'
                   'avoid hidden Windows characters.'))
 parser.add_option('--tree_file', help=('Tree file in Newick Binary Format.'))
-parser.add_option('--do_njtree', help=('compute guide tree from input alignment'))
-parser.add_option('--do_clustalw_tree', help=('compute guide tree using Clustalw2'))
+parser.add_option('--do_njtree', action='store_true', help=('compute guide tree from input alignment'))
+parser.add_option('--do_clustalw_tree', action='store_true', help=('compute guide tree using Clustalw2'))
 parser.add_option('--model_file', help=('Structure Model File.'))
 parser.add_option('--output_format', help=('Format for output alignment file'))
-parser.add_option('--trust_insertions', help=('Trust inferred insertions and do not allow their later matching'))
-parser.add_option('--show_insertions_with_dots', help=('Show gaps created by insertions as dots, deletions as dashes'))
-parser.add_option('--use_log_space', help=('Use log space for probabilities; slower but necessary for large'
+parser.add_option('--trust_insertions', action='store_true', help=('Trust inferred insertions and do not allow their later matching'))
+parser.add_option('--show_insertions_with_dots', action='store_true', help=('Show gaps created by insertions as dots, deletions as dashes'))
+parser.add_option('--use_log_space', action='store_true', help=('Use log space for probabilities; slower but necessary for large'
                   'numbers of sequences'))
-parser.add_option('--use_codon_model', help=('Use codon substutition model for alignment; requires DNA, multiples of'
+parser.add_option('--use_codon_model', action='store_true', help=('Use codon substutition model for alignment; requires DNA, multiples of'
                   'three in length'))
-parser.add_option('--translate_DNA', help=('Translate DNA sequences to proteins and backtranslate results'))
-parser.add_option('--mt_translate_DNA', help=('Translate DNA sequences to mt proteins, align and backtranslate'
+parser.add_option('--translate_DNA', action='store_true', help=('Translate DNA sequences to proteins and backtranslate results'))
+parser.add_option('--mt_translate_DNA', action='store_true', help=('Translate DNA sequences to mt proteins, align and backtranslate'
                   'results'))
 parser.add_option('--gap_rate', help=('Gap Opening Rate'))
 parser.add_option('--gap_extension', help=('Gap Extension Probability'))
@@ -106,23 +106,23 @@ parser.add_option('--max_pairwise_distance', help=('Maximum pairwise distance al
 parser.add_option('--branch_length_scaling', help=('Factor for scaling all branch lengths'))
 parser.add_option('--branch_length_fixed', help=('Fixed value for all branch lengths'))
 parser.add_option('--branch_length_maximum', help=('Upper limit for branch lengths'))
-parser.add_option('--use_real_branch_lengths', help=('Use real branch lengths; using this can be harmful as scoring matrices'
+parser.add_option('--use_real_branch_lengths', action='store_true', help=('Use real branch lengths; using this can be harmful as scoring matrices'
                   'became flat for large distances; rather use max_pairwise_distance'))
-parser.add_option('--do_no_posterior', help=('Do not compute posterior probability; much faster if those not needed'))
-parser.add_option('--run_once', help=('Do not iterate alignment'))
-parser.add_option('--run_twice', help=('Iterate alignment'))
-parser.add_option('--penalise_terminal_gaps', help=('Penalise terminal gaps as any other gap'))
-parser.add_option('--do_posterior_only', help=('Compute posterior probabilities for given *aligned* sequences; may be'
+parser.add_option('--do_no_posterior', action='store_true', help=('Do not compute posterior probability; much faster if those not needed'))
+parser.add_option('--run_once', action='store_true', help=('Do not iterate alignment'))
+parser.add_option('--run_twice', action='store_true', help=('Iterate alignment'))
+parser.add_option('--penalise_terminal_gaps', action='store_true', help=('Penalise terminal gaps as any other gap'))
+parser.add_option('--do_posterior_only', action='store_true', help=('Compute posterior probabilities for given *aligned* sequences; may be'
                   'unstable but useful'))
-parser.add_option('--use_chaos_anchors', help=('Use chaos anchors to massively speed up alignments; DNA only'))
+parser.add_option('--use_chaos_anchors', action='store_true', help=('Use chaos anchors to massively speed up alignments; DNA only'))
 parser.add_option('--minimum_anchor_distance', help=('Minimum chaos anchor distance'))
 parser.add_option('--maximum_anchor_distance', help=('Maximum chaos anchor distance'))
 parser.add_option('--skip_anchor_distance', help=('Chaos anchor skip distance'))
 parser.add_option('--drop_anchor_distance', help=('Chaos anchor drop distance'))
-parser.add_option('--output_ancestors', help=('Output ancestral sequences and probability profiles; note additional'
+parser.add_option('--output_ancestors', action='store_true', help=('Output ancestral sequences and probability profiles; note additional'
                   'files'))
 parser.add_option('--noise_level', help=('Noise level; progress and debugging information'))
-parser.add_option('--stay_quiet', help=('Stay quiet; disable all progress information'))
+parser.add_option('--stay_quiet', action='store_true', help=('Stay quiet; disable all progress information'))
 parser.add_option('--random_seed', help=('Set seed for random number generator; not recommended'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
@@ -319,9 +319,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -387,7 +387,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -459,26 +459,8 @@ EMBL-EBI Prank Python Client:
 
 Multiple sequence alignment with Prank.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/prank
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --sequence            Three or more sequences to be aligned can be entered
                         directly into this form. The sequences must be in FASTA
                         format. Partially formatted sequences are not accepted.
@@ -487,6 +469,8 @@ Multiple sequence alignment with Prank.
                         data from word processors may yield unpredictable results as
                         hidden/control characters may be present. There is a limit
                         of 500 sequences or 1MB of data.
+
+[Optional]
   --data_file           A file containing valid sequences in FASTA format can be
                         used as input for the sequence similarity search. Word
                         processors files may yield unpredictable results as
@@ -542,17 +526,39 @@ Multiple sequence alignment with Prank.
   --stay_quiet          Stay quiet; disable all progress information.
   --random_seed         Set seed for random number generator; not recommended.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/prank
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python prank.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python prank.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python prank.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python prank.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python prank.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python prank.py --polljob --jobid <jobId> [--outfile string]

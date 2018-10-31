@@ -98,7 +98,7 @@ parser.add_option('--maxFlexProduct', help=('Maximum flex. product. Using this o
                   'the product of a flexibilities for a pattern (FP parameter). This is'
                   'related to the memory requirements of the search, and increasing the'
                   'limit, increases the memory usage.'))
-parser.add_option('--patternSymbolFile', help=('Pattern Symbol File (BI parameter)'))
+parser.add_option('--patternSymbolFile', action='store_true', help=('Pattern Symbol File (BI parameter)'))
 parser.add_option('--numPatternSymbols', help=('Number of pattern symbols used in the initial search (BN parameter).'))
 parser.add_option('--patternScoring', help=('Pattern scoring (S parameter)'))
 parser.add_option('--patternGraph', help=('Pattern Graph (G parameter) allows the use of an alignment or a query'
@@ -107,22 +107,22 @@ parser.add_option('--searchGreediness', help=('Using the greediness parameter (E
                   'the search. Setting E to 0 (zero), the search will be exhaustive.'
                   'Increasing E increases the greediness, and decreases the time used in'
                   'the search.'))
-parser.add_option('--patternRefinement', help=('Pattern Refinement (R parameter). When the R option is switched on,'
+parser.add_option('--patternRefinement', action='store_true', help=('Pattern Refinement (R parameter). When the R option is switched on,'
                   'patterns found during the initial pattern search are input to a'
                   'refinement algorithm where more ambiguous pattern symbols can be'
                   'added.'))
-parser.add_option('--genAmbigSymbols', help=('Generalise ambiguous symbols (RG parameter). If the RG option is'
+parser.add_option('--genAmbigSymbols', action='store_true', help=('Generalise ambiguous symbols (RG parameter). If the RG option is'
                   'switched on, then ambiguous symbols listed in the symbols file are'
                   'used. If RG is off, only the letters needed to match the input'
                   'sequences are included in the ambiguous pattern positions.'))
-parser.add_option('--patternFormat', help=('PROSITE Pattern Format (OP parameter). When switched on, patterns will'
+parser.add_option('--patternFormat', action='store_true', help=('PROSITE Pattern Format (OP parameter). When switched on, patterns will'
                   'be output in PROSITE style (for instance C-x(2,4)-[DE]). When switched'
                   'off, patterns are output in a simpler consensus pattern style (for'
                   'instance Cxx--[DE] where x matches exactly one arbitrary sequence'
                   'symbol and - matches zero or one arbitrary sequence symbol).'))
 parser.add_option('--maxNumPatterns', help=('Maximum number of patterns (ON parameter) between 1 and 100.'))
 parser.add_option('--maxNumAlignments', help=('Maximum number of alignments (OA parameter) between 1 and 100.'))
-parser.add_option('--printPatterns', help=('Print Patterns in sequences (M parameter) If the M option is set, then'
+parser.add_option('--printPatterns', action='store_true', help=('Print Patterns in sequences (M parameter) If the M option is set, then'
                   'Pratt will print out the location of the sequence segments matching'
                   'each of the (maximum 52) best patterns. The patterns are given labels'
                   'A, B,...Z,a,b,...z in order of decreasing pattern score. Each sequence'
@@ -133,7 +133,7 @@ parser.add_option('--printPatterns', help=('Print Patterns in sequences (M param
 parser.add_option('--printingRatio', help=('Printing ratio (MR parameter). sets the K value (ratio) used for'
                   'printing the summary information about where in each sequence the'
                   'pattern matches are found.'))
-parser.add_option('--printVertically', help=('Print vertically (MV parameter). if set, the output is printed'
+parser.add_option('--printVertically', action='store_true', help=('Print vertically (MV parameter). if set, the output is printed'
                   'vertically instead of horizontally, vertical output can be better for'
                   'large sequence sets.'))
 parser.add_option('--stype', help=('Defines the type of the sequences to be aligned.'))
@@ -341,9 +341,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -409,7 +409,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -481,24 +481,15 @@ EMBL-EBI PRATT Python Client:
 
 Protein function analysis with Pratt.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/pratt
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            The input set of up to 100 sequences can be entered directly
+                        into this form. The sequences can be in FASTA or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequences
+                        are not accepted. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present.
 
 [Optional]
   --minPerc             Set the minimum percentage of the input sequences that
@@ -577,29 +568,44 @@ Protein function analysis with Pratt.
   --printVertically     Print vertically (MV parameter). if set, the output is
                         printed vertically instead of horizontally, vertical output
                         can be better for large sequence sets.
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            The input set of up to 100 sequences can be entered directly
-                        into this form. The sequences can be in FASTA or
-                        UniProtKB/Swiss-Prot format. A partially formatted sequences
-                        are not accepted. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present.
   --ppfile              Pattern restriction file. The restriction file limits the
                         sequence range via the start/end parameter and is in the
                         format '>Sequence (start, end)'. If parameter PP is off, the
                         restiction file will be ignored.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/pratt
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python pratt.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python pratt.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python pratt.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python pratt.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python pratt.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python pratt.py --polljob --jobid <jobId> [--outfile string]

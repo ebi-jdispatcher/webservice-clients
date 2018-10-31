@@ -1,3 +1,0 @@
-emboss_matcher
-EMBOSS matcher
-Pairwise sequence alignment with Matcher.

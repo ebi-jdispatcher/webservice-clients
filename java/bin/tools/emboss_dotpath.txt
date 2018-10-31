@@ -1,3 +1,0 @@
-emboss_dotpath
-EMBOSS dotpath
-Sequence statistics and plots with dotpath.

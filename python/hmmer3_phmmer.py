@@ -80,8 +80,8 @@ parser.add_option('--domT', help=('Report bit scores[Hit]'))
 parser.add_option('--popen', help=('Gap Penalties[open]'))
 parser.add_option('--pextend', help=('Gap Penalties[extend]'))
 parser.add_option('--mx', help=('Gap Penalties[Substitution scoring matrix]'))
-parser.add_option('--nobias', help=('Filters'))
-parser.add_option('--alignView', help=('Output alignment in result'))
+parser.add_option('--nobias', action='store_true', help=('Filters'))
+parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
 parser.add_option('--database', help=('Sequence Database'))
 parser.add_option('--evalue', help=('Expectation value cut-off for reporting target profiles in the per-'
                   'target output.'))
@@ -286,9 +286,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -354,7 +354,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -426,24 +426,16 @@ EMBL-EBI HMMER 3 phmmer Python Client:
 
 Protein function analysis with HMMER 3 phmmer.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer
+[Required (for job submission)]
+  --email               E-mail address.
+  --database            Sequence Database.
+  --sequence            The input sequence can be entered directly into this form.
+                        The sequence can be be in FASTA or UniProtKB/Swiss-Prot
+                        format. A partially formatted sequence is not accepted.
+                        Adding a return to the end of the sequence may help certain
+                        applications understand the input. Note that directly using
+                        data from word processors may yield unpredictable results as
+                        hidden/control characters may be present.
 
 [Optional]
   --incE                Significance E-values[Sequence].
@@ -459,28 +451,42 @@ Protein function analysis with HMMER 3 phmmer.
   --mx                  Gap Penalties[Substitution scoring matrix].
   --nobias              Filters.
   --alignView           Output alignment in result.
-  --database            Sequence Database.
   --evalue              Expectation value cut-off for reporting target profiles in
                         the per-target output.
-  --sequence            The input sequence can be entered directly into this form.
-                        The sequence can be be in FASTA or UniProtKB/Swiss-Prot
-                        format. A partially formatted sequence is not accepted.
-                        Adding a return to the end of the sequence may help certain
-                        applications understand the input. Note that directly using
-                        data from word processors may yield unpredictable results as
-                        hidden/control characters may be present.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python hmmer3_phmmer.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python hmmer3_phmmer.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python hmmer3_phmmer.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python hmmer3_phmmer.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python hmmer3_phmmer.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python hmmer3_phmmer.py --polljob --jobid <jobId> [--outfile string]

@@ -76,7 +76,7 @@ parser.add_option('--wordsize', help=('Word size.'))
 parser.add_option('--gap', help=('This specifies the size of the gap that is used to separate the'
                   'individual dotplots in the display. The size is measured in residues,'
                   'as displayed in the output.'))
-parser.add_option('--boxit', help=('Draw a box around dotplot.'))
+parser.add_option('--boxit', action='store_true', help=('Draw a box around dotplot.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -272,9 +272,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -340,7 +340,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -412,6 +412,20 @@ EMBL-EBI EMBOSS polydot Python Client:
 
 Sequence statistics and plots with polydot.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Two or more aligned sequences are required. There is
+                        currently a sequence input limit of 500 sequences and 1MB of
+                        data.
+
+[Optional]
+  --wordsize            Word size.
+  --gap                 This specifies the size of the gap that is used to separate
+                        the individual dotplots in the display. The size is measured
+                        in residues, as displayed in the output.
+  --boxit               Draw a box around dotplot.
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -425,34 +439,26 @@ Sequence statistics and plots with polydot.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_polydot
 
-[Optional]
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Two or more aligned sequences are required. There is
-                        currently a sequence input limit of 500 sequences and 1MB of
-                        data.
-  --wordsize            Word size.
-  --gap                 This specifies the size of the gap that is used to separate
-                        the individual dotplots in the display. The size is measured
-                        in residues, as displayed in the output.
-  --boxit               Draw a box around dotplot.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_polydot.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_polydot.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_polydot.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_polydot.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_polydot.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_polydot.py --polljob --jobid <jobId> [--outfile string]

@@ -1,3 +1,0 @@
-radar
-RADAR
-Protein function analysis with Radar.

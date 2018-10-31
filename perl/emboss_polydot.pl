@@ -75,15 +75,14 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'sequence=s'      => \$tool_params{'sequence'},       # Two or more aligned sequences are required. There is currently a sequence input limit of 500 sequences and 1MB of data.
-    'wordsize=i'      => \$tool_params{'wordsize'},       # Word size.
-    'gap=i'           => \$tool_params{'gap'},            # This specifies the size of the gap that is used to separate the individual dotplots in the display. The size is measured in residues, as displayed in the output.
-    'boxit'           => \$tool_params{'boxit'},          # Draw a box around dotplot.
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'sequence=s'      => \$params{'sequence'},       # Two or more aligned sequences are required. There is currently a sequence input limit of 500 sequences and 1MB of data.
+    'wordsize=i'      => \$params{'wordsize'},       # Word size.
+    'gap=i'           => \$params{'gap'},            # This specifies the size of the gap that is used to separate the individual dotplots in the display. The size is measured in residues, as displayed in the output.
+    'boxit'           => \$params{'boxit'},          # Draw a box around dotplot.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -99,8 +98,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -115,7 +114,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -632,13 +630,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -706,10 +704,10 @@ sub load_params {
 
 
     if ($params{'boxit'}) {
-        $tool_params{'boxit'} = 1;
+        $params{'boxit'} = 1;
     }
     else {
-        $tool_params{'boxit'} = 0;
+        $params{'boxit'} = 0;
     }
 
 
@@ -921,9 +919,23 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS polydot Python Client:
+EMBL-EBI EMBOSS polydot Perl Client:
 
 Sequence statistics and plots with polydot.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Two or more aligned sequences are required. There is
+                        currently a sequence input limit of 500 sequences and 1MB of
+                        data.
+
+[Optional]
+  --wordsize            Word size.
+  --gap                 This specifies the size of the gap that is used to separate
+                        the individual dotplots in the display. The size is measured
+                        in residues, as displayed in the output.
+  --boxit               Draw a box around dotplot.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -940,32 +952,24 @@ Sequence statistics and plots with polydot.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_polydot
 
-[Optional]
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Two or more aligned sequences are required. There is
-                        currently a sequence input limit of 500 sequences and 1MB of
-                        data.
-  --wordsize            Word size.
-  --gap                 This specifies the size of the gap that is used to separate
-                        the individual dotplots in the display. The size is measured
-                        in residues, as displayed in the output.
-  --boxit               Draw a box around dotplot.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

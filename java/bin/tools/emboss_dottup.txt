@@ -1,3 +1,0 @@
-emboss_dottup
-EMBOSS dottup
-Sequence statistics and plots with dottup.

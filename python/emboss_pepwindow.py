@@ -75,7 +75,7 @@ parser.add_option('--sequence', help=('The sequence to be analysed can be entere
                   'accepted..'))
 parser.add_option('--windowsize', help=('Window size for averaging (smoothing) the hydropathy plot. Use an'
                   'integer between 1 and 200.'))
-parser.add_option('--normalize', help=('Normalize data values (mean = 0.0, standard deviation = 1.0)'))
+parser.add_option('--normalize', action='store_true', help=('Normalize data values (mean = 0.0, standard deviation = 1.0)'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -271,9 +271,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -339,7 +339,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -411,6 +411,18 @@ EMBL-EBI EMBOSS pepwindow Python Client:
 
 Sequence statistics and plots with pepwindow.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The sequence to be analysed can be entered directly into
+                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
+                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
+                        sequences are not accepted.
+
+[Optional]
+  --windowsize          Window size for averaging (smoothing) the hydropathy plot.
+                        Use an integer between 1 and 200.
+  --normalize           Normalize data values (mean = 0.0, standard deviation = 1.0).
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -424,32 +436,26 @@ Sequence statistics and plots with pepwindow.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_pepwindow
 
-[Optional]
-  --sequence            The sequence to be analysed can be entered directly into
-                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
-                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
-                        sequences are not accepted.
-  --windowsize          Window size for averaging (smoothing) the hydropathy plot.
-                        Use an integer between 1 and 200.
-  --normalize           Normalize data values (mean = 0.0, standard deviation = 1.0).
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_pepwindow.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_pepwindow.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_pepwindow.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_pepwindow.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_pepwindow.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_pepwindow.py --polljob --jobid <jobId> [--outfile string]

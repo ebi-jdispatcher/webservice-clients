@@ -75,20 +75,19 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Defines the type of the sequences to be aligned
-    'matrix=s'        => \$tool_params{'matrix'},         # Default substitution scoring matrices.
-    'match_scores=s'  => \$tool_params{'match_scores'},   # Specify match/mismatch scores for DNA comparisons.
-    'gapopen=i'       => \$tool_params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
-    'gapext=i'        => \$tool_params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
-    'expthr=f'        => \$tool_params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
-    'format=s'        => \$tool_params{'format'},         # Pairwise sequences format
-    'graphics'        => \$tool_params{'graphics'},       # Generates a visual output
-    'asequence=s'     => \$tool_params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'bsequence=s'     => \$tool_params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
+    'matrix=s'        => \$params{'matrix'},         # Default substitution scoring matrices.
+    'match_scores=s'  => \$params{'match_scores'},   # Specify match/mismatch scores for DNA comparisons.
+    'gapopen=i'       => \$params{'gapopen'},        # Pairwise alignment score for the first residue in a gap.
+    'gapext=i'        => \$params{'gapext'},         # Pairwise alignment score for each additional residue in a gap.
+    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
+    'format=s'        => \$params{'format'},         # Pairwise sequences format
+    'graphics'        => \$params{'graphics'},       # Generates a visual output
+    'asequence=s'     => \$params{'asequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'bsequence=s'     => \$params{'bsequence'},      # A free text (raw) list of sequences is simply a block of characters representing several DNA/RNA or Protein sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -104,8 +103,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -120,7 +119,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -637,13 +635,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -711,10 +709,10 @@ sub load_params {
 
 
     if ($params{'graphics'}) {
-        $tool_params{'graphics'} = 1;
+        $params{'graphics'} = 1;
     }
     else {
-        $tool_params{'graphics'} = 0;
+        $params{'graphics'} = 0;
     }
 
 
@@ -926,41 +924,13 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI LALIGN Python Client:
+EMBL-EBI LALIGN Perl Client:
 
 Pairwise sequence alignment with Lalign.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/lalign
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Defines the type of the sequences to be aligned.
-  --matrix              Default substitution scoring matrices.
-  --match_scores        Specify match/mismatch scores for DNA comparisons.
-  --gapopen             Pairwise alignment score for the first residue in a gap.
-  --gapext              Pairwise alignment score for each additional residue in a
-                        gap.
-  --expthr              Limits the number of scores and alignments reported based on
-                        the expectation value. This is the maximum number of times
-                        the match is expected to occur by chance.
-  --format              Pairwise sequences format.
-  --graphics            Generates a visual output.
   --asequence           A free text (raw) list of sequences is simply a block of
                         characters representing several DNA/RNA or Protein
                         sequences. A sequence can be in GCG, FASTA, EMBL (Nucleotide
@@ -982,17 +952,51 @@ Pairwise sequence alignment with Lalign.
                         unpredictable results as hidden/control characters may be
                         present.
 
+[Optional]
+  --matrix              Default substitution scoring matrices.
+  --match_scores        Specify match/mismatch scores for DNA comparisons.
+  --gapopen             Pairwise alignment score for the first residue in a gap.
+  --gapext              Pairwise alignment score for each additional residue in a
+                        gap.
+  --expthr              Limits the number of scores and alignments reported based on
+                        the expectation value. This is the maximum number of times
+                        the match is expected to occur by chance.
+  --format              Pairwise sequences format.
+  --graphics            Generates a visual output.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/lalign
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

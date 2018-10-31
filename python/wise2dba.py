@@ -69,8 +69,8 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--para', help=('Show parameters in output alignmment, as in genewise.'))
-parser.add_option('--pretty', help=('Show pretty ASCII alignment viewing, as in genewise.'))
+parser.add_option('--para', action='store_true', help=('Show parameters in output alignmment, as in genewise.'))
+parser.add_option('--pretty', action='store_true', help=('Show pretty ASCII alignment viewing, as in genewise.'))
 parser.add_option('--asequence', help=('The first DNA sequence to be aligned can be entered directly into the'
                   'form. The sequence must be in a recognised format eg. GCG, FASTA,'
                   'EMBL, GenBank. Partially formatted sequences are not accepted. Adding'
@@ -282,9 +282,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -350,7 +350,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -422,28 +422,8 @@ EMBL-EBI Wise2dba Python Client:
 
 Pairwise sequence alignment with Wise2dba.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/wise2dba
-
-[Optional]
-  --para                Show parameters in output alignmment, as in genewise.
-  --pretty              Show pretty ASCII alignment viewing, as in genewise.
+[Required (for job submission)]
+  --email               E-mail address.
   --asequence           The first DNA sequence to be aligned can be entered directly
                         into the form. The sequence must be in a recognised format
                         eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences
@@ -462,17 +442,43 @@ Pairwise sequence alignment with Wise2dba.
                         may be present. There is a limit of 1MB for the sequence
                         entry.
 
+[Optional]
+  --para                Show parameters in output alignmment, as in genewise.
+  --pretty              Show pretty ASCII alignment viewing, as in genewise.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/wise2dba
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python wise2dba.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python wise2dba.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python wise2dba.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python wise2dba.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python wise2dba.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python wise2dba.py --polljob --jobid <jobId> [--outfile string]

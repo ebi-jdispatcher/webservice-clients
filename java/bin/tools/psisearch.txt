@@ -1,3 +1,0 @@
-psisearch
-PSI-Search
-Sequence similarity search with PSI-Search.

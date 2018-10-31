@@ -75,19 +75,19 @@ parser.add_option('--informat', help=('Format of the input sequence similarity s
                   'sequence alignment to be processed.'))
 parser.add_option('--outputformat', help=('Output format for the alignment.'))
 parser.add_option('--htmlmarkup', help=('Amount of HTML markup to be used in the result.'))
-parser.add_option('--css', help=('Use Cascading Style Sheets'))
+parser.add_option('--css', action='store_true', help=('Use Cascading Style Sheets'))
 parser.add_option('--pcid', help=('Compute percent identities with respect to'))
-parser.add_option('--alignment', help=('Show or hide the aligned sequences.'))
-parser.add_option('--ruler', help=('Show or hide the ruler showing the sequence coordinates.'))
+parser.add_option('--alignment', action='store_true', help=('Show or hide the aligned sequences.'))
+parser.add_option('--ruler', action='store_true', help=('Show or hide the ruler showing the sequence coordinates.'))
 parser.add_option('--width', help=('Width of output alignment.'))
 parser.add_option('--coloring', help=('Basic style of coloring'))
 parser.add_option('--colormap', help=('Color map'))
 parser.add_option('--groupmap', help=('Group map'))
-parser.add_option('--consensus', help=('Show or hide consensus sequence derived from the alignment.'))
+parser.add_option('--consensus', action='store_true', help=('Show or hide consensus sequence derived from the alignment.'))
 parser.add_option('--concoloring', help=('Basic style of consensus coloring'))
 parser.add_option('--concolormap', help=('Consensus color map'))
 parser.add_option('--congroupmap', help=('Consensus group map'))
-parser.add_option('--congaps', help=('Count gaps during consensus compuatations'))
+parser.add_option('--congaps', action='store_true', help=('Count gaps during consensus compuatations'))
 parser.add_option('--sequence', help=('Sequence similarity search result (e.g. BLAST or FASTA search report)'
                   'or a multiple sequence alignment.'))
 # General options
@@ -285,9 +285,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -353,7 +353,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -425,28 +425,14 @@ EMBL-EBI Mview Python Client:
 
 Multiple sequence alignment viewing with MView.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/mview
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Indicates if the sequences to align are protein or
                         nucleotide (DNA/RNA).
+  --sequence            Sequence similarity search result (e.g. BLAST or FASTA
+                        search report) or a multiple sequence alignment.
+
+[Optional]
   --informat            Format of the input sequence similarity search result or
                         multiple sequence alignment to be processed.
   --outputformat        Output format for the alignment.
@@ -464,20 +450,40 @@ Multiple sequence alignment viewing with MView.
   --concolormap         Consensus color map.
   --congroupmap         Consensus group map.
   --congaps             Count gaps during consensus compuatations.
-  --sequence            Sequence similarity search result (e.g. BLAST or FASTA
-                        search report) or a multiple sequence alignment.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mview
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python mview.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python mview.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python mview.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python mview.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python mview.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python mview.py --polljob --jobid <jobId> [--outfile string]

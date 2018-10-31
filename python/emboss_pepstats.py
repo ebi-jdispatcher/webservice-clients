@@ -73,9 +73,9 @@ parser.add_option('--sequence', help=('The sequence to be analysed can be entere
                   'The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or'
                   'UniProtKB/Swiss-Prot format. Partially formatted sequences are not'
                   'accepted..'))
-parser.add_option('--termini', help=('Include charges from the N-terminus and C-terminus when calculating'
+parser.add_option('--termini', action='store_true', help=('Include charges from the N-terminus and C-terminus when calculating'
                   'the Isoelectric Point'))
-parser.add_option('--mono', help=('Use weight from the most abundant (prinicpal) isotope of each amino'
+parser.add_option('--mono', action='store_true', help=('Use weight from the most abundant (prinicpal) isotope of each amino'
                   'acid when calculating molecular weights. By default this is not'
                   'enabled, so the average isotope weight is used instead.'))
 # General options
@@ -273,9 +273,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -341,7 +341,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -413,6 +413,21 @@ EMBL-EBI EMBOSS pepstats Python Client:
 
 Sequence statistics and plots with pepstats.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The sequence to be analysed can be entered directly into
+                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
+                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
+                        sequences are not accepted.
+
+[Optional]
+  --termini             Include charges from the N-terminus and C-terminus when
+                        calculating the Isoelectric Point.
+  --mono                Use weight from the most abundant (prinicpal) isotope of
+                        each amino acid when calculating molecular weights. By
+                        default this is not enabled, so the average isotope weight
+                        is used instead.
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -426,35 +441,26 @@ Sequence statistics and plots with pepstats.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_pepstats
 
-[Optional]
-  --sequence            The sequence to be analysed can be entered directly into
-                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
-                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
-                        sequences are not accepted.
-  --termini             Include charges from the N-terminus and C-terminus when
-                        calculating the Isoelectric Point.
-  --mono                Use weight from the most abundant (prinicpal) isotope of
-                        each amino acid when calculating molecular weights. By
-                        default this is not enabled, so the average isotope weight
-                        is used instead.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_pepstats.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_pepstats.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_pepstats.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_pepstats.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_pepstats.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_pepstats.py --polljob --jobid <jobId> [--outfile string]

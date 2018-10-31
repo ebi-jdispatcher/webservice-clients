@@ -75,28 +75,27 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
-    'informat=s'      => \$tool_params{'informat'},       # Format of the input sequence similarity search result or multiple sequence alignment to be processed.
-    'outputformat=s'  => \$tool_params{'outputformat'},   # Output format for the alignment.
-    'htmlmarkup=s'    => \$tool_params{'htmlmarkup'},     # Amount of HTML markup to be used in the result.
-    'css'             => \$tool_params{'css'},            # Use Cascading Style Sheets
-    'pcid=s'          => \$tool_params{'pcid'},           # Compute percent identities with respect to
-    'alignment'       => \$tool_params{'alignment'},      # Show or hide the aligned sequences.
-    'ruler'           => \$tool_params{'ruler'},          # Show or hide the ruler showing the sequence coordinates.
-    'width=i'         => \$tool_params{'width'},          # Width of output alignment.
-    'coloring=s'      => \$tool_params{'coloring'},       # Basic style of coloring
-    'colormap=s'      => \$tool_params{'colormap'},       # Color map
-    'groupmap=s'      => \$tool_params{'groupmap'},       # Group map
-    'consensus'       => \$tool_params{'consensus'},      # Show or hide consensus sequence derived from the alignment.
-    'concoloring=s'   => \$tool_params{'concoloring'},    # Basic style of consensus coloring
-    'concolormap=s'   => \$tool_params{'concolormap'},    # Consensus color map
-    'congroupmap=s'   => \$tool_params{'congroupmap'},    # Consensus group map
-    'congaps'         => \$tool_params{'congaps'},        # Count gaps during consensus compuatations
-    'sequence=a'      => \$tool_params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
+    'stype=s'         => \$params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+    'informat=s'      => \$params{'informat'},       # Format of the input sequence similarity search result or multiple sequence alignment to be processed.
+    'outputformat=s'  => \$params{'outputformat'},   # Output format for the alignment.
+    'htmlmarkup=s'    => \$params{'htmlmarkup'},     # Amount of HTML markup to be used in the result.
+    'css'             => \$params{'css'},            # Use Cascading Style Sheets
+    'pcid=s'          => \$params{'pcid'},           # Compute percent identities with respect to
+    'alignment'       => \$params{'alignment'},      # Show or hide the aligned sequences.
+    'ruler'           => \$params{'ruler'},          # Show or hide the ruler showing the sequence coordinates.
+    'width=i'         => \$params{'width'},          # Width of output alignment.
+    'coloring=s'      => \$params{'coloring'},       # Basic style of coloring
+    'colormap=s'      => \$params{'colormap'},       # Color map
+    'groupmap=s'      => \$params{'groupmap'},       # Group map
+    'consensus'       => \$params{'consensus'},      # Show or hide consensus sequence derived from the alignment.
+    'concoloring=s'   => \$params{'concoloring'},    # Basic style of consensus coloring
+    'concolormap=s'   => \$params{'concolormap'},    # Consensus color map
+    'congroupmap=s'   => \$params{'congroupmap'},    # Consensus group map
+    'congaps'         => \$params{'congaps'},        # Count gaps during consensus compuatations
+    'sequence=a'      => \$params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -112,8 +111,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -128,7 +127,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -645,13 +643,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -719,34 +717,34 @@ sub load_params {
 
 
     if ($params{'css'}) {
-        $tool_params{'css'} = 1;
+        $params{'css'} = 1;
     }
     else {
-        $tool_params{'css'} = 0;
+        $params{'css'} = 0;
     }
     if ($params{'alignment'}) {
-        $tool_params{'alignment'} = 1;
+        $params{'alignment'} = 1;
     }
     else {
-        $tool_params{'alignment'} = 0;
+        $params{'alignment'} = 0;
     }
     if ($params{'ruler'}) {
-        $tool_params{'ruler'} = 1;
+        $params{'ruler'} = 1;
     }
     else {
-        $tool_params{'ruler'} = 0;
+        $params{'ruler'} = 0;
     }
     if ($params{'consensus'}) {
-        $tool_params{'consensus'} = 1;
+        $params{'consensus'} = 1;
     }
     else {
-        $tool_params{'consensus'} = 0;
+        $params{'consensus'} = 0;
     }
     if ($params{'congaps'}) {
-        $tool_params{'congaps'} = 1;
+        $params{'congaps'} = 1;
     }
     else {
-        $tool_params{'congaps'} = 0;
+        $params{'congaps'} = 0;
     }
 
 
@@ -958,32 +956,18 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Mview Python Client:
+EMBL-EBI Mview Perl Client:
 
 Multiple sequence alignment viewing with MView.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/mview
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --stype               Indicates if the sequences to align are protein or
                         nucleotide (DNA/RNA).
+  --sequence            Sequence similarity search result (e.g. BLAST or FASTA
+                        search report) or a multiple sequence alignment.
+
+[Optional]
   --informat            Format of the input sequence similarity search result or
                         multiple sequence alignment to be processed.
   --outputformat        Output format for the alignment.
@@ -1001,20 +985,40 @@ Multiple sequence alignment viewing with MView.
   --concolormap         Consensus color map.
   --congroupmap         Consensus group map.
   --congaps             Count gaps during consensus compuatations.
-  --sequence            Sequence similarity search result (e.g. BLAST or FASTA
-                        search report) or a multiple sequence alignment.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mview
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

@@ -1,3 +1,0 @@
-fastm
-FASTM
-Sequence similarity search with FASTM.

@@ -1,3 +1,0 @@
-muscle
-Muscle
-Multiple sequence alignment with Muscle.

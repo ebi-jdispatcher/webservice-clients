@@ -75,21 +75,20 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'scorethr=i'      => \$tool_params{'scorethr'},       # Score threshold. The minimum score for a candidate hairpin.
-    'longext=i'       => \$tool_params{'longext'},        # Long match extention (bp).
-    'shortext=i'      => \$tool_params{'shortext'},       # Short match extention (bp).
-    'maxmis=i'        => \$tool_params{'maxmis'},         # Maximum mature mismatches.
-    'mismatchpen=i'   => \$tool_params{'mismatchpen'},    # Mature mismatch penalty.
-    'bowtie=i'        => \$tool_params{'bowtie'},         # Maximum allowed matches per candidate genome (Bowtie-m). 0 for disable.
-    'excludecan'      => \$tool_params{'excludecan'},     # Exclude candidates in loop. Binary toggle to exclude mature.
-    'maxloop=i'       => \$tool_params{'maxloop'},        # Maximum loop overlap. Maximum allowed mature basepairs overlapping loop.
-    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence(s) can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
-    'metazoa_species=s'=> \$tool_params{'metazoa_species'},# Ensembl Metazoa Species
-    'ensembl_species=s'=> \$tool_params{'ensembl_species'},# Ensembl Species
+    'scorethr=i'      => \$params{'scorethr'},       # Score threshold. The minimum score for a candidate hairpin.
+    'longext=i'       => \$params{'longext'},        # Long match extention (bp).
+    'shortext=i'      => \$params{'shortext'},       # Short match extention (bp).
+    'maxmis=i'        => \$params{'maxmis'},         # Maximum mature mismatches.
+    'mismatchpen=i'   => \$params{'mismatchpen'},    # Mature mismatch penalty.
+    'bowtie=i'        => \$params{'bowtie'},         # Maximum allowed matches per candidate genome (Bowtie-m). 0 for disable.
+    'excludecan'      => \$params{'excludecan'},     # Exclude candidates in loop. Binary toggle to exclude mature.
+    'maxloop=i'       => \$params{'maxloop'},        # Maximum loop overlap. Maximum allowed mature basepairs overlapping loop.
+    'sequence=s'      => \$params{'sequence'},       # The query sequence(s) can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
+    'metazoa_species=s'=> \$params{'metazoa_species'},# Ensembl Metazoa Species
+    'ensembl_species=s'=> \$params{'ensembl_species'},# Ensembl Species
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -105,8 +104,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -121,7 +120,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -638,13 +636,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -712,10 +710,10 @@ sub load_params {
 
 
     if ($params{'excludecan'}) {
-        $tool_params{'excludecan'} = 1;
+        $params{'excludecan'} = 1;
     }
     else {
-        $tool_params{'excludecan'} = 0;
+        $params{'excludecan'} = 0;
     }
 
 
@@ -927,9 +925,34 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI MapMi Python Client:
+EMBL-EBI MapMi Perl Client:
 
 RNA analysis with MapMi.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The query sequence(s) can be entered directly into this
+                        form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR,
+                        NBRF or PHYLIP format. A partially formatted sequence is not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present. There is a limit of 1MB for the sequence entry.
+
+[Optional]
+  --scorethr            Score threshold. The minimum score for a candidate hairpin.
+  --longext             Long match extention (bp).
+  --shortext            Short match extention (bp).
+  --maxmis              Maximum mature mismatches.
+  --mismatchpen         Mature mismatch penalty.
+  --bowtie              Maximum allowed matches per candidate genome (Bowtie-m). 0
+                        for disable.
+  --excludecan          Exclude candidates in loop. Binary toggle to exclude mature.
+  --maxloop             Maximum loop overlap. Maximum allowed mature basepairs
+                        overlapping loop.
+  --metazoa_species     Ensembl Metazoa Species.
+  --ensembl_species     Ensembl Species.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -946,43 +969,24 @@ RNA analysis with MapMi.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/mapmi
 
-[Optional]
-  --scorethr            Score threshold. The minimum score for a candidate hairpin.
-  --longext             Long match extention (bp).
-  --shortext            Short match extention (bp).
-  --maxmis              Maximum mature mismatches.
-  --mismatchpen         Mature mismatch penalty.
-  --bowtie              Maximum allowed matches per candidate genome (Bowtie-m). 0
-                        for disable.
-  --excludecan          Exclude candidates in loop. Binary toggle to exclude mature.
-  --maxloop             Maximum loop overlap. Maximum allowed mature basepairs
-                        overlapping loop.
-  --sequence            The query sequence(s) can be entered directly into this
-                        form. The sequence can be in GCG, FASTA, EMBL, GenBank, PIR,
-                        NBRF or PHYLIP format. A partially formatted sequence is not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present. There is a limit of 1MB for the sequence entry.
-  --metazoa_species     Ensembl Metazoa Species.
-  --ensembl_species     Ensembl Species.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

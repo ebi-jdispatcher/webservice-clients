@@ -1,3 +1,0 @@
-pratt
-PRATT
-Protein function analysis with Pratt.

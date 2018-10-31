@@ -75,29 +75,28 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'matrix=s'        => \$tool_params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
-    'gapopen=i'       => \$tool_params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap opening penalty will decrease the number of gaps in the final alignment.
-    'gapext=i'        => \$tool_params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favours short gaps in the final alignment, conversly, decreasing the gap extension penalty favours long gaps in the final alignment.
-    'expthr=f'        => \$tool_params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This value is the maximum number of times the match is expected to occur by chance.
-    'mask'            => \$tool_params{'mask'},           # Turn on/off the sequence masking for HOEs in PSSM constructions. This option allows you to mask sequence characters beyond the alignment region when constructing the PSSM, reducing over-extension errors.
-    'psithr=f'        => \$tool_params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in the PSSM at each iteration.
-    'scores=i'        => \$tool_params{'scores'},         # Maximum number of alignment score summaries reported in the result output.
-    'alignments=i'    => \$tool_params{'alignments'},     # Maximum number of alignments reported in the result output.
-    'hsps'            => \$tool_params{'hsps'},           # Turn on/off the display of all significant alignments between query and database sequence.
-    'scoreformat=s'   => \$tool_params{'scoreformat'},    # Different score formats.
-    'filter=s'        => \$tool_params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
-    'hist'            => \$tool_params{'hist'},           # Turn on/off the histogram in the PSI-Search result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
-    'annotfeats'      => \$tool_params{'annotfeats'},     # Turn on/off annotation features. Annotation features shows features from UniProtKB, such as variants, active sites, phospho-sites and binding sites that have been found in the aligned region of the database hit. To see the annotation features in the results after this has been enabled, select sequences of interest and click to 'Show' Alignments. This option also enables a new result tab (Domain Diagrams) that highlights domain regions.
-    'sequence=s'      => \$tool_params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$tool_params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
-    'previousjobid=s' => \$tool_params{'previousjobid'},  # The job identifier for the previous PSI-Search iteration.
-    'selectedHits=f'  => \$tool_params{'selectedHits'},   # List of identifiers from the hits of the previous iteration to use to construct the search PSSM for this iteration.
-    'bdrfile=f'       => \$tool_params{'bdrfile'},        # Boundary file containing boundary information for pre-selected sequences.Used for hardmask to clean HOEs.
-    'cpfile=f'        => \$tool_params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.
+    'matrix=s'        => \$params{'matrix'},         # The comparison matrix to be used to score alignments when searching the database
+    'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap opening penalty will decrease the number of gaps in the final alignment.
+    'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favours short gaps in the final alignment, conversly, decreasing the gap extension penalty favours long gaps in the final alignment.
+    'expthr=f'        => \$params{'expthr'},         # Limits the number of scores and alignments reported based on the expectation value. This value is the maximum number of times the match is expected to occur by chance.
+    'mask'            => \$params{'mask'},           # Turn on/off the sequence masking for HOEs in PSSM constructions. This option allows you to mask sequence characters beyond the alignment region when constructing the PSSM, reducing over-extension errors.
+    'psithr=f'        => \$params{'psithr'},         # Expectation value threshold for automatic selection of matched sequences for inclusion in the PSSM at each iteration.
+    'scores=i'        => \$params{'scores'},         # Maximum number of alignment score summaries reported in the result output.
+    'alignments=i'    => \$params{'alignments'},     # Maximum number of alignments reported in the result output.
+    'hsps'            => \$params{'hsps'},           # Turn on/off the display of all significant alignments between query and database sequence.
+    'scoreformat=s'   => \$params{'scoreformat'},    # Different score formats.
+    'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
+    'hist'            => \$params{'hist'},           # Turn on/off the histogram in the PSI-Search result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
+    'annotfeats'      => \$params{'annotfeats'},     # Turn on/off annotation features. Annotation features shows features from UniProtKB, such as variants, active sites, phospho-sites and binding sites that have been found in the aligned region of the database hit. To see the annotation features in the results after this has been enabled, select sequences of interest and click to 'Show' Alignments. This option also enables a new result tab (Domain Diagrams) that highlights domain regions.
+    'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
+    'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-Search iteration.
+    'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers from the hits of the previous iteration to use to construct the search PSSM for this iteration.
+    'bdrfile=f'       => \$params{'bdrfile'},        # Boundary file containing boundary information for pre-selected sequences.Used for hardmask to clean HOEs.
+    'cpfile=f'        => \$params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -113,8 +112,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -129,7 +128,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -646,13 +644,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -720,28 +718,28 @@ sub load_params {
 
 
     if ($params{'mask'}) {
-        $tool_params{'mask'} = 1;
+        $params{'mask'} = 1;
     }
     else {
-        $tool_params{'mask'} = 0;
+        $params{'mask'} = 0;
     }
     if ($params{'hsps'}) {
-        $tool_params{'hsps'} = 1;
+        $params{'hsps'} = 1;
     }
     else {
-        $tool_params{'hsps'} = 0;
+        $params{'hsps'} = 0;
     }
     if ($params{'hist'}) {
-        $tool_params{'hist'} = 1;
+        $params{'hist'} = 1;
     }
     else {
-        $tool_params{'hist'} = 0;
+        $params{'hist'} = 0;
     }
     if ($params{'annotfeats'}) {
-        $tool_params{'annotfeats'} = 1;
+        $params{'annotfeats'} = 1;
     }
     else {
-        $tool_params{'annotfeats'} = 0;
+        $params{'annotfeats'} = 0;
     }
 
 
@@ -953,28 +951,22 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI PSI-Search Python Client:
+EMBL-EBI PSI-Search Perl Client:
 
 Sequence similarity search with PSI-Search.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/psisearch
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The query sequence can be entered directly into this form.
+                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot format. A partially formatted sequence
+                        is not accepted. Adding a return to the end of the sequence
+                        may help certain applications understand the input. Note
+                        that directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be selected at the same time.
 
 [Optional]
   --matrix              The comparison matrix to be used to score alignments when
@@ -1020,16 +1012,6 @@ Sequence similarity search with PSI-Search.
                         sequences of interest and click to 'Show' Alignments. This
                         option also enables a new result tab (Domain Diagrams) that
                         highlights domain regions.
-  --sequence            The query sequence can be entered directly into this form.
-                        The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot format. A partially formatted sequence
-                        is not accepted. Adding a return to the end of the sequence
-                        may help certain applications understand the input. Note
-                        that directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be selected at the same time.
   --previousjobid       The job identifier for the previous PSI-Search iteration.
   --selectedHits        List of identifiers from the hits of the previous iteration
                         to use to construct the search PSSM for this iteration.
@@ -1038,17 +1020,39 @@ Sequence similarity search with PSI-Search.
   --cpfile              Checkpoint file from the previous iteration. Must be in
                         ASN.1 Binary Format.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --quiet               Decrease output.
+  --verbose             Increase output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/psisearch
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

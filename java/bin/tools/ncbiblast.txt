@@ -1,3 +1,0 @@
-ncbiblast
-NCBI Blast
-Sequence similarity search with NCBI Blast.

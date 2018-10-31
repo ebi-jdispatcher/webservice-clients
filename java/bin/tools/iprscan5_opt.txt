@@ -1,4 +1,0 @@
---goterms          	boolean	Switch on look-up of corresponding Gene Ontology annotations
---pathways         	boolean	Switch on look-up of corresponding pathway annotations
---appl             	string 	A number of different protein sequence applications are launched. These applications search against specific databases and have preconfigured cut off thresholds.
---sequence         	string 	Your protein sequence can be entered directly into this form in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.

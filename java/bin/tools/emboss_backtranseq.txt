@@ -1,3 +1,0 @@
-emboss_backtranseq
-EMBOSS backtranseq
-Sequence translations with backtranseq.

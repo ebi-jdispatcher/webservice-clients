@@ -279,9 +279,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -347,7 +347,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -419,6 +419,28 @@ EMBL-EBI T-coffe Python Client:
 
 Multiple sequence alignment with T-coffee.
 
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Defines the type of the sequences to be aligned.
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 500 sequences and 1MB of data.
+
+[Optional]
+  --format              Format for generated multiple sequence alignment.
+  --matrix              Matrix series to use when generating the multiple sequence
+                        alignment. The program goes through the chosen matrix
+                        series, spanning the full range of amino acid distances.
+  --order               The order in which the sequences appear in the final
+                        alignment.
+
 [General]
   -h, --help            Show this help message and exit.
   --async               Forces to make an asynchronous query.
@@ -432,42 +454,26 @@ Multiple sequence alignment with T-coffee.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
+  --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/tcoffee
 
-[Optional]
-  --format              Format for generated multiple sequence alignment.
-  --matrix              Matrix series to use when generating the multiple sequence
-                        alignment. The program goes through the chosen matrix
-                        series, spanning the full range of amino acid distances.
-  --order               The order in which the sequences appear in the final
-                        alignment.
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 500 sequences and 1MB of data.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python tcoffee.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python tcoffee.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python tcoffee.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python tcoffee.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python tcoffee.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python tcoffee.py --polljob --jobid <jobId> [--outfile string]

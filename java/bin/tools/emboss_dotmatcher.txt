@@ -1,3 +1,0 @@
-emboss_dotmatcher
-EMBOSS dotmatcher
-Sequence statistics and plots with dotmatcher.

@@ -1,3 +1,0 @@
-tcoffee
-T-coffe
-Multiple sequence alignment with T-coffee.

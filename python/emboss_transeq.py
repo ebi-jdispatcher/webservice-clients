@@ -76,9 +76,9 @@ parser.add_option('--frame', help=('The frames to be translated. The order of th
 parser.add_option('--codontable', help=('Which genetic code table to use. These are kept synchronised with'
                   'those maintained at the NCBIs Taxonomy Browser.'))
 parser.add_option('--regions', help=('Which regions of the users DNA molecule are to be translated.'))
-parser.add_option('--trim', help=('Remove * and X (stop and ambiguity) symbols from the end of the'
+parser.add_option('--trim', action='store_true', help=('Remove * and X (stop and ambiguity) symbols from the end of the'
                   'translation.'))
-parser.add_option('--reverse', help=('Choose this option if you wish to reverse and complement your input'
+parser.add_option('--reverse', action='store_true', help=('Choose this option if you wish to reverse and complement your input'
                   'sequence before frame translation.'))
 parser.add_option('--sequence', help=('Any input formats accepted by EMBOSS can be used, the full list of'
                   'sequence formats accepted as input by EMBOSS tools can be accessed via'
@@ -281,9 +281,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -349,7 +349,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -421,24 +421,14 @@ EMBL-EBI EMBOSS transeq Python Client:
 
 Sequence translations with transeq.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            Any input formats accepted by EMBOSS can be used, the full
+                        list of sequence formats accepted as input by EMBOSS tools
+                        can be accessed via the link below. Word processor files may
+                        yield unpredictable results as hidden/control characters may
+                        be present in the files. It is best to save files with the
+                        Unix format option to avoid hidden Windows characters.
 
 [Optional]
   --frame               The frames to be translated. The order of the frames follows
@@ -454,24 +444,40 @@ Sequence translations with transeq.
                         of the translation.
   --reverse             Choose this option if you wish to reverse and complement
                         your input sequence before frame translation.
-  --sequence            Any input formats accepted by EMBOSS can be used, the full
-                        list of sequence formats accepted as input by EMBOSS tools
-                        can be accessed via the link below. Word processor files may
-                        yield unpredictable results as hidden/control characters may
-                        be present in the files. It is best to save files with the
-                        Unix format option to avoid hidden Windows characters.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_transeq.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_transeq.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_transeq.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_transeq.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_transeq.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_transeq.py --polljob --jobid <jobId> [--outfile string]

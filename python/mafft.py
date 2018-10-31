@@ -76,7 +76,7 @@ parser.add_option('--gapopen', help=('Penalty for first base/residue in a gap.')
 parser.add_option('--gapext', help=('Penalty for each additional base/residue in a gap.'))
 parser.add_option('--order', help=('The order in which the sequences appear in the final alignment'))
 parser.add_option('--nbtree', help=('Tree Rebuilding Number'))
-parser.add_option('--treeout', help=('Generate guide tree file'))
+parser.add_option('--treeout', action='store_true', help=('Generate guide tree file'))
 parser.add_option('--maxiterate', help=('Maximum number of iterations to perform when refining the alignment'))
 parser.add_option('--ffts', help=('Perform fast fourier transform'))
 parser.add_option('--stype', help=('Indicates if the sequences to align are protein or nucleotide'
@@ -285,9 +285,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -353,7 +353,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -425,24 +425,20 @@ EMBL-EBI Mafft Python Client:
 
 Multiple sequence alignment with Mafft.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/mafft
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Indicates if the sequences to align are protein or
+                        nucleotide (DNA/RNA).
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 500 sequences and 1MB of data.
 
 [Optional]
   --format              Format for generated multiple sequence alignment.
@@ -457,30 +453,40 @@ Multiple sequence alignment with Mafft.
   --maxiterate          Maximum number of iterations to perform when refining the
                         alignment.
   --ffts                Perform fast fourier transform.
-  --stype               Indicates if the sequences to align are protein or
-                        nucleotide (DNA/RNA).
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 500 sequences and 1MB of data.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/mafft
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python mafft.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python mafft.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python mafft.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python mafft.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python mafft.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python mafft.py --polljob --jobid <jobId> [--outfile string]

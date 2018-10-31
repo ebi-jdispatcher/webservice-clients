@@ -71,11 +71,11 @@ parser = OptionParser(add_help_option=False)
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--codontable', help=('Which Genetic Code table to use. These are kept synchronised with'
                   'those maintained at the NCBIs Taxonomy Browser.'))
-parser.add_option('--firstorf', help=('Count the beginning of a sequence as a possible ORF, even if its'
+parser.add_option('--firstorf', action='store_true', help=('Count the beginning of a sequence as a possible ORF, even if its'
                   'inferior to the minimal ORF size.'))
-parser.add_option('--lastorf', help=('Count the end of a sequence as a possible ORF, even if its not'
+parser.add_option('--lastorf', action='store_true', help=('Count the end of a sequence as a possible ORF, even if its not'
                   'finishing with a STOP, or inferior to the minimal ORF size.'))
-parser.add_option('--reverse', help=('Choose this option if you wish to reverse and compliment your'
+parser.add_option('--reverse', action='store_true', help=('Choose this option if you wish to reverse and compliment your'
                   'sequence.'))
 parser.add_option('--orfminsize', help=('Minimum size of Open Reading Frames (ORFs) to display in the'
                   'translations.'))
@@ -277,9 +277,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -345,7 +345,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -417,24 +417,12 @@ EMBL-EBI EMBOSS sixpack Python Client:
 
 Sequence translations with sixpack.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/emboss_sixpack
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            A DNA sequence can be entered or pasted into this box.
+                        Ideally use a known sequence format such as fasta or EMBL,
+                        text pasted from word processors may contain meta-characters
+                        that cause problems.
 
 [Optional]
   --codontable          Which Genetic Code table to use. These are kept synchronised
@@ -448,22 +436,40 @@ Sequence translations with sixpack.
                         your sequence.
   --orfminsize          Minimum size of Open Reading Frames (ORFs) to display in the
                         translations.
-  --sequence            A DNA sequence can be entered or pasted into this box.
-                        Ideally use a known sequence format such as fasta or EMBL,
-                        text pasted from word processors may contain meta-characters
-                        that cause problems.
+
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/emboss_sixpack
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python emboss_sixpack.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_sixpack.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python emboss_sixpack.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python emboss_sixpack.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python emboss_sixpack.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python emboss_sixpack.py --polljob --jobid <jobId> [--outfile string]

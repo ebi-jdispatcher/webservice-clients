@@ -1,3 +1,0 @@
-saps
-SAPS
-Sequence statistics and plots with SAPS.

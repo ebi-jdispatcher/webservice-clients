@@ -80,7 +80,7 @@ parser.add_option('--match_scores', help=('Specify match/mismatch scores for DNA
                   '+5/-4. +3/-2 can perform better in some cases.'))
 parser.add_option('--gapopen', help=('Score for the first residue in a gap.'))
 parser.add_option('--gapext', help=('Score for each additional residue in a gap.'))
-parser.add_option('--hsps', help=('Turn on/off the display of all significant alignments between query'
+parser.add_option('--hsps', action='store_true', help=('Turn on/off the display of all significant alignments between query'
                   'and library sequence.'))
 parser.add_option('--expupperlim', help=('Limits the number of scores and alignments reported based on the'
                   'expectation value. This is the maximum number of times the match is'
@@ -94,7 +94,7 @@ parser.add_option('--strand', help=('For nucleotide sequences specify the sequen
                   'complement of provided) strands are used, for single stranded'
                   'sequences searching with only the upper or lower strand may provide'
                   'better results.'))
-parser.add_option('--hist', help=('Turn on/off the histogram in the FASTA result. The histogram gives a'
+parser.add_option('--hist', action='store_true', help=('Turn on/off the histogram in the FASTA result. The histogram gives a'
                   'qualitative view of how well the statistical theory fits the'
                   'similarity scores calculated by the program.'))
 parser.add_option('--scores', help=('Maximum number of match score summaries reported in the result output.'))
@@ -325,9 +325,9 @@ def serviceGetStatus(jobId):
 # Print the status of a job
 def printGetStatus(jobId):
     printDebugMessage(u'printGetStatus', u'Begin', 1)
+    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print(status)
     if outputLevel > 0 and status == "FINISHED":
@@ -393,7 +393,7 @@ def clientPoll(jobId):
     while result == u'RUNNING' or result == u'PENDING':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
-            print(result, file=sys.stderr)
+            print(result)
         if result == u'RUNNING' or result == u'PENDING':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
@@ -465,26 +465,8 @@ EMBL-EBI FASTM Python Client:
 
 Sequence similarity search with FASTM.
 
-[General]
-  -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
-  --title               Title for job.
-  --status              Get job status.
-  --resultTypes         Get available result types for job.
-  --polljob             Poll for the status of a job.
-  --pollFreq            Poll frequency in seconds (default 3s).
-  --jobid               JobId that was returned when an asynchronous job was submitted.
-  --outfile             File name for results (default is JobId; for STDOUT).
-  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
-  --params              List input parameters.
-  --paramDetail         Display details for input parameter.
-  --quiet               Decrease output.
-  --verbose             Increase output.
-  --debugLevel          Debugging level.
-  --baseUrl             Base URL. Defaults to:
-                        https://www.ebi.ac.uk/Tools/services/rest/fastm
-
-[Optional]
+[Required (for job submission)]
+  --email               E-mail address.
   --program             The FASTA program to be used for the Sequence Similarity
                         Search.
   --stype               Indicates if the query sequence is protein, DNA or RNA. Used
@@ -492,6 +474,21 @@ Sequence similarity search with FASTM.
                         type of sequence (via. the '-p', '-n' or '-U' options), this
                         prevents issues when using nucleotide sequences that contain
                         many ambiguous residues.
+  --sequence            The input set of peptide or nucleotide sequence fragments
+                        are described using a modified fasta sequence format. This
+                        comprises a fasta header line with an identifier for the set
+                        of sequences and optionally a description, followed by the
+                        individual sequences each starting on a newline and
+                        separated with commas. Partially formatted sequences are not
+                        accepted. Adding a return to the end of the sequence may
+                        help certain applications understand the input. Note that
+                        directly using data from word processors may yield
+                        unpredictable results as hidden/control characters may be
+                        present.
+  --database            The databases to run the sequence similarity search against.
+                        Multiple databases can be used at the same time.
+
+[Optional]
   --matrix              The comparison matrix to be used to score alignments when
                         searching the database.
   --match_scores        Specify match/mismatch scores for DNA comparisons. The
@@ -539,35 +536,44 @@ Sequence similarity search with FASTM.
                         due to composition rather then meaningful sequence
                         similarity. However in some cases filtering also masks
                         regions of interest and so should be used with caution.
-  --sequence            The input set of peptide or nucleotide sequence fragments
-                        are described using a modified fasta sequence format. This
-                        comprises a fasta header line with an identifier for the set
-                        of sequences and optionally a description, followed by the
-                        individual sequences each starting on a newline and
-                        separated with commas. Partially formatted sequences are not
-                        accepted. Adding a return to the end of the sequence may
-                        help certain applications understand the input. Note that
-                        directly using data from word processors may yield
-                        unpredictable results as hidden/control characters may be
-                        present.
-  --database            The databases to run the sequence similarity search against.
-                        Multiple databases can be used at the same time.
   --ktup                FASTA uses a rapid word-based lookup strategy to speed the
                         initial phase of the similarity search. The KTUP is used to
                         control the sensitivity of the search. Lower values lead to
                         more sensitive, but slower searches.
 
+[General]
+  -h, --help            Show this help message and exit.
+  --async               Forces to make an asynchronous query.
+  --title               Title for job.
+  --status              Get job status.
+  --resultTypes         Get available result types for job.
+  --polljob             Poll for the status of a job.
+  --pollFreq            Poll frequency in seconds (default 3s).
+  --jobid               JobId that was returned when an asynchronous job was submitted.
+  --outfile             File name for results (default is JobId; for STDOUT).
+  --outformat           Result format(s) to retrieve. It accepts comma-separated values.
+  --params              List input parameters.
+  --paramDetail         Display details for input parameter.
+  --verbose             Increase output.
+  --quiet               Decrease output.
+  --baseUrl             Base URL. Defaults to:
+                        https://www.ebi.ac.uk/Tools/services/rest/fastm
+
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: python fastm.py --email <your@email.com> [options...] <SequenceFile>
+  Usage: python fastm.py --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python fastm.py --async --email <your@email.com> [options...] <SequenceFile>
+  Usage: python fastm.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: python fastm.py --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: python fastm.py --polljob --jobid <jobId> [--outfile string]

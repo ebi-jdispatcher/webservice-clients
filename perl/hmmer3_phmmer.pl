@@ -75,26 +75,25 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'incE=s'          => \$tool_params{'incE'},           # Significance E-values[Sequence]
-    'incdomE=s'       => \$tool_params{'incdomE'},        # Significance E-values[Hit]
-    'E=s'             => \$tool_params{'E'},              # Report E-values[Sequence]
-    'domE=s'          => \$tool_params{'domE'},           # Report E-values[Hit]
-    'incT=s'          => \$tool_params{'incT'},           # Significance bit scores[Sequence]
-    'incdomT=s'       => \$tool_params{'incdomT'},        # Significance bit scores[Hit]
-    'T=s'             => \$tool_params{'T'},              # Report bit scores[Sequence]
-    'domT=s'          => \$tool_params{'domT'},           # Report bit scores[Hit]
-    'popen=s'         => \$tool_params{'popen'},          # Gap Penalties[open]
-    'pextend=s'       => \$tool_params{'pextend'},        # Gap Penalties[extend]
-    'mx=s'            => \$tool_params{'mx'},             # Gap Penalties[Substitution scoring matrix]
-    'nobias'          => \$tool_params{'nobias'},         # Filters
-    'alignView'       => \$tool_params{'alignView'},      # Output alignment in result
-    'database=s'      => \$tool_params{'database'},       # Sequence Database
-    'evalue=f'        => \$tool_params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
-    'sequence=s'      => \$tool_params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'incE=s'          => \$params{'incE'},           # Significance E-values[Sequence]
+    'incdomE=s'       => \$params{'incdomE'},        # Significance E-values[Hit]
+    'E=s'             => \$params{'E'},              # Report E-values[Sequence]
+    'domE=s'          => \$params{'domE'},           # Report E-values[Hit]
+    'incT=s'          => \$params{'incT'},           # Significance bit scores[Sequence]
+    'incdomT=s'       => \$params{'incdomT'},        # Significance bit scores[Hit]
+    'T=s'             => \$params{'T'},              # Report bit scores[Sequence]
+    'domT=s'          => \$params{'domT'},           # Report bit scores[Hit]
+    'popen=s'         => \$params{'popen'},          # Gap Penalties[open]
+    'pextend=s'       => \$params{'pextend'},        # Gap Penalties[extend]
+    'mx=s'            => \$params{'mx'},             # Gap Penalties[Substitution scoring matrix]
+    'nobias'          => \$params{'nobias'},         # Filters
+    'alignView'       => \$params{'alignView'},      # Output alignment in result
+    'database=s'      => \$params{'database'},       # Sequence Database
+    'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
+    'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -110,8 +109,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -126,7 +125,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -643,13 +641,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -717,16 +715,16 @@ sub load_params {
 
 
     if ($params{'nobias'}) {
-        $tool_params{'nobias'} = 1;
+        $params{'nobias'} = 1;
     }
     else {
-        $tool_params{'nobias'} = 0;
+        $params{'nobias'} = 0;
     }
     if ($params{'alignView'}) {
-        $tool_params{'alignView'} = 1;
+        $params{'alignView'} = 1;
     }
     else {
-        $tool_params{'alignView'} = 0;
+        $params{'alignView'} = 0;
     }
 
 
@@ -938,9 +936,37 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI HMMER 3 phmmer Python Client:
+EMBL-EBI HMMER 3 phmmer Perl Client:
 
 Protein function analysis with HMMER 3 phmmer.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --database            Sequence Database.
+  --sequence            The input sequence can be entered directly into this form.
+                        The sequence can be be in FASTA or UniProtKB/Swiss-Prot
+                        format. A partially formatted sequence is not accepted.
+                        Adding a return to the end of the sequence may help certain
+                        applications understand the input. Note that directly using
+                        data from word processors may yield unpredictable results as
+                        hidden/control characters may be present.
+
+[Optional]
+  --incE                Significance E-values[Sequence].
+  --incdomE             Significance E-values[Hit].
+  --E                   Report E-values[Sequence].
+  --domE                Report E-values[Hit].
+  --incT                Significance bit scores[Sequence].
+  --incdomT             Significance bit scores[Hit].
+  --T                   Report bit scores[Sequence].
+  --domT                Report bit scores[Hit].
+  --popen               Gap Penalties[open].
+  --pextend             Gap Penalties[extend].
+  --mx                  Gap Penalties[Substitution scoring matrix].
+  --nobias              Filters.
+  --alignView           Output alignment in result.
+  --evalue              Expectation value cut-off for reporting target profiles in
+                        the per-target output.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -957,46 +983,24 @@ Protein function analysis with HMMER 3 phmmer.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer
 
-[Optional]
-  --incE                Significance E-values[Sequence].
-  --incdomE             Significance E-values[Hit].
-  --E                   Report E-values[Sequence].
-  --domE                Report E-values[Hit].
-  --incT                Significance bit scores[Sequence].
-  --incdomT             Significance bit scores[Hit].
-  --T                   Report bit scores[Sequence].
-  --domT                Report bit scores[Hit].
-  --popen               Gap Penalties[open].
-  --pextend             Gap Penalties[extend].
-  --mx                  Gap Penalties[Substitution scoring matrix].
-  --nobias              Filters.
-  --alignView           Output alignment in result.
-  --database            Sequence Database.
-  --evalue              Expectation value cut-off for reporting target profiles in
-                        the per-target output.
-  --sequence            The input sequence can be entered directly into this form.
-                        The sequence can be be in FASTA or UniProtKB/Swiss-Prot
-                        format. A partially formatted sequence is not accepted.
-                        Adding a return to the end of the sequence may help certain
-                        applications understand the input. Note that directly using
-                        data from word processors may yield unpredictable results as
-                        hidden/control characters may be present.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

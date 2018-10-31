@@ -75,17 +75,16 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'stype=s'         => \$tool_params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
-    'format=s'        => \$tool_params{'format'},         # Format for generated multiple sequence alignment.
-    'gapopen=f'       => \$tool_params{'gapopen'},        # The penalty for opening/closing a gap. Half the value will be subtracted from the alignment score when opening, and half when closing a gap.
-    'gapext=f'        => \$tool_params{'gapext'},         # Penalty for extending a gap
-    'termgap=f'       => \$tool_params{'termgap'},        # Penalty to extend gaps from the N/C terminal of protein or 5'/3' terminal of nucleotide sequences
-    'bonus=f'         => \$tool_params{'bonus'},          # A bonus score that is added to each pair of aligned residues
-    'sequence=s'      => \$tool_params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 2000 sequences and 2MB of data.
+    'stype=s'         => \$params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
+    'format=s'        => \$params{'format'},         # Format for generated multiple sequence alignment.
+    'gapopen=f'       => \$params{'gapopen'},        # The penalty for opening/closing a gap. Half the value will be subtracted from the alignment score when opening, and half when closing a gap.
+    'gapext=f'        => \$params{'gapext'},         # Penalty for extending a gap
+    'termgap=f'       => \$params{'termgap'},        # Penalty to extend gaps from the N/C terminal of protein or 5'/3' terminal of nucleotide sequences
+    'bonus=f'         => \$params{'bonus'},          # A bonus score that is added to each pair of aligned residues
+    'sequence=s'      => \$params{'sequence'},       # Three or more sequences to be aligned can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is currently a sequence input limit of 2000 sequences and 2MB of data.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -101,8 +100,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -117,7 +116,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -634,13 +632,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -918,9 +916,34 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI Kalign Python Client:
+EMBL-EBI Kalign Perl Client:
 
 Multiple sequence alignment with Kalign.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --stype               Indicates if the sequences to align are protein or
+                        nucleotide (DNA/RNA).
+  --sequence            Three or more sequences to be aligned can be entered
+                        directly into this form. Sequences can be in GCG, FASTA,
+                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
+                        UniProtKB/Swiss-Prot (Protein only) format. Partially
+                        formatted sequences are not accepted. Adding a return to the
+                        end of the sequence may help certain applications understand
+                        the input. Note that directly using data from word
+                        processors may yield unpredictable results as hidden/control
+                        characters may be present. There is currently a sequence
+                        input limit of 2000 sequences and 2MB of data.
+
+[Optional]
+  --format              Format for generated multiple sequence alignment.
+  --gapopen             The penalty for opening/closing a gap. Half the value will
+                        be subtracted from the alignment score when opening, and
+                        half when closing a gap.
+  --gapext              Penalty for extending a gap.
+  --termgap             Penalty to extend gaps from the N/C terminal of protein or
+                        5'/3' terminal of nucleotide sequences.
+  --bonus               A bonus score that is added to each pair of aligned residues.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -937,43 +960,24 @@ Multiple sequence alignment with Kalign.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/kalign
 
-[Optional]
-  --stype               Indicates if the sequences to align are protein or
-                        nucleotide (DNA/RNA).
-  --format              Format for generated multiple sequence alignment.
-  --gapopen             The penalty for opening/closing a gap. Half the value will
-                        be subtracted from the alignment score when opening, and
-                        half when closing a gap.
-  --gapext              Penalty for extending a gap.
-  --termgap             Penalty to extend gaps from the N/C terminal of protein or
-                        5'/3' terminal of nucleotide sequences.
-  --bonus               A bonus score that is added to each pair of aligned residues.
-  --sequence            Three or more sequences to be aligned can be entered
-                        directly into this form. Sequences can be in GCG, FASTA,
-                        EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or
-                        UniProtKB/Swiss-Prot (Protein only) format. Partially
-                        formatted sequences are not accepted. Adding a return to the
-                        end of the sequence may help certain applications understand
-                        the input. Note that directly using data from word
-                        processors may yield unpredictable results as hidden/control
-                        characters may be present. There is currently a sequence
-                        input limit of 2000 sequences and 2MB of data.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

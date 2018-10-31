@@ -75,16 +75,15 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'codontable=s'    => \$tool_params{'codontable'},     # Which Genetic Code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
-    'firstorf'        => \$tool_params{'firstorf'},       # Count the beginning of a sequence as a possible ORF, even if it's inferior to the minimal ORF size.
-    'lastorf'         => \$tool_params{'lastorf'},        # Count the end of a sequence as a possible ORF, even if it's not finishing with a STOP, or inferior to the minimal ORF size.
-    'reverse'         => \$tool_params{'reverse'},        # Choose this option if you wish to reverse and compliment your sequence.
-    'orfminsize=s'    => \$tool_params{'orfminsize'},     # Minimum size of Open Reading Frames (ORFs) to display in the translations.
-    'sequence=s'      => \$tool_params{'sequence'},       # A DNA sequence can be entered or pasted into this box. Ideally use a known sequence format such as fasta or EMBL, text pasted from word processors may contain meta-characters that cause problems.
+    'codontable=s'    => \$params{'codontable'},     # Which Genetic Code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
+    'firstorf'        => \$params{'firstorf'},       # Count the beginning of a sequence as a possible ORF, even if it's inferior to the minimal ORF size.
+    'lastorf'         => \$params{'lastorf'},        # Count the end of a sequence as a possible ORF, even if it's not finishing with a STOP, or inferior to the minimal ORF size.
+    'reverse'         => \$params{'reverse'},        # Choose this option if you wish to reverse and compliment your sequence.
+    'orfminsize=s'    => \$params{'orfminsize'},     # Minimum size of Open Reading Frames (ORFs) to display in the translations.
+    'sequence=s'      => \$params{'sequence'},       # A DNA sequence can be entered or pasted into this box. Ideally use a known sequence format such as fasta or EMBL, text pasted from word processors may contain meta-characters that cause problems.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -100,8 +99,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -116,7 +115,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -633,13 +631,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -707,22 +705,22 @@ sub load_params {
 
 
     if ($params{'firstorf'}) {
-        $tool_params{'firstorf'} = 1;
+        $params{'firstorf'} = 1;
     }
     else {
-        $tool_params{'firstorf'} = 0;
+        $params{'firstorf'} = 0;
     }
     if ($params{'lastorf'}) {
-        $tool_params{'lastorf'} = 1;
+        $params{'lastorf'} = 1;
     }
     else {
-        $tool_params{'lastorf'} = 0;
+        $params{'lastorf'} = 0;
     }
     if ($params{'reverse'}) {
-        $tool_params{'reverse'} = 1;
+        $params{'reverse'} = 1;
     }
     else {
-        $tool_params{'reverse'} = 0;
+        $params{'reverse'} = 0;
     }
 
 
@@ -934,9 +932,29 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS sixpack Python Client:
+EMBL-EBI EMBOSS sixpack Perl Client:
 
 Sequence translations with sixpack.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            A DNA sequence can be entered or pasted into this box.
+                        Ideally use a known sequence format such as fasta or EMBL,
+                        text pasted from word processors may contain meta-characters
+                        that cause problems.
+
+[Optional]
+  --codontable          Which Genetic Code table to use. These are kept synchronised
+                        with those maintained at the NCBI's Taxonomy Browser.
+  --firstorf            Count the beginning of a sequence as a possible ORF, even if
+                        it's inferior to the minimal ORF size.
+  --lastorf             Count the end of a sequence as a possible ORF, even if it's
+                        not finishing with a STOP, or inferior to the minimal ORF
+                        size.
+  --reverse             Choose this option if you wish to reverse and compliment
+                        your sequence.
+  --orfminsize          Minimum size of Open Reading Frames (ORFs) to display in the
+                        translations.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -953,38 +971,24 @@ Sequence translations with sixpack.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_sixpack
 
-[Optional]
-  --codontable          Which Genetic Code table to use. These are kept synchronised
-                        with those maintained at the NCBI's Taxonomy Browser.
-  --firstorf            Count the beginning of a sequence as a possible ORF, even if
-                        it's inferior to the minimal ORF size.
-  --lastorf             Count the end of a sequence as a possible ORF, even if it's
-                        not finishing with a STOP, or inferior to the minimal ORF
-                        size.
-  --reverse             Choose this option if you wish to reverse and compliment
-                        your sequence.
-  --orfminsize          Minimum size of Open Reading Frames (ORFs) to display in the
-                        translations.
-  --sequence            A DNA sequence can be entered or pasted into this box.
-                        Ideally use a known sequence format such as fasta or EMBL,
-                        text pasted from word processors may contain meta-characters
-                        that cause problems.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

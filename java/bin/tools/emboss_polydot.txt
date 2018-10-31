@@ -1,3 +1,0 @@
-emboss_polydot
-EMBOSS polydot
-Sequence statistics and plots with polydot.

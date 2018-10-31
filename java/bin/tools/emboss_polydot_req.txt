@@ -1,9 +1,0 @@
-  --stype               Defines the type of the sequences to be aligned.
-  --sequence            Two or more aligned sequences are required. There is
-                        currently a sequence input limit of 500 sequences and 1MB of
-                        data.
-  --wordsize            Word size.
-  --gap                 This specifies the size of the gap that is used to separate
-                        the individual dotplots in the display. The size is measured
-                        in residues, as displayed in the output.
-  --boxit               Draw a box around dotplot.

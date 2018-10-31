@@ -75,12 +75,11 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'sequence=s'      => \$tool_params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
-    'hwindow=i'       => \$tool_params{'hwindow'},        # This sets the window size for averaging (smoothing) the hydropathy plots. By default a window size of 9 is used, please use an integer between 1 and 200.
+    'sequence=s'      => \$params{'sequence'},       # The sequence to be analysed can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted sequences are not accepted..
+    'hwindow=i'       => \$params{'hwindow'},        # This sets the window size for averaging (smoothing) the hydropathy plots. By default a window size of 9 is used, please use an integer between 1 and 200.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -96,8 +95,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -112,7 +111,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -629,13 +627,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -913,9 +911,21 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS pepinfo Python Client:
+EMBL-EBI EMBOSS pepinfo Perl Client:
 
 Sequence statistics and plots with pepinfo.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            The sequence to be analysed can be entered directly into
+                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
+                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
+                        sequences are not accepted.
+
+[Optional]
+  --hwindow             This sets the window size for averaging (smoothing) the
+                        hydropathy plots. By default a window size of 9 is used,
+                        please use an integer between 1 and 200.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -932,30 +942,24 @@ Sequence statistics and plots with pepinfo.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_pepinfo
 
-[Optional]
-  --sequence            The sequence to be analysed can be entered directly into
-                        this form. The sequence can be in GCG, FASTA, PIR, NBRF,
-                        PHYLIP or UniProtKB/Swiss-Prot format. Partially formatted
-                        sequences are not accepted.
-  --hwindow             This sets the window size for averaging (smoothing) the
-                        hydropathy plots. By default a window size of 9 is used,
-                        please use an integer between 1 and 200.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]

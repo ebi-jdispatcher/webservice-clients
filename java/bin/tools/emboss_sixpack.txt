@@ -1,3 +1,0 @@
-emboss_sixpack
-EMBOSS sixpack
-Sequence translations with sixpack.

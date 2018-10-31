@@ -75,16 +75,15 @@ my $numOpts = scalar(@ARGV);
 my %params = ('debugLevel' => 0);
 
 # Default parameter values (should get these from the service)
-my %tool_params = ();
 GetOptions(
 
     # Tool specific options
-    'frame=s'         => \$tool_params{'frame'},          # The frames to be translated. The order of the frames follows the Staden convention: Frame -1 is the reverse-complement of the sequence having the same codon phase as frame 1. Frame -2 is the same phase as frame 2. Frame -3 is the same phase as frame 3.
-    'codontable=s'    => \$tool_params{'codontable'},     # Which genetic code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
-    'regions=s'       => \$tool_params{'regions'},        # Which regions of the user's DNA molecule are to be translated.
-    'trim'            => \$tool_params{'trim'},           # Remove '*' and 'X' (stop and ambiguity) symbols from the end of the translation.
-    'reverse'         => \$tool_params{'reverse'},        # Choose this option if you wish to reverse and complement your input sequence before frame translation.
-    'sequence=s'      => \$tool_params{'sequence'},       # Any input formats accepted by EMBOSS can be used, the full list of sequence formats accepted as input by EMBOSS tools can be accessed via the link below. Word processor files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
+    'frame=s'         => \$params{'frame'},          # The frames to be translated. The order of the frames follows the Staden convention: Frame -1 is the reverse-complement of the sequence having the same codon phase as frame 1. Frame -2 is the same phase as frame 2. Frame -3 is the same phase as frame 3.
+    'codontable=s'    => \$params{'codontable'},     # Which genetic code table to use. These are kept synchronised with those maintained at the NCBI's Taxonomy Browser.
+    'regions=s'       => \$params{'regions'},        # Which regions of the user's DNA molecule are to be translated.
+    'trim'            => \$params{'trim'},           # Remove '*' and 'X' (stop and ambiguity) symbols from the end of the translation.
+    'reverse'         => \$params{'reverse'},        # Choose this option if you wish to reverse and complement your input sequence before frame translation.
+    'sequence=s'      => \$params{'sequence'},       # Any input formats accepted by EMBOSS can be used, the full list of sequence formats accepted as input by EMBOSS tools can be accessed via the link below. Word processor files may yield unpredictable results as hidden/control characters may be present in the files. It is best to save files with the Unix format option to avoid hidden Windows characters.
 
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -100,8 +99,8 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'quiet'           => \$params{'quiet'},          # Decrease output level
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
 );
@@ -116,7 +115,6 @@ if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
 # Debug mode: print the input parameters
 &print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
-&print_debug_message('MAIN', "tool_params:\n" . Dumper(\%tool_params), 11);
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
@@ -633,13 +631,13 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-    $tool_params{'sequence'} = shift;
+    $params{'sequence'} = shift;
 
     # Load parameters
     &load_params();
 
     # Submit the job
-    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%tool_params);
+    my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Simulate sync/async mode
     if (defined($params{'async'})) {
@@ -707,16 +705,16 @@ sub load_params {
 
 
     if ($params{'trim'}) {
-        $tool_params{'trim'} = 1;
+        $params{'trim'} = 1;
     }
     else {
-        $tool_params{'trim'} = 0;
+        $params{'trim'} = 0;
     }
     if ($params{'reverse'}) {
-        $tool_params{'reverse'} = 1;
+        $params{'reverse'} = 1;
     }
     else {
-        $tool_params{'reverse'} = 0;
+        $params{'reverse'} = 0;
     }
 
 
@@ -928,9 +926,33 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-EMBL-EBI EMBOSS transeq Python Client:
+EMBL-EBI EMBOSS transeq Perl Client:
 
 Sequence translations with transeq.
+
+[Required (for job submission)]
+  --email               E-mail address.
+  --sequence            Any input formats accepted by EMBOSS can be used, the full
+                        list of sequence formats accepted as input by EMBOSS tools
+                        can be accessed via the link below. Word processor files may
+                        yield unpredictable results as hidden/control characters may
+                        be present in the files. It is best to save files with the
+                        Unix format option to avoid hidden Windows characters.
+
+[Optional]
+  --frame               The frames to be translated. The order of the frames follows
+                        the Staden convention: Frame -1 is the reverse-complement of
+                        the sequence having the same codon phase as frame 1. Frame
+                        -2 is the same phase as frame 2. Frame -3 is the same phase
+                        as frame 3.
+  --codontable          Which genetic code table to use. These are kept synchronised
+                        with those maintained at the NCBI's Taxonomy Browser.
+  --regions             Which regions of the user's DNA molecule are to be
+                        translated.
+  --trim                Remove '*' and 'X' (stop and ambiguity) symbols from the end
+                        of the translation.
+  --reverse             Choose this option if you wish to reverse and complement
+                        your input sequence before frame translation.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -947,42 +969,24 @@ Sequence translations with transeq.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
-  --debugLevel          Debugging level.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq
 
-[Optional]
-  --frame               The frames to be translated. The order of the frames follows
-                        the Staden convention: Frame -1 is the reverse-complement of
-                        the sequence having the same codon phase as frame 1. Frame
-                        -2 is the same phase as frame 2. Frame -3 is the same phase
-                        as frame 3.
-  --codontable          Which genetic code table to use. These are kept synchronised
-                        with those maintained at the NCBI's Taxonomy Browser.
-  --regions             Which regions of the user's DNA molecule are to be
-                        translated.
-  --trim                Remove '*' and 'X' (stop and ambiguity) symbols from the end
-                        of the translation.
-  --reverse             Choose this option if you wish to reverse and complement
-                        your input sequence before frame translation.
-  --sequence            Any input formats accepted by EMBOSS can be used, the full
-                        list of sequence formats accepted as input by EMBOSS tools
-                        can be accessed via the link below. Word processor files may
-                        yield unpredictable results as hidden/control characters may
-                        be present in the files. It is best to save files with the
-                        Unix format option to avoid hidden Windows characters.
-
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
-  Usage: perl $scriptName --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: results as an attachment
 
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SequenceFile>
+  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
+Check status of Asynchronous job:
+  Usage: perl $scriptName --status --jobid <jobId>
+
+Retrieve job data:
   Use the jobid to query for the status of the job. If the job is finished,
   it also returns the results/errors.
   Usage: perl $scriptName --polljob --jobid <jobId> [--outfile string]
