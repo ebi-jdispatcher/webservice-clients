@@ -733,11 +733,13 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF
-WSDbfetch
-=========
+EMBL-EBI EMBOSS WSDbfetch Perl Client:
+
+Dbfetch service enables database entry retrieval given a set of entry
+identifiers, and a required data format.
 
 Usage:
-  $scriptName <method> [arguments...] [--baseUrl <baseUrl>]
+  perl $scriptName <method> [arguments...] [--baseUrl <baseUrl>]
 
 A number of methods are available:
 
@@ -750,7 +752,6 @@ A number of methods are available:
   fetchBatch - retrive database entries. See below for details of arguments.
 
 Fetching an entry: fetchData
-
   $scriptName fetchData <dbName:id> [format [style]]
 
   dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
@@ -761,7 +762,6 @@ Fetching an entry: fetchData
 
 
 Fetching entries: fetchBatch
-
   $scriptName fetchBatch <dbName> <idList> [format [style]]
 
   dbName     database name (e.g. UNIPROT)
@@ -771,11 +771,10 @@ Fetching entries: fetchBatch
   style      style to retrive (e.g. raw)
 
 Further information:
-
-  https://www.ebi.ac.uk/Tools/webservices
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
 
 Support/Feedback:
-
   https://www.ebi.ac.uk/support/
 EOF
 }

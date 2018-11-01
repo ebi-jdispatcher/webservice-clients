@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# ======================================================================
+###############################################################################
 #
-# Copyright 2009-2018 EMBL - European Bioinformatics Institute
+# Copyright 2012-2018 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# ======================================================================
-# WSDbfetch (REST) using urllib and xmltramp
-# (http://www.aaronsw.com/2002/xmltramp/).
-# ======================================================================
+#  WSDbfetch (REST) using urllib and xmltramp
+#
+# For further information see:
+# https://www.ebi.ac.uk/Tools/webservices/
+#
+###############################################################################
 
 from __future__ import print_function
 import platform, os, sys, time
@@ -47,45 +49,70 @@ outputLevel = 1
 debugLevel = 0
 
 # Usage message
-usage = """
-  %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
-  %prog fetchData <dbName:id> [formatName [styleName]] [options...]
-  %prog getDbFormats <dbName> [options...]
-  %prog getFormatStyles <dbName> <formatName> [options...]
-  %prog getSupportedDBs [options...]
-  %prog getSupportedFormats [options...]
-  %prog getSupportedStyles [options...]"""
+def print_usage():
+    print("""\
+EMBL-EBI EMBOSS WSDbfetch Python Client:
+
+Dbfetch service enables database entry retrieval given a set of entry
+identifiers, and a required data format.
+
+Usage:
+  python dbfetch.py <method> [arguments...] [--baseUrl <baseUrl>]
+
+A number of methods are available:
+  getSupportedDBs - list available databases
+  getSupportedFormats - list available databases with formats
+  getSupportedStyles - list available databases with styles
+  getDbFormats - list formats for a specifed database
+  getFormatStyles - list styles for a specified database and format
+  fetchData - retrive an database entry. See below for details of arguments.
+  fetchBatch - retrive database entries. See below for details of arguments.
+
+Fetching an entry: fetchData
+  python dbfetch.py fetchData <dbName:id> [format [style]]
+
+  dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
+             use @fileName to read identifiers from a file or @- to read
+             identifiers from STDIN.
+  format     format to retrive (e.g. uniprot)
+  style      style to retrive (e.g. raw)
+
+
+Fetching entries: fetchBatch
+  python dbfetch.py fetchBatch <dbName> <idList> [format [style]]
+
+  dbName     database name (e.g. UNIPROT)
+  idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
+             Maximum of 200 IDs or accessions. "-" for STDIN.
+  format     format to retrive (e.g. uniprot)
+  style      style to retrive (e.g. raw)
+
+Further information:
+  https://www.ebi.ac.uk/Tools/webservices and
+    https://github.com/ebi-wp/webservice-clients
+
+Support/Feedback:
+  https://www.ebi.ac.uk/support/""")
+
+other_usage ="""
+      %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
+      %prog fetchData <dbName:id> [formatName [styleName]] [options...]
+      %prog getDbFormats <dbName> [options...]
+      %prog getFormatStyles <dbName> <formatName> [options...]
+      %prog getSupportedDBs [options...]
+      %prog getSupportedFormats [options...]
+      %prog getSupportedStyles [options...]"""
+
 description = """Fetch database entries using entry identifiers. For more information on dbfetch
 refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+
 epilog = """\
 Further information:
   https://www.ebi.ac.uk/Tools/webservices
 Support/Feedback:
   https://www.ebi.ac.uk/support/"""
+
 version = "1.0"
-# Process command-line options
-parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
-parser.add_option('--quiet', action='store_true', help='decrease output level')
-parser.add_option('--verbose', action='store_true', help='increase output level')
-parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
-(options, args) = parser.parse_args()
-
-# Increase output level.
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level.
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level.
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-# Base URL for service.
-if options.baseUrl:
-    baseUrl = options.baseUrl
 
 
 # Debug print
@@ -247,47 +274,80 @@ def fetchBatch(db, idListStr, format='default', style='raw'):
     return result
 
 
-# No arguments, print usage
-if len(args) < 1:
-    parser.print_help()
-# List databases.
-elif args[0] == 'getSupportedDBs':
-    dbNameList = getSupportedDbs()
-    for dbName in dbNameList:
-        print(dbName)
-# List formats for a database.
-elif args[0] == 'getDbFormats' and len(args) > 1:
-    formatNameList = getDbFormats(args[1])
-    if len(formatNameList) > 0:
-        for formatName in formatNameList:
-            print(formatName)
+if __name__ == '__main__':
+    # Process command-line options
+    # parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
+    parser = OptionParser(add_help_option=False)
+    parser.add_option('-h', '--help', help='Shows this message and exit.')
+    parser.add_option('--quiet', action='store_true', help='decrease output level')
+    parser.add_option('--verbose', action='store_true', help='increase output level')
+    parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
+    parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+    (options, args) = parser.parse_args()
+
+    # No arguments, print usage
+    if len(args) < 1:
+        print_usage()
+        sys.exit()
+
+    if options.help:
+        print_usage()
+        sys.exit()
+
+    # Increase output level.
+    if options.verbose:
+        outputLevel += 1
+
+    # Decrease output level.
+    if options.quiet:
+        outputLevel -= 1
+
+    # Debug level.
+    if options.debugLevel:
+        debugLevel = options.debugLevel
+
+    # Base URL for service.
+    if options.baseUrl:
+        baseUrl = options.baseUrl
+
+    # List databases.
+    if args[0] == 'getSupportedDBs':
+        dbNameList = getSupportedDbs()
+        for dbName in dbNameList:
+            print(dbName)
+    # List formats for a database.
+    elif args[0] == 'getDbFormats' and len(args) > 1:
+        formatNameList = getDbFormats(args[1])
+        if len(formatNameList) > 0:
+            for formatName in formatNameList:
+                print(formatName)
+        else:
+            print('Database not found')
+    # List formats for a database.
+    elif args[0] == 'getFormatStyles' and len(args) > 2:
+        styleNameList = getFormatStyles(args[1], args[2])
+        if len(styleNameList) > 0:
+            for styleName in styleNameList:
+                print(styleName)
+        else:
+            print('Database and format not found')
+    # Fetch an entry
+    elif args[0] == 'fetchData' and len(args) > 1:
+        if len(args) > 3:
+            print(fetchData(args[1], args[2], args[3]))
+        elif len(args) > 2:
+            print(fetchData(args[1], args[2]))
+        else:
+            print(fetchData(args[1]))
+    # Fetch a set of entries
+    elif args[0] == 'fetchBatch' and len(args) > 2:
+        if len(args) > 4:
+            print(fetchBatch(args[1], args[2], args[3], args[4]))
+        elif len(args) > 3:
+            print(fetchBatch(args[1], args[2], args[3]))
+        else:
+            print(fetchBatch(args[1], args[2]))
+    # Unknown argument combination, display usage
     else:
-        print('Database not found')
-# List formats for a database.
-elif args[0] == 'getFormatStyles' and len(args) > 2:
-    styleNameList = getFormatStyles(args[1], args[2])
-    if len(styleNameList) > 0:
-        for styleName in styleNameList:
-            print(styleName)
-    else:
-        print('Database and format not found')
-# Fetch an entry
-elif args[0] == 'fetchData' and len(args) > 1:
-    if len(args) > 3:
-        print(fetchData(args[1], args[2], args[3]))
-    elif len(args) > 2:
-        print(fetchData(args[1], args[2]))
-    else:
-        print(fetchData(args[1]))
-# Fetch a set of entries
-elif args[0] == 'fetchBatch' and len(args) > 2:
-    if len(args) > 4:
-        print(fetchBatch(args[1], args[2], args[3], args[4]))
-    elif len(args) > 3:
-        print(fetchBatch(args[1], args[2], args[3]))
-    else:
-        print(fetchBatch(args[1], args[2]))
-# Unknown argument combination, display usage
-else:
-    print('Error: unrecognised argument combination')
-    parser.print_help()
+        print('Error: unrecognised argument combination')
+        print_usage()
