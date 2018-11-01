@@ -277,8 +277,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -496,21 +495,35 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
+
     if options.outputtype:
         params['outputtype'] = options.outputtype
+    
+
+    if not options.species:
+        params['species'] = 'swp23s'
     if options.species:
         params['species'] = options.species
+    
+
+    if not options.positiveresidues:
+        params['positiveresidues'] = 'lys-arg'
     if options.positiveresidues:
         params['positiveresidues'] = options.positiveresidues
+    
 
 
     # Submit the job
@@ -533,7 +546,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

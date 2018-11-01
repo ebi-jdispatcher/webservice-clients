@@ -315,8 +315,7 @@ public class RestClientncbiblast {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar ncbiblast.jar --polljob --jobid " + jobid);
         }
@@ -510,10 +509,15 @@ public class RestClientncbiblast {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -550,16 +554,22 @@ public class RestClientncbiblast {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilsncbiblast.marshallToXML(parameter);
+                    ClientUtilsncbiblast.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilsncbiblast.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilsncbiblast.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilsncbiblast.loadData(asequence),
+                                             ClientUtilsncbiblast.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -612,7 +622,7 @@ public class RestClientncbiblast {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilsncbiblast.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilsncbiblast.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar ncbiblast.jar --polljob --jobid " + jobid
                                            + "\n  java -jar ncbiblast.jar --polljob --outformat <type> --jobid " + jobid);
@@ -697,11 +707,16 @@ public class RestClientncbiblast {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -737,6 +752,84 @@ public class RestClientncbiblast {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "protein") {
+            if (cli.hasOption("task") == false) {
+                form.putSingle("task", "blastp");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "nucleotide") {
+            if (cli.hasOption("task") == false) {
+                form.putSingle("task", "blastn");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "vector") {
+            if (cli.hasOption("task") == false) {
+                form.putSingle("task", "blastn");
+            }
+        }
+
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "protein") {
+            if (cli.hasOption("matrix") == false) {
+                form.putSingle("matrix", "BLOSUM62");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "nucleotide") {
+            if (cli.hasOption("matrix") == false) {
+                form.putSingle("matrix", "BLOSUM62");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "vector") {
+            if (cli.hasOption("matrix") == false) {
+                form.putSingle("matrix", "BLOSUM62");
+            }
+        }
+
+        if (cli.hasOption("alignments") == false)
+           form.putSingle("alignments", "50");
+
+        if (cli.hasOption("scores") == false)
+           form.putSingle("scores", "50");
+
+        if (cli.hasOption("exp") == false)
+           form.putSingle("exp", "10");
+
+        if (cli.hasOption("dropoff") == false)
+           form.putSingle("dropoff", "0");
+
+        if (cli.hasOption("gapopen") == false)
+           form.putSingle("gapopen", "-1");
+
+        if (cli.hasOption("gapext") == false)
+           form.putSingle("gapext", "-1");
+
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "protein") {
+            if (cli.hasOption("filter") == false) {
+                form.putSingle("filter", "F");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "nucleotide") {
+            if (cli.hasOption("filter") == false) {
+                form.putSingle("filter", "T");
+            }
+        }
+        if (cli.hasOption("stype") && cli.getOptionValue("stype") == "vector") {
+            if (cli.hasOption("filter") == false) {
+                form.putSingle("filter", "T");
+            }
+        }
+
+        if (cli.hasOption("gapalign") == true) {
+            form.putSingle("gapalign", "true");
+        } else {
+            form.putSingle("gapalign", "false");
+        }
+
+        if (cli.hasOption("transltable") == false)
+           form.putSingle("transltable", "1");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

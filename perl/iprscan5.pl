@@ -129,6 +129,7 @@ if ($params{'help'} || $numOpts == 0) {
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
+
 if (
     !(
         $params{'polljob'}
@@ -629,7 +630,9 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
+
     $params{'sequence'} = shift;
+
 
     # Load parameters
     &load_params();
@@ -666,6 +669,9 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
+
+
+
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -688,6 +694,7 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
+
 }
 
 =head2 load_params()
@@ -701,18 +708,17 @@ Load job parameters from command-line options.
 sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
+    # Pass default values and fix bools (without default value)
+    if (!$params{'goterms'}) {
+        $params{'goterms'} = 'true'
+    }
 
-    if ($params{'goterms'}) {
-        $params{'goterms'} = 1;
+    if (!$params{'pathways'}) {
+        $params{'pathways'} = 'true'
     }
-    else {
-        $params{'goterms'} = 0;
-    }
-    if ($params{'pathways'}) {
-        $params{'pathways'} = 1;
-    }
-    else {
-        $params{'pathways'} = 0;
+
+    if (!$params{'appl'}) {
+        $params{'appl'} = 'MobiDBLite'
     }
 
 

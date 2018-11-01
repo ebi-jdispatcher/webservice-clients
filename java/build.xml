@@ -40,6 +40,9 @@
             <param name="client" value="emboss_needle"/>
         </antcall>
         <antcall target="jar-client">
+            <param name="client" value="emboss_water"/>
+        </antcall>
+        <antcall target="jar-client">
             <param name="client" value="emboss_stretcher"/>
         </antcall>
         <antcall target="jar-client">

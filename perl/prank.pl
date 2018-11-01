@@ -162,6 +162,7 @@ if ($params{'help'} || $numOpts == 0) {
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
+
 if (
     !(
         $params{'polljob'}
@@ -662,7 +663,9 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
+
     $params{'sequence'} = shift;
+
 
     # Load parameters
     &load_params();
@@ -699,6 +702,9 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
+
+
+
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -721,6 +727,7 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
+
 }
 
 =head2 load_params()
@@ -734,108 +741,77 @@ Load job parameters from command-line options.
 sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
+    # Pass default values and fix bools (without default value)
+    if (!$params{'do_njtree'}) {
+        $params{'do_njtree'} = 'false'
+    }
 
-    if ($params{'do_njtree'}) {
-        $params{'do_njtree'} = 1;
+    if (!$params{'do_clustalw_tree'}) {
+        $params{'do_clustalw_tree'} = 'false'
     }
-    else {
-        $params{'do_njtree'} = 0;
+
+    if (!$params{'output_format'}) {
+        $params{'output_format'} = '8'
     }
-    if ($params{'do_clustalw_tree'}) {
-        $params{'do_clustalw_tree'} = 1;
+
+    if (!$params{'trust_insertions'}) {
+        $params{'trust_insertions'} = 'false'
     }
-    else {
-        $params{'do_clustalw_tree'} = 0;
+
+    if (!$params{'show_insertions_with_dots'}) {
+        $params{'show_insertions_with_dots'} = 'false'
     }
-    if ($params{'trust_insertions'}) {
-        $params{'trust_insertions'} = 1;
+
+    if (!$params{'use_log_space'}) {
+        $params{'use_log_space'} = 'false'
     }
-    else {
-        $params{'trust_insertions'} = 0;
+
+    if (!$params{'use_codon_model'}) {
+        $params{'use_codon_model'} = 'false'
     }
-    if ($params{'show_insertions_with_dots'}) {
-        $params{'show_insertions_with_dots'} = 1;
+
+    if (!$params{'translate_DNA'}) {
+        $params{'translate_DNA'} = 'false'
     }
-    else {
-        $params{'show_insertions_with_dots'} = 0;
+
+    if (!$params{'mt_translate_DNA'}) {
+        $params{'mt_translate_DNA'} = 'false'
     }
-    if ($params{'use_log_space'}) {
-        $params{'use_log_space'} = 1;
+
+    if (!$params{'use_real_branch_lengths'}) {
+        $params{'use_real_branch_lengths'} = 'false'
     }
-    else {
-        $params{'use_log_space'} = 0;
+
+    if (!$params{'do_no_posterior'}) {
+        $params{'do_no_posterior'} = 'false'
     }
-    if ($params{'use_codon_model'}) {
-        $params{'use_codon_model'} = 1;
+
+    if (!$params{'run_once'}) {
+        $params{'run_once'} = 'false'
     }
-    else {
-        $params{'use_codon_model'} = 0;
+
+    if (!$params{'run_twice'}) {
+        $params{'run_twice'} = 'false'
     }
-    if ($params{'translate_DNA'}) {
-        $params{'translate_DNA'} = 1;
+
+    if (!$params{'penalise_terminal_gaps'}) {
+        $params{'penalise_terminal_gaps'} = 'false'
     }
-    else {
-        $params{'translate_DNA'} = 0;
+
+    if (!$params{'do_posterior_only'}) {
+        $params{'do_posterior_only'} = 'false'
     }
-    if ($params{'mt_translate_DNA'}) {
-        $params{'mt_translate_DNA'} = 1;
+
+    if (!$params{'use_chaos_anchors'}) {
+        $params{'use_chaos_anchors'} = 'false'
     }
-    else {
-        $params{'mt_translate_DNA'} = 0;
+
+    if (!$params{'output_ancestors'}) {
+        $params{'output_ancestors'} = 'false'
     }
-    if ($params{'use_real_branch_lengths'}) {
-        $params{'use_real_branch_lengths'} = 1;
-    }
-    else {
-        $params{'use_real_branch_lengths'} = 0;
-    }
-    if ($params{'do_no_posterior'}) {
-        $params{'do_no_posterior'} = 1;
-    }
-    else {
-        $params{'do_no_posterior'} = 0;
-    }
-    if ($params{'run_once'}) {
-        $params{'run_once'} = 1;
-    }
-    else {
-        $params{'run_once'} = 0;
-    }
-    if ($params{'run_twice'}) {
-        $params{'run_twice'} = 1;
-    }
-    else {
-        $params{'run_twice'} = 0;
-    }
-    if ($params{'penalise_terminal_gaps'}) {
-        $params{'penalise_terminal_gaps'} = 1;
-    }
-    else {
-        $params{'penalise_terminal_gaps'} = 0;
-    }
-    if ($params{'do_posterior_only'}) {
-        $params{'do_posterior_only'} = 1;
-    }
-    else {
-        $params{'do_posterior_only'} = 0;
-    }
-    if ($params{'use_chaos_anchors'}) {
-        $params{'use_chaos_anchors'} = 1;
-    }
-    else {
-        $params{'use_chaos_anchors'} = 0;
-    }
-    if ($params{'output_ancestors'}) {
-        $params{'output_ancestors'} = 1;
-    }
-    else {
-        $params{'output_ancestors'} = 0;
-    }
-    if ($params{'stay_quiet'}) {
-        $params{'stay_quiet'} = 1;
-    }
-    else {
-        $params{'stay_quiet'} = 0;
+
+    if (!$params{'stay_quiet'}) {
+        $params{'stay_quiet'} = 'false'
     }
 
 

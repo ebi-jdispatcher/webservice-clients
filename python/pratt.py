@@ -344,8 +344,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -639,73 +638,125 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.minPerc:
-        params['minPerc'] = options.minPerc
-    if options.patternPosition:
-        params['patternPosition'] = options.patternPosition
-    if options.maxPatternLength:
-        params['maxPatternLength'] = options.maxPatternLength
-    if options.maxNumPatternSymbols:
-        params['maxNumPatternSymbols'] = options.maxNumPatternSymbols
-    if options.maxNumWildcard:
-        params['maxNumWildcard'] = options.maxNumWildcard
-    if options.maxNumFlexSpaces:
-        params['maxNumFlexSpaces'] = options.maxNumFlexSpaces
-    if options.maxFlexibility:
-        params['maxFlexibility'] = options.maxFlexibility
-    if options.maxFlexProduct:
-        params['maxFlexProduct'] = options.maxFlexProduct
-    if options.patternSymbolFile:
-        params['patternSymbolFile'] = True
-    else:
-        params['patternSymbolFile'] = False
-    if options.numPatternSymbols:
-        params['numPatternSymbols'] = options.numPatternSymbols
-    if options.patternScoring:
-        params['patternScoring'] = options.patternScoring
-    if options.patternGraph:
-        params['patternGraph'] = options.patternGraph
-    if options.searchGreediness:
-        params['searchGreediness'] = options.searchGreediness
-    if options.patternRefinement:
-        params['patternRefinement'] = True
-    else:
-        params['patternRefinement'] = False
-    if options.genAmbigSymbols:
-        params['genAmbigSymbols'] = True
-    else:
-        params['genAmbigSymbols'] = False
-    if options.patternFormat:
-        params['patternFormat'] = True
-    else:
-        params['patternFormat'] = False
-    if options.maxNumPatterns:
-        params['maxNumPatterns'] = options.maxNumPatterns
-    if options.maxNumAlignments:
-        params['maxNumAlignments'] = options.maxNumAlignments
-    if options.printPatterns:
-        params['printPatterns'] = True
-    else:
-        params['printPatterns'] = False
-    if options.printingRatio:
-        params['printingRatio'] = options.printingRatio
-    if options.printVertically:
-        params['printVertically'] = True
-    else:
-        params['printVertically'] = False
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if options.minPerc:
+        params['minPerc'] = options.minPerc
+    
+
+    if not options.patternPosition:
+        params['patternPosition'] = 'off'
+    if options.patternPosition:
+        params['patternPosition'] = options.patternPosition
+    
+
+    if options.maxPatternLength:
+        params['maxPatternLength'] = options.maxPatternLength
+    
+
+    if options.maxNumPatternSymbols:
+        params['maxNumPatternSymbols'] = options.maxNumPatternSymbols
+    
+
+    if options.maxNumWildcard:
+        params['maxNumWildcard'] = options.maxNumWildcard
+    
+
+    if options.maxNumFlexSpaces:
+        params['maxNumFlexSpaces'] = options.maxNumFlexSpaces
+    
+
+    if options.maxFlexibility:
+        params['maxFlexibility'] = options.maxFlexibility
+    
+
+    if options.maxFlexProduct:
+        params['maxFlexProduct'] = options.maxFlexProduct
+    
+
+    if not options.patternSymbolFile:
+        params['patternSymbolFile'] = 'false'
+    if options.patternSymbolFile:
+        params['patternSymbolFile'] = options.patternSymbolFile
+    
+
+    if options.numPatternSymbols:
+        params['numPatternSymbols'] = options.numPatternSymbols
+    
+
+    if not options.patternScoring:
+        params['patternScoring'] = 'info'
+    if options.patternScoring:
+        params['patternScoring'] = options.patternScoring
+    
+
+    if options.patternGraph:
+        params['patternGraph'] = options.patternGraph
+    
+
+    if options.searchGreediness:
+        params['searchGreediness'] = options.searchGreediness
+    
+
+    if not options.patternRefinement:
+        params['patternRefinement'] = 'false'
+    if options.patternRefinement:
+        params['patternRefinement'] = options.patternRefinement
+    
+
+    if not options.genAmbigSymbols:
+        params['genAmbigSymbols'] = 'false'
+    if options.genAmbigSymbols:
+        params['genAmbigSymbols'] = options.genAmbigSymbols
+    
+
+    if not options.patternFormat:
+        params['patternFormat'] = 'true'
+    if options.patternFormat:
+        params['patternFormat'] = options.patternFormat
+    
+
+    if options.maxNumPatterns:
+        params['maxNumPatterns'] = options.maxNumPatterns
+    
+
+    if options.maxNumAlignments:
+        params['maxNumAlignments'] = options.maxNumAlignments
+    
+
+    if not options.printPatterns:
+        params['printPatterns'] = 'true'
+    if options.printPatterns:
+        params['printPatterns'] = options.printPatterns
+    
+
+    if options.printingRatio:
+        params['printingRatio'] = options.printingRatio
+    
+
+    if not options.printVertically:
+        params['printVertically'] = 'false'
+    if options.printVertically:
+        params['printVertically'] = options.printVertically
+    
+
     if options.ppfile:
         params['ppfile'] = options.ppfile
+    
 
 
     # Submit the job
@@ -728,7 +779,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

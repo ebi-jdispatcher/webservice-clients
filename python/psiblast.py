@@ -312,8 +312,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -571,51 +570,109 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.gapopen:
-        params['gapopen'] = options.gapopen
-    if options.gapext:
-        params['gapext'] = options.gapext
-    if options.expthr:
-        params['expthr'] = options.expthr
-    if options.psithr:
-        params['psithr'] = options.psithr
-    if options.scores:
-        params['scores'] = options.scores
-    if options.alignments:
-        params['alignments'] = options.alignments
-    if options.alignView:
-        params['alignView'] = options.alignView
-    if options.dropoff:
-        params['dropoff'] = options.dropoff
-    if options.finaldropoff:
-        params['finaldropoff'] = options.finaldropoff
-    if options.filter:
-        params['filter'] = options.filter
-    if options.seqrange:
-        params['seqrange'] = options.seqrange
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
     if options.database:
         params['database'] = options.database
+
+    if not options.matrix:
+        params['matrix'] = 'BLOSUM62'
+    if options.matrix:
+        params['matrix'] = options.matrix
+    
+
+    if not options.gapopen:
+        params['gapopen'] = '11'
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    
+
+    if not options.gapext:
+        params['gapext'] = '1'
+    if options.gapext:
+        params['gapext'] = options.gapext
+    
+
+    if not options.expthr:
+        params['expthr'] = '10.0'
+    if options.expthr:
+        params['expthr'] = options.expthr
+    
+
+    if not options.psithr:
+        params['psithr'] = '1.0e-3'
+    if options.psithr:
+        params['psithr'] = options.psithr
+    
+
+    if not options.scores:
+        params['scores'] = '500'
+    if options.scores:
+        params['scores'] = options.scores
+    
+
+    if not options.alignments:
+        params['alignments'] = '500'
+    if options.alignments:
+        params['alignments'] = options.alignments
+    
+
+    if options.alignView:
+        params['alignView'] = options.alignView
+    
+
+    if not options.dropoff:
+        params['dropoff'] = '15'
+    if options.dropoff:
+        params['dropoff'] = options.dropoff
+    
+
+    if not options.finaldropoff:
+        params['finaldropoff'] = '25'
+    if options.finaldropoff:
+        params['finaldropoff'] = options.finaldropoff
+    
+
+    if not options.filter:
+        params['filter'] = 'F'
+    if options.filter:
+        params['filter'] = options.filter
+    
+
+    if options.seqrange:
+        params['seqrange'] = options.seqrange
+    
+
     if options.previousjobid:
         params['previousjobid'] = options.previousjobid
+    
+
     if options.selectedHits:
         params['selectedHits'] = options.selectedHits
+    
+
     if options.cpfile:
         params['cpfile'] = options.cpfile
+    
+
     if options.umode:
         params['umode'] = options.umode
+    
+
     if options.patfile:
         params['patfile'] = options.patfile
+    
 
 
     # Submit the job
@@ -638,7 +695,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

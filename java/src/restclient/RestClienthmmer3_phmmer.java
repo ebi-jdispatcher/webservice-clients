@@ -281,8 +281,7 @@ public class RestClienthmmer3_phmmer {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar hmmer3_phmmer.jar --polljob --jobid " + jobid);
         }
@@ -452,10 +451,15 @@ public class RestClienthmmer3_phmmer {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -492,16 +496,22 @@ public class RestClienthmmer3_phmmer {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilshmmer3_phmmer.marshallToXML(parameter);
+                    ClientUtilshmmer3_phmmer.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilshmmer3_phmmer.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilshmmer3_phmmer.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilshmmer3_phmmer.loadData(asequence),
+                                             ClientUtilshmmer3_phmmer.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -554,7 +564,7 @@ public class RestClienthmmer3_phmmer {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilshmmer3_phmmer.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilshmmer3_phmmer.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar hmmer3_phmmer.jar --polljob --jobid " + jobid
                                            + "\n  java -jar hmmer3_phmmer.jar --polljob --outformat <type> --jobid " + jobid);
@@ -639,11 +649,16 @@ public class RestClienthmmer3_phmmer {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -679,6 +694,18 @@ public class RestClienthmmer3_phmmer {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("mx") == false)
+           form.putSingle("mx", "BLOSUM62");
+
+        if (cli.hasOption("nobias") == false)
+           form.putSingle("nobias", "true");
+
+        if (cli.hasOption("alignView") == false)
+           form.putSingle("alignView", "true");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

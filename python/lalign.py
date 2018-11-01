@@ -293,8 +293,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -532,35 +531,61 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.match_scores:
-        params['match_scores'] = options.match_scores
-    if options.gapopen:
-        params['gapopen'] = options.gapopen
-    if options.gapext:
-        params['gapext'] = options.gapext
-    if options.expthr:
-        params['expthr'] = options.expthr
-    if options.format:
-        params['format'] = options.format
-    if options.graphics:
-        params['graphics'] = True
-    else:
-        params['graphics'] = False
     if options.asequence:
         params['asequence'] = options.asequence
     if options.bsequence:
         params['bsequence'] = options.bsequence
+
+    if not options.matrix:
+        params['matrix'] = 'BL50'
+    if options.matrix:
+        params['matrix'] = options.matrix
+    
+
+    if not options.match_scores:
+        params['match_scores'] = '+5/-4'
+    if options.match_scores:
+        params['match_scores'] = options.match_scores
+    
+
+    if not options.gapopen:
+        params['gapopen'] = '-12'
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    
+
+    if options.gapext:
+        params['gapext'] = options.gapext
+    
+
+    if not options.expthr:
+        params['expthr'] = '10.0'
+    if options.expthr:
+        params['expthr'] = options.expthr
+    
+
+    if options.format:
+        params['format'] = options.format
+    
+
+    if not options.graphics:
+        params['graphics'] = 'true'
+    if options.graphics:
+        params['graphics'] = options.graphics
+    
 
 
     # Submit the job
@@ -583,7 +608,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

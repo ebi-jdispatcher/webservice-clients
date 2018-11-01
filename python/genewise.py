@@ -328,8 +328,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -604,61 +603,99 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.para:
-        params['para'] = True
-    else:
-        params['para'] = False
-    if options.pretty:
-        params['pretty'] = True
-    else:
-        params['pretty'] = False
-    if options.genes:
-        params['genes'] = True
-    else:
-        params['genes'] = False
-    if options.trans:
-        params['trans'] = True
-    else:
-        params['trans'] = False
-    if options.cdna:
-        params['cdna'] = True
-    else:
-        params['cdna'] = False
-    if options.embl:
-        params['embl'] = True
-    else:
-        params['embl'] = False
-    if options.ace:
-        params['ace'] = True
-    else:
-        params['ace'] = False
-    if options.gff:
-        params['gff'] = True
-    else:
-        params['gff'] = False
-    if options.diana:
-        params['diana'] = True
-    else:
-        params['diana'] = False
-    if options.init:
-        params['init'] = options.init
-    if options.splice:
-        params['splice'] = options.splice
-    if options.random:
-        params['random'] = options.random
-    if options.alg:
-        params['alg'] = options.alg
+    # Pass default values and fix bools (without default value)
     if options.asequence:
         params['asequence'] = options.asequence
     if options.bsequence:
         params['bsequence'] = options.bsequence
+
+    if not options.para:
+        params['para'] = 'true'
+    if options.para:
+        params['para'] = options.para
+    
+
+    if not options.pretty:
+        params['pretty'] = 'true'
+    if options.pretty:
+        params['pretty'] = options.pretty
+    
+
+    if not options.genes:
+        params['genes'] = 'true'
+    if options.genes:
+        params['genes'] = options.genes
+    
+
+    if not options.trans:
+        params['trans'] = 'true'
+    if options.trans:
+        params['trans'] = options.trans
+    
+
+    if not options.cdna:
+        params['cdna'] = 'true'
+    if options.cdna:
+        params['cdna'] = options.cdna
+    
+
+    if not options.embl:
+        params['embl'] = 'true'
+    if options.embl:
+        params['embl'] = options.embl
+    
+
+    if not options.ace:
+        params['ace'] = 'true'
+    if options.ace:
+        params['ace'] = options.ace
+    
+
+    if not options.gff:
+        params['gff'] = 'true'
+    if options.gff:
+        params['gff'] = options.gff
+    
+
+    if not options.diana:
+        params['diana'] = 'true'
+    if options.diana:
+        params['diana'] = options.diana
+    
+
+    if not options.init:
+        params['init'] = 'local'
+    if options.init:
+        params['init'] = options.init
+    
+
+    if not options.splice:
+        params['splice'] = 'flat'
+    if options.splice:
+        params['splice'] = options.splice
+    
+
+    if not options.random:
+        params['random'] = 'syn'
+    if options.random:
+        params['random'] = options.random
+    
+
+    if not options.alg:
+        params['alg'] = '623'
+    if options.alg:
+        params['alg'] = options.alg
+    
 
 
     # Submit the job
@@ -681,7 +718,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

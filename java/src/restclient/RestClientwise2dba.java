@@ -265,8 +265,7 @@ public class RestClientwise2dba {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar wise2dba.jar --polljob --jobid " + jobid);
         }
@@ -432,10 +431,15 @@ public class RestClientwise2dba {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -472,16 +476,22 @@ public class RestClientwise2dba {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilswise2dba.marshallToXML(parameter);
+                    ClientUtilswise2dba.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilswise2dba.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilswise2dba.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilswise2dba.loadData(asequence),
+                                             ClientUtilswise2dba.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -534,7 +544,7 @@ public class RestClientwise2dba {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilswise2dba.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilswise2dba.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar wise2dba.jar --polljob --jobid " + jobid
                                            + "\n  java -jar wise2dba.jar --polljob --outformat <type> --jobid " + jobid);
@@ -619,11 +629,16 @@ public class RestClientwise2dba {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -659,6 +674,15 @@ public class RestClientwise2dba {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("para") == false)
+           form.putSingle("para", "true");
+
+        if (cli.hasOption("pretty") == false)
+           form.putSingle("pretty", "true");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

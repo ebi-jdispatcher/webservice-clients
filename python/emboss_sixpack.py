@@ -280,8 +280,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -503,31 +502,47 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.codontable:
-        params['codontable'] = options.codontable
-    if options.firstorf:
-        params['firstorf'] = True
-    else:
-        params['firstorf'] = False
-    if options.lastorf:
-        params['lastorf'] = True
-    else:
-        params['lastorf'] = False
-    if options.reverse:
-        params['reverse'] = True
-    else:
-        params['reverse'] = False
-    if options.orfminsize:
-        params['orfminsize'] = options.orfminsize
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if not options.codontable:
+        params['codontable'] = '0'
+    if options.codontable:
+        params['codontable'] = options.codontable
+    
+
+    if not options.firstorf:
+        params['firstorf'] = 'true'
+    if options.firstorf:
+        params['firstorf'] = options.firstorf
+    
+
+    if not options.lastorf:
+        params['lastorf'] = 'true'
+    if options.lastorf:
+        params['lastorf'] = options.lastorf
+    
+
+    if not options.reverse:
+        params['reverse'] = 'true'
+    if options.reverse:
+        params['reverse'] = options.reverse
+    
+
+    if options.orfminsize:
+        params['orfminsize'] = options.orfminsize
+    
 
 
     # Submit the job
@@ -550,7 +565,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

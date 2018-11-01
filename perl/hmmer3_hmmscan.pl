@@ -139,6 +139,7 @@ if ($params{'help'} || $numOpts == 0) {
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
+
 if (
     !(
         $params{'polljob'}
@@ -639,7 +640,9 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
+
     $params{'sequence'} = shift;
+
 
     # Load parameters
     &load_params();
@@ -676,6 +679,9 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
+
+
+
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -698,6 +704,7 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
+
 }
 
 =head2 load_params()
@@ -711,24 +718,21 @@ Load job parameters from command-line options.
 sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
+    # Pass default values and fix bools (without default value)
+    if (!$params{'cut_ga'}) {
+        $params{'cut_ga'} = 'true'
+    }
 
-    if ($params{'cut_ga'}) {
-        $params{'cut_ga'} = 1;
+    if (!$params{'nobias'}) {
+        $params{'nobias'} = 'true'
     }
-    else {
-        $params{'cut_ga'} = 0;
+
+    if (!$params{'hmmdbparam'}) {
+        $params{'hmmdbparam'} = '52371'
     }
-    if ($params{'nobias'}) {
-        $params{'nobias'} = 1;
-    }
-    else {
-        $params{'nobias'} = 0;
-    }
-    if ($params{'alignView'}) {
-        $params{'alignView'} = 1;
-    }
-    else {
-        $params{'alignView'} = 0;
+
+    if (!$params{'alignView'}) {
+        $params{'alignView'} = 'true'
     }
 
 

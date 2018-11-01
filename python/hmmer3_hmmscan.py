@@ -286,8 +286,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -514,47 +513,77 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.incE:
-        params['incE'] = options.incE
-    if options.incdomE:
-        params['incdomE'] = options.incdomE
-    if options.E:
-        params['E'] = options.E
-    if options.domE:
-        params['domE'] = options.domE
-    if options.incT:
-        params['incT'] = options.incT
-    if options.incdomT:
-        params['incdomT'] = options.incdomT
-    if options.T:
-        params['T'] = options.T
-    if options.domT:
-        params['domT'] = options.domT
-    if options.cut_ga:
-        params['cut_ga'] = True
-    else:
-        params['cut_ga'] = False
-    if options.nobias:
-        params['nobias'] = True
-    else:
-        params['nobias'] = False
-    if options.hmmdbparam:
-        params['hmmdbparam'] = options.hmmdbparam
-    if options.alignView:
-        params['alignView'] = True
-    else:
-        params['alignView'] = False
+    # Pass default values and fix bools (without default value)
     if options.database:
         params['database'] = options.database
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if options.incE:
+        params['incE'] = options.incE
+    
+
+    if options.incdomE:
+        params['incdomE'] = options.incdomE
+    
+
+    if options.E:
+        params['E'] = options.E
+    
+
+    if options.domE:
+        params['domE'] = options.domE
+    
+
+    if options.incT:
+        params['incT'] = options.incT
+    
+
+    if options.incdomT:
+        params['incdomT'] = options.incdomT
+    
+
+    if options.T:
+        params['T'] = options.T
+    
+
+    if options.domT:
+        params['domT'] = options.domT
+    
+
+    if not options.cut_ga:
+        params['cut_ga'] = 'true'
+    if options.cut_ga:
+        params['cut_ga'] = options.cut_ga
+    
+
+    if not options.nobias:
+        params['nobias'] = 'true'
+    if options.nobias:
+        params['nobias'] = options.nobias
+    
+
+    if not options.hmmdbparam:
+        params['hmmdbparam'] = '52371'
+    if options.hmmdbparam:
+        params['hmmdbparam'] = options.hmmdbparam
+    
+
+    if not options.alignView:
+        params['alignView'] = 'true'
+    if options.alignView:
+        params['alignView'] = options.alignView
+    
 
 
     # Submit the job
@@ -577,7 +606,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

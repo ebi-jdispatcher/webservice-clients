@@ -260,8 +260,7 @@ public class RestClientseqcksum {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar seqcksum.jar --polljob --jobid " + jobid);
         }
@@ -420,10 +419,15 @@ public class RestClientseqcksum {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -460,16 +464,22 @@ public class RestClientseqcksum {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilsseqcksum.marshallToXML(parameter);
+                    ClientUtilsseqcksum.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilsseqcksum.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilsseqcksum.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilsseqcksum.loadData(asequence),
+                                             ClientUtilsseqcksum.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -522,7 +532,7 @@ public class RestClientseqcksum {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilsseqcksum.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilsseqcksum.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar seqcksum.jar --polljob --jobid " + jobid
                                            + "\n  java -jar seqcksum.jar --polljob --outformat <type> --jobid " + jobid);
@@ -607,11 +617,16 @@ public class RestClientseqcksum {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -647,6 +662,12 @@ public class RestClientseqcksum {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("length") == false)
+           form.putSingle("length", "true");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

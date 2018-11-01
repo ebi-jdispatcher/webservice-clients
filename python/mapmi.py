@@ -287,8 +287,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -515,37 +514,73 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.scorethr:
-        params['scorethr'] = options.scorethr
-    if options.longext:
-        params['longext'] = options.longext
-    if options.shortext:
-        params['shortext'] = options.shortext
-    if options.maxmis:
-        params['maxmis'] = options.maxmis
-    if options.mismatchpen:
-        params['mismatchpen'] = options.mismatchpen
-    if options.bowtie:
-        params['bowtie'] = options.bowtie
-    if options.excludecan:
-        params['excludecan'] = True
-    else:
-        params['excludecan'] = False
-    if options.maxloop:
-        params['maxloop'] = options.maxloop
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if not options.scorethr:
+        params['scorethr'] = '35'
+    if options.scorethr:
+        params['scorethr'] = options.scorethr
+    
+
+    if options.longext:
+        params['longext'] = options.longext
+    
+
+    if options.shortext:
+        params['shortext'] = options.shortext
+    
+
+    if not options.maxmis:
+        params['maxmis'] = '1'
+    if options.maxmis:
+        params['maxmis'] = options.maxmis
+    
+
+    if not options.mismatchpen:
+        params['mismatchpen'] = '10'
+    if options.mismatchpen:
+        params['mismatchpen'] = options.mismatchpen
+    
+
+    if options.bowtie:
+        params['bowtie'] = options.bowtie
+    
+
+    if not options.excludecan:
+        params['excludecan'] = 'true'
+    if options.excludecan:
+        params['excludecan'] = options.excludecan
+    
+
+    if not options.maxloop:
+        params['maxloop'] = '4'
+    if options.maxloop:
+        params['maxloop'] = options.maxloop
+    
+
+    if not options.metazoa_species:
+        params['metazoa_species'] = 'Drosophila_melanogaster'
     if options.metazoa_species:
         params['metazoa_species'] = options.metazoa_species
+    
+
+    if not options.ensembl_species:
+        params['ensembl_species'] = 'Mus_musculus'
     if options.ensembl_species:
         params['ensembl_species'] = options.ensembl_species
+    
 
 
     # Submit the job
@@ -568,7 +603,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

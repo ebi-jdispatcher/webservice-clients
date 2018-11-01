@@ -295,8 +295,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -533,47 +532,77 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.guidetreeout:
-        params['guidetreeout'] = True
-    else:
-        params['guidetreeout'] = False
-    if options.dismatout:
-        params['dismatout'] = True
-    else:
-        params['dismatout'] = False
-    if options.dealign:
-        params['dealign'] = True
-    else:
-        params['dealign'] = False
-    if options.mbed:
-        params['mbed'] = True
-    else:
-        params['mbed'] = False
-    if options.mbediteration:
-        params['mbediteration'] = True
-    else:
-        params['mbediteration'] = False
-    if options.iterations:
-        params['iterations'] = options.iterations
-    if options.gtiterations:
-        params['gtiterations'] = options.gtiterations
-    if options.hmmiterations:
-        params['hmmiterations'] = options.hmmiterations
-    if options.outfmt:
-        params['outfmt'] = options.outfmt
-    if options.order:
-        params['order'] = options.order
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if not options.guidetreeout:
+        params['guidetreeout'] = 'true'
+    if options.guidetreeout:
+        params['guidetreeout'] = options.guidetreeout
+    
+
+    if not options.dismatout:
+        params['dismatout'] = 'true'
+    if options.dismatout:
+        params['dismatout'] = options.dismatout
+    
+
+    if not options.dealign:
+        params['dealign'] = 'false'
+    if options.dealign:
+        params['dealign'] = options.dealign
+    
+
+    if not options.mbed:
+        params['mbed'] = 'true'
+    if options.mbed:
+        params['mbed'] = options.mbed
+    
+
+    if not options.mbediteration:
+        params['mbediteration'] = 'true'
+    if options.mbediteration:
+        params['mbediteration'] = options.mbediteration
+    
+
+    if not options.iterations:
+        params['iterations'] = '0'
+    if options.iterations:
+        params['iterations'] = options.iterations
+    
+
+    if not options.gtiterations:
+        params['gtiterations'] = '-1'
+    if options.gtiterations:
+        params['gtiterations'] = options.gtiterations
+    
+
+    if not options.hmmiterations:
+        params['hmmiterations'] = '-1'
+    if options.hmmiterations:
+        params['hmmiterations'] = options.hmmiterations
+    
+
+    if options.outfmt:
+        params['outfmt'] = options.outfmt
+    
+
+    if options.order:
+        params['order'] = options.order
+    
 
 
     # Submit the job
@@ -596,7 +625,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

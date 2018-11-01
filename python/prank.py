@@ -322,8 +322,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -592,121 +591,199 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
+
     if options.data_file:
         params['data_file'] = options.data_file
+    
+
     if options.tree_file:
         params['tree_file'] = options.tree_file
+    
+
+    if not options.do_njtree:
+        params['do_njtree'] = 'false'
     if options.do_njtree:
-        params['do_njtree'] = True
-    else:
-        params['do_njtree'] = False
+        params['do_njtree'] = options.do_njtree
+    
+
+    if not options.do_clustalw_tree:
+        params['do_clustalw_tree'] = 'false'
     if options.do_clustalw_tree:
-        params['do_clustalw_tree'] = True
-    else:
-        params['do_clustalw_tree'] = False
+        params['do_clustalw_tree'] = options.do_clustalw_tree
+    
+
     if options.model_file:
         params['model_file'] = options.model_file
+    
+
+    if not options.output_format:
+        params['output_format'] = '8'
     if options.output_format:
         params['output_format'] = options.output_format
+    
+
+    if not options.trust_insertions:
+        params['trust_insertions'] = 'false'
     if options.trust_insertions:
-        params['trust_insertions'] = True
-    else:
-        params['trust_insertions'] = False
+        params['trust_insertions'] = options.trust_insertions
+    
+
+    if not options.show_insertions_with_dots:
+        params['show_insertions_with_dots'] = 'false'
     if options.show_insertions_with_dots:
-        params['show_insertions_with_dots'] = True
-    else:
-        params['show_insertions_with_dots'] = False
+        params['show_insertions_with_dots'] = options.show_insertions_with_dots
+    
+
+    if not options.use_log_space:
+        params['use_log_space'] = 'false'
     if options.use_log_space:
-        params['use_log_space'] = True
-    else:
-        params['use_log_space'] = False
+        params['use_log_space'] = options.use_log_space
+    
+
+    if not options.use_codon_model:
+        params['use_codon_model'] = 'false'
     if options.use_codon_model:
-        params['use_codon_model'] = True
-    else:
-        params['use_codon_model'] = False
+        params['use_codon_model'] = options.use_codon_model
+    
+
+    if not options.translate_DNA:
+        params['translate_DNA'] = 'false'
     if options.translate_DNA:
-        params['translate_DNA'] = True
-    else:
-        params['translate_DNA'] = False
+        params['translate_DNA'] = options.translate_DNA
+    
+
+    if not options.mt_translate_DNA:
+        params['mt_translate_DNA'] = 'false'
     if options.mt_translate_DNA:
-        params['mt_translate_DNA'] = True
-    else:
-        params['mt_translate_DNA'] = False
+        params['mt_translate_DNA'] = options.mt_translate_DNA
+    
+
     if options.gap_rate:
         params['gap_rate'] = options.gap_rate
+    
+
     if options.gap_extension:
         params['gap_extension'] = options.gap_extension
+    
+
     if options.tn93_kappa:
         params['tn93_kappa'] = options.tn93_kappa
+    
+
     if options.tn93_rho:
         params['tn93_rho'] = options.tn93_rho
+    
+
     if options.guide_pairwise_distance:
         params['guide_pairwise_distance'] = options.guide_pairwise_distance
+    
+
     if options.max_pairwise_distance:
         params['max_pairwise_distance'] = options.max_pairwise_distance
+    
+
     if options.branch_length_scaling:
         params['branch_length_scaling'] = options.branch_length_scaling
+    
+
     if options.branch_length_fixed:
         params['branch_length_fixed'] = options.branch_length_fixed
+    
+
     if options.branch_length_maximum:
         params['branch_length_maximum'] = options.branch_length_maximum
+    
+
+    if not options.use_real_branch_lengths:
+        params['use_real_branch_lengths'] = 'false'
     if options.use_real_branch_lengths:
-        params['use_real_branch_lengths'] = True
-    else:
-        params['use_real_branch_lengths'] = False
+        params['use_real_branch_lengths'] = options.use_real_branch_lengths
+    
+
+    if not options.do_no_posterior:
+        params['do_no_posterior'] = 'false'
     if options.do_no_posterior:
-        params['do_no_posterior'] = True
-    else:
-        params['do_no_posterior'] = False
+        params['do_no_posterior'] = options.do_no_posterior
+    
+
+    if not options.run_once:
+        params['run_once'] = 'false'
     if options.run_once:
-        params['run_once'] = True
-    else:
-        params['run_once'] = False
+        params['run_once'] = options.run_once
+    
+
+    if not options.run_twice:
+        params['run_twice'] = 'false'
     if options.run_twice:
-        params['run_twice'] = True
-    else:
-        params['run_twice'] = False
+        params['run_twice'] = options.run_twice
+    
+
+    if not options.penalise_terminal_gaps:
+        params['penalise_terminal_gaps'] = 'false'
     if options.penalise_terminal_gaps:
-        params['penalise_terminal_gaps'] = True
-    else:
-        params['penalise_terminal_gaps'] = False
+        params['penalise_terminal_gaps'] = options.penalise_terminal_gaps
+    
+
+    if not options.do_posterior_only:
+        params['do_posterior_only'] = 'false'
     if options.do_posterior_only:
-        params['do_posterior_only'] = True
-    else:
-        params['do_posterior_only'] = False
+        params['do_posterior_only'] = options.do_posterior_only
+    
+
+    if not options.use_chaos_anchors:
+        params['use_chaos_anchors'] = 'false'
     if options.use_chaos_anchors:
-        params['use_chaos_anchors'] = True
-    else:
-        params['use_chaos_anchors'] = False
+        params['use_chaos_anchors'] = options.use_chaos_anchors
+    
+
     if options.minimum_anchor_distance:
         params['minimum_anchor_distance'] = options.minimum_anchor_distance
+    
+
     if options.maximum_anchor_distance:
         params['maximum_anchor_distance'] = options.maximum_anchor_distance
+    
+
     if options.skip_anchor_distance:
         params['skip_anchor_distance'] = options.skip_anchor_distance
+    
+
     if options.drop_anchor_distance:
         params['drop_anchor_distance'] = options.drop_anchor_distance
+    
+
+    if not options.output_ancestors:
+        params['output_ancestors'] = 'false'
     if options.output_ancestors:
-        params['output_ancestors'] = True
-    else:
-        params['output_ancestors'] = False
+        params['output_ancestors'] = options.output_ancestors
+    
+
     if options.noise_level:
         params['noise_level'] = options.noise_level
+    
+
+    if not options.stay_quiet:
+        params['stay_quiet'] = 'false'
     if options.stay_quiet:
-        params['stay_quiet'] = True
-    else:
-        params['stay_quiet'] = False
+        params['stay_quiet'] = options.stay_quiet
+    
+
     if options.random_seed:
         params['random_seed'] = options.random_seed
+    
 
 
     # Submit the job
@@ -729,7 +806,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

@@ -288,8 +288,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -517,59 +516,106 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
-    if options.informat:
-        params['informat'] = options.informat
-    if options.outputformat:
-        params['outputformat'] = options.outputformat
-    if options.htmlmarkup:
-        params['htmlmarkup'] = options.htmlmarkup
-    if options.css:
-        params['css'] = True
-    else:
-        params['css'] = False
-    if options.pcid:
-        params['pcid'] = options.pcid
-    if options.alignment:
-        params['alignment'] = True
-    else:
-        params['alignment'] = False
-    if options.ruler:
-        params['ruler'] = True
-    else:
-        params['ruler'] = False
-    if options.width:
-        params['width'] = options.width
-    if options.coloring:
-        params['coloring'] = options.coloring
-    if options.colormap:
-        params['colormap'] = options.colormap
-    if options.groupmap:
-        params['groupmap'] = options.groupmap
-    if options.consensus:
-        params['consensus'] = True
-    else:
-        params['consensus'] = False
-    if options.concoloring:
-        params['concoloring'] = options.concoloring
-    if options.concolormap:
-        params['concolormap'] = options.concolormap
-    if options.congroupmap:
-        params['congroupmap'] = options.congroupmap
-    if options.congaps:
-        params['congaps'] = True
-    else:
-        params['congaps'] = False
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if options.informat:
+        params['informat'] = options.informat
+    
+
+    if options.outputformat:
+        params['outputformat'] = options.outputformat
+    
+
+    if options.htmlmarkup:
+        params['htmlmarkup'] = options.htmlmarkup
+    
+
+    if options.css:
+        params['css'] = 'true'
+    else:
+        params['css'] = 'false'
+    
+    if options.css:
+        params['css'] = options.css
+    
+
+    if not options.pcid:
+        params['pcid'] = 'aligned'
+    if options.pcid:
+        params['pcid'] = options.pcid
+    
+
+    if not options.alignment:
+        params['alignment'] = 'true'
+    if options.alignment:
+        params['alignment'] = options.alignment
+    
+
+    if not options.ruler:
+        params['ruler'] = 'true'
+    if options.ruler:
+        params['ruler'] = options.ruler
+    
+
+    if not options.width:
+        params['width'] = '80'
+    if options.width:
+        params['width'] = options.width
+    
+
+    if not options.coloring:
+        params['coloring'] = 'identity'
+    if options.coloring:
+        params['coloring'] = options.coloring
+    
+
+    if options.colormap:
+        params['colormap'] = options.colormap
+    
+
+    if options.groupmap:
+        params['groupmap'] = options.groupmap
+    
+
+    if not options.consensus:
+        params['consensus'] = 'true'
+    if options.consensus:
+        params['consensus'] = options.consensus
+    
+
+    if not options.concoloring:
+        params['concoloring'] = 'any'
+    if options.concoloring:
+        params['concoloring'] = options.concoloring
+    
+
+    if options.concolormap:
+        params['concolormap'] = options.concolormap
+    
+
+    if options.congroupmap:
+        params['congroupmap'] = options.congroupmap
+    
+
+    if not options.congaps:
+        params['congaps'] = 'true'
+    if options.congaps:
+        params['congaps'] = options.congaps
+    
 
 
     # Submit the job
@@ -592,7 +638,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

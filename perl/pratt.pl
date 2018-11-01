@@ -149,6 +149,7 @@ if ($params{'help'} || $numOpts == 0) {
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
 
+
 if (
     !(
         $params{'polljob'}
@@ -649,7 +650,9 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
+
     $params{'sequence'} = shift;
+
 
     # Load parameters
     &load_params();
@@ -686,6 +689,9 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
+
+
+
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -708,6 +714,7 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
+
 }
 
 =head2 load_params()
@@ -721,42 +728,37 @@ Load job parameters from command-line options.
 sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
+    # Pass default values and fix bools (without default value)
+    if (!$params{'patternPosition'}) {
+        $params{'patternPosition'} = 'off'
+    }
 
-    if ($params{'patternSymbolFile'}) {
-        $params{'patternSymbolFile'} = 1;
+    if (!$params{'patternSymbolFile'}) {
+        $params{'patternSymbolFile'} = 'false'
     }
-    else {
-        $params{'patternSymbolFile'} = 0;
+
+    if (!$params{'patternScoring'}) {
+        $params{'patternScoring'} = 'info'
     }
-    if ($params{'patternRefinement'}) {
-        $params{'patternRefinement'} = 1;
+
+    if (!$params{'patternRefinement'}) {
+        $params{'patternRefinement'} = 'false'
     }
-    else {
-        $params{'patternRefinement'} = 0;
+
+    if (!$params{'genAmbigSymbols'}) {
+        $params{'genAmbigSymbols'} = 'false'
     }
-    if ($params{'genAmbigSymbols'}) {
-        $params{'genAmbigSymbols'} = 1;
+
+    if (!$params{'patternFormat'}) {
+        $params{'patternFormat'} = 'true'
     }
-    else {
-        $params{'genAmbigSymbols'} = 0;
+
+    if (!$params{'printPatterns'}) {
+        $params{'printPatterns'} = 'true'
     }
-    if ($params{'patternFormat'}) {
-        $params{'patternFormat'} = 1;
-    }
-    else {
-        $params{'patternFormat'} = 0;
-    }
-    if ($params{'printPatterns'}) {
-        $params{'printPatterns'} = 1;
-    }
-    else {
-        $params{'printPatterns'} = 0;
-    }
-    if ($params{'printVertically'}) {
-        $params{'printVertically'} = 1;
-    }
-    else {
-        $params{'printVertically'} = 0;
+
+    if (!$params{'printVertically'}) {
+        $params{'printVertically'} = 'false'
     }
 
 

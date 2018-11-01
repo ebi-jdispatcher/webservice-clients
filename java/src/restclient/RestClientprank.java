@@ -341,8 +341,7 @@ public class RestClientprank {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar prank.jar --polljob --jobid " + jobid);
         }
@@ -545,10 +544,15 @@ public class RestClientprank {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -585,16 +589,22 @@ public class RestClientprank {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilsprank.marshallToXML(parameter);
+                    ClientUtilsprank.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilsprank.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilsprank.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilsprank.loadData(asequence),
+                                             ClientUtilsprank.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -647,7 +657,7 @@ public class RestClientprank {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilsprank.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilsprank.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar prank.jar --polljob --jobid " + jobid
                                            + "\n  java -jar prank.jar --polljob --outformat <type> --jobid " + jobid);
@@ -732,11 +742,16 @@ public class RestClientprank {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -772,6 +787,63 @@ public class RestClientprank {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("do_njtree") == false)
+           form.putSingle("do_njtree", "false");
+
+        if (cli.hasOption("do_clustalw_tree") == false)
+           form.putSingle("do_clustalw_tree", "false");
+
+        if (cli.hasOption("output_format") == false)
+           form.putSingle("output_format", "8");
+
+        if (cli.hasOption("trust_insertions") == false)
+           form.putSingle("trust_insertions", "false");
+
+        if (cli.hasOption("show_insertions_with_dots") == false)
+           form.putSingle("show_insertions_with_dots", "false");
+
+        if (cli.hasOption("use_log_space") == false)
+           form.putSingle("use_log_space", "false");
+
+        if (cli.hasOption("use_codon_model") == false)
+           form.putSingle("use_codon_model", "false");
+
+        if (cli.hasOption("translate_DNA") == false)
+           form.putSingle("translate_DNA", "false");
+
+        if (cli.hasOption("mt_translate_DNA") == false)
+           form.putSingle("mt_translate_DNA", "false");
+
+        if (cli.hasOption("use_real_branch_lengths") == false)
+           form.putSingle("use_real_branch_lengths", "false");
+
+        if (cli.hasOption("do_no_posterior") == false)
+           form.putSingle("do_no_posterior", "false");
+
+        if (cli.hasOption("run_once") == false)
+           form.putSingle("run_once", "false");
+
+        if (cli.hasOption("run_twice") == false)
+           form.putSingle("run_twice", "false");
+
+        if (cli.hasOption("penalise_terminal_gaps") == false)
+           form.putSingle("penalise_terminal_gaps", "false");
+
+        if (cli.hasOption("do_posterior_only") == false)
+           form.putSingle("do_posterior_only", "false");
+
+        if (cli.hasOption("use_chaos_anchors") == false)
+           form.putSingle("use_chaos_anchors", "false");
+
+        if (cli.hasOption("output_ancestors") == false)
+           form.putSingle("output_ancestors", "false");
+
+        if (cli.hasOption("stay_quiet") == false)
+           form.putSingle("stay_quiet", "false");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

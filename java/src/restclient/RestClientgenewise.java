@@ -325,8 +325,7 @@ public class RestClientgenewise {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar genewise.jar --polljob --jobid " + jobid);
         }
@@ -535,10 +534,15 @@ public class RestClientgenewise {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -575,16 +579,22 @@ public class RestClientgenewise {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilsgenewise.marshallToXML(parameter);
+                    ClientUtilsgenewise.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilsgenewise.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilsgenewise.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilsgenewise.loadData(asequence),
+                                             ClientUtilsgenewise.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -637,7 +647,7 @@ public class RestClientgenewise {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilsgenewise.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilsgenewise.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar genewise.jar --polljob --jobid " + jobid
                                            + "\n  java -jar genewise.jar --polljob --outformat <type> --jobid " + jobid);
@@ -722,11 +732,16 @@ public class RestClientgenewise {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -762,6 +777,48 @@ public class RestClientgenewise {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("para") == false)
+           form.putSingle("para", "true");
+
+        if (cli.hasOption("pretty") == false)
+           form.putSingle("pretty", "true");
+
+        if (cli.hasOption("genes") == false)
+           form.putSingle("genes", "true");
+
+        if (cli.hasOption("trans") == false)
+           form.putSingle("trans", "true");
+
+        if (cli.hasOption("cdna") == false)
+           form.putSingle("cdna", "true");
+
+        if (cli.hasOption("embl") == false)
+           form.putSingle("embl", "true");
+
+        if (cli.hasOption("ace") == false)
+           form.putSingle("ace", "true");
+
+        if (cli.hasOption("gff") == false)
+           form.putSingle("gff", "true");
+
+        if (cli.hasOption("diana") == false)
+           form.putSingle("diana", "true");
+
+        if (cli.hasOption("init") == false)
+           form.putSingle("init", "local");
+
+        if (cli.hasOption("splice") == false)
+           form.putSingle("splice", "flat");
+
+        if (cli.hasOption("random") == false)
+           form.putSingle("random", "syn");
+
+        if (cli.hasOption("alg") == false)
+           form.putSingle("alg", "623");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

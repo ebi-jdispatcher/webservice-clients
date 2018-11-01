@@ -285,8 +285,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -513,37 +512,61 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
-    if options.inputformat:
-        params['inputformat'] = options.inputformat
-    if options.outputformat:
-        params['outputformat'] = options.outputformat
-    if options.feature:
-        params['feature'] = True
-    else:
-        params['feature'] = False
-    if options.firstonly:
-        params['firstonly'] = True
-    else:
-        params['firstonly'] = False
-    if options.reverse:
-        params['reverse'] = True
-    else:
-        params['reverse'] = False
-    if options.outputcase:
-        params['outputcase'] = options.outputcase
-    if options.seqrange:
-        params['seqrange'] = options.seqrange
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if not options.inputformat:
+        params['inputformat'] = 'unknown'
+    if options.inputformat:
+        params['inputformat'] = options.inputformat
+    
+
+    if not options.outputformat:
+        params['outputformat'] = 'embl'
+    if options.outputformat:
+        params['outputformat'] = options.outputformat
+    
+
+    if not options.feature:
+        params['feature'] = 'true'
+    if options.feature:
+        params['feature'] = options.feature
+    
+
+    if not options.firstonly:
+        params['firstonly'] = 'false'
+    if options.firstonly:
+        params['firstonly'] = options.firstonly
+    
+
+    if not options.reverse:
+        params['reverse'] = 'false'
+    if options.reverse:
+        params['reverse'] = options.reverse
+    
+
+    if not options.outputcase:
+        params['outputcase'] = 'none'
+    if options.outputcase:
+        params['outputcase'] = options.outputcase
+    
+
+    if options.seqrange:
+        params['seqrange'] = options.seqrange
+    
 
 
     # Submit the job
@@ -566,7 +589,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

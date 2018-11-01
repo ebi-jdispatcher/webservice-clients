@@ -321,8 +321,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -589,59 +588,116 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.gapopen:
-        params['gapopen'] = options.gapopen
-    if options.gapext:
-        params['gapext'] = options.gapext
-    if options.expthr:
-        params['expthr'] = options.expthr
-    if options.mask:
-        params['mask'] = True
-    else:
-        params['mask'] = False
-    if options.psithr:
-        params['psithr'] = options.psithr
-    if options.scores:
-        params['scores'] = options.scores
-    if options.alignments:
-        params['alignments'] = options.alignments
-    if options.hsps:
-        params['hsps'] = True
-    else:
-        params['hsps'] = False
-    if options.scoreformat:
-        params['scoreformat'] = options.scoreformat
-    if options.filter:
-        params['filter'] = options.filter
-    if options.hist:
-        params['hist'] = True
-    else:
-        params['hist'] = False
-    if options.annotfeats:
-        params['annotfeats'] = True
-    else:
-        params['annotfeats'] = False
+    # Pass default values and fix bools (without default value)
     if options.sequence:
         params['sequence'] = options.sequence
     if options.database:
         params['database'] = options.database
+
+    if not options.matrix:
+        params['matrix'] = 'BLOSUM62'
+    if options.matrix:
+        params['matrix'] = options.matrix
+    
+
+    if not options.gapopen:
+        params['gapopen'] = '11'
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    
+
+    if not options.gapext:
+        params['gapext'] = '1'
+    if options.gapext:
+        params['gapext'] = options.gapext
+    
+
+    if not options.expthr:
+        params['expthr'] = '10.0'
+    if options.expthr:
+        params['expthr'] = options.expthr
+    
+
+    if not options.mask:
+        params['mask'] = 'true'
+    if options.mask:
+        params['mask'] = options.mask
+    
+
+    if not options.psithr:
+        params['psithr'] = '1.0e-3'
+    if options.psithr:
+        params['psithr'] = options.psithr
+    
+
+    if not options.scores:
+        params['scores'] = '500'
+    if options.scores:
+        params['scores'] = options.scores
+    
+
+    if not options.alignments:
+        params['alignments'] = '500'
+    if options.alignments:
+        params['alignments'] = options.alignments
+    
+
+    if not options.hsps:
+        params['hsps'] = 'false'
+    if options.hsps:
+        params['hsps'] = options.hsps
+    
+
+    if not options.scoreformat:
+        params['scoreformat'] = 'default'
+    if options.scoreformat:
+        params['scoreformat'] = options.scoreformat
+    
+
+    if options.filter:
+        params['filter'] = options.filter
+    
+
+    if not options.hist:
+        params['hist'] = 'false'
+    if options.hist:
+        params['hist'] = options.hist
+    
+
+    if options.annotfeats:
+        params['annotfeats'] = 'true'
+    else:
+        params['annotfeats'] = 'false'
+    
+    if options.annotfeats:
+        params['annotfeats'] = options.annotfeats
+    
+
     if options.previousjobid:
         params['previousjobid'] = options.previousjobid
+    
+
     if options.selectedHits:
         params['selectedHits'] = options.selectedHits
+    
+
     if options.bdrfile:
         params['bdrfile'] = options.bdrfile
+    
+
     if options.cpfile:
         params['cpfile'] = options.cpfile
+    
 
 
     # Submit the job
@@ -664,7 +720,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

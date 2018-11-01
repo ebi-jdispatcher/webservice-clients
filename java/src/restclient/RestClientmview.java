@@ -281,8 +281,7 @@ public class RestClientmview {
         if (outputLevel > 0)
             System.out.println("Getting status for job " + jobid);
         String status = checkStatus(jobid);
-        if (outputLevel > 0)
-            System.out.println(status);
+        System.out.println(status);
         if (outputLevel > 0 && status.equals("FINISHED")) {
              System.out.println("To get results: java -jar mview.jar --polljob --jobid " + jobid);
         }
@@ -451,10 +450,15 @@ public class RestClientmview {
             int pollFreq = getPollFreq();
 
             String sequence = null;
+            String asequence = null;
+            String bsequence = null;
             if (cli.hasOption("sequence")) {
                 sequence = cli.getOptionValue("sequence");
             } else if (unusedargs.size() > 0) {
                 sequence = unusedargs.get(0);
+            } else if (cli.hasOption("asequence") && cli.hasOption("bsequence")) {
+                asequence = cli.getOptionValue("asequence");
+                bsequence = cli.getOptionValue("bsequence");
             }
 
             if (cli.hasOption("baseUrl")) {
@@ -491,16 +495,22 @@ public class RestClientmview {
                 if (parameter != null) {
 
                     printDebugMessage("run", "Simplified view", 11);
-                    ClientUtilsmview.marshallToXML(parameter);
+                    ClientUtilsmview.marshallToXML(parameter, debugLevel, "parameters");
                 } else {
                     printDebugMessage("run", "Returned WsParameter object is null", 41);
                 }
             }
 
             // Submit new job
-            else if (cli.hasOption("email") && sequence != null) {
+            else if (cli.hasOption("email") && (sequence != null || (asequence != null && bsequence != null))) {
 
-                String jobid = submitJob(cli, ClientUtilsmview.loadData(sequence));
+                String jobid = null;
+                if (sequence != null){
+                    jobid = submitJob(cli, ClientUtilsmview.loadData(sequence), null);
+                } else if (asequence != null && bsequence != null) {
+                    jobid = submitJob(cli, ClientUtilsmview.loadData(asequence),
+                                             ClientUtilsmview.loadData(bsequence));
+                }
 
                 if (jobid != null) {
                     // Asynchronous (default) execution
@@ -553,7 +563,7 @@ public class RestClientmview {
                         System.out.println("Getting result types for job " + jobid);
                     if (outputLevel > 0)
                         System.out.println("Available result types:");
-                    ClientUtilsmview.marshallToXML(getResultTypesForJobId(jobid));
+                    ClientUtilsmview.marshallToXML(getResultTypesForJobId(jobid), debugLevel, "types");
                     if (outputLevel > 0)
                         System.out.println("To get results:\n  java -jar mview.jar --polljob --jobid " + jobid
                                            + "\n  java -jar mview.jar --polljob --outformat <type> --jobid " + jobid);
@@ -638,11 +648,16 @@ public class RestClientmview {
      * @throws ServiceException
      * @throws IOException
      */
-    private String submitJob(CommandLine cli, String inputSeq)
+    private String submitJob(CommandLine cli, String inputSeq, String inputSeq2)
             throws ServiceException, IOException {
 
         Form form = new Form();
-        form.putSingle("sequence", inputSeq);
+        if (inputSeq2 != null) {
+            form.putSingle("asequence", inputSeq);
+            form.putSingle("bsequence", inputSeq2);
+        } else {
+            form.putSingle("sequence", inputSeq);
+        }
 
         for (Option option : cli.getOptions()) {
             String optionName = option.getOpt();
@@ -678,6 +693,39 @@ public class RestClientmview {
                 form.putSingle(optionName, optionValue);
             }
         }
+
+        // Pass default values and fix bools (without default value)
+        if (cli.hasOption("css") == true) {
+            form.putSingle("css", "true");
+        } else {
+            form.putSingle("css", "false");
+        }
+
+        if (cli.hasOption("pcid") == false)
+           form.putSingle("pcid", "aligned");
+
+        if (cli.hasOption("alignment") == false)
+           form.putSingle("alignment", "true");
+
+        if (cli.hasOption("ruler") == false)
+           form.putSingle("ruler", "true");
+
+        if (cli.hasOption("width") == false)
+           form.putSingle("width", "80");
+
+        if (cli.hasOption("coloring") == false)
+           form.putSingle("coloring", "identity");
+
+        if (cli.hasOption("consensus") == false)
+           form.putSingle("consensus", "true");
+
+        if (cli.hasOption("concoloring") == false)
+           form.putSingle("concoloring", "any");
+
+        if (cli.hasOption("congaps") == false)
+           form.putSingle("congaps", "true");
+
+
 
         ClientResponse response = getResponse(baseUrl, "/run", RequestType.POST, form);
 

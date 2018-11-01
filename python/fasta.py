@@ -340,8 +340,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -632,67 +631,122 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
+    # Pass default values and fix bools (without default value)
     if options.program:
         params['program'] = options.program
     if options.stype:
         params['stype'] = options.stype
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.match_scores:
-        params['match_scores'] = options.match_scores
-    if options.gapopen:
-        params['gapopen'] = options.gapopen
-    if options.gapext:
-        params['gapext'] = options.gapext
-    if options.hsps:
-        params['hsps'] = True
-    else:
-        params['hsps'] = False
-    if options.expupperlim:
-        params['expupperlim'] = options.expupperlim
-    if options.explowlim:
-        params['explowlim'] = options.explowlim
-    if options.strand:
-        params['strand'] = options.strand
-    if options.hist:
-        params['hist'] = True
-    else:
-        params['hist'] = False
-    if options.scores:
-        params['scores'] = options.scores
-    if options.alignments:
-        params['alignments'] = options.alignments
-    if options.scoreformat:
-        params['scoreformat'] = options.scoreformat
-    if options.stats:
-        params['stats'] = options.stats
-    if options.annotfeats:
-        params['annotfeats'] = True
-    else:
-        params['annotfeats'] = False
-    if options.annotsym:
-        params['annotsym'] = options.annotsym
-    if options.dbrange:
-        params['dbrange'] = options.dbrange
-    if options.seqrange:
-        params['seqrange'] = options.seqrange
-    if options.filter:
-        params['filter'] = options.filter
-    if options.transltable:
-        params['transltable'] = options.transltable
     if options.sequence:
         params['sequence'] = options.sequence
     if options.database:
         params['database'] = options.database
+
+    if options.matrix:
+        params['matrix'] = options.matrix
+    
+
+    if options.match_scores:
+        params['match_scores'] = options.match_scores
+    
+
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    
+
+    if options.gapext:
+        params['gapext'] = options.gapext
+    
+
+    if not options.hsps:
+        params['hsps'] = 'false'
+    if options.hsps:
+        params['hsps'] = options.hsps
+    
+
+    if options.expupperlim:
+        params['expupperlim'] = options.expupperlim
+    
+
+    if not options.explowlim:
+        params['explowlim'] = '0'
+    if options.explowlim:
+        params['explowlim'] = options.explowlim
+    
+
+    if options.strand:
+        params['strand'] = options.strand
+    
+
+    if not options.hist:
+        params['hist'] = 'false'
+    if options.hist:
+        params['hist'] = options.hist
+    
+
+    if not options.scores:
+        params['scores'] = '50'
+    if options.scores:
+        params['scores'] = options.scores
+    
+
+    if not options.alignments:
+        params['alignments'] = '50'
+    if options.alignments:
+        params['alignments'] = options.alignments
+    
+
+    if options.scoreformat:
+        params['scoreformat'] = options.scoreformat
+    
+
+    if options.stats:
+        params['stats'] = options.stats
+    
+
+    if options.annotfeats:
+        params['annotfeats'] = 'true'
+    else:
+        params['annotfeats'] = 'false'
+    
+    if options.annotfeats:
+        params['annotfeats'] = options.annotfeats
+    
+
+    if options.annotsym:
+        params['annotsym'] = options.annotsym
+    
+
+    if options.dbrange:
+        params['dbrange'] = options.dbrange
+    
+
+    if options.seqrange:
+        params['seqrange'] = options.seqrange
+    
+
+    if options.filter:
+        params['filter'] = options.filter
+    
+
+    if not options.transltable:
+        params['transltable'] = '1'
+    if options.transltable:
+        params['transltable'] = options.transltable
+    
+
     if options.ktup:
         params['ktup'] = options.ktup
+    
 
 
     # Submit the job
@@ -715,7 +769,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

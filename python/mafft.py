@@ -288,8 +288,7 @@ def printGetStatus(jobId):
     status = serviceGetStatus(jobId)
     if outputLevel > 0:
         print("Getting status for job %s" % jobId)
-    if outputLevel > 0:
-        print(status)
+    print(status)
     if outputLevel > 0 and status == "FINISHED":
         print("To get results: python %s --polljob --jobid %s"
               "" % (os.path.basename(__file__), jobId))
@@ -520,37 +519,69 @@ elif options.email and not options.jobid:
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif options.sequence:  # Specified via option
-        if os.path.exists(options.sequence):  # Read file into content
-            params[u'sequence'] = readFile(options.sequence)
-        else:  # Argument is a sequence id
-            params[u'sequence'] = options.sequence
-    # Booleans need to be represented as 1/0 rather than True/False
+    elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
+        if hasattr(options, "sequence"):
+            if os.path.exists(options.sequence):  # Read file into content
+                params[u'sequence'] = readFile(options.sequence)
+            else:  # Argument is a sequence id
+                params[u'sequence'] = options.sequence
+        elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
+            params[u'asequence'] = options.asequence
+            params[u'bsequence'] = options.bsequence
 
-    if options.format:
-        params['format'] = options.format
-    if options.matrix:
-        params['matrix'] = options.matrix
-    if options.gapopen:
-        params['gapopen'] = options.gapopen
-    if options.gapext:
-        params['gapext'] = options.gapext
-    if options.order:
-        params['order'] = options.order
-    if options.nbtree:
-        params['nbtree'] = options.nbtree
-    if options.treeout:
-        params['treeout'] = True
-    else:
-        params['treeout'] = False
-    if options.maxiterate:
-        params['maxiterate'] = options.maxiterate
-    if options.ffts:
-        params['ffts'] = options.ffts
+    # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
     if options.sequence:
         params['sequence'] = options.sequence
+
+    if options.format:
+        params['format'] = options.format
+    
+
+    if not options.matrix:
+        params['matrix'] = 'bl62'
+    if options.matrix:
+        params['matrix'] = options.matrix
+    
+
+    if not options.gapopen:
+        params['gapopen'] = '1.53'
+    if options.gapopen:
+        params['gapopen'] = options.gapopen
+    
+
+    if options.gapext:
+        params['gapext'] = options.gapext
+    
+
+    if options.order:
+        params['order'] = options.order
+    
+
+    if not options.nbtree:
+        params['nbtree'] = '2'
+    if options.nbtree:
+        params['nbtree'] = options.nbtree
+    
+
+    if not options.treeout:
+        params['treeout'] = 'true'
+    if options.treeout:
+        params['treeout'] = options.treeout
+    
+
+    if not options.maxiterate:
+        params['maxiterate'] = '2'
+    if options.maxiterate:
+        params['maxiterate'] = options.maxiterate
+    
+
+    if not options.ffts:
+        params['ffts'] = 'none'
+    if options.ffts:
+        params['ffts'] = options.ffts
+    
 
 
     # Submit the job
@@ -573,7 +604,7 @@ elif options.jobid and options.status:
     printGetStatus(options.jobid)
 
 elif options.jobid and (options.resultTypes or options.polljob):
-    status = serviceGetStatus(jobId)
+    status = serviceGetStatus(options.jobid)
     if status == 'PENDING' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)

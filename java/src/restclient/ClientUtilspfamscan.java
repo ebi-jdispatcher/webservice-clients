@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import restclient.stubs.WsError;
 import restclient.stubs.WsResultType;
 
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import org.xml.sax.InputSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -70,12 +73,199 @@ public class ClientUtilspfamscan {
      * @param result
      * @param <T>
      */
-    public static <T> void marshallToXML(T result) throws JAXBException {
-
+    public static <T> void marshallToXML(T result, int debugLevel, String target) throws JAXBException {
+        String xmlString = "";
+        StringWriter sw = new StringWriter();
         JAXBContext jc = JAXBContext.newInstance(result.getClass());
         Marshaller marshaller = jc.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(result, System.out);
+        marshaller.marshal(result, sw);
+        xmlString = sw.toString();
+        //System.out.println(xmlString);
+        if (target.equals("parameters")){
+            printParsedXML(xmlString, debugLevel);
+        } else if (target.equals("types")) {
+            printParsedXMLTypes(xmlString, debugLevel);
+        }
+    }
+
+    public static void printParsedXML(String xmlString, int debugLevel){
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xmlString));
+            Document doc = db.parse(is);
+
+            NodeList nodes = doc.getElementsByTagName("parameter");
+            try {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    String n = "";
+                    try {
+                        NodeList name = element.getElementsByTagName("name");
+                        Element line = (Element) name.item(0);
+                        n = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String d = "";
+                    try {
+                        NodeList description = element.getElementsByTagName("description");
+                        Element line = (Element) description.item(0);
+                        d = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String t = "";
+                    try {
+                        NodeList type = element.getElementsByTagName("type");
+                        Element line = (Element) type.item(0);
+                        t = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    if (!n.equals("") && !t.equals("")) System.out.println(n + "\t" + t);
+                    if (!d.equals("")) System.out.println(d);
+                }
+            } catch (Exception e){
+                printDebugMessage("printParsedXML", "Values not available", 11, debugLevel);
+                e.printStackTrace();
+            }
+
+            nodes = doc.getElementsByTagName("value");
+
+
+            try {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    String v = "";
+                    try {
+                        NodeList value = element.getElementsByTagName("value");
+                        Element line = (Element) value.item(0);
+                        v = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String l = "";
+                    try {
+                        NodeList label = element.getElementsByTagName("label");
+                        Element line = (Element) label.item(0);
+                        l = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+
+                    String ke = "";
+                    try {
+                        NodeList key = element.getElementsByTagName("key");
+                        Element line = (Element) key.item(0);
+                        ke = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String va = "";
+                    try {
+                        NodeList val = element.getElementsByTagName("value");
+                        Element line = (Element) val.item(0);
+                        va = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    if (!v.equals("")) System.out.println(v);
+                    if (!l.equals("")) System.out.println("\t" + l);
+                    if (!ke.equals("") && !va.equals("")) System.out.println("\t" + ke + "\t" + va);
+                }
+            } catch (Exception e){
+                printDebugMessage("printParsedXML", "Values not available", 11, debugLevel);
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void printParsedXMLTypes(String xmlString, int debugLevel){
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xmlString));
+            Document doc = db.parse(is);
+            NodeList nodes = doc.getElementsByTagName("type");
+
+            try {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    String d = "";
+                    try {
+                        NodeList description = element.getElementsByTagName("description");
+                        Element line = (Element) description.item(0);
+                        d = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String f = "";
+                    try{
+                        NodeList fileSuffix = element.getElementsByTagName("fileSuffix");
+                        Element line = (Element) fileSuffix.item(0);
+                        f = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String id = "";
+                    try {
+                        NodeList identifier = element.getElementsByTagName("identifier");
+                        Element line = (Element) identifier.item(0);
+                        id = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String l = "";
+                    try {
+                        NodeList label = element.getElementsByTagName("label");
+                        Element line = (Element) label.item(0);
+                        l = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    String t = "";
+                    try {
+                        NodeList mediaType = element.getElementsByTagName("mediaType");
+                        Element line = (Element) mediaType.item(0);
+                        t = line.getTextContent();
+                    } catch (Exception e){
+                        //skip
+                    }
+
+                    if (!id.equals("")) System.out.println(id);
+                    if (!l.equals("")) System.out.println("\t" + l);
+                    if (!d.equals("")) System.out.println("\t" + d);
+                    if (!t.equals("")) System.out.println("\t" + t);
+                    if (!f.equals("")) System.out.println("\t" + f);
+                }
+
+            } catch (Exception e){
+                printDebugMessage("printParsedXML", "Types not available", 11, debugLevel);
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static List<WsResultType> processUserOutputFormats(String cli, List<WsResultType> allResultTypes,
@@ -136,6 +326,8 @@ public class ClientUtilspfamscan {
             if (status.equals("FAILURE")) {
                 return false;
             }
+            if (outputLevel > 0)
+                System.out.println(status);
         }
         printDebugMessage("getStatusInIntervals", "Synchronous job execution has finished.",
                 11, debugLevel);
