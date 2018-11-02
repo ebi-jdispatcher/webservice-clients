@@ -67,16 +67,21 @@ my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/emboss_seqret';
 # Set interval for checking status
 my $checkInterval = 3;
 
+# Set maximum number of 'ERROR' status calls to call job failed.
+my $maxErrorStatusCount = 3;
+
 # Output level
 my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ('debugLevel' => 0);
+my %params = (
+    'debugLevel' => 0,
+    'maxJobs'    => 1
+);
 
 # Default parameter values (should get these from the service)
 GetOptions(
-
     # Tool specific options
     'stype=s'         => \$params{'stype'},          # Indicates if the query sequence is protein, DNA or RNA.
     'inputformat=s'   => \$params{'inputformat'},    # Input format name
@@ -87,7 +92,6 @@ GetOptions(
     'outputcase=s'    => \$params{'outputcase'},     # Change alphabet case for output sequences.
     'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell EMBOSS seqret to only use residues 34 to 89, inclusive.
     'sequence=a'      => \$params{'sequence'},       # One or more sequences to be translated can be entered directly into this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 2MB.
-
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -133,8 +137,6 @@ if ($params{'help'} || $numOpts == 0) {
 
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
-
-
 if (
     !(
         $params{'polljob'}
@@ -151,7 +153,6 @@ if (
     &usage();
     exit(1);
 }
-
 # Get parameters list
 elsif ($params{'params'}) {
     &print_tool_params();
@@ -179,10 +180,35 @@ elsif ($params{'polljob'} && defined($params{'jobid'})) {
 
 # Submit a job
 else {
+    # Multiple input sequence mode, assume fasta format.
+    if (defined($params{'multifasta'}) && $params{'multifasta'}) {
+        &multi_submit_job();
+    }
 
-    # Load the sequence data and submit.
-    &submit_job(&load_data());
+    # Entry identifier list file.
+    elsif ((defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/)
+        || (defined($ARGV[0]) && $ARGV[0] =~ m/^\@/)) {
+        my $list_filename = $params{'sequence'} || $ARGV[0];
+        $list_filename =~ s/^\@//;
+        &list_file_submit_job($list_filename);
+    }
+    # Default: single sequence/identifier.
+    else {
+        # Warn for invalid batch only option use.
+        if (defined($params{'useSeqId'}) && $params{'useSeqId'}) {
+            print STDERR "Warning: --useSeqId option ignored.\n";
+            delete $params{'useSeqId'};
+        }
+        if (defined($params{'maxJobs'}) && $params{'maxJobs'} > 1) {
+            print STDERR "Warning: --maxJobs option ignored.\n";
+            $params{'maxJobs'} = 1;
+        }
+        # Load the sequence data and submit.
+        &submit_job(&load_data());
+    }
 }
+
+
 
 =head1 FUNCTIONS
 
@@ -635,9 +661,7 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-
     $params{'sequence'} = shift;
-
 
     # Load parameters
     &load_params();
@@ -645,7 +669,7 @@ sub submit_job {
     # Submit the job
     my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
-    # Simulate sync/async mode
+    # Asynchronous submission.
     if (defined($params{'async'})) {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
@@ -653,6 +677,8 @@ sub submit_job {
                 "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
+
+    # Simulate synchronous submission serial mode.
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
@@ -660,10 +686,13 @@ sub submit_job {
             print STDERR "$jobid\n";
         }
         usleep($checkInterval);
+        # Get results.
         &get_results($jobid);
     }
     print_debug_message('submit_job', 'End', 1);
+    return $jobid;
 }
+
 
 =head2 load_data()
 
@@ -674,9 +703,6 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
-
-
-
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -699,7 +725,6 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
-
 }
 
 =head2 load_params()
@@ -737,7 +762,6 @@ sub load_params {
     if (!$params{'outputcase'}) {
         $params{'outputcase'} = 'none'
     }
-
 
     print_debug_message('load_params', 'End', 1);
 }
@@ -793,6 +817,8 @@ sub get_results {
     my $jobid = shift;
     print_debug_message('get_results', 'jobid: ' . $jobid, 1);
 
+    my $output_basename = $jobid;
+
     # Verbose
     if ($outputLevel > 1) {
         print 'Getting results for job ', $jobid, "\n";
@@ -801,15 +827,23 @@ sub get_results {
     # Check status, and wait if not finished
     client_poll($jobid);
 
+    # Default output file names use JobId, however the name can be specified...
+    if (defined($params{'outfile'})) {
+        $output_basename = $params{'outfile'};
+    }
+
     # Use JobId if output file name is not defined
-    unless (defined($params{'outfile'})) {
-        $params{'outfile'} = $jobid;
+    else {
+        unless (defined($params{'outfile'})) {
+            $params{'outfile'} = $jobid;
+            $output_basename = $jobid;
+        }
     }
 
     # Get list of data types
     my (@resultTypes) = rest_get_result_types($jobid);
 
-    my $output_basename = $jobid;
+
     # Get the data and write it to a file
     if (defined($params{'outformat'})) {
         # Specified data type
@@ -861,12 +895,12 @@ sub get_results {
                 print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
             }
             my $result = rest_get_result($jobid, $resultType->{'identifier'});
-            if ($params{'outfile'} eq '-') {
+            if (defined($params{'outfile'}) && $params{'outfile'} eq '-') {
                 write_file($params{'outfile'}, $result);
             }
             else {
                 write_file(
-                    $params{'outfile'} . '.'
+                    $output_basename . '.'
                         . $resultType->{'identifier'} . '.'
                         . $resultType->{'fileSuffix'},
                     $result

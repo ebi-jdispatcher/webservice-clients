@@ -60,6 +60,8 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
 use Time::HiRes qw(usleep);
+use JSON::XS;
+use Try::Tiny;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
@@ -67,16 +69,21 @@ my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
 # Set interval for checking status
 my $checkInterval = 3;
 
+# Set maximum number of 'ERROR' status calls to call job failed.
+my $maxErrorStatusCount = 3;
+
 # Output level
 my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ('debugLevel' => 0);
+my %params = (
+    'debugLevel' => 0,
+    'maxJobs'    => 1
+);
 
 # Default parameter values (should get these from the service)
 GetOptions(
-
     # Tool specific options
     'incE=s'          => \$params{'incE'},           # Significance E-values[Sequence]
     'incdomE=s'       => \$params{'incdomE'},        # Significance E-values[Hit]
@@ -94,7 +101,6 @@ GetOptions(
     'database=s'      => \$params{'database'},       # Sequence Database
     'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -109,6 +115,11 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
+    'acc=i'           => \$params{'acc'},             # Get accession ID, how many from top
+    'multifasta'      => \$params{'multifasta'},     # Multiple fasta input
+    'useSeqId'        => \$params{'useSeqId'},       # Seq Id file name
+    'maxJobs=i'       => \$params{'maxJobs'},        # Max. parallel jobs
+
     'verbose'         => \$params{'verbose'},        # Increase output level
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
@@ -140,8 +151,6 @@ if ($params{'help'} || $numOpts == 0) {
 
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
-
-
 if (
     !(
         $params{'polljob'}
@@ -158,7 +167,6 @@ if (
     &usage();
     exit(1);
 }
-
 # Get parameters list
 elsif ($params{'params'}) {
     &print_tool_params();
@@ -186,10 +194,37 @@ elsif ($params{'polljob'} && defined($params{'jobid'})) {
 
 # Submit a job
 else {
+    # Multiple input sequence mode, assume fasta format.
+    if (defined($params{'multifasta'}) && $params{'multifasta'}) {
+        &multi_submit_job();
+    }
 
-    # Load the sequence data and submit.
-    &submit_job(&load_data());
+    # Entry identifier list file.
+    elsif ((defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/)
+        || (defined($ARGV[0]) && $ARGV[0] =~ m/^\@/)) {
+        my $list_filename = $params{'sequence'} || $ARGV[0];
+        $list_filename =~ s/^\@//;
+        &list_file_submit_job($list_filename);
+    }
+    # Default: single sequence/identifier.
+    else {
+        # Warn for invalid batch only option use.
+        if (defined($params{'useSeqId'}) && $params{'useSeqId'}) {
+            print STDERR "Warning: --useSeqId option ignored.\n";
+            delete $params{'useSeqId'};
+        }
+        if (defined($params{'maxJobs'}) && $params{'maxJobs'} > 1) {
+            print STDERR "Warning: --maxJobs option ignored.\n";
+            $params{'maxJobs'} = 1;
+        }
+        # Load the sequence data and submit.
+        &submit_job(&load_data());
+    }
 }
+
+
+# Seq db index
+my $db_index = '2'; # default uniprotkb
 
 =head1 FUNCTIONS
 
@@ -300,6 +335,202 @@ sub rest_request {
 
     # Return the response data
     return $retVal;
+}
+=head2 rest_request_for_accid()
+
+Perform a REST request (HTTP GET).
+
+  my $response_str = &rest_request($url);
+
+=cut
+
+sub rest_request_for_accid {
+    print_debug_message('rest_request_for_accid', 'Begin', 11);
+    my $requestUrl = shift;
+    print_debug_message('rest_request_for_accid', 'URL: ' . $requestUrl, 11);
+
+    # Get an LWP UserAgent.
+    $ua = &rest_user_agent() unless defined($ua);
+    # Available HTTP compression methods.
+    my $can_accept;
+    eval {
+        $can_accept = HTTP::Message::decodable();
+    };
+    $can_accept = '' unless defined($can_accept);
+    # Perform the request
+    my $response = $ua->get($requestUrl,
+        'Accept-Encoding' => $can_accept, # HTTP compression.
+    );
+
+    # Unpack possibly compressed response.
+    my $retVal;
+    if (defined($can_accept) && $can_accept ne '') {
+        $retVal = $response->decoded_content();
+    }
+    # If unable to decode use orginal content.
+    $retVal = $response->content() unless defined($retVal);
+    # Check for an error.
+    &rest_error($response, $retVal);
+    print_debug_message('rest_request', 'End', 11);
+
+    my @lines = split /\n/, $retVal;
+
+    my $v_cnt = 0;
+    my $top_acc = 20;
+    if (defined $params{'acc'}) {
+        $top_acc = $params{'acc'};
+    }
+
+    my $new_id_len = 0;
+    foreach my $line (@lines) {
+
+        # Updating HMMER numeric ID to Accession
+        if ($v_cnt >= $top_acc) {
+            last;
+        }
+
+        my $where_id_begin = index($line, '>>');
+
+        if ($where_id_begin > -1) {
+            $v_cnt++;
+
+            my $grab_id = substr($line, $where_id_begin + 3, 30);
+            $grab_id =~ s/\s*$//; # trim left whitespace
+
+            try {
+
+                my $acc_id = rest_get_accid($grab_id);
+				print_debug_message('rest_request_for_accid', '###>>>>>>>> grab_id: ' . $grab_id, 42);
+				print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id: ' . $acc_id, 42);
+                if ($grab_id and $acc_id) {
+
+					# List, Header, Details
+
+					my $isChEMBL = substr($acc_id,0,2);
+					my $new_id =$acc_id;
+
+					# List & Details
+                    #my $old_id_forDetail = '  ' . $grab_id . ' ';
+                    #my $new_id_forDetail = '' . substr($new_id . '  ', 0, length($old_id_forDetail));
+                    my $old_id_forDetail = LPad($grab_id, ' ', 10);
+                    my $new_id_forDetail = LPad($new_id, ' ', length($old_id_forDetail)-length($new_id));
+
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetail=' . $old_id_forDetail . '==' , 42);
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetail=' . $new_id_forDetail . '==' , 42);
+
+					#1  Details =Sequence list (Start with two spaces) &
+                    $retVal =~ s/$old_id_forDetail/$new_id_forDetail/g;
+
+
+					#2 >> Sequence ID (Start with '>>' and One spaces)
+                    my $old_id_forDetailHeader = '>> ' . $grab_id;
+                    my $new_id_forDetailHeader = '>> ' . $acc_id;                      # both spaces requries to avoid unexpected replacement
+					$retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g;
+
+
+					# List (Start with two spaces)
+                    #my $old_id_forList = '   ' . $grab_id . '';
+                    #my $new_id_forList = '' . $new_id . '   ';
+
+                    my $old_id_forList = LPad($grab_id , ' ', 2) . ' ';
+                    my $new_id_forList = LPad($new_id , ' ', 2) . ' ';
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList=' . $old_id_forList . '==' , 42);
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList=' . $new_id_forList . '==' , 42);
+					$retVal =~ s/$old_id_forList/$new_id_forList/g;
+
+
+					# >> Sequence ID (Start with '>>' and One spaces)
+
+					# List (Except not start with 00) & Details
+                    my $HMMERID_StartWithZero = sprintf("%09d", $grab_id) . ' ';
+                    my $new_HMMERID_StartWithZero = LPad($new_id, ' ', length($HMMERID_StartWithZero)-length($new_id));
+
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> HMMERID_StartWithZero       =' . $HMMERID_StartWithZero . '==' , 42);
+					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_HMMERID_StartWithZero   =' . $new_HMMERID_StartWithZero . '==' , 42);
+                    $retVal =~ s/$HMMERID_StartWithZero/$new_HMMERID_StartWithZero/g;
+                }
+            }
+            catch {
+                #warn "Caught Getting Accession error: $_";
+                warn " Not found the Accession for: " . $grab_id;
+                #last;
+            }
+        }
+
+    }
+
+    # Return the response data
+    return $retVal;
+}
+
+sub LPad {
+    my ($str, $padding, $length) = @_;
+
+    my $pad_length = $length;
+    $pad_length = 0 if $pad_length < 0;
+    $padding x= $pad_length;
+    $padding.$str;
+}
+
+sub RPad {
+    my ($str, $padding, $length) = @_;
+
+    my $pad_length = $length - length $str;
+    $pad_length = 0 if $pad_length < 0;
+    $padding x= $pad_length;
+    $str.$padding;
+}
+
+=head2 rest_get_accid()
+
+Retrive acc with entry id.
+http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
+http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
+
+=cut
+
+sub rest_get_accid {
+    print_debug_message('rest_get_accid', '################ Begin', 42);
+    #my (@reference);
+    my $each_acc_id;
+    my ($entryid) = @_;
+
+    my $domainid = 'hmmer_seq';
+    my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/';
+
+    my $url = $ebisearch_baseUrl . $domainid . "/entry/" . $entryid . "?fields=id,content";
+    my $reference_list_xml_str = &rest_request($url);
+    my $reference_list_xml = XMLin($reference_list_xml_str);
+
+    # read XML file
+    my $data = XMLin($reference_list_xml_str);
+    my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
+
+    if ($acc_info) {
+
+        my $decoded;
+
+        try {
+            $decoded = JSON::XS::decode_json($acc_info);
+        }
+        catch {
+            warn "Caught JSON::XS decode error: $_";
+			print_debug_message('rest_get_accid', '### catch ###' , 42);
+        };
+
+        my @dbs1 = $decoded->{'db'};
+        my @selected_db = $dbs1[0]->[$db_index];
+
+        $each_acc_id = $selected_db[0]->[0]->{'dn'};
+
+    }
+    else {
+        print_debug_message('rest_get_accid', '=acc_info NONE: ', 42);
+    }
+
+    print_debug_message('rest_get_accid', 'End', 42);
+	print_debug_message('rest_get_accid', '###>>>>>>>> each_acc_id: ' . $each_acc_id, 42);
+    return($each_acc_id);
 }
 
 =head2 rest_get_parameters()
@@ -449,7 +680,8 @@ sub rest_get_result {
     print_debug_message('rest_get_result', 'jobid: ' . $job_id, 1);
     print_debug_message('rest_get_result', 'type: ' . $type, 1);
     my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
-    my $result = &rest_request($url);
+    my $result = &rest_request_for_accid($url);
+
     print_debug_message('rest_get_result', length($result) . ' characters',
         1);
     print_debug_message('rest_get_result', 'End', 1);
@@ -642,9 +874,54 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-
     $params{'sequence'} = shift;
+    my $seq_id = shift;
 
+    # Set input seqdb ; ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
+    my $param_seqdb = $params{'database'};
+
+    if ($param_seqdb eq 'ensemblgenomes') {
+        $db_index = "1";
+    }
+    if ($param_seqdb eq 'uniprotkb') {
+        $db_index = "2";
+    }
+    if ($param_seqdb eq 'rp75') {
+        $db_index = "3";
+    }
+    if ($param_seqdb eq 'uniprotrefprot') {
+        $db_index = "4";
+    }
+    if ($param_seqdb eq 'rp55') {
+        $db_index = "5";
+    }
+    if ($param_seqdb eq 'rp35') {
+        $db_index = "6";
+    }
+    if ($param_seqdb eq 'rp15') {
+        $db_index = "7";
+    }
+    if ($param_seqdb eq 'ensembl') {
+        $db_index = "8";
+    }
+    if ($param_seqdb eq 'merops') {
+        $db_index = "9";
+    }
+    if ($param_seqdb eq 'qfo') {
+        $db_index = "10";
+    }
+    if ($param_seqdb eq 'swissprot') {
+        $db_index = "11";
+    }
+    if ($param_seqdb eq 'pdb') {
+        $db_index = "12";
+    }
+    if ($param_seqdb eq 'chembl') {
+        $db_index = "13";
+    }
+    if ($param_seqdb eq 'meropsscan') {
+        $db_index = "14";
+    }
 
     # Load parameters
     &load_params();
@@ -652,7 +929,7 @@ sub submit_job {
     # Submit the job
     my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
-    # Simulate sync/async mode
+    # Asynchronous submission.
     if (defined($params{'async'})) {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
@@ -660,6 +937,8 @@ sub submit_job {
                 "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
+
+    # Simulate synchronous submission serial mode.
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
@@ -667,10 +946,234 @@ sub submit_job {
             print STDERR "$jobid\n";
         }
         usleep($checkInterval);
-        &get_results($jobid);
+        # Get results.
+        &get_results($jobid, $seq_id);
+
     }
     print_debug_message('submit_job', 'End', 1);
+    return $jobid;
 }
+=head2 multi_submit_job()
+
+Submit multiple jobs assuming input is a collection of fasta formatted sequences.
+
+  &multi_submit_job();
+
+=cut
+
+sub multi_submit_job {
+    print_debug_message('multi_submit_job', 'Begin', 1);
+    my (@filename_list) = ();
+
+    # Query sequence
+    if (defined($ARGV[0])) {                  # Bare option
+        if (-f $ARGV[0] || $ARGV[0] eq '-') { # File
+            push(@filename_list, $ARGV[0]);
+        }
+        else {
+            warn 'Warning: Input file "' . $ARGV[0] . '" does not exist';
+        }
+    }
+    if ($params{'sequence'}) {                                      # Via --sequence
+        if (-f $params{'sequence'} || $params{'sequence'} eq '-') { # File
+            push(@filename_list, $params{'sequence'});
+        }
+        else {
+            warn 'Warning: Input file "'
+                . $params{'sequence'}
+                . '" does not exist';
+        }
+    }
+
+    # Job identifier tracking for parallel execution.
+    my @jobid_list = ();
+    my $job_number = 0;
+    $/ = '>';
+    foreach my $filename (@filename_list) {
+        my $INFILE;
+        if ($filename eq '-') { # STDIN.
+            open($INFILE, '<-')
+                or die 'Error: unable to STDIN (' . $! . ')';
+        }
+        else { # File.
+            open($INFILE, '<', $filename)
+                or die 'Error: unable to open file '
+                . $filename . ' ('
+                . $! . ')';
+        }
+        while (<$INFILE>) {
+            my $seq = $_;
+            $seq =~ s/>$//;
+            if ($seq =~ m/(\S+)/) {
+                my $seq_id = $1;
+                print STDERR "Submitting job for: $seq_id\n"
+                    if ($outputLevel > 0);
+                $seq = '>' . $seq;
+                &print_debug_message('multi_submit_job', $seq, 11);
+                $job_number++;
+                my $job_id = &submit_job($seq, $seq_id);
+
+                my $job_info_str = sprintf('%s %d %d', $job_id, 0, $job_number);
+
+                push(@jobid_list, $job_info_str);
+            }
+
+            # Parallel mode, wait for job(s) to finish to free slots.
+            while ($params{'maxJobs'} > 1
+                && scalar(@jobid_list) >= $params{'maxJobs'}) {
+                &_job_list_poll(\@jobid_list);
+                print_debug_message('multi_submit_job',
+                    'Remaining jobs: ' . scalar(@jobid_list), 1);
+            }
+        }
+        close $INFILE;
+    }
+
+    # Parallel mode, wait for remaining jobs to finish.
+    while ($params{'maxJobs'} > 1 && scalar(@jobid_list) > 0) {
+        &_job_list_poll(\@jobid_list);
+        print_debug_message('multi_submit_job',
+            'Remaining jobs: ' . scalar(@jobid_list), 1);
+    }
+    print_debug_message('multi_submit_job', 'End', 1);
+}
+
+
+=head2 _job_list_poll()
+
+Poll the status of a list of jobs and fetch results for finished jobs.
+
+  while(scalar(@jobid_list) > 0) {
+    &_job_list_poll(\@jobid_list);
+  }
+
+=cut
+
+sub _job_list_poll {
+    print_debug_message('_job_list_poll', 'Begin', 1);
+    my $jobid_list = shift;
+    print_debug_message('_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+        11);
+
+    # Loop though job Id list polling job status.
+    for (my $jobNum = (scalar(@$jobid_list) - 1); $jobNum > -1; $jobNum--) {
+        my ($jobid, $seq_id, $error_count, $job_number) =
+            split(/\s+/, $jobid_list->[$jobNum]);
+        print_debug_message('_job_list_poll', 'jobNum: ' . $jobNum, 12);
+        print_debug_message('_job_list_poll',
+            'Job info: ' . $jobid_list->[$jobNum], 12);
+
+        # Get job status.
+        my $job_status = &rest_get_status($jobid);
+        print_debug_message('_job_list_poll', 'Status: ' . $job_status, 12);
+
+        # Fetch results and remove finished/failed jobs from list.
+        if (
+            !(
+                $job_status eq 'RUNNING'
+                    || $job_status eq 'PENDING'
+                    || ($job_status eq 'ERROR'
+                    && $error_count < $maxErrorStatusCount)
+            )
+        ) {
+            if ($job_status eq 'ERROR' || $job_status eq 'FAILED') {
+                print STDERR
+                    "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
+            }
+            &get_results($jobid, $seq_id);
+            splice(@$jobid_list, $jobNum, 1);
+        }
+        else {
+
+            # Update error count, increment for new error or clear old errors.
+            if ($job_status eq 'ERROR') {
+                $error_count++;
+            }
+            elsif ($error_count > 0) {
+                $error_count--;
+            }
+
+            # Update job tracking info.
+            my $job_info_str = sprintf('%s %s %d %d',
+                $jobid, $seq_id, $error_count, $job_number);
+            $jobid_list->[$jobNum] = $job_info_str;
+        }
+    }
+    print_debug_message('_job_list_poll', 'Num jobs: ' . scalar(@$jobid_list),
+        11);
+    print_debug_message('_job_list_poll', 'End', 1);
+}
+
+=head2 list_file_submit_job()
+
+Submit multiple jobs using a file containing a list of entry identifiers as
+input.
+
+  &list_file_submit_job($list_filename)
+
+=cut
+
+sub list_file_submit_job {
+    print_debug_message('list_file_submit_job', 'Begin', 1);
+    my $filename = shift;
+
+    # Open the file of identifiers.
+    my $LISTFILE;
+    if ($filename eq '-') { # STDIN.
+        open($LISTFILE, '<-')
+            or die 'Error: unable to STDIN (' . $! . ')';
+    }
+    else { # File.
+        open($LISTFILE, '<', $filename)
+            or die 'Error: unable to open file ' . $filename . ' (' . $! . ')';
+    }
+
+    # Job identifier tracking for parallel execution.
+    my @jobid_list = ();
+    my $job_number = 0;
+
+    # Iterate over identifiers, submitting each job
+    while (<$LISTFILE>) {
+        my $line = $_;
+        chomp($line);
+        if ($line ne '') {
+            &print_debug_message('list_file_submit_job', 'line: ' . $line, 2);
+            if ($line =~ m/\w:\w/) {
+                # Check this is an identifier
+                my $seq_id = $line;
+                print STDERR "Submitting job for: $seq_id\n"
+                    if ($outputLevel > 0);
+                $job_number++;
+                my $job_id = &submit_job($seq_id, $seq_id);
+                my $job_info_str =
+                    sprintf('%s %s %d %d', $job_id, $seq_id, 0, $job_number);
+                push(@jobid_list, $job_info_str);
+            }
+            else {
+                print STDERR
+                    "Warning: line \"$line\" is not recognised as an identifier\n";
+            }
+
+            # Parallel mode, wait for job(s) to finish to free slots.
+            while ($params{'maxJobs'} > 1
+                && scalar(@jobid_list) >= $params{'maxJobs'}) {
+                &_job_list_poll(\@jobid_list);
+                print_debug_message('list_file_submit_job',
+                    'Remaining jobs: ' . scalar(@jobid_list), 1);
+            }
+        }
+    }
+    close $LISTFILE;
+
+    # Parallel mode, wait for remaining jobs to finish.
+    while ($params{'maxJobs'} > 1 && scalar(@jobid_list) > 0) {
+        &_job_list_poll(\@jobid_list);
+        print_debug_message('list_file_submit_job',
+            'Remaining jobs: ' . scalar(@jobid_list), 1);
+    }
+    print_debug_message('list_file_submit_job', 'End', 1);
+}
+
 
 =head2 load_data()
 
@@ -681,9 +1184,6 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
-
-
-
     print_debug_message('load_data', 'Begin', 1);
     my $retSeq;
 
@@ -706,7 +1206,6 @@ sub load_data {
     }
     print_debug_message('load_data', 'End', 1);
     return $retSeq;
-
 }
 
 =head2 load_params()
@@ -732,7 +1231,6 @@ sub load_params {
     if (!$params{'alignView'}) {
         $params{'alignView'} = 'true'
     }
-
 
     print_debug_message('load_params', 'End', 1);
 }
@@ -787,6 +1285,10 @@ sub get_results {
     print_debug_message('get_results', 'Begin', 1);
     my $jobid = shift;
     print_debug_message('get_results', 'jobid: ' . $jobid, 1);
+    my $seq_id = shift;
+    print_debug_message('get_results', 'seq_id: ' . $seq_id, 1) if ($seq_id);
+
+    my $output_basename = $jobid;
 
     # Verbose
     if ($outputLevel > 1) {
@@ -796,15 +1298,30 @@ sub get_results {
     # Check status, and wait if not finished
     client_poll($jobid);
 
+    # Default output file names use JobId, however the name can be specified...
+    if (defined($params{'outfile'})) {
+        $output_basename = $params{'outfile'};
+    }
+    # Or use sequence identifer.
+    elsif (defined($params{'useSeqId'} && defined($seq_id) && $seq_id ne '')) {
+        $output_basename = $seq_id;
+
+        # Make safe to use as a file name.
+        $output_basename =~ s/\W/_/g;
+    }
+
     # Use JobId if output file name is not defined
-    unless (defined($params{'outfile'})) {
-        $params{'outfile'} = $jobid;
+    else {
+        unless (defined($params{'outfile'})) {
+            $params{'outfile'} = $jobid;
+            $output_basename = $jobid;
+        }
     }
 
     # Get list of data types
     my (@resultTypes) = rest_get_result_types($jobid);
 
-    my $output_basename = $jobid;
+
     # Get the data and write it to a file
     if (defined($params{'outformat'})) {
         # Specified data type
@@ -856,12 +1373,12 @@ sub get_results {
                 print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
             }
             my $result = rest_get_result($jobid, $resultType->{'identifier'});
-            if ($params{'outfile'} eq '-') {
+            if (defined($params{'outfile'}) && $params{'outfile'} eq '-') {
                 write_file($params{'outfile'}, $result);
             }
             else {
                 write_file(
-                    $params{'outfile'} . '.'
+                    $output_basename . '.'
                         . $resultType->{'identifier'} . '.'
                         . $resultType->{'fileSuffix'},
                     $result
@@ -984,6 +1501,12 @@ Protein function analysis with HMMER 3 phmmer.
   --pollFreq            Poll frequency in seconds (default 3s).
   --jobid               JobId that was returned when an asynchronous job was submitted.
   --outfile             File name for results (default is JobId; for STDOUT).
+  --acc                 Get accession ID, how many from top. The default is 20.
+  --multifasta          Treat input as a set of fasta formatted sequences.
+  --useSeqId            Use sequence identifiers for output filenames.
+                        Only available in multi-fasta and multi-identifier modes.
+  --maxJobs             Maximum number of concurrent jobs. Only
+                        available in multifasta or list file modes.
   --outformat           Result format(s) to retrieve. It accepts comma-separated values.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.

@@ -67,16 +67,21 @@ my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/genewise';
 # Set interval for checking status
 my $checkInterval = 3;
 
+# Set maximum number of 'ERROR' status calls to call job failed.
+my $maxErrorStatusCount = 3;
+
 # Output level
 my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ('debugLevel' => 0);
+my %params = (
+    'debugLevel' => 0,
+    'maxJobs'    => 1
+);
 
 # Default parameter values (should get these from the service)
 GetOptions(
-
     # Tool specific options
     'para'            => \$params{'para'},           # Show parameters in the output alignmment, as in genewise.
     'pretty'          => \$params{'pretty'},         # Show pretty ASCII alignment viewing, as in genewise.
@@ -93,7 +98,6 @@ GetOptions(
     'alg=s'           => \$params{'alg'},            # The solutions is different in the genewise21:93 compared to the genewise 6:23 algorithms. (1) In 6:23 we force the external match portions of the homology model to be identical to the alternative model, thus cancelling each other out. This is a pretty gross approximation and is sort of equivalent to the intron tie'ing. It makes things algorithmically easier... However this means a) 6:23 is nowhere near a probabilistic model and b) you really have to used a tied intron model in 6:23 otherwise very bad edge effects (final introns being ridiculously long) occur. (2) In 21:93 we have a full probabilistic model on each side of the homology segment. This is not reported in the -pretty output but you can see it in the -alb output if you like. Do not trust the gene model outside of the homology segment however. By having these external gene model parts we can use all the gene model features safe in the knowledge that if the homology segments do not justify the match then the external part of the model will soak up the additional intron/py-tract/splice site biases.
     'asequence=s'     => \$params{'asequence'},      # The protein sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
     'bsequence=s'     => \$params{'bsequence'},      # The DNA sequence to be compared can be entered directly into the form. The sequence must be in a recognised format eg. GCG, FASTA, EMBL, GenBank. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present. There is a limit of 1MB for the sequence entry.
-
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -139,8 +143,6 @@ if ($params{'help'} || $numOpts == 0) {
 
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
-
-
 if (
     !(
         $params{'polljob'}
@@ -186,10 +188,35 @@ elsif ($params{'polljob'} && defined($params{'jobid'})) {
 
 # Submit a job
 else {
+    # Multiple input sequence mode, assume fasta format.
+    if (defined($params{'multifasta'}) && $params{'multifasta'}) {
+        &multi_submit_job();
+    }
 
-    # Load the sequence data and submit.
-    &submit_job(&load_data());
+    # Entry identifier list file.
+    elsif ((defined($params{'sequence'}) && $params{'sequence'} =~ m/^\@/)
+        || (defined($ARGV[0]) && $ARGV[0] =~ m/^\@/)) {
+        my $list_filename = $params{'sequence'} || $ARGV[0];
+        $list_filename =~ s/^\@//;
+        &list_file_submit_job($list_filename);
+    }
+    # Default: single sequence/identifier.
+    else {
+        # Warn for invalid batch only option use.
+        if (defined($params{'useSeqId'}) && $params{'useSeqId'}) {
+            print STDERR "Warning: --useSeqId option ignored.\n";
+            delete $params{'useSeqId'};
+        }
+        if (defined($params{'maxJobs'}) && $params{'maxJobs'} > 1) {
+            print STDERR "Warning: --maxJobs option ignored.\n";
+            $params{'maxJobs'} = 1;
+        }
+        # Load the sequence data and submit.
+        &submit_job(&load_data());
+    }
 }
+
+
 
 =head1 FUNCTIONS
 
@@ -642,7 +669,6 @@ sub submit_job {
     print_debug_message('submit_job', 'Begin', 1);
 
     # Set input sequence
-
     $params{'asequence'} = shift;
     $params{'bsequence'} = shift;
 
@@ -653,7 +679,7 @@ sub submit_job {
     # Submit the job
     my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
-    # Simulate sync/async mode
+    # Asynchronous submission.
     if (defined($params{'async'})) {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
@@ -661,6 +687,8 @@ sub submit_job {
                 "To check status: perl $scriptName --status --jobid $jobid\n";
         }
     }
+
+    # Simulate synchronous submission serial mode.
     else {
         if ($outputLevel > 0) {
             print STDERR "JobId: $jobid\n";
@@ -668,10 +696,13 @@ sub submit_job {
             print STDERR "$jobid\n";
         }
         usleep($checkInterval);
+        # Get results.
         &get_results($jobid);
     }
     print_debug_message('submit_job', 'End', 1);
+    return $jobid;
 }
+
 
 =head2 load_data()
 
@@ -682,9 +713,6 @@ Load sequence data from file or option specified on the command-line.
 =cut
 
 sub load_data {
-
-
-
     print_debug_message('load_data', 'Begin', 1);
     my @retSeq = ();
 
@@ -791,7 +819,6 @@ sub load_params {
         $params{'alg'} = '623'
     }
 
-
     print_debug_message('load_params', 'End', 1);
 }
 
@@ -846,6 +873,8 @@ sub get_results {
     my $jobid = shift;
     print_debug_message('get_results', 'jobid: ' . $jobid, 1);
 
+    my $output_basename = $jobid;
+
     # Verbose
     if ($outputLevel > 1) {
         print 'Getting results for job ', $jobid, "\n";
@@ -854,15 +883,23 @@ sub get_results {
     # Check status, and wait if not finished
     client_poll($jobid);
 
+    # Default output file names use JobId, however the name can be specified...
+    if (defined($params{'outfile'})) {
+        $output_basename = $params{'outfile'};
+    }
+
     # Use JobId if output file name is not defined
-    unless (defined($params{'outfile'})) {
-        $params{'outfile'} = $jobid;
+    else {
+        unless (defined($params{'outfile'})) {
+            $params{'outfile'} = $jobid;
+            $output_basename = $jobid;
+        }
     }
 
     # Get list of data types
     my (@resultTypes) = rest_get_result_types($jobid);
 
-    my $output_basename = $jobid;
+
     # Get the data and write it to a file
     if (defined($params{'outformat'})) {
         # Specified data type
@@ -914,12 +951,12 @@ sub get_results {
                 print STDERR 'Getting ', $resultType->{'identifier'}, "\n";
             }
             my $result = rest_get_result($jobid, $resultType->{'identifier'});
-            if ($params{'outfile'} eq '-') {
+            if (defined($params{'outfile'}) && $params{'outfile'} eq '-') {
                 write_file($params{'outfile'}, $result);
             }
             else {
                 write_file(
-                    $params{'outfile'} . '.'
+                    $output_basename . '.'
                         . $resultType->{'identifier'} . '.'
                         . $resultType->{'fileSuffix'},
                     $result
