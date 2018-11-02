@@ -46,8 +46,20 @@ RUN python clientsgenerator.py python,perl,java
 WORKDIR /webservice-clients-generator/dist
 RUN wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/python/dbfetch.py \
  && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/perl/dbfetch.pl
+
+# Adding EBI Search clients
+RUN wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/python/requests/ebeye_requests.py \
+ && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/perl/lwp/ebeye_lwp.pl \
+ && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/java/jar/EBeye_JAXRS-source.jar \
+ && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/java/jar/EBeye_JAXRS.jar \
+ && wget https://raw.githubusercontent.com/ebi-wp/webservice-clients/master/java/jar/ebiws-lib.zip
+RUN ln -s ebeye_requests.py ebisearch.py \
+ && ln -s ebeye_lwp.pl ebisearch.pl \
+ && ln -s EBeye_JAXRS.jar ebisearch.jar
+RUN unzip ebiws-lib.zip
+
 # TODO Get dbfetch Java client
 RUN ant; exit 0
-RUN ant -lib lib && rm -rf bin lib
+RUN ant -lib lib && rm -rf bin
 RUN chmod +x *.py *.pl *.jar
 ENV PATH="/webservice-clients-generator/dist:${PATH}"
