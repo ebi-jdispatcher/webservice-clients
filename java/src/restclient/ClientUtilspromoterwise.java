@@ -21,8 +21,6 @@ package restclient;
 
 import com.sun.jersey.api.client.ClientResponse;
 import org.apache.commons.cli.Options;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import restclient.stubs.WsError;
 import restclient.stubs.WsResultType;
 
@@ -42,9 +40,6 @@ import java.util.List;
 
 
 public class ClientUtilspromoterwise {
-
-
-//    private static final Logger log = LoggerFactory.getLogger(ClientUtilspromoterwise.class);
 
     /**
      * Check if Http response code is as expected

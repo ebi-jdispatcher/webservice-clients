@@ -44,12 +44,6 @@ import java.util.List;
 
 public class RestClientgenewise {
 
-    static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR");
-    }
-
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClientgenewise.class);
-
     private String revision = "2018";
     private Client client;
     private final String toolId;
@@ -605,7 +599,7 @@ public class RestClientgenewise {
 
                         if (outputLevel > 0)
                             System.out.println("To check status: java -jar genewise.jar --status --jobid " + jobid);
-                        
+
                     // Synchronous execution
                     } else {
                         if (outputLevel > 0){

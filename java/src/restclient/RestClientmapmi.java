@@ -44,12 +44,6 @@ import java.util.List;
 
 public class RestClientmapmi {
 
-    static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR");
-    }
-
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClientmapmi.class);
-
     private String revision = "2018";
     private Client client;
     private final String toolId;
@@ -512,7 +506,7 @@ public class RestClientmapmi {
 
                         if (outputLevel > 0)
                             System.out.println("To check status: java -jar mapmi.jar --status --jobid " + jobid);
-                        
+
                     // Synchronous execution
                     } else {
                         if (outputLevel > 0){

@@ -44,12 +44,6 @@ import java.util.List;
 
 public class RestClientemboss_water {
 
-    static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR");
-    }
-
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClientemboss_water.class);
-
     private String revision = "2018";
     private Client client;
     private final String toolId;
@@ -515,7 +509,7 @@ public class RestClientemboss_water {
 
                         if (outputLevel > 0)
                             System.out.println("To check status: java -jar emboss_water.jar --status --jobid " + jobid);
-                        
+
                     // Synchronous execution
                     } else {
                         if (outputLevel > 0){

@@ -44,12 +44,6 @@ import java.util.List;
 
 public class RestClientemboss_polydot {
 
-    static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR");
-    }
-
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClientemboss_polydot.class);
-
     private String revision = "2018";
     private Client client;
     private final String toolId;
@@ -483,7 +477,7 @@ public class RestClientemboss_polydot {
 
                         if (outputLevel > 0)
                             System.out.println("To check status: java -jar emboss_polydot.jar --status --jobid " + jobid);
-                        
+
                     // Synchronous execution
                     } else {
                         if (outputLevel > 0){

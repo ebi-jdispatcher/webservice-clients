@@ -44,12 +44,6 @@ import java.util.List;
 
 public class RestClientpfamscan {
 
-    static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "ERROR");
-    }
-
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestClientpfamscan.class);
-
     private String revision = "2018";
     private Client client;
     private final String toolId;
@@ -487,7 +481,7 @@ public class RestClientpfamscan {
 
                         if (outputLevel > 0)
                             System.out.println("To check status: java -jar pfamscan.jar --status --jobid " + jobid);
-                        
+
                     // Synchronous execution
                     } else {
                         if (outputLevel > 0){
