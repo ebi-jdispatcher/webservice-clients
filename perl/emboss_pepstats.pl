@@ -261,7 +261,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die $error_message;
+        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
