@@ -27,7 +27,7 @@ LABEL    base_image="ebi-wp:EMBL-EBI Web Service Clients" \
 RUN apt-get update --fix-missing \
   && apt-get install -y build-essential wget curl unzip git make gcc g++
 RUN apt-get -y upgrade \
-  && apt-get install -y perl python3-pip python-virtualenv default-jdk ant
+  && apt-get install -y perl libcrypt-ssleay-perl python3-pip python-virtualenv default-jdk ant
 
 # Perl Dependencies
 RUN curl -L https://cpanmin.us | perl - App::cpanminus \
