@@ -221,8 +221,8 @@ else {
 }
 
 
-# Seq db index
-my $db_index = '2'; # default uniprotkb
+# hmmscan db index
+my $db_index = "4"; # default Pfam
 
 =head1 FUNCTIONS
 
@@ -359,7 +359,10 @@ sub rest_request_for_accid {
     my $response = $ua->get($requestUrl,
         'Accept-Encoding' => $can_accept, # HTTP compression.
     );
-
+    print_debug_message('rest_request_for_accid', 'HTTP status: ' . $response->code, 11);
+    print_debug_message('rest_request_for_accid', 'response length: ' . length($response->content()), 11);
+    print_debug_message('rest_request_for_accid', 'request:' . "\n" . $response->request()->as_string(), 32);
+    print_debug_message('rest_request_for_accid', 'response: ' . "\n" . $response->as_string(), 32);
     # Unpack possibly compressed response.
     my $retVal;
     if (defined($can_accept) && $can_accept ne '') {
@@ -369,7 +372,8 @@ sub rest_request_for_accid {
     $retVal = $response->content() unless defined($retVal);
     # Check for an error.
     &rest_error($response, $retVal);
-    print_debug_message('rest_request', 'End', 11);
+    print_debug_message('rest_request_for_accid', 'retVal: ' . $retVal, 12);
+    print_debug_message('rest_request_for_accid', 'End', 11);
 
     my @lines = split /\n/, $retVal;
 
@@ -379,7 +383,6 @@ sub rest_request_for_accid {
         $top_acc = $params{'acc'};
     }
 
-    my $new_id_len = 0;
     foreach my $line (@lines) {
 
         # Updating HMMER numeric ID to Accession
@@ -395,64 +398,22 @@ sub rest_request_for_accid {
             my $grab_id = substr($line, $where_id_begin + 3, 30);
             $grab_id =~ s/\s*$//; # trim left whitespace
 
-            try {
+            #print "=grab_id=====================\n";
 
-                my $acc_id = rest_get_accid($grab_id);
-				print_debug_message('rest_request_for_accid', '###>>>>>>>> grab_id: ' . $grab_id, 42);
-				print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id: ' . $acc_id, 42);
-                if ($grab_id and $acc_id) {
+            my $acc_id = rest_get_accid($grab_id);
 
-					# List, Header, Details
+            if ($grab_id) {
+                if ($acc_id) {
 
-					my $isChEMBL = substr($acc_id,0,2);
-					my $new_id =$acc_id;
+                    my $numeric1 = ' ' . sprintf("%09d", $grab_id) . ' ';
+                    my $numeric2 = ' ' . $grab_id . ' ';
+                    my $new_id = ' ' . $acc_id . ' ';
 
-					# List & Details
-                    #my $old_id_forDetail = '  ' . $grab_id . ' ';
-                    #my $new_id_forDetail = '' . substr($new_id . '  ', 0, length($old_id_forDetail));
-                    my $old_id_forDetail = LPad($grab_id, ' ', 10);
-                    my $new_id_forDetail = LPad($new_id, ' ', length($old_id_forDetail)-length($new_id));
-
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetail=' . $old_id_forDetail . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetail=' . $new_id_forDetail . '==' , 42);
-
-					#1  Details =Sequence list (Start with two spaces) &
-                    $retVal =~ s/$old_id_forDetail/$new_id_forDetail/g;
-
-
-					#2 >> Sequence ID (Start with '>>' and One spaces)
-                    my $old_id_forDetailHeader = '>> ' . $grab_id;
-                    my $new_id_forDetailHeader = '>> ' . $acc_id;                      # both spaces requries to avoid unexpected replacement
-					$retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g;
-
-
-					# List (Start with two spaces)
-                    #my $old_id_forList = '   ' . $grab_id . '';
-                    #my $new_id_forList = '' . $new_id . '   ';
-
-                    my $old_id_forList = LPad($grab_id , ' ', 2) . ' ';
-                    my $new_id_forList = LPad($new_id , ' ', 2) . ' ';
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList=' . $old_id_forList . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList=' . $new_id_forList . '==' , 42);
-					$retVal =~ s/$old_id_forList/$new_id_forList/g;
-
-
-					# >> Sequence ID (Start with '>>' and One spaces)
-
-					# List (Except not start with 00) & Details
-                    my $HMMERID_StartWithZero = sprintf("%09d", $grab_id) . ' ';
-                    my $new_HMMERID_StartWithZero = LPad($new_id, ' ', length($HMMERID_StartWithZero)-length($new_id));
-
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> HMMERID_StartWithZero       =' . $HMMERID_StartWithZero . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_HMMERID_StartWithZero   =' . $new_HMMERID_StartWithZero . '==' , 42);
-                    $retVal =~ s/$HMMERID_StartWithZero/$new_HMMERID_StartWithZero/g;
+                    $retVal =~ s/$numeric1/$new_id/g;
+                    $retVal =~ s/$numeric2/$new_id/g;
                 }
             }
-            catch {
-                #warn "Caught Getting Accession error: $_";
-                warn " Not found the Accession for: " . $grab_id;
-                #last;
-            }
+
         }
 
     }
@@ -461,42 +422,26 @@ sub rest_request_for_accid {
     return $retVal;
 }
 
-sub LPad {
-    my ($str, $padding, $length) = @_;
-
-    my $pad_length = $length;
-    $pad_length = 0 if $pad_length < 0;
-    $padding x= $pad_length;
-    $padding.$str;
-}
-
-sub RPad {
-    my ($str, $padding, $length) = @_;
-
-    my $pad_length = $length - length $str;
-    $pad_length = 0 if $pad_length < 0;
-    $padding x= $pad_length;
-    $str.$padding;
-}
 
 =head2 rest_get_accid()
 
 Retrive acc with entry id.
-http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
-http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
+https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
+https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
 
 =cut
 
 sub rest_get_accid {
-    print_debug_message('rest_get_accid', '################ Begin', 42);
+    print_debug_message('rest_get_accid', '##### Begin', 42);
     #my (@reference);
     my $each_acc_id;
     my ($entryid) = @_;
 
-    my $domainid = 'hmmer_seq';
-    my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/';
+    #my $domainid ='hmmer_seq';
+    my $domainid = 'hmmer_hmm';
+    my $ebisearch_baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
 
-    my $url = $ebisearch_baseUrl . $domainid . "/entry/" . $entryid . "?fields=id,content";
+    my $url = $ebisearch_baseUrl . "/entry/" . $entryid . "?fields=id,content";
     my $reference_list_xml_str = &rest_request($url);
     my $reference_list_xml = XMLin($reference_list_xml_str);
 
@@ -505,6 +450,7 @@ sub rest_get_accid {
     my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
 
     if ($acc_info) {
+        print_debug_message('rest_get_accid', '#acc_info is: ' . $acc_info, 42);
 
         my $decoded;
 
@@ -513,21 +459,18 @@ sub rest_get_accid {
         }
         catch {
             warn "Caught JSON::XS decode error: $_";
-			print_debug_message('rest_get_accid', '### catch ###' , 42);
         };
 
-        my @dbs1 = $decoded->{'db'};
-        my @selected_db = $dbs1[0]->[$db_index];
+        my @selected_db = $decoded->[$db_index];
 
-        $each_acc_id = $selected_db[0]->[0]->{'dn'};
+        $each_acc_id = $selected_db[0]->{'acc'};
 
     }
     else {
-        print_debug_message('rest_get_accid', '=acc_info NONE: ', 42);
+        print_debug_message('rest_get_accid', '#acc_info NONE: ', 42);
     }
 
     print_debug_message('rest_get_accid', 'End', 42);
-	print_debug_message('rest_get_accid', '###>>>>>>>> each_acc_id: ' . $each_acc_id, 42);
     return($each_acc_id);
 }
 
@@ -875,50 +818,27 @@ sub submit_job {
     $params{'sequence'} = shift;
     my $seq_id = shift;
 
-    # Set input seqdb ; ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
-    my $param_seqdb = $params{'database'};
-
-    if ($param_seqdb eq 'ensemblgenomes') {
-        $db_index = "1";
-    }
-    if ($param_seqdb eq 'uniprotkb') {
+    # Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
+    my $param_hmmdb = $params{'database'};
+    if ($param_hmmdb eq 'treefam') {
         $db_index = "2";
     }
-    if ($param_seqdb eq 'rp75') {
+    if ($param_hmmdb eq 'gene3d') {
         $db_index = "3";
     }
-    if ($param_seqdb eq 'uniprotrefprot') {
+    if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam') {
+        $params{'database'} = 'pfam';
         $db_index = "4";
     }
-    if ($param_seqdb eq 'rp55') {
+    if ($param_hmmdb eq 'superfamily') {
         $db_index = "5";
     }
-    if ($param_seqdb eq 'rp35') {
+    if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
+        $params{'database'} = 'tigrfam';
         $db_index = "6";
     }
-    if ($param_seqdb eq 'rp15') {
+    if ($param_hmmdb eq 'pirsf') {
         $db_index = "7";
-    }
-    if ($param_seqdb eq 'ensembl') {
-        $db_index = "8";
-    }
-    if ($param_seqdb eq 'merops') {
-        $db_index = "9";
-    }
-    if ($param_seqdb eq 'qfo') {
-        $db_index = "10";
-    }
-    if ($param_seqdb eq 'swissprot') {
-        $db_index = "11";
-    }
-    if ($param_seqdb eq 'pdb') {
-        $db_index = "12";
-    }
-    if ($param_seqdb eq 'chembl') {
-        $db_index = "13";
-    }
-    if ($param_seqdb eq 'meropsscan') {
-        $db_index = "14";
     }
 
     # Load parameters

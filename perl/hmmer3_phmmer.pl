@@ -484,8 +484,8 @@ sub RPad {
 =head2 rest_get_accid()
 
 Retrive acc with entry id.
-http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
-http://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
+https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
+https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
 
 =cut
 
@@ -496,7 +496,7 @@ sub rest_get_accid {
     my ($entryid) = @_;
 
     my $domainid = 'hmmer_seq';
-    my $ebisearch_baseUrl = 'http://www.ebi.ac.uk/ebisearch/ws/rest/';
+    my $ebisearch_baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest/';
 
     my $url = $ebisearch_baseUrl . $domainid . "/entry/" . $entryid . "?fields=id,content";
     my $reference_list_xml_str = &rest_request($url);
