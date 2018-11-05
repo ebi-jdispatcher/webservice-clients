@@ -10,8 +10,6 @@
 
     <!-- Add new tool HERE -->
     <target name="jar" depends="compile, copy-dependencies" description="package, output to JAR">
-
-        <copy file="src/logback.xml" tofile="${build.dir}/logback.xml"></copy>
         <antcall target="jar-client">
             <param name="client" value="clustalo"/>
         </antcall>
@@ -207,7 +205,7 @@
     <target name="jar-client">
         <jar jarfile="${dist.dir}/${client}.jar"
              basedir="${build.dir}"
-             includes="logback.xml tools/** restclient/** restclient/stubs/**">
+             includes="tools/** restclient/** restclient/stubs/**">
             <manifest>
                 <attribute name="Main-Class" value="restclient.RestClient${client}"/>
             </manifest>
