@@ -514,11 +514,18 @@ elif options.paramDetail:
 # Submit job
 elif options.email and not options.jobid:
     params = {}
-    if len(args) > 0:
+    if len(args) == 1:
         if os.path.exists(args[0]):  # Read file into content
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
+    elif len(args) == 2:
+        if os.path.exists(args[0]) and os.path.exists(args[1]):  # Read file into content
+            params[u'asequence'] = readFile(args[0])
+            params[u'bsequence'] = readFile(args[1])
+        else:  # Argument is a sequence id
+            params[u'asequence'] = args[0]
+            params[u'bsequence'] = args[0]
     elif hasattr(options, "sequence") or (hasattr(options, "asequence") and hasattr(options, "bsequence")):  # Specified via option
         if hasattr(options, "sequence"):
             if os.path.exists(options.sequence):  # Read file into content
@@ -526,14 +533,16 @@ elif options.email and not options.jobid:
             else:  # Argument is a sequence id
                 params[u'sequence'] = options.sequence
         elif hasattr(options, "asequence") and hasattr(options, "bsequence"):
-            params[u'asequence'] = options.asequence
-            params[u'bsequence'] = options.bsequence
+            if os.path.exists(options.asequence) and os.path.exists(options.bsequence):  # Read file into content
+                params[u'asequence'] = readFile(options.asequence)
+                params[u'bsequence'] = readFile(options.bsequence)
+            else:  # Argument is a sequence id
+                params[u'asequence'] = options.asequence
+                params[u'bsequence'] = options.bsequence
 
     # Pass default values and fix bools (without default value)
     if options.stype:
         params['stype'] = options.stype
-    if options.sequence:
-        params['sequence'] = options.sequence
 
     if options.format:
         params['format'] = options.format
