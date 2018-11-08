@@ -278,7 +278,7 @@ if __name__ == '__main__':
     # Process command-line options
     # parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
     parser = OptionParser(add_help_option=False)
-    parser.add_option('-h', '--help', help='Shows this message and exit.')
+    parser.add_option('-h', '--help', action='store_true', help='Shows this message and exit.')
     parser.add_option('--quiet', action='store_true', help='decrease output level')
     parser.add_option('--verbose', action='store_true', help='increase output level')
     parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
