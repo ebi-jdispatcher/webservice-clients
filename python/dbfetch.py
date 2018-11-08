@@ -259,8 +259,19 @@ def getFormatStyles(db, format):
 # Get an entry.
 def fetchData(query, format='default', style='raw'):
     printDebugMessage('fetchData', 'Begin', 1)
-    requestUrl = baseUrl + '/' + query.replace(':', '/') + '/' + format + '?style=' + style
-    result = restRequest(requestUrl)
+    if query.startswith('@'):
+        result = []
+        if os.path.exists(query.lstrip('@')):
+            with open(query.lstrip('@'), 'r') as inlines:
+                for line in inlines:
+                    requestUrl = baseUrl + '/' + line.strip().replace(':', '/') + '/' + format + '?style=' + style
+                    result.append(restRequest(requestUrl))
+        else:
+            print("Error: unable to open file %s (No such file or directory)" % query)
+        result = "".join(result)
+    else:
+        requestUrl = baseUrl + '/' + query.replace(':', '/') + '/' + format + '?style=' + style
+        result = restRequest(requestUrl)
     printDebugMessage('fetchData', 'End', 1)
     return result
 
