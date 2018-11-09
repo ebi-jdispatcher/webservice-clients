@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=EBIWS2_Java&amp;ivyXmlPath=ivy.xml&amp;confs=*"/>
+	<classpathentry exported="true" kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=EBIWS2_Java&amp;ivyXmlPath=ivy.xml&amp;confs=*"/>
 	<classpathentry kind="lib" path="/net/isilon3/production/extsrv2/projects/local_work/wp-02/src/2.0-EBIWS/java/lib"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/activation-1.1.1-sources.jar"/>

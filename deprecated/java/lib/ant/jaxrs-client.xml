@@ -19,33 +19,39 @@
 ======================================================================
 -->
 <project name="jaxrs-client">
-	<!-- Generate JAX-RS stubs from a WADL -->
-	<!--
+    <!-- Generate JAX-RS stubs from a WADL -->
+    <!--
 	Using the wsimport command:
 	wsimport -d bin -p uk.ac.ebi.webservices.ebeye -keep -s src http://www.ebi.ac.uk/ebisearch/service.ebi?wsdl
 	NB: assumes wsimport is on the current PATH. This is usually the case with Java 6.
 	-->
-	<target name="genJaxrsStubs"
+    <target name="genJaxrsStubs"
 		description="JAX-RS Client: generate stubs from a WADL using wadl2java command">
-		<echo message="${stubPkg}" />
-		<echo message="${wsdlUrl}" />
-	  <java classname="org.apache.cxf.tools.wadlto.WADLToJava" classpathref="classpath" fork="true">
-	  	<arg value="-p"/>
-	  	<arg value="${stubPkg}"/>
-	  	<arg value="-sp"/>
-	  	<arg value="http://www.ebi.ac.uk/ebisearch/schemas/EBISearchRestWS=${stubPkg}"/>
-	    <arg value="-d"/>
-	    <arg value="${src.dir}"/>
-	    <arg value="${wsdlUrl}"/>
-	  </java>
-	</target>
+        <echo message="${stubPkg}" />
+        <echo message="${wadlUrl}" />
+        <java classname="org.apache.cxf.tools.wadlto.WADLToJava" classpathref="classpath" fork="true">
+            <arg value="-p" />
+            <arg value="${stubPkg}" />
+            <arg value="-sp" />
+            <arg value="http://www.ebi.ac.uk/ebisearch/schemas/EBISearchRestWS=${stubPkg}"/>
+            <!--
+            <arg value="-b"/>
+            <arg value="${ant.import.lib.dir}/jaxrs-ebeye-jaxb.xml"/>
+            -->
+            <arg value="-d"/>
+            <arg value="${src.dir}"/>
+            <arg value="-xjc-b"/>
+            <arg value="-xjc${ant.import.lib.dir}/jaxrs-ebeye-jaxb.xml"/>
+            <arg value="${wadlUrl}"/>
+        </java>
+    </target>
 
-	<!--
+    <!--
 	Using the "wsimport" ant task:
 	See https://metro.dev.java.net/nonav/1.4/docs/wsimportant.html
 	NB: This does not work correctly due to dependency issues.
 	-->
-	<!-- target name="genJaxwsStubs"
+    <!-- target name="genJaxwsStubs"
 		description="JAX-WS RI: generate stubs from a WSDL using wsimport ant task">
 		<echo message="${stubPkg}" />
 		<echo message="${wsdlUrl}" />

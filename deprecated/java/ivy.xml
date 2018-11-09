@@ -32,11 +32,6 @@ Library dependencies via Apache Ivy
 	<dependencies>
 		<!-- Command-line handling -->
 		<dependency org="commons-cli" name="commons-cli" rev="1.2"/>
-
-		<!-- Apache Axis 1.x -->
-		<dependency org="axis" name="axis" rev="1.4" />
-		<dependency org="javax.activation" name="activation" rev="1.1.1" />
-		<dependency org="javax.mail" name="mail" rev="1.4.1" />
 		
 		<!-- HTTP compression support for Axis -->
 		<dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" />
@@ -55,9 +50,17 @@ Library dependencies via Apache Ivy
 		<dependency org="com.sun.xml.ws" name="webservices-rt" rev="1.4" />
 		<dependency org="javax.annotation" name="jsr250-api" rev="1.0" />
 		<dependency org="org.jvnet" name="mimepull" rev="1.3" / -->
+		
+        <!-- Java RPC -->
+        <!-- https://mvnrepository.com/artifact/javax.xml.rpc/javax.xml.rpc-api -->
+        <dependency org="javax.xml.rpc" name="javax.xml.rpc-api" rev="1.1.2"/>
 
 		<!-- Apache CXF jaxrs client -->
 		<dependency org="org.apache.cxf" name="cxf-rt-rs-client" rev="3.1.0"/>
 		<dependency org="org.apache.cxf" name="cxf-tools-wadlto-jaxrs" rev="3.1.0"/>
+        
+        <!-- EHCache JCache implementation -->
+        <dependency org="org.ehcache.modules" name="ehcache-107" rev="3.6.1" />
+        
 	</dependencies>
 </ivy-module>

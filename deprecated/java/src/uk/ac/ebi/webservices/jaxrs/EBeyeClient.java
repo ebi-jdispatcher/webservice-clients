@@ -25,6 +25,12 @@ package uk.ac.ebi.webservices.jaxrs;
 
 import java.util.List;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.Duration;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -34,23 +40,29 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
+import org.apache.cxf.jaxrs.client.cache.CacheControlClientReaderInterceptor;
+import org.apache.cxf.jaxrs.client.cache.CacheControlClientRequestFilter;
+import org.apache.cxf.jaxrs.client.cache.Entry;
+import org.apache.cxf.jaxrs.client.cache.Key;
+import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
+import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsDomain;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsDomains;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsEntries;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsEntry;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFacet;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFacetValue;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFacets;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsField;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsFieldInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsIndexInfo;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsOption;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult.Domains;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult.Entries;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult.Facets;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult.Suggestions;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsResult.TopTerms;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsSuggestion;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsSuggestions;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTerm;
-import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTopTerms;
+import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.WsTermStats;
 import uk.ac.ebi.webservices.jaxrs.stubs.ebeye.Wsurl;
 
 /** <p>EB-eye web service Java client using Apache HttpComponents.</p>
@@ -287,6 +299,22 @@ public class EBeyeClient {
 	protected Client getClient() {
 		if (client == null) {
 			client = ClientBuilder.newClient();
+			client.register(new GZIPInInterceptor());
+			client.register(new GZIPOutInterceptor());
+			
+			CacheManager cm = Caching.getCachingProvider().getCacheManager();
+			MutableConfiguration<Key, Entry> ccfg = new MutableConfiguration<Key, Entry>()
+			      .setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_DAY))
+			      .setStatisticsEnabled(true);
+			
+			CacheControlClientRequestFilter cacheFilter = new CacheControlClientRequestFilter();
+			Cache<Key, Entry> oneDayCache = cm.createCache("one_day", ccfg);
+			cacheFilter.setCache(oneDayCache);
+			client.register(cacheFilter);
+
+			CacheControlClientReaderInterceptor cacheInterceptor = new CacheControlClientReaderInterceptor();
+			cacheInterceptor.setCache(oneDayCache);
+			client.register(cacheInterceptor);
 		}
 		return client;
 	}
@@ -578,7 +606,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainsHierarchy", "Begin", 1);
 
 		WsResult result = getDomainsHierarchy();
-		WsDomains domains = result.getDomains();
+		Domains domains = result.getDomains();
 		if (domains != null) {
 			for (WsDomain domain : domains.getDomain()) {
 				printDomainsInHierarchy(domain, "");
@@ -605,7 +633,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainDetails", "Begin", 1);
 
 		WsResult result = getDomainDetails(domainId);
-		WsDomains domains = result.getDomains();
+		Domains domains = result.getDomains();
 		if (domains != null) {
 			for (WsDomain domain : domains.getDomain()) {
 				printDetailsInHierarchy(domain);
@@ -695,7 +723,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetResults", "Begin", 1);
 
 		WsResult result = getResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort);
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				print(entry);
@@ -754,7 +782,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetFacetedResults", "Begin", 1);
 
 		WsResult result = getFacetedResults(domain, query, fields, start, size, fieldurl, viewurl, sortField, order, sort, facetCount, facetfields, selectedfacets, facetsdepth);
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				print(entry);
@@ -763,7 +791,7 @@ public class EBeyeClient {
 
 		System.out.println();
 
-		WsFacets facets = result.getFacets();
+		Facets facets = result.getFacets();
 		if (facets != null) {
 			for (WsFacet facet : facets.getFacet()) {
 				print(facet);
@@ -808,7 +836,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetEntries", "Begin", 1);
 
 		WsResult result = getEntries(domain, entryIds, fields, fieldurl, viewurl);
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				print(entry);
@@ -826,7 +854,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainsReferencedInDomain", "Begin", 1);
 
 		WsResult result = getDomainsReferencedInDomain(domain);
-		WsDomains domains = result.getDomains();
+		Domains domains = result.getDomains();
 		if (domains != null) {
 			printIds(domains);
 		}
@@ -834,7 +862,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainsReferencedInDomain", "End", 1);
 	}
 
-	private void printIds(WsDomains domains) {
+	private void printIds(Domains domains) {
 		for (WsDomain domain : domains.getDomain()) {
 			System.out.println(domain.getId());
 		}
@@ -849,7 +877,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetDomainsReferencedInEntry", "Begin", 1);
 
 		WsResult result = getDomainsReferencedInEntry(domain, entry);
-		WsDomains domains = result.getDomains();
+		Domains domains = result.getDomains();
 		if (domains != null) {
 			printIds(domains);
 		}
@@ -873,7 +901,7 @@ public class EBeyeClient {
 		printDebugMessage("printGetReferencedEntries", "Begin", 1);
 
 		WsResult result = getReferencedEntries(domain, entryIds, referencedDomain, fields, start, size, fieldurl, viewurl, facetCount, facetfields, selectedfacets);
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				printReference(entry);
@@ -910,7 +938,7 @@ public class EBeyeClient {
 		System.out.println();
 		
 		if (entry.getReferenceFacets() != null) {
-			for (WsFacet facet : entry.getReferenceFacets().getReferenceFacets()) {
+			for (WsFacet facet : entry.getReferenceFacets().getReferenceFacet()) {
 				print(facet);
 			}
 		}
@@ -951,7 +979,7 @@ public class EBeyeClient {
 		                                  excludes,
 		                                  excludesets);
 
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				print(entry);
@@ -996,7 +1024,7 @@ public class EBeyeClient {
 		                                  excludes,
 		                                  excludesets);
 
-		WsEntries entries = result.getEntries();
+		Entries entries = result.getEntries();
 		if (entries != null) {
 			for (WsEntry entry : entries.getEntry()) {
 				print(entry);
@@ -1016,10 +1044,10 @@ public class EBeyeClient {
 
 		WsResult result = getAutoComplete(domain, term);
 
-		WsSuggestions suggestions = result.getSuggestions();
+		Suggestions suggestions = result.getSuggestions();
 		if (suggestions != null) {
 			for (WsSuggestion suggestion : suggestions.getSuggestion()) {
-				System.out.println(suggestion.getSuggestion());
+				System.out.println(suggestion.getSuggest());
 			}
 		}
 
@@ -1037,9 +1065,9 @@ public class EBeyeClient {
 		printDebugMessage("printGetTopTerms", "Begin", 1);
 
 		WsResult result = getTopTerms(domain, field, size, excludes, excludesets);
-		WsTopTerms topTerms = result.getTopTerms();
+		TopTerms topTerms = result.getTopTerms();
 		if (topTerms != null && topTerms.getTerm() != null) {
-			for (WsTerm term : topTerms.getTerm()) {
+			for (WsTermStats term : topTerms.getTerm()) {
 				System.out.println(term.getText() + ": " + term.getDocFreq());
 			}
 		}
