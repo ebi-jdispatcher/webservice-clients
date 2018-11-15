@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jxb:bindings xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector"
+    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+    jxb:extensionBindingPrefixes="xjc" 
+    jxb:version="2.1"
+    xsi:schemaLocation="http://www.ebi.ac.uk/ebisearch/schemas/EBISearchRestWS.xsd"
+    >
+    
+<!-- Problems in combining wadl2java with jaxb
+https://issues.apache.org/jira/browse/CXF-5647
+https://issues.apache.org/jira/browse/CXF-5951 
+ -->
+
+    <jxb:bindings>
+        <jxb:globalBindings>
+            <xjc:serializable uid="2" />
+        </jxb:globalBindings>
+    </jxb:bindings>
+</jxb:bindings>

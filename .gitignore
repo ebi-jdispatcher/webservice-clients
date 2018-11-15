@@ -17,6 +17,9 @@
 #*.tar.gz
 #*.rar
 
+### ivy jar
+java/lib/ivy
+
 ### macOS template
 *.DS_Store
 .AppleDouble
