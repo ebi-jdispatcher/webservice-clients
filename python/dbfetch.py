@@ -220,23 +220,9 @@ def getSupportedStyles():
     for dbInfo in dbInfoList:
         for format in dbInfo["formatInfoList"]:
             dbList.append("%s\t%s\t%s" % (str(dbInfo["name"]), format["name"],
-                                          ",".join([f["name"] for f in format["styleInfoList"]])))
+                                          ",".join([s["name"] for s in format["styleInfoList"]])))
     printDebugMessage('getSupportedStyles', 'End', 1)
     return dbList
-
-# Check if a databaseInfo matches a database name.
-def is_database(dbInfo, dbName):
-    printDebugMessage('is_database', 'Begin', 11)
-    retVal = False
-    if str(dbInfo.name) == dbName:
-        retVal = True
-    else:
-        for dbAlias in dbInfo.aliasList:
-            if str(dbAlias) == dbName:
-                retVal = True
-    printDebugMessage('is_database', 'retVal: ' + str(retVal), 11)
-    printDebugMessage('is_database', 'End', 11)
-    return retVal
 
 
 # Get list of formats for a database.
@@ -246,26 +232,10 @@ def getDbFormats(db):
     formatNameList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        if is_database(dbInfo, db):
-            for formatInfo in dbInfo.formatInfoList:
-                formatNameList.append(str(formatInfo.name))
+        if db == dbInfo["name"]:
+            formatNameList = [f["name"] for f in dbInfo["formatInfoList"]]
     printDebugMessage('getDbFormats', 'End', 1)
     return formatNameList
-
-
-# Check if a formatInfo matches a format name.
-def is_format(formatInfo, formatName):
-    printDebugMessage('is_format', 'Begin', 11)
-    retVal = False
-    if str(formatInfo.name) == formatName:
-        retVal = True
-    else:
-        for formatAlias in formatInfo.aliases:
-            if str(formatAlias) == formatName:
-                retVal = True
-    printDebugMessage('is_format', 'retVal: ' + str(retVal), 12)
-    printDebugMessage('is_format', 'End', 11)
-    return retVal
 
 
 # Get list of styles for a format of a database.
@@ -274,11 +244,11 @@ def getFormatStyles(db, format):
     styleNameList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        if is_database(dbInfo, db):
-            for formatInfo in dbInfo.formatInfoList:
-                if is_format(formatInfo, format):
-                    for styleInfo in formatInfo.styleInfoList:
-                        styleNameList.append(str(styleInfo.name))
+        if db == dbInfo["name"]:
+            for f in dbInfo["formatInfoList"]:
+                if format == f["name"]:
+                    for s in f["styleInfoList"]:
+                        styleNameList = [s["name"] for s in f["styleInfoList"]]
     printDebugMessage('getFormatStyles', 'End', 1)
     return styleNameList
 
@@ -370,21 +340,27 @@ if __name__ == '__main__':
         for dbNameStyle in dbNameStyleList:
             print(dbNameStyle)
     # List formats for a database.
-    elif args[0] == 'getDbFormats' and len(args) > 1:
-        formatNameList = getDbFormats(args[1])
-        if len(formatNameList) > 0:
-            for formatName in formatNameList:
-                print(formatName)
+    elif args[0] == 'getDbFormats':
+        if len(args) > 1:
+            formatNameList = getDbFormats(args[1])
+            if len(formatNameList) > 0:
+                for formatName in formatNameList:
+                    print(formatName)
+            else:
+                print('Database not found')
         else:
-            print('Database not found')
+            print('<dbName> needed. See --help for more information.')
     # List formats for a database.
-    elif args[0] == 'getFormatStyles' and len(args) > 2:
-        styleNameList = getFormatStyles(args[1], args[2])
-        if len(styleNameList) > 0:
-            for styleName in styleNameList:
-                print(styleName)
+    elif args[0] == 'getFormatStyles':
+        if len(args) > 2:
+            styleNameList = getFormatStyles(args[1], args[2])
+            if len(styleNameList) > 0:
+                for styleName in styleNameList:
+                    print(styleName)
+            else:
+                print('Database and format not found')
         else:
-            print('Database and format not found')
+            print('<dbName> and <dbFormat> needed. See --help for more information.')
     # Fetch an entry
     elif args[0] == 'fetchData' and len(args) > 1:
         if len(args) > 3:
