@@ -764,21 +764,20 @@ Usage:
   perl $scriptName <method> [arguments...] [--baseUrl <baseUrl>]
 
 A number of methods are available:
-
-  getSupportedDBs - list available databases
-  getSupportedFormats - list available databases with formats
-  getSupportedStyles - list available databases with styles
-  getDbFormats - list formats for a specifed database
-  getFormatStyles - list styles for a specified database and format
-  fetchData - retrive an database entry. See below for details of arguments.
-  fetchBatch - retrive database entries. See below for details of arguments.
+  getSupportedDBs       List available databases.
+  getSupportedFormats   List available databases with formats.
+  getSupportedStyles    List available databases with styles.
+  getDbFormats          List formats for a specifed database. Requires <dbName>.
+  getFormatStyles       List styles for a specified database and format.
+                        Requires <dbName> and <dbFormat>.
+  fetchData             Retrive an database entry. See below for details of arguments.
+  fetchBatch            Retrive database entries. See below for details of arguments.
 
 Fetching an entry: fetchData
   perl $scriptName fetchData <dbName:id> [format [style]]
 
   dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
-             use \@fileName to read identifiers from a file or \@- to read
-             identifiers from STDIN.
+             use \@fileName to read identifiers from a file.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
@@ -788,7 +787,7 @@ Fetching entries: fetchBatch
 
   dbName     database name (e.g. UNIPROT)
   idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
-             Maximum of 200 IDs or accessions. "-" for STDIN.
+             Maximum of 200 IDs or accessions.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
