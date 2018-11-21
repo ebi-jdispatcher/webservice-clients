@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#  WSDbfetch (REST) using urllib and xmltramp
+#  WSDbfetch (REST) using urllib
 #
 # For further information see:
 # https://www.ebi.ac.uk/Tools/webservices/
@@ -29,8 +29,8 @@ from __future__ import print_function
 import os
 import sys
 import time
+import json
 import platform
-from xmltramp2 import xmltramp
 from optparse import OptionParser
 
 try:
@@ -184,14 +184,13 @@ def restRequest(url):
 # Get database details.
 def getDatabaseInfoList():
     printDebugMessage('getDatabaseInfoList', 'Begin', 11)
-    requestUrl = baseUrl + '/dbfetch.databases?style=xml'
-    xmlDoc = restRequest(requestUrl)
-    printDebugMessage('getDatabaseInfoList', 'xmlDoc: ' + xmlDoc, 21)
-    doc = xmltramp.parse(xmlDoc)
-    databaseInfoList = doc['databaseInfo':]
+    requestUrl = baseUrl + '/dbfetch.databases?style=json'
+    jsonDoc = restRequest(requestUrl)
+    printDebugMessage('getDatabaseInfoList', 'json: ' + jsonDoc, 21)
+    doc = json.loads(jsonDoc)
+    databaseInfoList = [doc[db] for db in doc]
     printDebugMessage('getDatabaseInfoList', 'End', 11)
     return databaseInfoList
-
 
 # Get list of database names.
 def getSupportedDbs():
@@ -199,7 +198,7 @@ def getSupportedDbs():
     dbList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        dbList.append(str(dbInfo.name))
+        dbList.append(str(dbInfo["name"]))
     printDebugMessage('getSupportedDbs', 'End', 1)
     return dbList
 
