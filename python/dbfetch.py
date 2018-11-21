@@ -213,6 +213,17 @@ def getSupportedFormats():
     printDebugMessage('getSupportedFormats', 'End', 1)
     return dbList
 
+def getSupportedStyles():
+    printDebugMessage('getSupportedStyles', 'Begin', 1)
+    dbList = []
+    dbInfoList = getDatabaseInfoList()
+    for dbInfo in dbInfoList:
+        for format in dbInfo["formatInfoList"]:
+            dbList.append("%s\t%s\t%s" % (str(dbInfo["name"]), format["name"],
+                                          ",".join([f["name"] for f in format["styleInfoList"]])))
+    printDebugMessage('getSupportedStyles', 'End', 1)
+    return dbList
+
 # Check if a databaseInfo matches a database name.
 def is_database(dbInfo, dbName):
     printDebugMessage('is_database', 'Begin', 11)
@@ -354,6 +365,10 @@ if __name__ == '__main__':
         dbNameFormatList = getSupportedFormats()
         for dbNameFormat in dbNameFormatList:
             print(dbNameFormat)
+    elif args[0] == 'getSupportedStyles':
+        dbNameStyleList = getSupportedStyles()
+        for dbNameStyle in dbNameStyleList:
+            print(dbNameStyle)
     # List formats for a database.
     elif args[0] == 'getDbFormats' and len(args) > 1:
         formatNameList = getDbFormats(args[1])

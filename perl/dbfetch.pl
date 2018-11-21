@@ -424,18 +424,19 @@ sub rest_get_supported_styles {
     my (@retArray) = ();
     foreach my $db_name ( sort ( keys(%$dbfetch_info) ) ) {
         my $db_info   = $dbfetch_info->{$db_name};
-        my $tmpStr    = $db_info->{'name'} . "\t";
-        my %styleHash = ();
         foreach my $format ( @{ $db_info->{'formatInfoList'} } ) {
-            foreach my $styleName ( @{ $format->{'styleNames'} } ) {
-                $styleHash{$styleName} = $styleName;
+            my $tmpStr    = $db_info->{'name'} . "\t";
+            my %styleHash = ();
+            $tmpStr .= $format->{'name'} . "\t";
+            foreach my $styleName ( @{ $format->{'styleInfoList'} } ) {
+                $styleHash{$styleName->{'name'}} = $styleName->{'name'};
             }
+            foreach my $styleName ( sort ( keys(%styleHash) ) ) {
+                $tmpStr .= $styleName . ',';
+            }
+            $tmpStr =~ s/,$//;
+            push( @retArray, $tmpStr );
         }
-        foreach my $styleName ( sort ( keys(%styleHash) ) ) {
-            $tmpStr .= $styleName . ',';
-        }
-        $tmpStr =~ s/,$//;
-        push( @retArray, $tmpStr );
     }
     print_debug_message( 'rest_get_supported_styles', 'End', 1 );
     return (@retArray);
