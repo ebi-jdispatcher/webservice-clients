@@ -45,7 +45,7 @@ except ImportError:
     from urllib2 import __version__ as urllib_version
 
 # Service base URL
-baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
+baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Output level
 outputLevel = 1
@@ -111,7 +111,7 @@ other_usage = """
       %prog getSupportedStyles [options...]"""
 
 description = """Fetch database entries using entry identifiers. For more information on dbfetch
-refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+refer to https://www.ebi.ac.uk/Tools/dbfetch/"""
 
 epilog = """\
 Further information:

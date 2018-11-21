@@ -31,13 +31,13 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/dbfetch>
+L<https://www.ebi.ac.uk/Tools/dbfetch>
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest>
+L<https://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest>
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+L<https://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =back
 
@@ -80,7 +80,7 @@ use Data::Dumper;
 use constant MAX_CHUNK_SIZE => 100;
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
+my $baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
 
 # Output level
 my $outputLevel = 1;
@@ -802,7 +802,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
+Please contact us at L<https://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut
