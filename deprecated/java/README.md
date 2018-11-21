@@ -1,105 +1,52 @@
-# EBI Web Services Java Clients
+# EBI Search REST Webservice client Sample
 
-A set of sample EBI Web Services clients developed in Java.
+A sample client written in java Java.
 
-See http://www.ebi.ac.uk/Tools/webservices/
+See https://www.ebi.ac.uk/ebisearch/swagger.ebi
 
 ## Building Clients
 
-An Apache ant (http://ant.apache.org/) build file (build.xml) is used to
-perform the build, with Apache Ivy (http://ant.apache.org/ivy/) being used to
-manage library dependencies (see ivy.xml).
+Apache Maven is required to build the project
 
-### 1. Generate the stubs from the WSDLs.
+### 1. Compile and packaging
 
-Generate stubs from service description documents (WSDL) for all the SOAP
-toolkits:
-```
-ant stubs
-```
-
-Generate stubs for a specific SOAP library, e.g. Apache Axis 1.x:
-```
-ant axis1-stubs
-```
-
-Generate stubs for a specific service for a specific library, e.g. WU-BLAST
-(SOAP):
-```
-ant axis1-stubs-wublast
-```
-
-Note: since ant does not support remote dependency checking, and many of the
-WSDLs are dynamic documents, the stubs are re-generated each time these
-targets are called.
-
-### 2. Compile
-```
-ant
-```
-
-or
+The client can be compiled and packaged with the command:
 
 ```
-ant compile
+mvn install
 ```
 
-If compilation fails it might have happened that one of the webservices was retired, in such case:
+packaged archive will be copied in the folder ./jar/
 
-* we did not generate correct stub for the tool
-* we need to remobe classes of the tool and references to it in build.xml
 
-To compile just the code for one of the SOAP libraries, e.g. Apache Axis 1.x:
-```
-ant axis1-compile
-```
+### 1. Clean
 
-### 3. Compile and package into jars:
-```
-ant jar
-```
-
-To package just the code for one of the SOAP libraries, e.g. Apache Axis 1.x:
-```
-ant axis1-jar
-```
-
-### 4. Package the dependencies downloaded by Apache Ivy:
-```
-ant package-dependencies
-```
-
-### 5. Test the generated client jars:
-```
-ant test
-```
-
-To test just the jars for one of the SOAP libraries, e.g. Apache Axis 1.x:
-```
-ant axis1-test
-```
-
-To test just the jar for a specific service and SOAP library, e.g. WU-BLAST
-(SOAP) using Apache Axis 1.x:
+To clean the project folder, run the command:
 
 ```
-ant axis1-test-wublast
+mvn clean
 ```
+The `target` and `jar` folders will be deleted
+
+
 
 ## Running Clients
 
-To run a client the required jars (`lib/`) need to be added to the classpath. A
-simple way to do this is to set the `java.ext.dirs` property to include the
-directory containing the jars. For example:
+To run the client, run the command
 
 ```
-java -Djava.ext.dirs=lib/ -jar jar/WSDbfetch.jar
+java -jar jar/jaxrs-client-<version>-with-dependencies.jar
 ```
 
-For JAX-WS under Java 5, the JAX-WS libraries also need to be included in the
-path list specified for `java.ext.dirs`, since these are not provided as part
-of the Java installation. The JAX-WS libraries can be obtained from
-https://jax-ws.dev.java.net/.
+## Client integration
+
+In case the user want to integrate the client in another application it can use the following artifacts:
+
+ * jar/jaxrs-client-<version>.jar: it contain the EBI Search client code
+ * jar/jaxrs-client-<version>-dependencies-libs.zip: it's a list of all the libraries needed to run the client
+
+As an alternative the user can integrate the client using the maven `pom.xml` file to resolve the dependencies
+
 
 ## Contact and Support
 
