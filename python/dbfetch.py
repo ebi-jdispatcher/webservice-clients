@@ -202,6 +202,16 @@ def getSupportedDbs():
     printDebugMessage('getSupportedDbs', 'End', 1)
     return dbList
 
+# Get list of database names + formats.
+def getSupportedFormats():
+    printDebugMessage('getSupportedFormats', 'Begin', 1)
+    dbList = []
+    dbInfoList = getDatabaseInfoList()
+    for dbInfo in dbInfoList:
+        dbList.append("%s\t%s" % (str(dbInfo["name"]),
+                                  ",".join([f["name"] for f in dbInfo["formatInfoList"]])))
+    printDebugMessage('getSupportedFormats', 'End', 1)
+    return dbList
 
 # Check if a databaseInfo matches a database name.
 def is_database(dbInfo, dbName):
@@ -340,6 +350,10 @@ if __name__ == '__main__':
         dbNameList = getSupportedDbs()
         for dbName in dbNameList:
             print(dbName)
+    elif args[0] == 'getSupportedFormats':
+        dbNameFormatList = getSupportedFormats()
+        for dbNameFormat in dbNameFormatList:
+            print(dbNameFormat)
     # List formats for a database.
     elif args[0] == 'getDbFormats' and len(args) > 1:
         formatNameList = getDbFormats(args[1])
