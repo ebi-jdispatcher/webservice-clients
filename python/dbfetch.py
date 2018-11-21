@@ -25,7 +25,11 @@
 ###############################################################################
 
 from __future__ import print_function
-import platform, os, sys, time
+
+import os
+import sys
+import time
+import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
 
@@ -49,6 +53,8 @@ outputLevel = 1
 debugLevel = 0
 
 # Usage message
+
+
 def print_usage():
     print("""\
 EMBL-EBI EMBOSS WSDbfetch Python Client:
@@ -94,7 +100,8 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
-other_usage ="""
+
+other_usage = """
       %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
       %prog fetchData <dbName:id> [formatName [styleName]] [options...]
       %prog getDbFormats <dbName> [options...]
@@ -264,13 +271,15 @@ def fetchData(query, format='default', style='raw'):
         if os.path.exists(query.lstrip('@')):
             with open(query.lstrip('@'), 'r') as inlines:
                 for line in inlines:
-                    requestUrl = baseUrl + '/' + line.strip().replace(':', '/') + '/' + format + '?style=' + style
+                    requestUrl = baseUrl + '/' + line.strip().replace(':', '/') + '/' + \
+                        format + '?style=' + style
                     result.append(restRequest(requestUrl))
         else:
             print("Error: unable to open file %s (No such file or directory)" % query)
         result = "".join(result)
     else:
-        requestUrl = baseUrl + '/' + query.replace(':', '/') + '/' + format + '?style=' + style
+        requestUrl = baseUrl + '/' + \
+            query.replace(':', '/') + '/' + format + '?style=' + style
         result = restRequest(requestUrl)
     printDebugMessage('fetchData', 'End', 1)
     return result
@@ -279,7 +288,8 @@ def fetchData(query, format='default', style='raw'):
 # Get a set of entries.
 def fetchBatch(db, idListStr, format='default', style='raw'):
     printDebugMessage('fetchBatch', 'Begin', 1)
-    requestUrl = baseUrl + '/' + db + '/' + idListStr + '/' + format + '?style=' + style
+    requestUrl = baseUrl + '/' + db + '/' + \
+        idListStr + '/' + format + '?style=' + style
     result = restRequest(requestUrl)
     printDebugMessage('fetchBatch', 'End', 1)
     return result
@@ -289,11 +299,16 @@ if __name__ == '__main__':
     # Process command-line options
     # parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
     parser = OptionParser(add_help_option=False)
-    parser.add_option('-h', '--help', action='store_true', help='Shows this message and exit.')
-    parser.add_option('--quiet', action='store_true', help='decrease output level')
-    parser.add_option('--verbose', action='store_true', help='increase output level')
-    parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
-    parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+    parser.add_option('-h', '--help', action='store_true',
+                      help='Shows this message and exit.')
+    parser.add_option('--quiet', action='store_true',
+                      help='decrease output level')
+    parser.add_option('--verbose', action='store_true',
+                      help='increase output level')
+    parser.add_option('--baseUrl', default=baseUrl,
+                      help='base URL for dbfetch')
+    parser.add_option('--debugLevel', type='int',
+                      default=debugLevel, help='debug output level')
     (options, args) = parser.parse_args()
 
     # No arguments, print usage
