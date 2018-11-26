@@ -39,6 +39,8 @@ In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as
 # To install Perl dependencies run (you might need sudo)
 cpan LWP
 cpan XML::Simple
+cpan YAML::Syck
+cpan JSON::XS
 ```
 
 An example test for Clustal Omega Perl client:
