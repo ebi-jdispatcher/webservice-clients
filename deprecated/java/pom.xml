@@ -2,13 +2,30 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <name>EBI Search JAX-RS client</name>
+  <url>https://github.com/ebi-wp/webservice-clients</url>
+
+  <organization>
+      <name>EMBL-EBI</name>
+      <url>www.ebi.ac.uk</url>
+  </organization>
+  <scm>
+      <url>https://github.com/ebi-wp/webservice-clients</url>
+  </scm>
+
+
+  <distributionManagement>
+    <repository>
+        <id>wp-artifactory</id>
+        <name>Web Production Artifactory</name>
+        <url>https://wwwint.ebi.ac.uk/wp/artifactory/libs-release-local/</url>
+    </repository>
+  </distributionManagement>
+
   <groupId>uk.ac.ebi.ebisearch</groupId>
   <artifactId>jaxrs-client</artifactId>
   <version>1.1.0</version>
   <packaging>jar</packaging>
-
-  <name>webservice-client</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
