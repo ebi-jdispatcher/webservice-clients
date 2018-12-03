@@ -32,13 +32,15 @@ git clone https://github.com/ebi-wp/webservice-clients.git
 
 ### Perl clients [![perl](https://img.shields.io/badge/perl-5.22.0+-blue.svg?style=flat)]()
 
-In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as two dependencies
-(LWP and XML::Simple). Install these with:
+In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as Perl dependencies. Additional instruction on how to install Perl and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
+Install dependencies with:
 ```bash
 # To install Perl dependencies run (you might need sudo)
 cpan LWP
 cpan XML::Simple
+cpan YAML::Syck
+cpan JSON::XS
 ```
 
 An example test for Clustal Omega Perl client:
@@ -51,7 +53,7 @@ perl clustalo.pl --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:
 
 Specially if you have no root access to your machine, you might need to
 use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
-Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed.
+Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed. Additional instruction on how to install Python and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
 ```bash
 virtualenv -p `which python` env
@@ -73,7 +75,7 @@ python clustalo.py --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,s
 ### Java clients [![java](https://img.shields.io/badge/java-1.8+-blue.svg?style=flat)]()
 
 In order to run Java clients, Java (tested version 1.8.0_161") as well as ant (tested version 1.10.5),
-needs to installed.
+needs to installed. Additional instruction on how to install Java and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
 The Java source code needs to be compiled with `ant` as follows:
 ```bash

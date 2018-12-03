@@ -31,13 +31,13 @@ For further information see:
 =over
 
 =item *
-L<http://www.ebi.ac.uk/Tools/dbfetch>
+L<https://www.ebi.ac.uk/Tools/dbfetch>
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest>
+L<https://www.ebi.ac.uk/Tools/webservices/services/dbfetch_rest>
 
 =item *
-L<http://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
+L<https://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =back
 
@@ -80,79 +80,80 @@ use Data::Dumper;
 use constant MAX_CHUNK_SIZE => 100;
 
 # Base URL for service
-my $baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
+my $baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
+
 # Output level
 my $outputLevel = 1;
 
 # Process command-line options
 my $numOpts = scalar(@ARGV);
-my %params = ('debugLevel' => 0);
+my %params = ( 'debugLevel' => 0 );
 
 # Default parameter values (should get these from the service)
 GetOptions(
-    'quiet'        => \$params{'quiet'},      # Decrease output level
-    'verbose'      => \$params{'verbose'},    # Increase output level
-    'debugLevel=i' => \$params{'debugLevel'}, # Debug output level
-    'baseUrl=s'    => \$baseUrl,              # Base URL for service.
+    'quiet'        => \$params{'quiet'},         # Decrease output level
+    'verbose'      => \$params{'verbose'},       # Increase output level
+    'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
+    'baseUrl=s'    => \$baseUrl,                 # Base URL for service.
 );
-if ($params{'verbose'}) {$outputLevel++}
-if ($params{'$quiet'}) {$outputLevel--}
+if ( $params{'verbose'} ) { $outputLevel++ }
+if ( $params{'$quiet'} )  { $outputLevel-- }
 
 # Debug mode: LWP version
-&print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1);
+&print_debug_message( 'MAIN', 'LWP::VERSION: ' . $LWP::VERSION, 1 );
 
 # Debug mode: print the input parameters
-&print_debug_message('MAIN', "params:\n" . Dumper(\%params), 11);
+&print_debug_message( 'MAIN', "params:\n" . Dumper( \%params ), 11 );
 
 # LWP UserAgent for making HTTP calls (initialised when required).
 my $ua;
 
 # Get the script filename for use in usage messages
-my $scriptName = basename($0, ());
+my $scriptName = basename( $0, () );
 
 # Print usage and exit if requested
-if ($params{'help'} || $numOpts == 0) {
+if ( $params{'help'} || $numOpts == 0 ) {
     &usage();
     exit(0);
 }
 
 # Debug mode: show the base URL
-&print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
+&print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
 
 my $method = shift;
 
 # Get supported database names
-if ($method eq 'getSupportedDBs') {
+if ( $method eq 'getSupportedDBs' ) {
     &print_get_supported_dbs();
 }
 
 # Get supported database and format names
-elsif ($method eq 'getSupportedFormats') {
+elsif ( $method eq 'getSupportedFormats' ) {
     &print_get_supported_formats();
 }
 
 # Get supported database and style names
-elsif ($method eq 'getSupportedStyles') {
+elsif ( $method eq 'getSupportedStyles' ) {
     &print_get_supported_styles();
 }
 
 # Get formats for a database.
-elsif ($method eq 'getDbFormats') {
+elsif ( $method eq 'getDbFormats' ) {
     &print_get_db_formats(@ARGV);
 }
 
 # Get styles for a format of a database.
-elsif ($method eq 'getFormatStyles') {
+elsif ( $method eq 'getFormatStyles' ) {
     &print_get_format_styles(@ARGV);
 }
 
 # Fetch an entry
-elsif ($method eq 'fetchData') {
+elsif ( $method eq 'fetchData' ) {
     &print_fetch_data(@ARGV);
 }
 
 # Fetch a set of entries.
-elsif ($method eq 'fetchBatch') {
+elsif ( $method eq 'fetchBatch' ) {
     &print_fetch_batch(@ARGV);
 }
 else {
@@ -175,16 +176,20 @@ Get a LWP UserAgent to use to perform REST requests.
 =cut
 
 sub rest_user_agent() {
-    print_debug_message('rest_user_agent', 'Begin', 21);
+    print_debug_message( 'rest_user_agent', 'Begin', 21 );
+
     # Create an LWP UserAgent for making HTTP calls.
     my $ua = LWP::UserAgent->new();
+
     # Set 'User-Agent' HTTP header to identifiy the client.
     my $revisionNumber = 0;
-    $revisionNumber = $1 if ('$Revision$' =~ m/(\d+)/);
-    $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
+    $revisionNumber = $1 if ( '$Revision$' =~ m/(\d+)/ );
+    $ua->agent( "EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) "
+          . $ua->agent() );
+
     # Configure HTTP proxy support from environment.
     $ua->env_proxy;
-    print_debug_message('rest_user_agent', 'End', 21);
+    print_debug_message( 'rest_user_agent', 'End', 21 );
     return $ua;
 }
 
@@ -197,25 +202,30 @@ Check a REST response for an error condition. An error is mapped to a die.
 =cut
 
 sub rest_error() {
-    print_debug_message('rest_error', 'Begin', 21);
+    print_debug_message( 'rest_error', 'Begin', 21 );
     my $response = shift;
     my $contentdata;
-    if (scalar(@_) > 0) {
+    if ( scalar(@_) > 0 ) {
         $contentdata = shift;
     }
-    if (!defined($contentdata) || $contentdata eq '') {
+    if ( !defined($contentdata) || $contentdata eq '' ) {
         $contentdata = $response->content();
     }
+
     # Check for HTTP error codes
-    if ($response->is_error) {
+    if ( $response->is_error ) {
         my $error_message = '';
+
         # HTML response.
-        if ($contentdata =~ m/<h1>([^<]+)<\/h1>/) {
+        if ( $contentdata =~ m/<h1>([^<]+)<\/h1>/ ) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        die 'http status: '
+          . $response->code . ' '
+          . $response->message . '  '
+          . $error_message;
     }
-    print_debug_message('rest_error', 'End', 21);
+    print_debug_message( 'rest_error', 'End', 21 );
 }
 
 =head2 rest_request()
@@ -227,41 +237,45 @@ Perform a REST request (HTTP GET).
 =cut
 
 sub rest_request {
-    print_debug_message('rest_request', 'Begin', 11);
+    print_debug_message( 'rest_request', 'Begin', 11 );
     my $requestUrl = shift;
-    print_debug_message('rest_request', 'URL: ' . $requestUrl, 11);
+    print_debug_message( 'rest_request', 'URL: ' . $requestUrl, 11 );
 
     # Get an LWP UserAgent.
     $ua = &rest_user_agent() unless defined($ua);
+
     # Available HTTP compression methods.
     my $can_accept;
-    eval {
-        $can_accept = HTTP::Message::decodable();
-    };
+    eval { $can_accept = HTTP::Message::decodable(); };
     $can_accept = '' unless defined($can_accept);
+
     # Perform the request
-    my $response = $ua->get($requestUrl,
-        'Accept-Encoding' => $can_accept, # HTTP compression.
+    my $response = $ua->get(
+        $requestUrl,
+        'Accept-Encoding' => $can_accept,    # HTTP compression.
     );
-    print_debug_message('rest_request', 'HTTP status: ' . $response->code,
-        11);
-    print_debug_message('rest_request',
-        'response length: ' . length($response->content()), 11);
-    print_debug_message('rest_request',
-        'request:' . "\n" . $response->request()->as_string(), 32);
-    print_debug_message('rest_request',
-        'response: ' . "\n" . $response->as_string(), 32);
+    print_debug_message( 'rest_request', 'HTTP status: ' . $response->code,
+        11 );
+    print_debug_message( 'rest_request',
+        'response length: ' . length( $response->content() ), 11 );
+    print_debug_message( 'rest_request',
+        'request:' . "\n" . $response->request()->as_string(), 32 );
+    print_debug_message( 'rest_request',
+        'response: ' . "\n" . $response->as_string(), 32 );
+
     # Unpack possibly compressed response.
     my $retVal;
-    if (defined($can_accept) && $can_accept ne '') {
+    if ( defined($can_accept) && $can_accept ne '' ) {
         $retVal = $response->decoded_content();
     }
+
     # If unable to decode use orginal content.
     $retVal = $response->content() unless defined($retVal);
+
     # Check for an error.
-    &rest_error($response, $retVal);
-    print_debug_message('rest_request', 'retVal: ' . $retVal, 12);
-    print_debug_message('rest_request', 'End', 11);
+    &rest_error( $response, $retVal );
+    print_debug_message( 'rest_request', 'retVal: ' . $retVal, 12 );
+    print_debug_message( 'rest_request', 'End', 11 );
 
     # Return the response data
     return $retVal;
@@ -277,20 +291,21 @@ Check the response from dbfetch for an warning/error message.
 =cut
 
 sub dbfetch_error_check {
-    print_debug_message('dbfetch_error_check', 'Begin', 11);
-    my $content = shift;
+    print_debug_message( 'dbfetch_error_check', 'Begin', 11 );
+    my $content    = shift;
     my $statusCode = -1;
-    if ($content =~ m/^ERROR (\d+) [^\n\r]+[\n\r]+$/) {
+    if ( $content =~ m/^ERROR (\d+) [^\n\r]+[\n\r]+$/ ) {
         $statusCode = $1;
+
         # "ID not found" or "No entries found."
-        if ($statusCode == 4 || $statusCode == 12) {
+        if ( $statusCode == 4 || $statusCode == 12 ) {
             warn $content;
         }
         else {
             die $content;
         }
     }
-    print_debug_message('dbfetch_error_check', 'End', 11);
+    print_debug_message( 'dbfetch_error_check', 'End', 11 );
     return $statusCode;
 }
 
@@ -303,16 +318,16 @@ Get server meta-information.
 =cut
 
 sub rest_get_meta_information {
-    print_debug_message('rest_get_meta_information', 'Begin', 1);
+    print_debug_message( 'rest_get_meta_information', 'Begin', 1 );
 
     # Get meta-information
-    my $url = $baseUrl . '/dbfetch.databases?style=yaml';
+    my $url          = $baseUrl . '/dbfetch.databases?style=yaml';
     my $response_str = &rest_request($url);
     &dbfetch_error_check($response_str);
     my $dbfetch_info = Load($response_str);
-    print_debug_message('rest_get_meta_information',
-        "dbfetch_info:\n" . Dumper($dbfetch_info), 11);
-    print_debug_message('rest_get_meta_information', 'End', 1);
+    print_debug_message( 'rest_get_meta_information',
+        "dbfetch_info:\n" . Dumper($dbfetch_info), 11 );
+    print_debug_message( 'rest_get_meta_information', 'End', 1 );
     return $dbfetch_info;
 }
 
@@ -325,14 +340,14 @@ Get list of supported database names.
 =cut
 
 sub rest_get_supported_dbs {
-    print_debug_message('rest_get_supported_dbs', 'Begin', 1);
+    print_debug_message( 'rest_get_supported_dbs', 'Begin', 1 );
     my $dbfetch_info = &rest_get_meta_information();
     my (@retArray) = ();
-    foreach my $db_name (sort ( keys(%$dbfetch_info) )) {
+    foreach my $db_name ( sort ( keys(%$dbfetch_info) ) ) {
         my $db_info = $dbfetch_info->{$db_name};
-        push(@retArray, $db_info->{'name'});
+        push( @retArray, $db_info->{'name'} );
     }
-    print_debug_message('rest_get_supported_dbs', 'End', 1);
+    print_debug_message( 'rest_get_supported_dbs', 'End', 1 );
     return @retArray;
 }
 
@@ -345,12 +360,12 @@ Print list of supported databases.
 =cut
 
 sub print_get_supported_dbs {
-    print_debug_message('print_get_supported_dbs', 'Begin', 1);
+    print_debug_message( 'print_get_supported_dbs', 'Begin', 1 );
     my (@db_array) = &rest_get_supported_dbs();
     foreach my $dbName (@db_array) {
         print $dbName, "\n";
     }
-    print_debug_message('print_get_supported_dbs', 'End', 1);
+    print_debug_message( 'print_get_supported_dbs', 'End', 1 );
 }
 
 =head2 rest_get_supported_formats()
@@ -362,20 +377,20 @@ Get list of supported database and format names.
 =cut
 
 sub rest_get_supported_formats {
-    print_debug_message('rest_get_supported_formats', 'Begin', 1);
+    print_debug_message( 'rest_get_supported_formats', 'Begin', 1 );
     my $dbfetch_info = &rest_get_meta_information();
     my (@retArray) = ();
-    foreach my $db_name (sort ( keys(%$dbfetch_info) )) {
+    foreach my $db_name ( sort ( keys(%$dbfetch_info) ) ) {
         my $db_info = $dbfetch_info->{$db_name};
-        my $tmpStr = $db_info->{'name'} . "\t";
-        foreach my $format (@{$db_info->{'formatInfoList'}}) {
+        my $tmpStr  = $db_info->{'name'} . "\t";
+        foreach my $format ( @{ $db_info->{'formatInfoList'} } ) {
             $tmpStr .= $format->{'name'} . ',';
         }
         $tmpStr =~ s/,$//;
-        push(@retArray, $tmpStr);
+        push( @retArray, $tmpStr );
     }
-    print_debug_message('rest_get_supported_formats', 'End', 1);
-    return(@retArray);
+    print_debug_message( 'rest_get_supported_formats', 'End', 1 );
+    return (@retArray);
 }
 
 =head2
@@ -387,12 +402,12 @@ Print list of supported database and format names.
 =cut
 
 sub print_get_supported_formats {
-    print_debug_message('print_get_supported_formats', 'Begin', 1);
+    print_debug_message( 'print_get_supported_formats', 'Begin', 1 );
     my (@format_array) = &rest_get_supported_formats();
     foreach my $format (@format_array) {
         print $format, "\n";
     }
-    print_debug_message('print_get_supported_formats', 'End', 1);
+    print_debug_message( 'print_get_supported_formats', 'End', 1 );
 }
 
 =head2 rest_get_supported_styles()
@@ -404,26 +419,27 @@ Get list of supported database and style names.
 =cut
 
 sub rest_get_supported_styles {
-    print_debug_message('rest_get_supported_styles', 'Begin', 1);
+    print_debug_message( 'rest_get_supported_styles', 'Begin', 1 );
     my $dbfetch_info = &rest_get_meta_information();
     my (@retArray) = ();
-    foreach my $db_name (sort ( keys(%$dbfetch_info) )) {
-        my $db_info = $dbfetch_info->{$db_name};
-        my $tmpStr = $db_info->{'name'} . "\t";
-        my %styleHash = ();
-        foreach my $format (@{$db_info->{'formatInfoList'}}) {
-            foreach my $styleName (@{$format->{'styleNames'}}) {
-                $styleHash{$styleName} = $styleName;
+    foreach my $db_name ( sort ( keys(%$dbfetch_info) ) ) {
+        my $db_info   = $dbfetch_info->{$db_name};
+        foreach my $format ( @{ $db_info->{'formatInfoList'} } ) {
+            my $tmpStr    = $db_info->{'name'} . "\t";
+            my %styleHash = ();
+            $tmpStr .= $format->{'name'} . "\t";
+            foreach my $styleName ( @{ $format->{'styleInfoList'} } ) {
+                $styleHash{$styleName->{'name'}} = $styleName->{'name'};
             }
+            foreach my $styleName ( sort ( keys(%styleHash) ) ) {
+                $tmpStr .= $styleName . ',';
+            }
+            $tmpStr =~ s/,$//;
+            push( @retArray, $tmpStr );
         }
-        foreach my $styleName (sort ( keys(%styleHash) )) {
-            $tmpStr .= $styleName . ',';
-        }
-        $tmpStr =~ s/,$//;
-        push(@retArray, $tmpStr);
     }
-    print_debug_message('rest_get_supported_styles', 'End', 1);
-    return(@retArray);
+    print_debug_message( 'rest_get_supported_styles', 'End', 1 );
+    return (@retArray);
 }
 
 =head2 print_get_supported_styles()
@@ -435,12 +451,12 @@ Print list of supported database and style names.
 =cut
 
 sub print_get_supported_styles {
-    print_debug_message('print_get_supported_styles', 'Begin', 1);
+    print_debug_message( 'print_get_supported_styles', 'Begin', 1 );
     my (@style_array) = &rest_get_supported_styles();
     foreach my $style (@style_array) {
         print $style, "\n";
     }
-    print_debug_message('print_get_supported_styles', 'End', 1);
+    print_debug_message( 'print_get_supported_styles', 'End', 1 );
 }
 
 =head2 rest_get_db_formats()
@@ -452,21 +468,21 @@ Get list of available formats for a database.
 =cut
 
 sub rest_get_db_formats {
-    print_debug_message('rest_get_db_formats', 'Begin', 1);
-    my $dbName = shift;
+    print_debug_message( 'rest_get_db_formats', 'Begin', 1 );
+    my $dbName       = shift;
     my $dbfetch_info = &rest_get_meta_information();
-    my (@retArray) = ();
-    if ($dbfetch_info->{$dbName}) {
+    my (@retArray)   = ();
+    if ( $dbfetch_info->{$dbName} ) {
         my $db_info = $dbfetch_info->{$dbName};
-        foreach my $format (@{$db_info->{'formatInfoList'}}) {
-            push(@retArray, $format->{'name'});
+        foreach my $format ( @{ $db_info->{'formatInfoList'} } ) {
+            push( @retArray, $format->{'name'} );
         }
     }
-    if (scalar(@retArray) < 1) {
-        die "ERROR 1 Unknown database [$dbName]."
+    if ( scalar(@retArray) < 1 ) {
+        die "ERROR 1 Unknown database [$dbName].";
     }
-    print_debug_message('rest_get_db_formats', 'End', 1);
-    return(@retArray);
+    print_debug_message( 'rest_get_db_formats', 'End', 1 );
+    return (@retArray);
 }
 
 =head2 print_get_db_formats()
@@ -478,12 +494,12 @@ Print list of available formats for a database.
 =cut
 
 sub print_get_db_formats {
-    print_debug_message('print_get_db_formats', 'Begin', 1);
+    print_debug_message( 'print_get_db_formats', 'Begin', 1 );
     my (@format_array) = &rest_get_db_formats(@_);
     foreach my $format (@format_array) {
         print $format, "\n";
     }
-    print_debug_message('print_get_db_formats', 'End', 1);
+    print_debug_message( 'print_get_db_formats', 'End', 1 );
 }
 
 =head2 rest_get_format_styles()
@@ -495,29 +511,29 @@ Get list of styles for a format of a database.
 =cut
 
 sub rest_get_format_styles {
-    print_debug_message('rest_get_format_styles', 'Begin', 1);
-    my $dbName = shift;
-    my $formatName = shift;
+    print_debug_message( 'rest_get_format_styles', 'Begin', 1 );
+    my $dbName       = shift;
+    my $formatName   = shift;
     my $dbfetch_info = &rest_get_meta_information();
-    my (@retArray) = ();
-    if ($dbfetch_info->{$dbName}) {
+    my (@retArray)   = ();
+    if ( $dbfetch_info->{$dbName} ) {
         my $db_info = $dbfetch_info->{$dbName};
-        foreach my $format (@{$db_info->{'formatInfoList'}}) {
-            if ($formatName eq $format->{'name'}) {
-                foreach my $styleInfo (@{$format->{'styleInfoList'}}) {
-                    push(@retArray, $styleInfo->{'name'});
+        foreach my $format ( @{ $db_info->{'formatInfoList'} } ) {
+            if ( $formatName eq $format->{'name'} ) {
+                foreach my $styleInfo ( @{ $format->{'styleInfoList'} } ) {
+                    push( @retArray, $styleInfo->{'name'} );
                 }
             }
         }
     }
     else {
-        die "ERROR 1 Unknown database [$dbName]."
+        die "ERROR 1 Unknown database [$dbName].";
     }
-    if (scalar(@retArray) < 1) {
-        die "ERROR 3 Format [$formatName] not known for database [$dbName]."
+    if ( scalar(@retArray) < 1 ) {
+        die "ERROR 3 Format [$formatName] not known for database [$dbName].";
     }
-    print_debug_message('rest_get_format_styles', 'End', 1);
-    return(@retArray);
+    print_debug_message( 'rest_get_format_styles', 'End', 1 );
+    return (@retArray);
 }
 
 =head2 print_get_format_styles()
@@ -529,12 +545,12 @@ Print list of available style names for a format of a database.
 =cut
 
 sub print_get_format_styles {
-    print_debug_message('print_get_format_styles', 'Begin', 1);
+    print_debug_message( 'print_get_format_styles', 'Begin', 1 );
     my (@style_array) = &rest_get_format_styles(@_);
     foreach my $style (@style_array) {
         print $style, "\n";
     }
-    print_debug_message('print_get_format_styles', 'End', 1);
+    print_debug_message( 'print_get_format_styles', 'End', 1 );
 }
 
 =head2 rest_fetch_data()
@@ -546,26 +562,26 @@ Fetch an entry.
 =cut
 
 sub rest_fetch_data {
-    print_debug_message('rest_fetch_data', 'Begin', 1);
-    my $query = shift;
+    print_debug_message( 'rest_fetch_data', 'Begin', 1 );
+    my $query      = shift;
     my $formatName = 'default';
-    $formatName = shift if (scalar(@_) > 0);
+    $formatName = shift if ( scalar(@_) > 0 );
     my $styleName = 'raw';
-    $styleName = shift if (scalar(@_) > 0);
-    my @queryPart = split(/:/, $query);
+    $styleName = shift if ( scalar(@_) > 0 );
+    my @queryPart = split( /:/, $query );
     my $dbName = 'default';
     my $id;
 
-    if (scalar(@queryPart) > 1) {
+    if ( scalar(@queryPart) > 1 ) {
         $dbName = $queryPart[0];
-        $id = $queryPart[1];
+        $id     = $queryPart[1];
     }
     else {
         $id = $query;
     }
     my $response_str =
-        &rest_fetch_batch($dbName, $id, $formatName, $styleName);
-    print_debug_message('rest_fetch_data', 'End', 1);
+      &rest_fetch_batch( $dbName, $id, $formatName, $styleName );
+    print_debug_message( 'rest_fetch_data', 'End', 1 );
     return $response_str;
 }
 
@@ -578,39 +594,39 @@ Print an entry.
 =cut
 
 sub print_fetch_data {
-    print_debug_message('print_fetch_data', 'Begin', 1);
-    my $query = shift;
+    print_debug_message( 'print_fetch_data', 'Begin', 1 );
+    my $query      = shift;
     my $formatName = shift || 'default';
-    my $styleName = shift || 'raw';
+    my $styleName  = shift || 'raw';
 
     # Read identifiers from file?
-    if ($query eq '-' || $query =~ m/^@/) {
+    if ( $query eq '-' || $query =~ m/^@/ ) {
         my $FH;
         my $filename = $query;
         $filename =~ s/^@//;
-        if ($filename eq '-') {
+        if ( $filename eq '-' ) {
             $FH = *STDIN;
         }
         else {
-            open($FH, '<', $filename)
-                or die "Error: unable to open file $filename ($!)";
+            open( $FH, '<', $filename )
+              or die "Error: unable to open file $filename ($!)";
         }
         while (<$FH>) {
             chomp;
             my $entryId = $_;
-            if ($entryId =~ m/^\S+:\S+/) {
+            if ( $entryId =~ m/^\S+:\S+/ ) {
                 my $entryStr =
-                    &rest_fetch_data($entryId, $formatName, $styleName);
+                  &rest_fetch_data( $entryId, $formatName, $styleName );
                 print $entryStr, "\n" if ($entryStr);
             }
         }
-        close($FH) unless ($filename eq '-');
+        close($FH) unless ( $filename eq '-' );
     }
     else {
-        my $entryStr = &rest_fetch_data($query, $formatName, $styleName);
+        my $entryStr = &rest_fetch_data( $query, $formatName, $styleName );
         print $entryStr, "\n" if ($entryStr);
     }
-    print_debug_message('print_fetch_data', 'End', 1);
+    print_debug_message( 'print_fetch_data', 'End', 1 );
 }
 
 =head2 rest_fetch_batch()
@@ -622,16 +638,16 @@ Fetch a set of entries.
 =cut
 
 sub rest_fetch_batch {
-    print_debug_message('rest_fetch_batch', 'Begin', 1);
+    print_debug_message( 'rest_fetch_batch', 'Begin', 1 );
     my $url = $baseUrl . '/' . shift;
-    $url .= '/' . shift if (scalar(@_) > 0);
-    $url .= '/' . shift if (scalar(@_) > 0);
-    $url .= '?style=' . shift if (scalar(@_) > 0);
-    print_debug_message('rest_fetch_batch', 'url: ' . $url, 11);
+    $url .= '/' . shift       if ( scalar(@_) > 0 );
+    $url .= '/' . shift       if ( scalar(@_) > 0 );
+    $url .= '?style=' . shift if ( scalar(@_) > 0 );
+    print_debug_message( 'rest_fetch_batch', 'url: ' . $url, 11 );
     my $response_str = &rest_request($url);
-    my $statusCode = &dbfetch_error_check($response_str);
-    $response_str = '' if ($statusCode > -1);
-    print_debug_message('rest_fetch_batch', 'End', 1);
+    my $statusCode   = &dbfetch_error_check($response_str);
+    $response_str = '' if ( $statusCode > -1 );
+    print_debug_message( 'rest_fetch_batch', 'End', 1 );
     return $response_str;
 }
 
@@ -644,64 +660,70 @@ Print a set of entries.
 =cut
 
 sub print_fetch_batch {
-    print_debug_message('print_fetch_batch', 'Begin', 1);
-    my $dbName = shift;
-    my $idListStr = shift;
+    print_debug_message( 'print_fetch_batch', 'Begin', 1 );
+    my $dbName     = shift;
+    my $idListStr  = shift;
     my $formatName = shift || 'default';
-    my $styleName = shift || 'raw';
+    my $styleName  = shift || 'raw';
 
     # Read identifiers from STDIN or file?
-    if ($idListStr eq '-' || $idListStr =~ m/^@/) {
+    if ( $idListStr eq '-' || $idListStr =~ m/^@/ ) {
         my $tmpIdListStr = '';
         my $FH;
         my $filename = $idListStr;
         $filename =~ s/^@//;
-        if ($filename eq '-') {
+        if ( $filename eq '-' ) {
             $FH = *STDIN;
         }
         else {
-            open($FH, '<', $filename) or die "Error: unable to open file $filename ($!)";
+            open( $FH, '<', $filename )
+              or die "Error: unable to open file $filename ($!)";
         }
         my $id_counter = 0;
         while (<$FH>) {
             chomp;
-            if ($_ ne '') {
-                $tmpIdListStr .= ',' if (length($tmpIdListStr) > 0);
+            if ( $_ ne '' ) {
+                $tmpIdListStr .= ',' if ( length($tmpIdListStr) > 0 );
                 $tmpIdListStr .= $_;
                 $id_counter++;
             }
-            if ($id_counter >= MAX_CHUNK_SIZE) {
-                &_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
-                $id_counter = 0;    # Reset counter.
-                $tmpIdListStr = ''; # Clear identifier list.
+            if ( $id_counter >= MAX_CHUNK_SIZE ) {
+                &_print_fetch_batch( $dbName, $tmpIdListStr, $formatName,
+                    $styleName );
+                $id_counter   = 0;     # Reset counter.
+                $tmpIdListStr = '';    # Clear identifier list.
             }
         }
-        close($FH) unless ($filename eq '-');
-        if ($id_counter > 0) {
-            &_print_fetch_batch($dbName, $tmpIdListStr, $formatName, $styleName);
+        close($FH) unless ( $filename eq '-' );
+        if ( $id_counter > 0 ) {
+            &_print_fetch_batch( $dbName, $tmpIdListStr, $formatName,
+                $styleName );
         }
     }
+
     # Direct specification of identifiers.
     else {
-        &_print_fetch_batch($dbName, $idListStr, $formatName, $styleName);
+        &_print_fetch_batch( $dbName, $idListStr, $formatName, $styleName );
     }
-    print_debug_message('print_fetch_batch', 'End', 1);
+    print_debug_message( 'print_fetch_batch', 'End', 1 );
 }
 
 sub _print_fetch_batch {
-    print_debug_message('_print_fetch_batch', 'Begin', 11);
-    my $dbName = shift;
-    my $idListStr = shift;
+    print_debug_message( '_print_fetch_batch', 'Begin', 11 );
+    my $dbName     = shift;
+    my $idListStr  = shift;
     my $formatName = shift;
-    my $styleName = shift;
-    $idListStr =~ s/[ \t\n\r;]+/,/g; # Id list should be comma seperated
-    $idListStr =~ s/,+/,/g;          # Remove any empty items
-    my $entriesStr = &rest_fetch_batch($dbName, $idListStr, $formatName, $styleName);
-    if (length($entriesStr) > 0) {
+    my $styleName  = shift;
+    $idListStr =~ s/[ \t\n\r;]+/,/g;    # Id list should be comma seperated
+    $idListStr =~ s/,+/,/g;             # Remove any empty items
+    my $entriesStr =
+      &rest_fetch_batch( $dbName, $idListStr, $formatName, $styleName );
+
+    if ( length($entriesStr) > 0 ) {
         print $entriesStr;
-        print "\n" if ($entriesStr !~ m/[\r\n]$/);
+        print "\n" if ( $entriesStr !~ m/[\r\n]$/ );
     }
-    print_debug_message('_print_fetch_batch', 'End', 11);
+    print_debug_message( '_print_fetch_batch', 'End', 11 );
 }
 
 ### Service actions and utility functions ###
@@ -716,9 +738,9 @@ Print debug message at specified debug level.
 
 sub print_debug_message {
     my $function_name = shift;
-    my $message = shift;
-    my $level = shift;
-    if ($level <= $params{'debugLevel'}) {
+    my $message       = shift;
+    my $level         = shift;
+    if ( $level <= $params{'debugLevel'} ) {
         print STDERR '[', $function_name, '()] ', $message, "\n";
     }
 }
@@ -732,7 +754,7 @@ Print program usage message.
 =cut
 
 sub usage {
-    print STDERR <<EOF
+    print STDERR <<EOF;
 EMBL-EBI EMBOSS WSDbfetch Perl Client:
 
 Dbfetch service enables database entry retrieval given a set of entry
@@ -742,31 +764,30 @@ Usage:
   perl $scriptName <method> [arguments...] [--baseUrl <baseUrl>]
 
 A number of methods are available:
-
-  getSupportedDBs - list available databases
-  getSupportedFormats - list available databases with formats
-  getSupportedStyles - list available databases with styles
-  getDbFormats - list formats for a specifed database
-  getFormatStyles - list styles for a specified database and format
-  fetchData - retrive an database entry. See below for details of arguments.
-  fetchBatch - retrive database entries. See below for details of arguments.
+  getSupportedDBs       List available databases.
+  getSupportedFormats   List available databases with formats.
+  getSupportedStyles    List available databases with styles.
+  getDbFormats          List formats for a specifed database. Requires <dbName>.
+  getFormatStyles       List styles for a specified database and format.
+                        Requires <dbName> and <dbFormat>.
+  fetchData             Retrive an database entry. See below for details of arguments.
+  fetchBatch            Retrive database entries. See below for details of arguments.
 
 Fetching an entry: fetchData
-  $scriptName fetchData <dbName:id> [format [style]]
+  perl $scriptName fetchData <dbName:id> [format [style]]
 
   dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
-             use \@fileName to read identifiers from a file or \@- to read
-             identifiers from STDIN.
+             use \@fileName to read identifiers from a file.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
 
 Fetching entries: fetchBatch
-  $scriptName fetchBatch <dbName> <idList> [format [style]]
+  perl $scriptName fetchBatch <dbName> <idList> [format [style]]
 
   dbName     database name (e.g. UNIPROT)
   idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
-             Maximum of 200 IDs or accessions. "-" for STDIN.
+             Maximum of 200 IDs or accessions.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
@@ -781,7 +802,7 @@ EOF
 
 =head1 FEEDBACK/SUPPORT
 
-Please contact us at L<http://www.ebi.ac.uk/support/> if you have any
+Please contact us at L<https://www.ebi.ac.uk/support/> if you have any
 feedback, suggestions or issues with the service or this client.
 
 =cut

@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#  WSDbfetch (REST) using urllib and xmltramp
+#  WSDbfetch (REST) using urllib
 #
 # For further information see:
 # https://www.ebi.ac.uk/Tools/webservices/
@@ -25,8 +25,12 @@
 ###############################################################################
 
 from __future__ import print_function
-import platform, os, sys, time
-from xmltramp2 import xmltramp
+
+import os
+import sys
+import time
+import json
+import platform
 from optparse import OptionParser
 
 try:
@@ -41,7 +45,7 @@ except ImportError:
     from urllib2 import __version__ as urllib_version
 
 # Service base URL
-baseUrl = 'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
+baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
 
 # Output level
 outputLevel = 1
@@ -49,6 +53,8 @@ outputLevel = 1
 debugLevel = 0
 
 # Usage message
+
+
 def print_usage():
     print("""\
 EMBL-EBI EMBOSS WSDbfetch Python Client:
@@ -60,20 +66,20 @@ Usage:
   python dbfetch.py <method> [arguments...] [--baseUrl <baseUrl>]
 
 A number of methods are available:
-  getSupportedDBs - list available databases
-  getSupportedFormats - list available databases with formats
-  getSupportedStyles - list available databases with styles
-  getDbFormats - list formats for a specifed database
-  getFormatStyles - list styles for a specified database and format
-  fetchData - retrive an database entry. See below for details of arguments.
-  fetchBatch - retrive database entries. See below for details of arguments.
+  getSupportedDBs       List available databases.
+  getSupportedFormats   List available databases with formats.
+  getSupportedStyles    List available databases with styles.
+  getDbFormats          List formats for a specifed database. Requires <dbName>.
+  getFormatStyles       List styles for a specified database and format.
+                        Requires <dbName> and <dbFormat>.
+  fetchData             Retrive an database entry. See below for details of arguments.
+  fetchBatch            Retrive database entries. See below for details of arguments.
 
 Fetching an entry: fetchData
   python dbfetch.py fetchData <dbName:id> [format [style]]
 
   dbName:id  database name and entry ID or accession (e.g. UNIPROT:WAP_RAT),
-             use @fileName to read identifiers from a file or @- to read
-             identifiers from STDIN.
+             use @fileName to read identifiers from a file.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
@@ -83,7 +89,7 @@ Fetching entries: fetchBatch
 
   dbName     database name (e.g. UNIPROT)
   idList     list of entry IDs or accessions (e.g. 1433T_RAT,WAP_RAT).
-             Maximum of 200 IDs or accessions. "-" for STDIN.
+             Maximum of 200 IDs or accessions.
   format     format to retrive (e.g. uniprot)
   style      style to retrive (e.g. raw)
 
@@ -94,7 +100,8 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
-other_usage ="""
+
+other_usage = """
       %prog fetchBatch <dbName> <id1,id2,...> [formatName [styleName]] [options...]
       %prog fetchData <dbName:id> [formatName [styleName]] [options...]
       %prog getDbFormats <dbName> [options...]
@@ -104,7 +111,7 @@ other_usage ="""
       %prog getSupportedStyles [options...]"""
 
 description = """Fetch database entries using entry identifiers. For more information on dbfetch
-refer to http://www.ebi.ac.uk/Tools/dbfetch/"""
+refer to https://www.ebi.ac.uk/Tools/dbfetch/"""
 
 epilog = """\
 Further information:
@@ -177,14 +184,13 @@ def restRequest(url):
 # Get database details.
 def getDatabaseInfoList():
     printDebugMessage('getDatabaseInfoList', 'Begin', 11)
-    requestUrl = baseUrl + '/dbfetch.databases?style=xml'
-    xmlDoc = restRequest(requestUrl)
-    printDebugMessage('getDatabaseInfoList', 'xmlDoc: ' + xmlDoc, 21)
-    doc = xmltramp.parse(xmlDoc)
-    databaseInfoList = doc['databaseInfo':]
+    requestUrl = baseUrl + '/dbfetch.databases?style=json'
+    jsonDoc = restRequest(requestUrl)
+    printDebugMessage('getDatabaseInfoList', 'json: ' + jsonDoc, 21)
+    doc = json.loads(jsonDoc)
+    databaseInfoList = [doc[db] for db in doc]
     printDebugMessage('getDatabaseInfoList', 'End', 11)
     return databaseInfoList
-
 
 # Get list of database names.
 def getSupportedDbs():
@@ -192,24 +198,31 @@ def getSupportedDbs():
     dbList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        dbList.append(str(dbInfo.name))
+        dbList.append(str(dbInfo["name"]))
     printDebugMessage('getSupportedDbs', 'End', 1)
     return dbList
 
+# Get list of database names + formats.
+def getSupportedFormats():
+    printDebugMessage('getSupportedFormats', 'Begin', 1)
+    dbList = []
+    dbInfoList = getDatabaseInfoList()
+    for dbInfo in dbInfoList:
+        dbList.append("%s\t%s" % (str(dbInfo["name"]),
+                                  ",".join([f["name"] for f in dbInfo["formatInfoList"]])))
+    printDebugMessage('getSupportedFormats', 'End', 1)
+    return dbList
 
-# Check if a databaseInfo matches a database name.
-def is_database(dbInfo, dbName):
-    printDebugMessage('is_database', 'Begin', 11)
-    retVal = False
-    if str(dbInfo.name) == dbName:
-        retVal = True
-    else:
-        for dbAlias in dbInfo.aliasList:
-            if str(dbAlias) == dbName:
-                retVal = True
-    printDebugMessage('is_database', 'retVal: ' + str(retVal), 11)
-    printDebugMessage('is_database', 'End', 11)
-    return retVal
+def getSupportedStyles():
+    printDebugMessage('getSupportedStyles', 'Begin', 1)
+    dbList = []
+    dbInfoList = getDatabaseInfoList()
+    for dbInfo in dbInfoList:
+        for format in dbInfo["formatInfoList"]:
+            dbList.append("%s\t%s\t%s" % (str(dbInfo["name"]), format["name"],
+                                          ",".join([s["name"] for s in format["styleInfoList"]])))
+    printDebugMessage('getSupportedStyles', 'End', 1)
+    return dbList
 
 
 # Get list of formats for a database.
@@ -219,26 +232,10 @@ def getDbFormats(db):
     formatNameList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        if is_database(dbInfo, db):
-            for formatInfo in dbInfo.formatInfoList:
-                formatNameList.append(str(formatInfo.name))
+        if db == dbInfo["name"]:
+            formatNameList = [f["name"] for f in dbInfo["formatInfoList"]]
     printDebugMessage('getDbFormats', 'End', 1)
     return formatNameList
-
-
-# Check if a formatInfo matches a format name.
-def is_format(formatInfo, formatName):
-    printDebugMessage('is_format', 'Begin', 11)
-    retVal = False
-    if str(formatInfo.name) == formatName:
-        retVal = True
-    else:
-        for formatAlias in formatInfo.aliases:
-            if str(formatAlias) == formatName:
-                retVal = True
-    printDebugMessage('is_format', 'retVal: ' + str(retVal), 12)
-    printDebugMessage('is_format', 'End', 11)
-    return retVal
 
 
 # Get list of styles for a format of a database.
@@ -247,11 +244,11 @@ def getFormatStyles(db, format):
     styleNameList = []
     dbInfoList = getDatabaseInfoList()
     for dbInfo in dbInfoList:
-        if is_database(dbInfo, db):
-            for formatInfo in dbInfo.formatInfoList:
-                if is_format(formatInfo, format):
-                    for styleInfo in formatInfo.styleInfoList:
-                        styleNameList.append(str(styleInfo.name))
+        if db == dbInfo["name"]:
+            for f in dbInfo["formatInfoList"]:
+                if format == f["name"]:
+                    for s in f["styleInfoList"]:
+                        styleNameList = [s["name"] for s in f["styleInfoList"]]
     printDebugMessage('getFormatStyles', 'End', 1)
     return styleNameList
 
@@ -264,13 +261,15 @@ def fetchData(query, format='default', style='raw'):
         if os.path.exists(query.lstrip('@')):
             with open(query.lstrip('@'), 'r') as inlines:
                 for line in inlines:
-                    requestUrl = baseUrl + '/' + line.strip().replace(':', '/') + '/' + format + '?style=' + style
+                    requestUrl = baseUrl + '/' + line.strip().replace(':', '/') + '/' + \
+                        format + '?style=' + style
                     result.append(restRequest(requestUrl))
         else:
             print("Error: unable to open file %s (No such file or directory)" % query)
         result = "".join(result)
     else:
-        requestUrl = baseUrl + '/' + query.replace(':', '/') + '/' + format + '?style=' + style
+        requestUrl = baseUrl + '/' + \
+            query.replace(':', '/') + '/' + format + '?style=' + style
         result = restRequest(requestUrl)
     printDebugMessage('fetchData', 'End', 1)
     return result
@@ -279,7 +278,8 @@ def fetchData(query, format='default', style='raw'):
 # Get a set of entries.
 def fetchBatch(db, idListStr, format='default', style='raw'):
     printDebugMessage('fetchBatch', 'Begin', 1)
-    requestUrl = baseUrl + '/' + db + '/' + idListStr + '/' + format + '?style=' + style
+    requestUrl = baseUrl + '/' + db + '/' + \
+        idListStr + '/' + format + '?style=' + style
     result = restRequest(requestUrl)
     printDebugMessage('fetchBatch', 'End', 1)
     return result
@@ -289,11 +289,16 @@ if __name__ == '__main__':
     # Process command-line options
     # parser = OptionParser(usage=usage, description=description, epilog=epilog, version=version)
     parser = OptionParser(add_help_option=False)
-    parser.add_option('-h', '--help', action='store_true', help='Shows this message and exit.')
-    parser.add_option('--quiet', action='store_true', help='decrease output level')
-    parser.add_option('--verbose', action='store_true', help='increase output level')
-    parser.add_option('--baseUrl', default=baseUrl, help='base URL for dbfetch')
-    parser.add_option('--debugLevel', type='int', default=debugLevel, help='debug output level')
+    parser.add_option('-h', '--help', action='store_true',
+                      help='Shows this message and exit.')
+    parser.add_option('--quiet', action='store_true',
+                      help='decrease output level')
+    parser.add_option('--verbose', action='store_true',
+                      help='increase output level')
+    parser.add_option('--baseUrl', default=baseUrl,
+                      help='base URL for dbfetch')
+    parser.add_option('--debugLevel', type='int',
+                      default=debugLevel, help='debug output level')
     (options, args) = parser.parse_args()
 
     # No arguments, print usage
@@ -326,22 +331,36 @@ if __name__ == '__main__':
         dbNameList = getSupportedDbs()
         for dbName in dbNameList:
             print(dbName)
+    elif args[0] == 'getSupportedFormats':
+        dbNameFormatList = getSupportedFormats()
+        for dbNameFormat in dbNameFormatList:
+            print(dbNameFormat)
+    elif args[0] == 'getSupportedStyles':
+        dbNameStyleList = getSupportedStyles()
+        for dbNameStyle in dbNameStyleList:
+            print(dbNameStyle)
     # List formats for a database.
-    elif args[0] == 'getDbFormats' and len(args) > 1:
-        formatNameList = getDbFormats(args[1])
-        if len(formatNameList) > 0:
-            for formatName in formatNameList:
-                print(formatName)
+    elif args[0] == 'getDbFormats':
+        if len(args) > 1:
+            formatNameList = getDbFormats(args[1])
+            if len(formatNameList) > 0:
+                for formatName in formatNameList:
+                    print(formatName)
+            else:
+                print('Database not found')
         else:
-            print('Database not found')
+            print('<dbName> needed. See --help for more information.')
     # List formats for a database.
-    elif args[0] == 'getFormatStyles' and len(args) > 2:
-        styleNameList = getFormatStyles(args[1], args[2])
-        if len(styleNameList) > 0:
-            for styleName in styleNameList:
-                print(styleName)
+    elif args[0] == 'getFormatStyles':
+        if len(args) > 2:
+            styleNameList = getFormatStyles(args[1], args[2])
+            if len(styleNameList) > 0:
+                for styleName in styleNameList:
+                    print(styleName)
+            else:
+                print('Database and format not found')
         else:
-            print('Database and format not found')
+            print('<dbName> and <dbFormat> needed. See --help for more information.')
     # Fetch an entry
     elif args[0] == 'fetchData' and len(args) > 1:
         if len(args) > 3:
