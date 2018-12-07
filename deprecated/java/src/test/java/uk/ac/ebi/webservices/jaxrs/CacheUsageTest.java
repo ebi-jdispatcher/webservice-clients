@@ -7,8 +7,8 @@ public class CacheUsageTest {
 
    public static void main(String[] args) throws Exception {
       EBeyeClient cli = new EBeyeClient();
-//      cli.setServiceEndPoint("http://wp-np2-28:8080/ebisearch/ws/rest/");
-      cli.setServiceEndPoint("http://wp-p3s-f8:9050/ebisearch/ws/rest/");
+      cli.setServiceEndPoint("http://wwwdev.ebi.ac.uk/ebisearch/ws/rest/");
+//      cli.setServiceEndPoint("http://wp-p3s-f8:9050/ebisearch/ws/rest/");
 //      cli.setEnableCache(false);
 //      cli.setCacheConfig("path to configuration");
 
