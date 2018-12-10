@@ -2,17 +2,38 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <name>EBI Search JAX-RS client</name>
+  <url>https://github.com/ebi-wp/webservice-clients</url>
+
+  <organization>
+      <name>EMBL-EBI</name>
+      <url>www.ebi.ac.uk</url>
+  </organization>
+  <scm>
+      <url>https://github.com/ebi-wp/webservice-clients</url>
+  </scm>
+
+
+  <distributionManagement>
+    <repository>
+        <id>wp-artifactory</id>
+        <name>Web Production Artifactory</name>
+        <url>https://wwwint.ebi.ac.uk/wp/artifactory/libs-release-local/</url>
+    </repository>
+  </distributionManagement>
+
   <groupId>uk.ac.ebi.ebisearch</groupId>
   <artifactId>jaxrs-client</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <packaging>jar</packaging>
-
-  <name>webservice-client</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.jar.outfolder>${project.basedir}/jar</project.build.jar.outfolder>
+    <cxf.version>3.2.7</cxf.version>
+<!-- 
+        <cxf.version>3.3.0-SNAPSHOT</cxf.version>
+-->
   </properties>
 
   <dependencies>
@@ -30,15 +51,12 @@
     <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>3.2.7</version>
-<!-- 
-        <version>3.3.0-SNAPSHOT</version>
- -->
+        <version>${cxf.version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-tools-wadlto-jaxrs</artifactId>
-        <version>3.2.7</version>
+        <version>${cxf.version}</version>
     </dependency>
     <dependency>
         <groupId>javax.cache</groupId>
@@ -87,8 +105,11 @@
                 <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                 <wadlOptions>
                   <wadlOption>
+<!-- 
+                    <wadl>http://wp-p3s-f8.ebi.ac.uk:9050/ebisearch/ws/rest?_wadl</wadl>
+ -->
                     <wadl>https://www.ebi.ac.uk/ebisearch/ws/rest?_wadl</wadl>
-                    <impl>true</impl>
+                    <impl>false</impl>
                     <packagename>uk.ac.ebi.webservices.jaxrs.stubs.ebeye</packagename>
                     <!--
                     <bindingFiles>
@@ -114,12 +135,16 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.1</version>
               <configuration>
                 <outputDirectory>${project.build.jar.outfolder}</outputDirectory>
                 <finalName>${project.artifactId}-${project.version}-jar-with-dependencies</finalName>
                 <transformers>
                     <transformer
                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                      <resource>META-INF/cxf/bus-extensions.txt</resource>
+                    </transformer>
                 </transformers>
                 <archive>
                     <manifest>
@@ -139,12 +164,26 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
+            <version>3.1.0</version>
             <configuration>
                 <outputDirectory>${project.build.jar.outfolder}</outputDirectory>
+<!--
+                <excludes>
+                    <exclude>**/stubs/ebeye/package-info*</exclude>
+                </excludes>
+-->
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>uk.ac.ebi.webservices.jaxrs.EBeyeClient</mainClass>
+                    </manifest>
+                </archive>
             </configuration>
         </plugin>
         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-clean-plugin</artifactId>
+            <version>3.1.0</version>
             <configuration>
                 <filesets>
                     <fileset>
