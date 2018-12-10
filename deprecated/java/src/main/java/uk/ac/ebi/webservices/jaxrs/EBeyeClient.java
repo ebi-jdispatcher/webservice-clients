@@ -95,6 +95,7 @@ public class EBeyeClient {
     private boolean enableCache = true;
     
     private String cacheConfig = getClass().getResource("/cache.ccf").getFile();
+    private static final String CACHE_NAME = "simple_cache";
     
     private boolean correctResponseNamespace = true;
     
@@ -378,9 +379,11 @@ public class EBeyeClient {
                   .setStoreByValue(false)
 //                  .setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_DAY))
                   .setStatisticsEnabled(true);
-            
             CacheControlClientRequestFilter cacheFilter = new CacheControlClientRequestFilter();
-            Cache<Key, Entry> oneDayCache = cm.createCache("simple_cache", ccfg);
+            Cache<Key, Entry> oneDayCache = cm.getCache(CACHE_NAME);
+            if (oneDayCache == null) {
+               oneDayCache = cm.createCache(CACHE_NAME, ccfg);
+            }
             cacheFilter.setCache(oneDayCache);
             client.register(cacheFilter);
             
