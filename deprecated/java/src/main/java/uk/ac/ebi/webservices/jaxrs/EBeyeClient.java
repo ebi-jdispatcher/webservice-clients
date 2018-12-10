@@ -24,7 +24,9 @@
 package uk.ac.ebi.webservices.jaxrs;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.AccessedExpiryPolicy;
+import javax.cache.expiry.Duration;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -94,7 +98,8 @@ public class EBeyeClient {
     
     private boolean enableCache = true;
     
-    private String cacheConfig = getClass().getResource("/cache.ccf").getFile();
+    private final static String DEFAULT_CACHE_CONFIG = "/cache.ccf";
+    private String cacheConfig = null;
     private static final String CACHE_NAME = "simple_cache";
     
     private boolean correctResponseNamespace = true;
@@ -344,15 +349,28 @@ public class EBeyeClient {
         }
     }
 
-    private Properties loadProperties(String filePath) {
+    private Properties loadPropertiesFromClasspath(String classpathFile) throws IOException {
+       InputStream is = getClass().getResourceAsStream(classpathFile);
+       return loadProperties(is);
+    }
+    
+    private Properties loadPropertiesFromFS(String fsFile) throws IOException {
+       InputStream is = new FileInputStream(new File(fsFile));
+       return loadProperties(is);
+    }
+    
+    private Properties loadProperties(InputStream in) throws IOException {
       Properties cacheProps = new Properties();
       try {
-         InputStream in = new FileInputStream(filePath);
          cacheProps.load(in);
 
       } catch (IOException e) {
          printDebugMessage("getClient",
-            String.format("Error loading Cache config from: [%s], message: [%s]", filePath, e.getMessage()), 0);
+            String.format("Error loading Cache config from: [%s], message: [%s]", in.toString(), e.getMessage()), 0);
+      } finally {
+         if (in != null) {
+            in.close();
+         }
       }
       return cacheProps;
     }
@@ -369,15 +387,21 @@ public class EBeyeClient {
 
          if (enableCache) {
             CacheManager cm = null;
-            if (!StringUtils.isBlank(cacheConfig)) {
-               cm = Caching.getCachingProvider().getCacheManager(null, null, loadProperties(cacheConfig));
-            } else {
+            
+            try {
+               if (!StringUtils.isBlank(cacheConfig)) {
+                  cm = Caching.getCachingProvider().getCacheManager(null, null, loadPropertiesFromFS(cacheConfig));
+               } else {
+                  cm = Caching.getCachingProvider().getCacheManager(null, null, loadPropertiesFromClasspath(DEFAULT_CACHE_CONFIG));
+               }
+            } catch (IOException e) {
+               printDebugMessage("getClient", "Error opening cache configuration file: "+e.getMessage(), 1);
                cm = Caching.getCachingProvider().getCacheManager();
             }
             
             MutableConfiguration<Key, Entry> ccfg = new MutableConfiguration<Key, Entry>()
                   .setStoreByValue(false)
-//                  .setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_DAY))
+                  .setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_DAY))
                   .setStatisticsEnabled(true);
             CacheControlClientRequestFilter cacheFilter = new CacheControlClientRequestFilter();
             Cache<Key, Entry> oneDayCache = cm.getCache(CACHE_NAME);
