@@ -7,10 +7,13 @@ public class CacheUsageTest {
 
    public static void main(String[] args) throws Exception {
       EBeyeClient cli = new EBeyeClient();
-      cli.setServiceEndPoint("http://wwwdev.ebi.ac.uk/ebisearch/ws/rest/");
+      cli.setServiceEndPoint("http://wp-np2-28.ebi.ac.uk:8080/ebisearch/ws/rest/");
+//      cli.setServiceEndPoint("http://wwwdev.ebi.ac.uk/ebisearch/ws/rest/");
 //      cli.setServiceEndPoint("http://wp-p3s-f8:9050/ebisearch/ws/rest/");
 //      cli.setEnableCache(false);
-//      cli.setCacheConfig("path to configuration");
+      
+//      String cacheCfgFile = CacheUsageTest.class.getResource("/cache.ccf").getFile();
+//      cli.setCacheConfig(cacheCfgFile);
 
       try {
          for (int i = 0; i < 15; i++) {

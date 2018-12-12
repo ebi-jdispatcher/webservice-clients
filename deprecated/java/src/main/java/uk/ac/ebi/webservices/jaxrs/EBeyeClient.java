@@ -26,9 +26,9 @@ package uk.ac.ebi.webservices.jaxrs;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +100,8 @@ public class EBeyeClient {
     
     private final static String DEFAULT_CACHE_CONFIG = "/cache.ccf";
     private String cacheConfig = null;
-    private static final String CACHE_NAME = "simple_cache";
+    private String classpathCacheConfig = null;
+    private static final String CACHE_NAME = "ebisearch_rest_cache";
     
     private boolean correctResponseNamespace = true;
     
@@ -329,6 +330,19 @@ public class EBeyeClient {
       this.cacheConfig = cacheConfig;
    }
 
+   public String getClasspathCacheConfig() {
+      return classpathCacheConfig;
+   }
+
+   /**
+    * Set the cache configuration file to a classpath file
+    * 
+    * @param classpathCacheConfig
+    */
+   public void setClasspathCacheConfig(String classpathCacheConfig) {
+      this.classpathCacheConfig = classpathCacheConfig;
+   }
+
    public boolean isCorrectResponseNamespace() {
       return correctResponseNamespace;
    }
@@ -389,14 +403,23 @@ public class EBeyeClient {
             CacheManager cm = null;
             
             try {
+               // In tomcat the default JCS URI is leading to a classloader exception.
+               // Point the CacheManager to tmp dir to avoid exception in tomcat runtime
+               File mockJCSDir = new File(System.getProperty("java.io.tmpdir"), "mock_jcs");
+               mockJCSDir.mkdirs();
+               URI tmpDirURI = mockJCSDir.toURI();
                if (!StringUtils.isBlank(cacheConfig)) {
-                  cm = Caching.getCachingProvider().getCacheManager(null, null, loadPropertiesFromFS(cacheConfig));
+                  cm = Caching.getCachingProvider().getCacheManager(tmpDirURI, null, loadPropertiesFromFS(cacheConfig));
                } else {
-                  cm = Caching.getCachingProvider().getCacheManager(null, null, loadPropertiesFromClasspath(DEFAULT_CACHE_CONFIG));
+                  String classpathCfg = !StringUtils.isBlank(classpathCacheConfig)? classpathCacheConfig : DEFAULT_CACHE_CONFIG;
+                  cm = Caching.getCachingProvider().getCacheManager(tmpDirURI, null, loadPropertiesFromClasspath(classpathCfg));
                }
             } catch (IOException e) {
-               printDebugMessage("getClient", "Error opening cache configuration file: "+e.getMessage(), 1);
+               printDebugMessage("getClient", "Error opening cache configuration file: "+e.getMessage(), 0);
                cm = Caching.getCachingProvider().getCacheManager();
+            }
+            for (String name : cm.getCacheNames()) {
+               printDebugMessage("getClient", "cache name: "+name, 0);
             }
             
             MutableConfiguration<Key, Entry> ccfg = new MutableConfiguration<Key, Entry>()
