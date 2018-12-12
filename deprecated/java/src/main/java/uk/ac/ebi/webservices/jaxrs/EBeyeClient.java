@@ -418,9 +418,6 @@ public class EBeyeClient {
                printDebugMessage("getClient", "Error opening cache configuration file: "+e.getMessage(), 0);
                cm = Caching.getCachingProvider().getCacheManager();
             }
-            for (String name : cm.getCacheNames()) {
-               printDebugMessage("getClient", "cache name: "+name, 0);
-            }
             
             MutableConfiguration<Key, Entry> ccfg = new MutableConfiguration<Key, Entry>()
                   .setStoreByValue(false)
