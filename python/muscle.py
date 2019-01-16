@@ -55,7 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/muscle'
-version = u'2019-01-16 13:32'
+version = u'2019-01-16 16:04'
 
 # Set interval for checking status
 pollFreq = 3
@@ -87,7 +87,7 @@ parser.add_option('--email', help='E-mail address.')
 parser.add_option('--title', help='Job title.')
 parser.add_option('--outfile', help='File name for results.')
 parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--async', action='store_true', help='Asynchronous mode.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
 parser.add_option('--jobid', help='Job identifier.')
 parser.add_option('--polljob', action="store_true", help='Get job result.')
 parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
@@ -437,7 +437,7 @@ Multiple sequence alignment with Muscle.
 
 [General]
   -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
+  --asyncjob            Forces to make an asynchronous query.
   --title               Title for job.
   --status              Get job status.
   --resultTypes         Get available result types for job.
@@ -462,7 +462,7 @@ Synchronous job:
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: python muscle.py --async --email <your@email.com> [options...] <SeqFile|SeqID(s)>
+  Usage: python muscle.py --asyncjob --email <your@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
 Check status of Asynchronous job:
@@ -544,7 +544,7 @@ elif options.email and not options.jobid:
 
     # Submit the job
     jobId = serviceRun(options.email, options.title, params)
-    if options.async: # Async mode
+    if options.asyncjob: # Async mode
         print(jobId)
         if outputLevel > 0:
             print("To check status: python %s --status --jobid %s"

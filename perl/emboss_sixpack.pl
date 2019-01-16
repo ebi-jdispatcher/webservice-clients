@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/emboss_sixpack';
-my $version = '2019-01-16 13:32';
+my $version = '2019-01-16 16:04';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -97,7 +97,7 @@ GetOptions(
     'outformat=s'     => \$params{'outformat'},      # Output file type
     'jobid=s'         => \$params{'jobid'},          # JobId
     'help|h'          => \$params{'help'},           # Usage help
-    'async'           => \$params{'async'},          # Asynchronous submission
+    'asyncjob'        => \$params{'asyncjob'},       # Asynchronous submission
     'polljob'         => \$params{'polljob'},        # Get results
     'pollFreq=f'      => \$params{'pollFreq'},       # Poll Frequency
     'resultTypes'     => \$params{'resultTypes'},    # Get result types
@@ -676,7 +676,7 @@ sub submit_job {
     my $jobid = &rest_run($params{'email'}, $params{'title'}, \%params);
 
     # Asynchronous submission.
-    if (defined($params{'async'})) {
+    if (defined($params{'asyncjob'})) {
         print STDOUT $jobid, "\n";
         if ($outputLevel > 0) {
             print STDERR
@@ -1005,7 +1005,7 @@ Sequence translations with sixpack.
 
 [General]
   -h, --help            Show this help message and exit.
-  --async               Forces to make an asynchronous query.
+  --asyncjob            Forces to make an asynchronous query.
   --title               Title for job.
   --status              Get job status.
   --resultTypes         Get available result types for job.
@@ -1030,7 +1030,7 @@ Synchronous job:
 Asynchronous job:
   Use this if you want to retrieve the results at a later time. The results
   are stored for up to 24 hours.
-  Usage: perl $scriptName --async --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
+  Usage: perl $scriptName --asyncjob --email <your\@email.com> [options...] <SeqFile|SeqID(s)>
   Returns: jobid
 
 Check status of Asynchronous job:
