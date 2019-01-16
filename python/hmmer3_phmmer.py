@@ -55,6 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer'
+version = u'2019-01-16 13:32'
 
 # Set interval for checking status
 pollFreq = 3
@@ -81,6 +82,8 @@ parser.add_option('--popen', help=('Gap Penalties[open]'))
 parser.add_option('--pextend', help=('Gap Penalties[extend]'))
 parser.add_option('--mx', help=('Gap Penalties[Substitution scoring matrix]'))
 parser.add_option('--nobias', action='store_true', help=('Filters'))
+parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
+                  'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
 parser.add_option('--database', help=('Sequence Database'))
 parser.add_option('--evalue', help=('Expectation value cut-off for reporting target profiles in the per-'
@@ -91,6 +94,7 @@ parser.add_option('--sequence', help=('The input sequence can be entered directl
                   'end of the sequence may help certain applications understand the'
                   'input. Note that directly using data from word processors may yield'
                   'unpredictable results as hidden/control characters may be present.'))
+parser.add_option('--nhits', help=('Number of hits to be displayed.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -107,6 +111,7 @@ parser.add_option('--params', action='store_true', help='List input parameters.'
 parser.add_option('--paramDetail', help='Get details for parameter.')
 parser.add_option('--quiet', action='store_true', help='Decrease output level.')
 parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
 parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
 
@@ -142,10 +147,7 @@ def getUserAgent():
     printDebugMessage(u'getUserAgent', u'Begin', 11)
     # Agent string for urllib2 library.
     urllib_agent = u'Python-urllib/%s' % urllib_version
-    clientRevision = u'$Revision: 2018 $'
-    clientVersion = u'0'
-    if len(clientRevision) > 11:
-        clientVersion = clientRevision[11:-2]
+    clientRevision = version
     # Prepend client specific agent string.
     user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
         clientVersion, os.path.basename(__file__),
@@ -400,10 +402,15 @@ def getResult(jobId):
                 else:
                     fmode = 'w'
 
-                fh = open(filename, fmode)
-
-                fh.write(result)
-                fh.close()
+                try:
+                    fh = open(filename, fmode)
+                    fh.write(result)
+                    fh.close()
+                except TypeError:
+                    fh.close()
+                    fh = open(filename, "wb")
+                    fh.write(result)
+                    fh.close()
                 if outputLevel > 0:
                     print("Creating result file: " + filename)
     printDebugMessage(u'getResult', u'End', 1)
@@ -449,9 +456,13 @@ Protein function analysis with HMMER 3 phmmer.
   --pextend             Gap Penalties[extend].
   --mx                  Gap Penalties[Substitution scoring matrix].
   --nobias              Filters.
+  --compressedout       By default it runs hmm2c plus post-processing (default
+                        output), whereas with compressedout, it gets compressed
+                        output only.
   --alignView           Output alignment in result.
   --evalue              Expectation value cut-off for reporting target profiles in
                         the per-target output.
+  --nhits               Number of hits to be displayed.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -467,6 +478,7 @@ Protein function analysis with HMMER 3 phmmer.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
   --verbose             Increase output.
+  --version             Prints out the version of the Client and exit.
   --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer
@@ -511,6 +523,10 @@ elif options.params:
 # Get parameter details
 elif options.paramDetail:
     printGetParameterDetails(options.paramDetail)
+# Print Client version
+elif options.version:
+    print("Revision: %s" % version)
+    sys.exit()
 # Submit job
 elif options.email and not options.jobid:
     params = {}
@@ -596,6 +612,15 @@ elif options.email and not options.jobid:
         params['nobias'] = options.nobias
     
 
+    if options.compressedout:
+        params['compressedout'] = 'true'
+    else:
+        params['compressedout'] = 'false'
+    
+    if options.compressedout:
+        params['compressedout'] = options.compressedout
+    
+
     if not options.alignView:
         params['alignView'] = 'true'
     if options.alignView:
@@ -604,6 +629,10 @@ elif options.email and not options.jobid:
 
     if options.evalue:
         params['evalue'] = options.evalue
+    
+
+    if options.nhits:
+        params['nhits'] = options.nhits
     
 
 

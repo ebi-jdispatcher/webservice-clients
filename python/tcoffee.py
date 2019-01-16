@@ -55,6 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/tcoffee'
+version = u'2019-01-16 13:32'
 
 # Set interval for checking status
 pollFreq = 3
@@ -100,6 +101,7 @@ parser.add_option('--params', action='store_true', help='List input parameters.'
 parser.add_option('--paramDetail', help='Get details for parameter.')
 parser.add_option('--quiet', action='store_true', help='Decrease output level.')
 parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
 parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
 parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
 
@@ -135,10 +137,7 @@ def getUserAgent():
     printDebugMessage(u'getUserAgent', u'Begin', 11)
     # Agent string for urllib2 library.
     urllib_agent = u'Python-urllib/%s' % urllib_version
-    clientRevision = u'$Revision: 2018 $'
-    clientVersion = u'0'
-    if len(clientRevision) > 11:
-        clientVersion = clientRevision[11:-2]
+    clientRevision = version
     # Prepend client specific agent string.
     user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
         clientVersion, os.path.basename(__file__),
@@ -393,10 +392,15 @@ def getResult(jobId):
                 else:
                     fmode = 'w'
 
-                fh = open(filename, fmode)
-
-                fh.write(result)
-                fh.close()
+                try:
+                    fh = open(filename, fmode)
+                    fh.write(result)
+                    fh.close()
+                except TypeError:
+                    fh.close()
+                    fh = open(filename, "wb")
+                    fh.write(result)
+                    fh.close()
                 if outputLevel > 0:
                     print("Creating result file: " + filename)
     printDebugMessage(u'getResult', u'End', 1)
@@ -454,6 +458,7 @@ Multiple sequence alignment with T-coffee.
   --params              List input parameters.
   --paramDetail         Display details for input parameter.
   --verbose             Increase output.
+  --version             Prints out the version of the Client and exit.
   --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/tcoffee
@@ -498,6 +503,10 @@ elif options.params:
 # Get parameter details
 elif options.paramDetail:
     printGetParameterDetails(options.paramDetail)
+# Print Client version
+elif options.version:
+    print("Revision: %s" % version)
+    sys.exit()
 # Submit job
 elif options.email and not options.jobid:
     params = {}
@@ -531,6 +540,8 @@ elif options.email and not options.jobid:
     if options.stype:
         params['stype'] = options.stype
 
+    if not options.format:
+        params['format'] = 'clustalw'
     if options.format:
         params['format'] = options.format
     
@@ -541,6 +552,8 @@ elif options.email and not options.jobid:
         params['matrix'] = options.matrix
     
 
+    if not options.order:
+        params['order'] = 'aligned'
     if options.order:
         params['order'] = options.order
     

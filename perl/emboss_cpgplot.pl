@@ -63,6 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/emboss_cpgplot';
+my $version = '2019-01-16 13:32';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -103,6 +104,7 @@ GetOptions(
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'version'         => \$params{'version'},        # Prints out the version of the Client and exit.
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
@@ -140,6 +142,7 @@ if (
             || $params{'status'}
             || $params{'params'}
             || $params{'paramDetail'}
+            || $params{'version'}
     )
         && !(defined($ARGV[0]) || defined($params{'sequence'}))
 ) {
@@ -157,6 +160,12 @@ elsif ($params{'params'}) {
 # Get parameter details
 elsif ($params{'paramDetail'}) {
     &print_param_details($params{'paramDetail'});
+}
+
+# Print Client version
+elsif ($params{'version'}) {
+  print STDOUT 'Revision: ' . $version, "\n";
+  exit(1);
 }
 
 # Job status
@@ -226,7 +235,7 @@ sub rest_user_agent() {
     my $ua = LWP::UserAgent->new();
     # Set 'User-Agent' HTTP header to identifiy the client.
     my $revisionNumber = 0;
-    $revisionNumber = $1 if ('$Revision$' =~ m/(\d+)/);
+    $revisionNumber = "Revision: " . $version;
     $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
     # Configure HTTP proxy support from environment.
     $ua->env_proxy;
@@ -995,6 +1004,7 @@ Sequence statistics and plots with cpgplot.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --version             Prints out the version of the Client and exit.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/emboss_cpgplot
 

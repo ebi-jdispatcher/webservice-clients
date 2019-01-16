@@ -60,11 +60,10 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
 use Time::HiRes qw(usleep);
-use JSON::XS;
-use Try::Tiny;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
+my $version = '2019-01-16 13:32';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -96,9 +95,11 @@ GetOptions(
     'cut_ga'          => \$params{'cut_ga'},         # Use the gathering threshold.
     'nobias'          => \$params{'nobias'},         # Filters
     'hmmdbparam=s'    => \$params{'hmmdbparam'},     # hmmdbparam
+    'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \$params{'database'},       # HMM Database
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'nhits=i'         => \$params{'nhits'},          # Number of hits to be displayed.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -113,12 +114,12 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'acc=i'           => \$params{'acc'},             # Get accession ID, how many from top
     'multifasta'      => \$params{'multifasta'},     # Multiple fasta input
     'useSeqId'        => \$params{'useSeqId'},       # Seq Id file name
     'maxJobs=i'       => \$params{'maxJobs'},        # Max. parallel jobs
 
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'version'         => \$params{'version'},        # Prints out the version of the Client and exit.
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
@@ -156,6 +157,7 @@ if (
             || $params{'status'}
             || $params{'params'}
             || $params{'paramDetail'}
+            || $params{'version'}
     )
         && !(defined($ARGV[0]) || defined($params{'sequence'}))
 ) {
@@ -173,6 +175,12 @@ elsif ($params{'params'}) {
 # Get parameter details
 elsif ($params{'paramDetail'}) {
     &print_param_details($params{'paramDetail'});
+}
+
+# Print Client version
+elsif ($params{'version'}) {
+  print STDOUT 'Revision: ' . $version, "\n";
+  exit(1);
 }
 
 # Job status
@@ -244,7 +252,7 @@ sub rest_user_agent() {
     my $ua = LWP::UserAgent->new();
     # Set 'User-Agent' HTTP header to identifiy the client.
     my $revisionNumber = 0;
-    $revisionNumber = $1 if ('$Revision$' =~ m/(\d+)/);
+    $revisionNumber = "Revision: " . $version;
     $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
     # Configure HTTP proxy support from environment.
     $ua->env_proxy;
@@ -333,145 +341,6 @@ sub rest_request {
 
     # Return the response data
     return $retVal;
-}
-=head2 rest_request_for_accid()
-
-Perform a REST request (HTTP GET).
-
-  my $response_str = &rest_request($url);
-
-=cut
-
-sub rest_request_for_accid {
-    print_debug_message('rest_request_for_accid', 'Begin', 11);
-    my $requestUrl = shift;
-    print_debug_message('rest_request_for_accid', 'URL: ' . $requestUrl, 11);
-
-    # Get an LWP UserAgent.
-    $ua = &rest_user_agent() unless defined($ua);
-    # Available HTTP compression methods.
-    my $can_accept;
-    eval {
-        $can_accept = HTTP::Message::decodable();
-    };
-    $can_accept = '' unless defined($can_accept);
-    # Perform the request
-    my $response = $ua->get($requestUrl,
-        'Accept-Encoding' => $can_accept, # HTTP compression.
-    );
-    print_debug_message('rest_request_for_accid', 'HTTP status: ' . $response->code, 11);
-    print_debug_message('rest_request_for_accid', 'response length: ' . length($response->content()), 11);
-    print_debug_message('rest_request_for_accid', 'request:' . "\n" . $response->request()->as_string(), 32);
-    print_debug_message('rest_request_for_accid', 'response: ' . "\n" . $response->as_string(), 32);
-    # Unpack possibly compressed response.
-    my $retVal;
-    if (defined($can_accept) && $can_accept ne '') {
-        $retVal = $response->decoded_content();
-    }
-    # If unable to decode use orginal content.
-    $retVal = $response->content() unless defined($retVal);
-    # Check for an error.
-    &rest_error($response, $retVal);
-    print_debug_message('rest_request_for_accid', 'retVal: ' . $retVal, 12);
-    print_debug_message('rest_request_for_accid', 'End', 11);
-
-    my @lines = split /\n/, $retVal;
-
-    my $v_cnt = 0;
-    my $top_acc = 20;
-    if (defined $params{'acc'}) {
-        $top_acc = $params{'acc'};
-    }
-
-    foreach my $line (@lines) {
-
-        # Updating HMMER numeric ID to Accession
-        if ($v_cnt >= $top_acc) {
-            last;
-        }
-
-        my $where_id_begin = index($line, '>>');
-
-        if ($where_id_begin > -1) {
-            $v_cnt++;
-
-            my $grab_id = substr($line, $where_id_begin + 3, 30);
-            $grab_id =~ s/\s*$//; # trim left whitespace
-
-            #print "=grab_id=====================\n";
-
-            my $acc_id = rest_get_accid($grab_id);
-
-            if ($grab_id) {
-                if ($acc_id) {
-
-                    my $numeric1 = ' ' . sprintf("%09d", $grab_id) . ' ';
-                    my $numeric2 = ' ' . $grab_id . ' ';
-                    my $new_id = ' ' . $acc_id . ' ';
-
-                    $retVal =~ s/$numeric1/$new_id/g;
-                    $retVal =~ s/$numeric2/$new_id/g;
-                }
-            }
-
-        }
-
-    }
-
-    # Return the response data
-    return $retVal;
-}
-
-
-=head2 rest_get_accid()
-
-Retrive acc with entry id.
-https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
-https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
-
-=cut
-
-sub rest_get_accid {
-    print_debug_message('rest_get_accid', '##### Begin', 42);
-    #my (@reference);
-    my $each_acc_id;
-    my ($entryid) = @_;
-
-    #my $domainid ='hmmer_seq';
-    my $domainid = 'hmmer_hmm';
-    my $ebisearch_baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_hmm';
-
-    my $url = $ebisearch_baseUrl . "/entry/" . $entryid . "?fields=id,content";
-    my $reference_list_xml_str = &rest_request($url);
-    my $reference_list_xml = XMLin($reference_list_xml_str);
-
-    # read XML file
-    my $data = XMLin($reference_list_xml_str);
-    my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
-
-    if ($acc_info) {
-        print_debug_message('rest_get_accid', '#acc_info is: ' . $acc_info, 42);
-
-        my $decoded;
-
-        try {
-            $decoded = JSON::XS::decode_json($acc_info);
-        }
-        catch {
-            warn "Caught JSON::XS decode error: $_";
-        };
-
-        my @selected_db = $decoded->[$db_index];
-
-        $each_acc_id = $selected_db[0]->{'acc'};
-
-    }
-    else {
-        print_debug_message('rest_get_accid', '#acc_info NONE: ', 42);
-    }
-
-    print_debug_message('rest_get_accid', 'End', 42);
-    return($each_acc_id);
 }
 
 =head2 rest_get_parameters()
@@ -621,8 +490,7 @@ sub rest_get_result {
     print_debug_message('rest_get_result', 'jobid: ' . $job_id, 1);
     print_debug_message('rest_get_result', 'type: ' . $type, 1);
     my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
-    my $result = &rest_request_for_accid($url);
-
+    my $result = &rest_request($url);
     print_debug_message('rest_get_result', length($result) . ' characters',
         1);
     print_debug_message('rest_get_result', 'End', 1);
@@ -1150,6 +1018,13 @@ sub load_params {
         $params{'hmmdbparam'} = '52371'
     }
 
+    if ($params{'compressedout'}) {
+        $params{'compressedout'} = 'true';
+    }
+    else {
+        $params{'compressedout'} = 'false';
+    }
+
     if (!$params{'alignView'}) {
         $params{'alignView'} = 'true'
     }
@@ -1408,7 +1283,11 @@ Protein function analysis with HMMER 3 hmmscan.
   --cut_ga              Use the gathering threshold.
   --nobias              Filters.
   --hmmdbparam          hmmdbparam.
+  --compressedout       By default it runs hmm2c plus post-processing (default
+                        output), whereas with compressedout, it gets compressed
+                        output only.
   --alignView           Output alignment in result.
+  --nhits               Number of hits to be displayed.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -1420,7 +1299,6 @@ Protein function analysis with HMMER 3 hmmscan.
   --pollFreq            Poll frequency in seconds (default 3s).
   --jobid               JobId that was returned when an asynchronous job was submitted.
   --outfile             File name for results (default is JobId; for STDOUT).
-  --acc                 Get accession ID, how many from top. The default is 20.
   --multifasta          Treat input as a set of fasta formatted sequences.
   --useSeqId            Use sequence identifiers for output filenames.
                         Only available in multi-fasta and multi-identifier modes.
@@ -1431,6 +1309,7 @@ Protein function analysis with HMMER 3 hmmscan.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --version             Prints out the version of the Client and exit.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan
 

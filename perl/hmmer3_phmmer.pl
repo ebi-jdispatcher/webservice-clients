@@ -60,11 +60,10 @@ use Getopt::Long qw(:config no_ignore_case bundling);
 use File::Basename;
 use Data::Dumper;
 use Time::HiRes qw(usleep);
-use JSON::XS;
-use Try::Tiny;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
+my $version = '2019-01-16 13:32';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -97,10 +96,12 @@ GetOptions(
     'pextend=s'       => \$params{'pextend'},        # Gap Penalties[extend]
     'mx=s'            => \$params{'mx'},             # Gap Penalties[Substitution scoring matrix]
     'nobias'          => \$params{'nobias'},         # Filters
+    'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \$params{'database'},       # Sequence Database
     'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
+    'nhits=i'         => \$params{'nhits'},          # Number of hits to be displayed.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -115,12 +116,12 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
-    'acc=i'           => \$params{'acc'},             # Get accession ID, how many from top
     'multifasta'      => \$params{'multifasta'},     # Multiple fasta input
     'useSeqId'        => \$params{'useSeqId'},       # Seq Id file name
     'maxJobs=i'       => \$params{'maxJobs'},        # Max. parallel jobs
 
     'verbose'         => \$params{'verbose'},        # Increase output level
+    'version'         => \$params{'version'},        # Prints out the version of the Client and exit.
     'quiet'           => \$params{'quiet'},          # Decrease output level
     'debugLevel=i'    => \$params{'debugLevel'},     # Debugging level
     'baseUrl=s'       => \$baseUrl,                  # Base URL for service.
@@ -158,6 +159,7 @@ if (
             || $params{'status'}
             || $params{'params'}
             || $params{'paramDetail'}
+            || $params{'version'}
     )
         && !(defined($ARGV[0]) || defined($params{'sequence'}))
 ) {
@@ -175,6 +177,12 @@ elsif ($params{'params'}) {
 # Get parameter details
 elsif ($params{'paramDetail'}) {
     &print_param_details($params{'paramDetail'});
+}
+
+# Print Client version
+elsif ($params{'version'}) {
+  print STDOUT 'Revision: ' . $version, "\n";
+  exit(1);
 }
 
 # Job status
@@ -246,7 +254,7 @@ sub rest_user_agent() {
     my $ua = LWP::UserAgent->new();
     # Set 'User-Agent' HTTP header to identifiy the client.
     my $revisionNumber = 0;
-    $revisionNumber = $1 if ('$Revision$' =~ m/(\d+)/);
+    $revisionNumber = "Revision: " . $version;
     $ua->agent("EBI-Sample-Client/$revisionNumber ($scriptName; $OSNAME) " . $ua->agent());
     # Configure HTTP proxy support from environment.
     $ua->env_proxy;
@@ -335,202 +343,6 @@ sub rest_request {
 
     # Return the response data
     return $retVal;
-}
-=head2 rest_request_for_accid()
-
-Perform a REST request (HTTP GET).
-
-  my $response_str = &rest_request($url);
-
-=cut
-
-sub rest_request_for_accid {
-    print_debug_message('rest_request_for_accid', 'Begin', 11);
-    my $requestUrl = shift;
-    print_debug_message('rest_request_for_accid', 'URL: ' . $requestUrl, 11);
-
-    # Get an LWP UserAgent.
-    $ua = &rest_user_agent() unless defined($ua);
-    # Available HTTP compression methods.
-    my $can_accept;
-    eval {
-        $can_accept = HTTP::Message::decodable();
-    };
-    $can_accept = '' unless defined($can_accept);
-    # Perform the request
-    my $response = $ua->get($requestUrl,
-        'Accept-Encoding' => $can_accept, # HTTP compression.
-    );
-
-    # Unpack possibly compressed response.
-    my $retVal;
-    if (defined($can_accept) && $can_accept ne '') {
-        $retVal = $response->decoded_content();
-    }
-    # If unable to decode use orginal content.
-    $retVal = $response->content() unless defined($retVal);
-    # Check for an error.
-    &rest_error($response, $retVal);
-    print_debug_message('rest_request', 'End', 11);
-
-    my @lines = split /\n/, $retVal;
-
-    my $v_cnt = 0;
-    my $top_acc = 20;
-    if (defined $params{'acc'}) {
-        $top_acc = $params{'acc'};
-    }
-
-    my $new_id_len = 0;
-    foreach my $line (@lines) {
-
-        # Updating HMMER numeric ID to Accession
-        if ($v_cnt >= $top_acc) {
-            last;
-        }
-
-        my $where_id_begin = index($line, '>>');
-
-        if ($where_id_begin > -1) {
-            $v_cnt++;
-
-            my $grab_id = substr($line, $where_id_begin + 3, 30);
-            $grab_id =~ s/\s*$//; # trim left whitespace
-
-            try {
-
-                my $acc_id = rest_get_accid($grab_id);
-				print_debug_message('rest_request_for_accid', '###>>>>>>>> grab_id: ' . $grab_id, 42);
-				print_debug_message('rest_request_for_accid', '###>>>>>>>> acc_id: ' . $acc_id, 42);
-                if ($grab_id and $acc_id) {
-
-					# List, Header, Details
-
-					my $isChEMBL = substr($acc_id,0,2);
-					my $new_id =$acc_id;
-
-					# List & Details
-                    #my $old_id_forDetail = '  ' . $grab_id . ' ';
-                    #my $new_id_forDetail = '' . substr($new_id . '  ', 0, length($old_id_forDetail));
-                    my $old_id_forDetail = LPad($grab_id, ' ', 10);
-                    my $new_id_forDetail = LPad($new_id, ' ', length($old_id_forDetail)-length($new_id));
-
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forDetail=' . $old_id_forDetail . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forDetail=' . $new_id_forDetail . '==' , 42);
-
-					#1  Details =Sequence list (Start with two spaces) &
-                    $retVal =~ s/$old_id_forDetail/$new_id_forDetail/g;
-
-
-					#2 >> Sequence ID (Start with '>>' and One spaces)
-                    my $old_id_forDetailHeader = '>> ' . $grab_id;
-                    my $new_id_forDetailHeader = '>> ' . $acc_id;                      # both spaces requries to avoid unexpected replacement
-					$retVal =~ s/$old_id_forDetailHeader/$new_id_forDetailHeader/g;
-
-
-					# List (Start with two spaces)
-                    #my $old_id_forList = '   ' . $grab_id . '';
-                    #my $new_id_forList = '' . $new_id . '   ';
-
-                    my $old_id_forList = LPad($grab_id , ' ', 2) . ' ';
-                    my $new_id_forList = LPad($new_id , ' ', 2) . ' ';
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> old_id_forList=' . $old_id_forList . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_id_forList=' . $new_id_forList . '==' , 42);
-					$retVal =~ s/$old_id_forList/$new_id_forList/g;
-
-
-					# >> Sequence ID (Start with '>>' and One spaces)
-
-					# List (Except not start with 00) & Details
-                    my $HMMERID_StartWithZero = sprintf("%09d", $grab_id) . ' ';
-                    my $new_HMMERID_StartWithZero = LPad($new_id, ' ', length($HMMERID_StartWithZero)-length($new_id));
-
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> HMMERID_StartWithZero       =' . $HMMERID_StartWithZero . '==' , 42);
-					print_debug_message('rest_request_for_accid', '###>>>>>>>> new_HMMERID_StartWithZero   =' . $new_HMMERID_StartWithZero . '==' , 42);
-                    $retVal =~ s/$HMMERID_StartWithZero/$new_HMMERID_StartWithZero/g;
-                }
-            }
-            catch {
-                #warn "Caught Getting Accession error: $_";
-                warn " Not found the Accession for: " . $grab_id;
-                #last;
-            }
-        }
-
-    }
-
-    # Return the response data
-    return $retVal;
-}
-
-sub LPad {
-    my ($str, $padding, $length) = @_;
-
-    my $pad_length = $length;
-    $pad_length = 0 if $pad_length < 0;
-    $padding x= $pad_length;
-    $padding.$str;
-}
-
-sub RPad {
-    my ($str, $padding, $length) = @_;
-
-    my $pad_length = $length - length $str;
-    $pad_length = 0 if $pad_length < 0;
-    $padding x= $pad_length;
-    $str.$padding;
-}
-
-=head2 rest_get_accid()
-
-Retrive acc with entry id.
-https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094/xref/uniprot
-https://www.ebi.ac.uk/ebisearch/ws/rest/hmmer_seq/entry/14094?fields=id,content
-
-=cut
-
-sub rest_get_accid {
-    print_debug_message('rest_get_accid', '################ Begin', 42);
-    #my (@reference);
-    my $each_acc_id;
-    my ($entryid) = @_;
-
-    my $domainid = 'hmmer_seq';
-    my $ebisearch_baseUrl = 'https://www.ebi.ac.uk/ebisearch/ws/rest/';
-
-    my $url = $ebisearch_baseUrl . $domainid . "/entry/" . $entryid . "?fields=id,content";
-    my $reference_list_xml_str = &rest_request($url);
-    my $reference_list_xml = XMLin($reference_list_xml_str);
-
-    # read XML file
-    my $data = XMLin($reference_list_xml_str);
-    my $acc_info = $data->{'entries'}->{'entry'}->{'fields'}->{'field'}->{'content'}->{'values'}->{'value'};
-
-    if ($acc_info) {
-
-        my $decoded;
-
-        try {
-            $decoded = JSON::XS::decode_json($acc_info);
-        }
-        catch {
-            warn "Caught JSON::XS decode error: $_";
-			print_debug_message('rest_get_accid', '### catch ###' , 42);
-        };
-
-        my @dbs1 = $decoded->{'db'};
-        my @selected_db = $dbs1[0]->[$db_index];
-
-        $each_acc_id = $selected_db[0]->[0]->{'dn'};
-
-    }
-    else {
-        print_debug_message('rest_get_accid', '=acc_info NONE: ', 42);
-    }
-
-    print_debug_message('rest_get_accid', 'End', 42);
-	print_debug_message('rest_get_accid', '###>>>>>>>> each_acc_id: ' . $each_acc_id, 42);
-    return($each_acc_id);
 }
 
 =head2 rest_get_parameters()
@@ -680,8 +492,7 @@ sub rest_get_result {
     print_debug_message('rest_get_result', 'jobid: ' . $job_id, 1);
     print_debug_message('rest_get_result', 'type: ' . $type, 1);
     my $url = $baseUrl . '/result/' . $job_id . '/' . $type;
-    my $result = &rest_request_for_accid($url);
-
+    my $result = &rest_request($url);
     print_debug_message('rest_get_result', length($result) . ' characters',
         1);
     print_debug_message('rest_get_result', 'End', 1);
@@ -1228,6 +1039,13 @@ sub load_params {
         $params{'nobias'} = 'true'
     }
 
+    if ($params{'compressedout'}) {
+        $params{'compressedout'} = 'true';
+    }
+    else {
+        $params{'compressedout'} = 'false';
+    }
+
     if (!$params{'alignView'}) {
         $params{'alignView'} = 'true'
     }
@@ -1487,9 +1305,13 @@ Protein function analysis with HMMER 3 phmmer.
   --pextend             Gap Penalties[extend].
   --mx                  Gap Penalties[Substitution scoring matrix].
   --nobias              Filters.
+  --compressedout       By default it runs hmm2c plus post-processing (default
+                        output), whereas with compressedout, it gets compressed
+                        output only.
   --alignView           Output alignment in result.
   --evalue              Expectation value cut-off for reporting target profiles in
                         the per-target output.
+  --nhits               Number of hits to be displayed.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -1501,7 +1323,6 @@ Protein function analysis with HMMER 3 phmmer.
   --pollFreq            Poll frequency in seconds (default 3s).
   --jobid               JobId that was returned when an asynchronous job was submitted.
   --outfile             File name for results (default is JobId; for STDOUT).
-  --acc                 Get accession ID, how many from top. The default is 20.
   --multifasta          Treat input as a set of fasta formatted sequences.
   --useSeqId            Use sequence identifiers for output filenames.
                         Only available in multi-fasta and multi-identifier modes.
@@ -1512,6 +1333,7 @@ Protein function analysis with HMMER 3 phmmer.
   --paramDetail         Display details for input parameter.
   --quiet               Decrease output.
   --verbose             Increase output.
+  --version             Prints out the version of the Client and exit.
   --baseUrl             Base URL. Defaults to:
                         https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer
 
