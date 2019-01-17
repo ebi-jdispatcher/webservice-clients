@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/mapmi';
-my $version = '2019-01-16 16:04';
+my $version = '2019-01-17 15:15';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -768,14 +768,6 @@ sub load_params {
 
     if (!$params{'maxloop'}) {
         $params{'maxloop'} = '4'
-    }
-
-    if (!$params{'metazoa_species'}) {
-        $params{'metazoa_species'} = 'Caenorhabditis_elegans,Drosophila_melanogaster'
-    }
-
-    if (!$params{'ensembl_species'}) {
-        $params{'ensembl_species'} = 'Danio_rerio,Homo_sapiens,Mus_musculus'
     }
 
     print_debug_message('load_params', 'End', 1);

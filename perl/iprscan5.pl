@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/iprscan5';
-my $version = '2019-01-16 16:04';
+my $version = '2019-01-17 15:15';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -975,10 +975,6 @@ sub load_params {
 
     if (!$params{'pathways'}) {
         $params{'pathways'} = 'true'
-    }
-
-    if (!$params{'appl'}) {
-        $params{'appl'} = 'ProDom,PRINTS,PIRSF,PfamA,SMART,TIGRFAM,PrositeProfiles,HAMAP,PrositePatterns,SuperFamily,SignalP,TMHMM,Panther,Gene3d,Phobius,Coils,CDD,SFLD,MobiDBLite'
     }
 
     print_debug_message('load_params', 'End', 1);

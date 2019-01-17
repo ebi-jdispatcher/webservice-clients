@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/seqcksum';
-my $version = '2019-01-16 16:04';
+my $version = '2019-01-17 15:15';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -743,10 +743,6 @@ sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
     # Pass default values and fix bools (without default value)
-    if (!$params{'cksmethod'}) {
-        $params{'cksmethod'} = 'crc,spcrc,altcrc,cdigest,md,shaa,shab,shac,shad,shae'
-    }
-
     if (!$params{'length'}) {
         $params{'length'} = 'true'
     }

@@ -55,7 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mapmi'
-version = u'2019-01-16 16:04'
+version = u'2019-01-17 15:15'
 
 # Set interval for checking status
 pollFreq = 3
@@ -144,11 +144,14 @@ def getUserAgent():
     urllib_agent = u'Python-urllib/%s' % urllib_version
     clientRevision = version
     # Prepend client specific agent string.
+    try:
+        pythonversion = platform.python_version()
+        pythonsys = platform.system()
+    except ValueError:
+        pythonversion, pythonsys = "Unknown", "Unknown"
     user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename(__file__),
-        platform.python_version(), platform.system(),
-        urllib_agent
-    )
+        clientRevision, os.path.basename(__file__),
+        pythonversion, pythonsys, urllib_agent)
     printDebugMessage(u'getUserAgent', u'user_agent: ' + user_agent, 12)
     printDebugMessage(u'getUserAgent', u'End', 11)
     return user_agent
@@ -588,14 +591,10 @@ elif options.email and not options.jobid:
         params['maxloop'] = options.maxloop
     
 
-    if not options.metazoa_species:
-        params['metazoa_species'] = 'Caenorhabditis_elegans,Drosophila_melanogaster'
     if options.metazoa_species:
         params['metazoa_species'] = options.metazoa_species
     
 
-    if not options.ensembl_species:
-        params['ensembl_species'] = 'Danio_rerio,Homo_sapiens,Mus_musculus'
     if options.ensembl_species:
         params['ensembl_species'] = options.ensembl_species
     
