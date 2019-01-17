@@ -46,6 +46,7 @@ except ImportError:
 
 # Service base URL
 baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
+version = u'2019-01-17 15:15'
 
 # Output level
 outputLevel = 1
@@ -119,8 +120,6 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/"""
 
-version = "1.0"
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -130,19 +129,21 @@ def printDebugMessage(functionName, message, level):
 
 # User-agent for request.
 def getUserAgent():
-    printDebugMessage('getUserAgent', 'Begin', 11)
-    urllib_agent = 'Python-urllib/%s' % urllib_version
-    clientRevision = '$Revision$'
-    clientVersion = '0'
-    if len(clientRevision) > 11:
-        clientVersion = clientRevision[11:-2]
-    user_agent = 'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
-        clientVersion, os.path.basename(__file__),
-        platform.python_version(), platform.system(),
-        urllib_agent
-    )
-    printDebugMessage('getUserAgent', 'user_agent: ' + user_agent, 12)
-    printDebugMessage('getUserAgent', 'End', 11)
+    printDebugMessage(u'getUserAgent', u'Begin', 11)
+    # Agent string for urllib2 library.
+    urllib_agent = u'Python-urllib/%s' % urllib_version
+    clientRevision = version
+    # Prepend client specific agent string.
+    try:
+        pythonversion = platform.python_version()
+        pythonsys = platform.system()
+    except ValueError:
+        pythonversion, pythonsys = "Unknown", "Unknown"
+    user_agent = u'EBI-Sample-Client/%s (%s; Python %s; %s) %s' % (
+        clientRevision, os.path.basename(__file__),
+        pythonversion, pythonsys, urllib_agent)
+    printDebugMessage(u'getUserAgent', u'user_agent: ' + user_agent, 12)
+    printDebugMessage(u'getUserAgent', u'End', 11)
     return user_agent
 
 
@@ -295,11 +296,18 @@ if __name__ == '__main__':
                       help='decrease output level')
     parser.add_option('--verbose', action='store_true',
                       help='increase output level')
+    parser.add_option('--version', action='store_true',
+                      help='Prints out the version of the Client and exit.')
     parser.add_option('--baseUrl', default=baseUrl,
                       help='base URL for dbfetch')
     parser.add_option('--debugLevel', type='int',
                       default=debugLevel, help='debug output level')
     (options, args) = parser.parse_args()
+
+    # Print Client version
+    if options.version:
+        print("Revision: %s" % version)
+        sys.exit()
 
     # No arguments, print usage
     if len(args) < 1:

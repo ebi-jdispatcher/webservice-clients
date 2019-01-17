@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-dbfetch_lwp.pl
+dbfetch.pl
 
 =head1 DESCRIPTION
 
@@ -81,6 +81,7 @@ use constant MAX_CHUNK_SIZE => 100;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
+my $version = '2019-01-17 15:15';
 
 # Output level
 my $outputLevel = 1;
@@ -93,6 +94,7 @@ my %params = ( 'debugLevel' => 0 );
 GetOptions(
     'quiet'        => \$params{'quiet'},         # Decrease output level
     'verbose'      => \$params{'verbose'},       # Increase output level
+    'version'      => \$params{'version'},        # Prints out the version of the Client and exit.
     'debugLevel=i' => \$params{'debugLevel'},    # Debug output level
     'baseUrl=s'    => \$baseUrl,                 # Base URL for service.
 );
@@ -119,6 +121,12 @@ if ( $params{'help'} || $numOpts == 0 ) {
 
 # Debug mode: show the base URL
 &print_debug_message( 'MAIN', 'baseUrl: ' . $baseUrl, 1 );
+
+# Print Client version
+if ($params{'version'}) {
+  print STDOUT 'Revision: ' . $version, "\n";
+  exit(1);
+}
 
 my $method = shift;
 
