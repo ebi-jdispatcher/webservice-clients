@@ -31,7 +31,7 @@ RUN apt-get -y upgrade \
 
 # Perl Dependencies
 RUN curl -L https://cpanmin.us | perl - App::cpanminus \
- && cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck JSON::XS
+ && cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck
 
 # Python Dependencies
 RUN rm -rf /usr/bin/python && ln -s /usr/bin/pip3 /usr/bin/pip \

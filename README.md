@@ -40,7 +40,6 @@ Install dependencies with:
 cpan LWP
 cpan XML::Simple
 cpan YAML::Syck
-cpan JSON::XS
 ```
 
 An example test for Clustal Omega Perl client:
