@@ -55,7 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan'
-version = u'2019-01-17 15:15'
+version = u'2019-01-28 16:39'
 
 # Set interval for checking status
 pollFreq = 3
@@ -106,6 +106,12 @@ parser.add_option('--status', action="store_true", help='Get job status.')
 parser.add_option('--resultTypes', action='store_true', help='Get result types.')
 parser.add_option('--params', action='store_true', help='List input parameters.')
 parser.add_option('--paramDetail', help='Get details for parameter.')
+parser.add_option('--multifasta', action='store_true', help='Treat input as a set of fasta formatted sequences.')
+parser.add_option('--useSeqId', action='store_true', help='Use sequence identifiers for output filenames.'
+                                                          'Only available in multi-fasta and multi-identifier modes.')
+parser.add_option('--maxJobs', type='int', help='Maximum number of concurrent jobs. '
+                                                'Only available in multifasta or list file modes.')
+
 parser.add_option('--quiet', action='store_true', help='Decrease output level.')
 parser.add_option('--verbose', action='store_true', help='Increase output level.')
 parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
@@ -131,6 +137,14 @@ if options.pollFreq:
 
 if options.baseUrl:
     baseUrl = options.baseUrl
+if options.multifasta:
+    multifasta = options.multifasta
+
+if options.useSeqId:
+    useSeqId = options.useSeqId
+
+if options.maxJobs:
+    maxJobs = options.maxJobs
 
 
 # Debug print
@@ -271,6 +285,40 @@ def serviceRun(email, title, params):
     printDebugMessage(u'serviceRun', u'jobId: ' + jobId, 2)
     printDebugMessage(u'serviceRun', u'End', 1)
     return jobId
+def multipleServiceRun(email, title, params, useSeqId, maxJobs, outputLevel):
+    seqs = params['sequence']
+    seqs = seqs.split(">")[1:]
+    i = 0
+    j = maxJobs
+    done = 0
+    jobs = []
+    while done < len(seqs):
+        c = 0
+        for seq in seqs[i:j]:
+            c += 1
+            params['sequence'] = ">" + seq
+            if c <= int(maxJobs):
+                jobId = serviceRun(options.email, options.title, params)
+                jobs.append(jobId)
+                if outputLevel > 0:
+                    if useSeqId:
+                        print("Submitting job for: %s" % str(seq.split()[0]))
+                    else:
+                        print("JobId: " + jobId, file=sys.stderr)
+        for k, jobId in enumerate(jobs[:]):
+            if outputLevel > 0:
+                print("JobId: " + jobId, file=sys.stderr)
+            else:
+                print(jobId)
+            if useSeqId:
+                options.outfile = str(seqs[i + k].split()[0])
+            getResult(jobId)
+            done += 1
+            jobs.remove(jobId)
+        i += maxJobs
+        j += maxJobs
+        time.sleep(pollFreq)
+
 
 
 # Get job status
@@ -628,20 +676,31 @@ elif options.email and not options.jobid:
 
 
     # Submit the job
-    jobId = serviceRun(options.email, options.title, params)
-    if options.asyncjob: # Async mode
-        print(jobId)
-        if outputLevel > 0:
-            print("To check status: python %s --status --jobid %s"
-                  "" % (os.path.basename(__file__), jobId))
+    if options.multifasta:
+        multipleServiceRun(options.email, options.title, params,
+                           options.useSeqId, options.maxJobs,
+                           outputLevel)
     else:
-        # Sync mode
-        if outputLevel > 0:
-            print("JobId: " + jobId, file=sys.stderr)
-        else:
+        if options.useSeqId:
+            print("Warning: --useSeqId option ignored.")
+        if options.maxJobs:
+            print("Warning: --maxJobs option ignored.")
+
+        jobId = serviceRun(options.email, options.title, params)
+        if options.asyncjob: # Async mode
             print(jobId)
-        time.sleep(pollFreq)
-        getResult(jobId)
+            if outputLevel > 0:
+                print("To check status: python %s --status --jobid %s"
+                      "" % (os.path.basename(__file__), jobId))
+        else:
+            # Sync mode
+            if outputLevel > 0:
+                print("JobId: " + jobId, file=sys.stderr)
+            else:
+                print(jobId)
+            time.sleep(pollFreq)
+            getResult(jobId)
+
 # Get job status
 elif options.jobid and options.status:
     printGetStatus(options.jobid)
