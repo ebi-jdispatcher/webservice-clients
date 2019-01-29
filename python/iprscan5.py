@@ -55,7 +55,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/iprscan5'
-version = u'2019-01-28 16:39'
+version = u'2019-01-29 14:22'
 
 # Set interval for checking status
 pollFreq = 3
@@ -552,12 +552,12 @@ elif options.version:
 # Submit job
 elif options.email and not options.jobid:
     params = {}
-    if len(args) == 1:
+    if len(args) == 1 and "true" not in args and "false" not in args:
         if os.path.exists(args[0]):  # Read file into content
             params[u'sequence'] = readFile(args[0])
         else:  # Argument is a sequence id
             params[u'sequence'] = args[0]
-    elif len(args) == 2:
+    elif len(args) == 2 and "true" not in args and "false" not in args:
         if os.path.exists(args[0]) and os.path.exists(args[1]):  # Read file into content
             params[u'asequence'] = readFile(args[0])
             params[u'bsequence'] = readFile(args[1])
