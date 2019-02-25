@@ -101,7 +101,7 @@ GetOptions(
     'concolormap=s'   => \$params{'concolormap'},    # Consensus color map
     'congroupmap=s'   => \$params{'congroupmap'},    # Consensus group map
     'congaps'         => \$params{'congaps'},        # Count gaps during consensus compuatations
-    'sequence=a'      => \$params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
+    'sequence=s'      => \$params{'sequence'},       # Sequence similarity search result (e.g. BLAST or FASTA search report) or a multiple sequence alignment.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
