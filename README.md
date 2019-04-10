@@ -16,7 +16,7 @@ These clients are generated from the service (XML) description with
 * [Python](python)
 * [Java](java)
 
-*Note:* A number of "older" REST and SOAP clients in a range of programming languages is now [deprecated](deprecated)
+*Note:* A number of "older" REST and SOAP clients in a range of programming languages are now [deprecated](deprecated)
 but still available for those who might be interested. In addition to Perl, Python and Java, clients are available
 in C#, Visual Basic .NET, Ruby and PHP, using a variety of different REST/SOAP libraries.
 
