@@ -16,7 +16,7 @@ These clients are generated from the service (XML) description with
 * [Python](python)
 * [Java](java)
 
-*Note:* A number of "older" REST and SOAP clients in a range of programming languages is now [deprecated](deprecated)
+*Note:* A number of "older" REST and SOAP clients in a range of programming languages are now [deprecated](deprecated)
 but still available for those who might be interested. In addition to Perl, Python and Java, clients are available
 in C#, Visual Basic .NET, Ruby and PHP, using a variety of different REST/SOAP libraries.
 
@@ -32,7 +32,7 @@ git clone https://github.com/ebi-wp/webservice-clients.git
 
 ### Perl clients [![perl](https://img.shields.io/badge/perl-5.22.0+-blue.svg?style=flat)]()
 
-In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as Perl dependencies. Additional instruction on how to install Perl and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
+In order to run Perl clients, Perl (tested version 5.22.0) needs to installed as well as Perl dependencies. Additional instructions on how to install Perl and its dependencies are [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
 Install dependencies with:
 ```bash
@@ -52,7 +52,7 @@ perl clustalo.pl --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:
 
 Specially if you have no root access to your machine, you might need to
 use [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/).
-Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed. Additional instruction on how to install Python and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
+Prepare a virtual environment where all the Python (tested version 3.6.5) dependencies will be installed. Additional instructions on how to install Python and its dependencies are [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
 ```bash
 virtualenv -p `which python` env
@@ -71,21 +71,21 @@ An example test for Clustal Omega Python client:
 python clustalo.py --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:wap_pig
 ```
 
-### Java clients [![java](https://img.shields.io/badge/java-1.8+-blue.svg?style=flat)]()
+### Java clients [![java](https://img.shields.io/badge/java-1.8-blue.svg?style=flat)]()
 
 In order to run Java clients, Java (tested version 1.8.0_161") as well as ant (tested version 1.10.5),
-needs to installed. Additional instruction on how to install Java and its decencies is [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
+needs to installed. *Note Java 9 and above are currently not supported.* Additional instructions on how to install Java and its dependencies are [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
-The Java source code needs to be compiled with `ant` as follows:
-```bash
-# if ant build fails on the first run, try the command again
-ant -lib lib
-```
-
-An example test for Clustal Omega Java client:
+The clients are provided here as self-contained JAR files. (The source code is available in the [webservice-clients-generator repository](https://github.com/ebi-wp/webservice-clients-generator)) To run them on all platforms, an example for the Clustal Omega Java client is:
 
 ```bash
 java -jar clustalo.jar --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:wap_pig
+```
+
+On Linux and OSX you can use the simpler:
+
+```bash
+./clustalo.jar --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:wap_pig
 ```
 
 ## Running clients with Docker
