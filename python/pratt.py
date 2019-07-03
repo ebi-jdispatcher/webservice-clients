@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/pratt'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,41 +71,41 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--minPerc', help=('Set the minimum percentage of the input sequences that should match a'
+parser.add_option('--minPerc', type=int, help=('Set the minimum percentage of the input sequences that should match a'
                   'pattern (C%). If you set this to, say 80, Pratt will only report'
                   'patterns matching at least 80 % of the sequences input.'))
-parser.add_option('--patternPosition', help=('Pattern position in sequence (PP parameter)'))
-parser.add_option('--maxPatternLength', help=('Maximum pattern length (PL parameter) allows you to set the maximum'
+parser.add_option('--patternPosition', type=str, help=('Pattern position in sequence (PP parameter)'))
+parser.add_option('--maxPatternLength', type=int, help=('Maximum pattern length (PL parameter) allows you to set the maximum'
                   'length of a pattern. The length of the pattern C-x(2,4)-[DE] is'
                   '1+4+1=6. The memory requirement of Pratt depends on L; a higher L'
                   'value gives higher memory requirement.'))
-parser.add_option('--maxNumPatternSymbols', help=('Maximum number of pattern symbols (PN parameter). Using this you can'
+parser.add_option('--maxNumPatternSymbols', type=int, help=('Maximum number of pattern symbols (PN parameter). Using this you can'
                   'set the maximum number of symbols in a pattern. The pattern'
                   'C-x(2,4)-[DE] has 2 symbols (C and [DE]). When PN is increased, Pratt'
                   'will require more memory.'))
-parser.add_option('--maxNumWildcard', help=('Maximum length of a widecard (x). Using this option you can set the'
+parser.add_option('--maxNumWildcard', type=int, help=('Maximum length of a widecard (x). Using this option you can set the'
                   'maximum length of a wildcard (PX parameter). Increasing this will'
                   'increase the time used by Pratt, and also slightly the memory'
                   'required.'))
-parser.add_option('--maxNumFlexSpaces', help=('Maximum length of flexible spaces. Using this option you can set the'
+parser.add_option('--maxNumFlexSpaces', type=int, help=('Maximum length of flexible spaces. Using this option you can set the'
                   'maximum number of flexible wildcards (matching a variable number of'
                   'arbitrary sequence symbols) (FN parameter). Increasing this will'
                   'increase the time used by Pratt.'))
-parser.add_option('--maxFlexibility', help=('Maximum flexibility. You can set the maximum flexibility of a flexible'
+parser.add_option('--maxFlexibility', type=int, help=('Maximum flexibility. You can set the maximum flexibility of a flexible'
                   'wildcard (matching a variable number of arbitrary sequence symbols)'
                   '(FL parameter). For instance x(2,4) and x(10,12) has flexibility 2,'
                   'and x(10) has flexibility 0. Increasing this will increase the time'
                   'used by Pratt.'))
-parser.add_option('--maxFlexProduct', help=('Maximum flex. product. Using this option you can set an upper limit on'
+parser.add_option('--maxFlexProduct', type=int, help=('Maximum flex. product. Using this option you can set an upper limit on'
                   'the product of a flexibilities for a pattern (FP parameter). This is'
                   'related to the memory requirements of the search, and increasing the'
                   'limit, increases the memory usage.'))
 parser.add_option('--patternSymbolFile', action='store_true', help=('Pattern Symbol File (BI parameter)'))
-parser.add_option('--numPatternSymbols', help=('Number of pattern symbols used in the initial search (BN parameter).'))
-parser.add_option('--patternScoring', help=('Pattern scoring (S parameter)'))
-parser.add_option('--patternGraph', help=('Pattern Graph (G parameter) allows the use of an alignment or a query'
+parser.add_option('--numPatternSymbols', type=int, help=('Number of pattern symbols used in the initial search (BN parameter).'))
+parser.add_option('--patternScoring', type=str, help=('Pattern scoring (S parameter)'))
+parser.add_option('--patternGraph', type=str, help=('Pattern Graph (G parameter) allows the use of an alignment or a query'
                   'sequence to restrict the pattern search.'))
-parser.add_option('--searchGreediness', help=('Using the greediness parameter (E) you can adjust the greediness of'
+parser.add_option('--searchGreediness', type=int, help=('Using the greediness parameter (E) you can adjust the greediness of'
                   'the search. Setting E to 0 (zero), the search will be exhaustive.'
                   'Increasing E increases the greediness, and decreases the time used in'
                   'the search.'))
@@ -121,8 +122,8 @@ parser.add_option('--patternFormat', action='store_true', help=('PROSITE Pattern
                   'off, patterns are output in a simpler consensus pattern style (for'
                   'instance Cxx--[DE] where x matches exactly one arbitrary sequence'
                   'symbol and - matches zero or one arbitrary sequence symbol).'))
-parser.add_option('--maxNumPatterns', help=('Maximum number of patterns (ON parameter) between 1 and 100.'))
-parser.add_option('--maxNumAlignments', help=('Maximum number of alignments (OA parameter) between 1 and 100.'))
+parser.add_option('--maxNumPatterns', type=int, help=('Maximum number of patterns (ON parameter) between 1 and 100.'))
+parser.add_option('--maxNumAlignments', type=int, help=('Maximum number of alignments (OA parameter) between 1 and 100.'))
 parser.add_option('--printPatterns', action='store_true', help=('Print Patterns in sequences (M parameter) If the M option is set, then'
                   'Pratt will print out the location of the sequence segments matching'
                   'each of the (maximum 52) best patterns. The patterns are given labels'
@@ -131,19 +132,19 @@ parser.add_option('--printPatterns', action='store_true', help=('Print Patterns 
                   'pattern with label C matches the third K-tuple in a sequence C is'
                   'printed out. If several patterns match in the same K-tuple, only the'
                   'best will be printed.'))
-parser.add_option('--printingRatio', help=('Printing ratio (MR parameter). sets the K value (ratio) used for'
+parser.add_option('--printingRatio', type=int, help=('Printing ratio (MR parameter). sets the K value (ratio) used for'
                   'printing the summary information about where in each sequence the'
                   'pattern matches are found.'))
 parser.add_option('--printVertically', action='store_true', help=('Print vertically (MV parameter). if set, the output is printed'
                   'vertically instead of horizontally, vertical output can be better for'
                   'large sequence sets.'))
-parser.add_option('--stype', help=('Defines the type of the sequences to be aligned.'))
-parser.add_option('--sequence', help=('The input set of up to 100 sequences can be entered directly into this'
+parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned.'))
+parser.add_option('--sequence', type=str, help=('The input set of up to 100 sequences can be entered directly into this'
                   'form. The sequences can be in FASTA or UniProtKB/Swiss-Prot format. A'
                   'partially formatted sequences are not accepted. Note that directly'
                   'using data from word processors may yield unpredictable results as'
                   'hidden/control characters may be present.'))
-parser.add_option('--ppfile', help=('Pattern restriction file. The restriction file limits the sequence'
+parser.add_option('--ppfile', type=str, help=('Pattern restriction file. The restriction file limits the sequence'
                   'range via the start/end parameter and is in the format >Sequence'
                   '(start, end). If parameter PP is off, the restiction file will be'
                   'ignored.'))
@@ -254,8 +255,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

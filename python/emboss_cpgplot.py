@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_cpgplot'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,19 +71,19 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--sequence', help=('One or more sequences to be analysed can be entered directly into this'
+parser.add_option('--sequence', type=str, help=('One or more sequences to be analysed can be entered directly into this'
                   'form. Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or'
                   'PHYLIP format. Partially formatted sequences are not accepted.'))
-parser.add_option('--window', help=('The percentage CG content and the Observed frequency of CG is'
+parser.add_option('--window', type=int, help=('The percentage CG content and the Observed frequency of CG is'
                   'calculated within a window whose size is set by this parameter. The'
                   'window is moved down the sequence and these statistics are calculated'
                   'at each position that the window is moved to'))
-parser.add_option('--minlen', help=('This sets the minimum length that a CpG island has to be before it is'
+parser.add_option('--minlen', type=int, help=('This sets the minimum length that a CpG island has to be before it is'
                   'reported.'))
-parser.add_option('--minoe', help=('This sets the minimum average observed to expected ratio of C plus G'
+parser.add_option('--minoe', type=str, help=('This sets the minimum average observed to expected ratio of C plus G'
                   'to CpG in a set of 10 windows that are required before a CpG island is'
                   'reported.'))
-parser.add_option('--minpc', help=('This sets the minimum average percentage of G plus C a set of 10'
+parser.add_option('--minpc', type=str, help=('This sets the minimum average percentage of G plus C a set of 10'
                   'windows that are required before a CpG island is reported.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
@@ -177,8 +178,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

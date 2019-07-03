@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/prank'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,23 +71,23 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--sequence', help=('Three or more sequences to be aligned can be entered directly into'
+parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
                   'this form. The sequences must be in FASTA format. Partially formatted'
                   'sequences are not accepted. Adding a return to the end of the sequence'
                   'may help certain applications understand the input. Note that directly'
                   'using data from word processors may yield unpredictable results as'
                   'hidden/control characters may be present. There is a limit of 500'
                   'sequences or 1MB of data.'))
-parser.add_option('--data_file', help=('A file containing valid sequences in FASTA format can be used as input'
+parser.add_option('--data_file', type=str, help=('A file containing valid sequences in FASTA format can be used as input'
                   'for the sequence similarity search. Word processors files may yield'
                   'unpredictable results as hidden/control characters may be present in'
                   'the files. It is best to save files with the Unix format option to'
                   'avoid hidden Windows characters.'))
-parser.add_option('--tree_file', help=('Tree file in Newick Binary Format.'))
+parser.add_option('--tree_file', type=str, help=('Tree file in Newick Binary Format.'))
 parser.add_option('--do_njtree', action='store_true', help=('compute guide tree from input alignment'))
 parser.add_option('--do_clustalw_tree', action='store_true', help=('compute guide tree using Clustalw2'))
-parser.add_option('--model_file', help=('Structure Model File.'))
-parser.add_option('--output_format', help=('Format for output alignment file'))
+parser.add_option('--model_file', type=str, help=('Structure Model File.'))
+parser.add_option('--output_format', type=str, help=('Format for output alignment file'))
 parser.add_option('--trust_insertions', action='store_true', help=('Trust inferred insertions and do not allow their later matching'))
 parser.add_option('--show_insertions_with_dots', action='store_true', help=('Show gaps created by insertions as dots, deletions as dashes'))
 parser.add_option('--use_log_space', action='store_true', help=('Use log space for probabilities; slower but necessary for large'
@@ -96,17 +97,17 @@ parser.add_option('--use_codon_model', action='store_true', help=('Use codon sub
 parser.add_option('--translate_DNA', action='store_true', help=('Translate DNA sequences to proteins and backtranslate results'))
 parser.add_option('--mt_translate_DNA', action='store_true', help=('Translate DNA sequences to mt proteins, align and backtranslate'
                   'results'))
-parser.add_option('--gap_rate', help=('Gap Opening Rate'))
-parser.add_option('--gap_extension', help=('Gap Extension Probability'))
-parser.add_option('--tn93_kappa', help=('Parameter kappa for Tamura-Nei DNA substitution model'))
-parser.add_option('--tn93_rho', help=('Parameter rho for Tamura-Nei DNA substitution model'))
-parser.add_option('--guide_pairwise_distance', help=('Fixed pairwise distance used for generating scoring matrix in guide'
+parser.add_option('--gap_rate', type=str, help=('Gap Opening Rate'))
+parser.add_option('--gap_extension', type=str, help=('Gap Extension Probability'))
+parser.add_option('--tn93_kappa', type=str, help=('Parameter kappa for Tamura-Nei DNA substitution model'))
+parser.add_option('--tn93_rho', type=str, help=('Parameter rho for Tamura-Nei DNA substitution model'))
+parser.add_option('--guide_pairwise_distance', type=str, help=('Fixed pairwise distance used for generating scoring matrix in guide'
                   'tree computation'))
-parser.add_option('--max_pairwise_distance', help=('Maximum pairwise distance allowed in progressive steps of multiple'
+parser.add_option('--max_pairwise_distance', type=str, help=('Maximum pairwise distance allowed in progressive steps of multiple'
                   'alignment; allows making matching more stringent or flexible'))
-parser.add_option('--branch_length_scaling', help=('Factor for scaling all branch lengths'))
-parser.add_option('--branch_length_fixed', help=('Fixed value for all branch lengths'))
-parser.add_option('--branch_length_maximum', help=('Upper limit for branch lengths'))
+parser.add_option('--branch_length_scaling', type=str, help=('Factor for scaling all branch lengths'))
+parser.add_option('--branch_length_fixed', type=str, help=('Fixed value for all branch lengths'))
+parser.add_option('--branch_length_maximum', type=str, help=('Upper limit for branch lengths'))
 parser.add_option('--use_real_branch_lengths', action='store_true', help=('Use real branch lengths; using this can be harmful as scoring matrices'
                   'became flat for large distances; rather use max_pairwise_distance'))
 parser.add_option('--do_no_posterior', action='store_true', help=('Do not compute posterior probability; much faster if those not needed'))
@@ -116,15 +117,15 @@ parser.add_option('--penalise_terminal_gaps', action='store_true', help=('Penali
 parser.add_option('--do_posterior_only', action='store_true', help=('Compute posterior probabilities for given *aligned* sequences; may be'
                   'unstable but useful'))
 parser.add_option('--use_chaos_anchors', action='store_true', help=('Use chaos anchors to massively speed up alignments; DNA only'))
-parser.add_option('--minimum_anchor_distance', help=('Minimum chaos anchor distance'))
-parser.add_option('--maximum_anchor_distance', help=('Maximum chaos anchor distance'))
-parser.add_option('--skip_anchor_distance', help=('Chaos anchor skip distance'))
-parser.add_option('--drop_anchor_distance', help=('Chaos anchor drop distance'))
+parser.add_option('--minimum_anchor_distance', type=int, help=('Minimum chaos anchor distance'))
+parser.add_option('--maximum_anchor_distance', type=int, help=('Maximum chaos anchor distance'))
+parser.add_option('--skip_anchor_distance', type=int, help=('Chaos anchor skip distance'))
+parser.add_option('--drop_anchor_distance', type=int, help=('Chaos anchor drop distance'))
 parser.add_option('--output_ancestors', action='store_true', help=('Output ancestral sequences and probability profiles; note additional'
                   'files'))
-parser.add_option('--noise_level', help=('Noise level; progress and debugging information'))
+parser.add_option('--noise_level', type=int, help=('Noise level; progress and debugging information'))
 parser.add_option('--stay_quiet', action='store_true', help=('Stay quiet; disable all progress information'))
-parser.add_option('--random_seed', help=('Set seed for random number generator; not recommended'))
+parser.add_option('--random_seed', type=int, help=('Set seed for random number generator; not recommended'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -218,8 +219,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

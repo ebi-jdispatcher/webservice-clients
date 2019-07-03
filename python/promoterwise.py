@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/promoterwise'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,8 +71,8 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--hitoutput', help=('Hit list output format'))
-parser.add_option('--asequence', help=('The first DNA sequence to be aligned can be entered directly into the'
+parser.add_option('--hitoutput', type=str, help=('Hit list output format'))
+parser.add_option('--asequence', type=str, help=('The first DNA sequence to be aligned can be entered directly into the'
                   'form. The sequence must be in a recognised format eg. GCG, FASTA,'
                   'EMBL, GenBank. Partially formatted sequences are not accepted. Adding'
                   'a return to the end of the sequence may help certain applications'
@@ -79,7 +80,7 @@ parser.add_option('--asequence', help=('The first DNA sequence to be aligned can
                   'processors may yield unpredictable results as hidden/control'
                   'characters may be present. There is a limit of 1MB for the sequence'
                   'entry.'))
-parser.add_option('--bsequence', help=('The second DNA sequence to be aligned can be entered directly into the'
+parser.add_option('--bsequence', type=str, help=('The second DNA sequence to be aligned can be entered directly into the'
                   'form. The sequence must be in a recognised format eg. GCG, FASTA,'
                   'EMBL, GenBank. Partially formatted sequences are not accepted. Adding'
                   'a return to the end of the sequence may help certain applications'
@@ -180,8 +181,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mapmi'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,17 +71,17 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--scorethr', help=('Score threshold. The minimum score for a candidate hairpin.'))
-parser.add_option('--longext', help=('Long match extention (bp).'))
-parser.add_option('--shortext', help=('Short match extention (bp).'))
-parser.add_option('--maxmis', help=('Maximum mature mismatches.'))
-parser.add_option('--mismatchpen', help=('Mature mismatch penalty.'))
-parser.add_option('--bowtie', help=('Maximum allowed matches per candidate genome (Bowtie-m). 0 for'
+parser.add_option('--scorethr', type=int, help=('Score threshold. The minimum score for a candidate hairpin.'))
+parser.add_option('--longext', type=int, help=('Long match extention (bp).'))
+parser.add_option('--shortext', type=int, help=('Short match extention (bp).'))
+parser.add_option('--maxmis', type=int, help=('Maximum mature mismatches.'))
+parser.add_option('--mismatchpen', type=int, help=('Mature mismatch penalty.'))
+parser.add_option('--bowtie', type=int, help=('Maximum allowed matches per candidate genome (Bowtie-m). 0 for'
                   'disable.'))
 parser.add_option('--excludecan', action='store_true', help=('Exclude candidates in loop. Binary toggle to exclude mature.'))
-parser.add_option('--maxloop', help=('Maximum loop overlap. Maximum allowed mature basepairs overlapping'
+parser.add_option('--maxloop', type=int, help=('Maximum loop overlap. Maximum allowed mature basepairs overlapping'
                   'loop.'))
-parser.add_option('--sequence', help=('The query sequence(s) can be entered directly into this form. The'
+parser.add_option('--sequence', type=str, help=('The query sequence(s) can be entered directly into this form. The'
                   'sequence can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF or PHYLIP'
                   'format. A partially formatted sequence is not accepted. Adding a'
                   'return to the end of the sequence may help certain applications'
@@ -88,8 +89,8 @@ parser.add_option('--sequence', help=('The query sequence(s) can be entered dire
                   'processors may yield unpredictable results as hidden/control'
                   'characters may be present. There is a limit of 1MB for the sequence'
                   'entry.'))
-parser.add_option('--metazoa_species', help=('Ensembl Metazoa Species'))
-parser.add_option('--ensembl_species', help=('Ensembl Species'))
+parser.add_option('--metazoa_species', type=str, help=('Ensembl Metazoa Species'))
+parser.add_option('--ensembl_species', type=str, help=('Ensembl Species'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -183,8 +184,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -550,7 +550,7 @@ elif options.email and not options.jobid:
     # Pass default values and fix bools (without default value)
 
     if not options.scorethr:
-        params['scorethr'] = '35'
+        params['scorethr'] = 35
     if options.scorethr:
         params['scorethr'] = options.scorethr
     
@@ -564,13 +564,13 @@ elif options.email and not options.jobid:
     
 
     if not options.maxmis:
-        params['maxmis'] = '1'
+        params['maxmis'] = 1
     if options.maxmis:
         params['maxmis'] = options.maxmis
     
 
     if not options.mismatchpen:
-        params['mismatchpen'] = '10'
+        params['mismatchpen'] = 10
     if options.mismatchpen:
         params['mismatchpen'] = options.mismatchpen
     
@@ -586,7 +586,7 @@ elif options.email and not options.jobid:
     
 
     if not options.maxloop:
-        params['maxloop'] = '4'
+        params['maxloop'] = 4
     if options.maxloop:
         params['maxloop'] = options.maxloop
     

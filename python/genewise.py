@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/genewise'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -79,14 +80,14 @@ parser.add_option('--embl', action='store_true', help=('EMBL feature table forma
 parser.add_option('--ace', action='store_true', help=('Show Ace file gene structure, as in genewise.'))
 parser.add_option('--gff', action='store_true', help=('Show Gene Feature Format file, as in genewise.'))
 parser.add_option('--diana', action='store_true', help=('Show EMBL FT format suitable for diana.'))
-parser.add_option('--init', help=('Model in local/global mode. You should only put the model in global'
+parser.add_option('--init', type=str, help=('Model in local/global mode. You should only put the model in global'
                   'mode if you expect your protein homolog to have homology from start to'
                   'end to the gene in the DNA sequence.'))
-parser.add_option('--splice', help=('Using splice model or GT/AG? Use the full blown model for splice'
+parser.add_option('--splice', type=str, help=('Using splice model or GT/AG? Use the full blown model for splice'
                   'sites, or a simplistic GT/AG. Generally if you are using a DNA'
                   'sequence which is from human or worm, then leave this on. If you are'
                   'using a very different (eg plant) species, switch it off.'))
-parser.add_option('--random', help=('The probability of the model has to compared to an alternative model'
+parser.add_option('--random', type=str, help=('The probability of the model has to compared to an alternative model'
                   '(in fact to all alternative models which are possible) to allow proper'
                   'Bayesian inference. This causes considerable difficulty in these'
                   'algorithms because from a algorithmical point of view we would'
@@ -99,7 +100,7 @@ parser.add_option('--random', help=('The probability of the model has to compare
                   'the gene have to be the only gene in the DNA sequence. This means that'
                   'there are very good splice sites/poly-pyrimidine tracts outside of the'
                   'matched alignment can severely de-rail the alignment.'))
-parser.add_option('--alg', help=('The solutions is different in the genewise21:93 compared to the'
+parser.add_option('--alg', type=str, help=('The solutions is different in the genewise21:93 compared to the'
                   'genewise 6:23 algorithms. (1) In 6:23 we force the external match'
                   'portions of the homology model to be identical to the alternative'
                   'model, thus cancelling each other out. This is a pretty gross'
@@ -115,7 +116,7 @@ parser.add_option('--alg', help=('The solutions is different in the genewise21:9
                   'all the gene model features safe in the knowledge that if the homology'
                   'segments do not justify the match then the external part of the model'
                   'will soak up the additional intron/py-tract/splice site biases.'))
-parser.add_option('--asequence', help=('The protein sequence can be entered directly into this form. The'
+parser.add_option('--asequence', type=str, help=('The protein sequence can be entered directly into this form. The'
                   'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
                   'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
                   'partially formatted sequence is not accepted. Adding a return to the'
@@ -123,7 +124,7 @@ parser.add_option('--asequence', help=('The protein sequence can be entered dire
                   'input. Note that directly using data from word processors may yield'
                   'unpredictable results as hidden/control characters may be present.'
                   'There is a limit of 1MB for the sequence entry.'))
-parser.add_option('--bsequence', help=('The DNA sequence to be compared can be entered directly into the form.'
+parser.add_option('--bsequence', type=str, help=('The DNA sequence to be compared can be entered directly into the form.'
                   'The sequence must be in a recognised format eg. GCG, FASTA, EMBL,'
                   'GenBank. Partially formatted sequences are not accepted. Adding a'
                   'return to the end of the sequence may help certain applications'
@@ -224,8 +225,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

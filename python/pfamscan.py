@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/pfamscan'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,11 +71,11 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--database', help=('The database(s) to search.'))
-parser.add_option('--evalue', help=('Expectation value cut-off.'))
+parser.add_option('--database', type=str, help=('The database(s) to search.'))
+parser.add_option('--evalue', type=str, help=('Expectation value cut-off.'))
 parser.add_option('--asp', action='store_true', help=('Predict active site residues for Pfam-A matches.'))
-parser.add_option('--format', help=('Output format'))
-parser.add_option('--sequence', help=('The input sequence can be entered directly into this form. The'
+parser.add_option('--format', type=str, help=('Output format'))
+parser.add_option('--sequence', type=str, help=('The input sequence can be entered directly into this form. The'
                   'sequence can be in FASTA or UniProtKB/Swiss-Prot format. A partially'
                   'formatted sequence is not accepted. Adding a return to the end of the'
                   'sequence may help certain applications understand the input. Note that'
@@ -187,8 +188,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

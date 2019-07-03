@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/psisearch'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,30 +71,30 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--matrix', help=('The comparison matrix to be used to score alignments when searching'
+parser.add_option('--matrix', type=str, help=('The comparison matrix to be used to score alignments when searching'
                   'the database'))
-parser.add_option('--gapopen', help=('Penalty taken away from the score when a gap is created in sequence.'
+parser.add_option('--gapopen', type=int, help=('Penalty taken away from the score when a gap is created in sequence.'
                   'Increasing the gap opening penalty will decrease the number of gaps in'
                   'the final alignment.'))
-parser.add_option('--gapext', help=('Penalty taken away from the score for each base or residue in the gap.'
+parser.add_option('--gapext', type=int, help=('Penalty taken away from the score for each base or residue in the gap.'
                   'Increasing the gap extension penalty favours short gaps in the final'
                   'alignment, conversly, decreasing the gap extension penalty favours'
                   'long gaps in the final alignment.'))
-parser.add_option('--expthr', help=('Limits the number of scores and alignments reported based on the'
+parser.add_option('--expthr', type=str, help=('Limits the number of scores and alignments reported based on the'
                   'expectation value. This value is the maximum number of times the match'
                   'is expected to occur by chance.'))
 parser.add_option('--mask', action='store_true', help=('Turn on/off the sequence masking for HOEs in PSSM constructions. This'
                   'option allows you to mask sequence characters beyond the alignment'
                   'region when constructing the PSSM, reducing over-extension errors.'))
-parser.add_option('--psithr', help=('Expectation value threshold for automatic selection of matched'
+parser.add_option('--psithr', type=str, help=('Expectation value threshold for automatic selection of matched'
                   'sequences for inclusion in the PSSM at each iteration.'))
-parser.add_option('--scores', help=('Maximum number of alignment score summaries reported in the result'
+parser.add_option('--scores', type=int, help=('Maximum number of alignment score summaries reported in the result'
                   'output.'))
-parser.add_option('--alignments', help=('Maximum number of alignments reported in the result output.'))
+parser.add_option('--alignments', type=int, help=('Maximum number of alignments reported in the result output.'))
 parser.add_option('--hsps', action='store_true', help=('Turn on/off the display of all significant alignments between query'
                   'and database sequence.'))
-parser.add_option('--scoreformat', help=('Different score formats.'))
-parser.add_option('--filter', help=('Filter regions of low sequence complexity. This can avoid issues with'
+parser.add_option('--scoreformat', type=str, help=('Different score formats.'))
+parser.add_option('--filter', type=str, help=('Filter regions of low sequence complexity. This can avoid issues with'
                   'low complexity sequences where matches are found due to composition'
                   'rather then meaningful sequence similarity. However in some cases'
                   'filtering also masks regions of interest and so should be used with'
@@ -108,21 +109,21 @@ parser.add_option('--annotfeats', action='store_true', help=('Turn on/off annota
                   'has been enabled, select sequences of interest and click to Show'
                   'Alignments. This option also enables a new result tab (Domain'
                   'Diagrams) that highlights domain regions.'))
-parser.add_option('--sequence', help=('The query sequence can be entered directly into this form. The'
+parser.add_option('--sequence', type=str, help=('The query sequence can be entered directly into this form. The'
                   'sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-'
                   'Prot format. A partially formatted sequence is not accepted. Adding a'
                   'return to the end of the sequence may help certain applications'
                   'understand the input. Note that directly using data from word'
                   'processors may yield unpredictable results as hidden/control'
                   'characters may be present.'))
-parser.add_option('--database', help=('The databases to run the sequence similarity search against. Multiple'
+parser.add_option('--database', type=str, help=('The databases to run the sequence similarity search against. Multiple'
                   'databases can be selected at the same time.'))
-parser.add_option('--previousjobid', help=('The job identifier for the previous PSI-Search iteration.'))
-parser.add_option('--selectedHits', help=('List of identifiers from the hits of the previous iteration to use to'
+parser.add_option('--previousjobid', type=str, help=('The job identifier for the previous PSI-Search iteration.'))
+parser.add_option('--selectedHits', type=str, help=('List of identifiers from the hits of the previous iteration to use to'
                   'construct the search PSSM for this iteration.'))
-parser.add_option('--bdrfile', help=('Boundary file containing boundary information for pre-selected'
+parser.add_option('--bdrfile', type=str, help=('Boundary file containing boundary information for pre-selected'
                   'sequences.Used for hardmask to clean HOEs.'))
-parser.add_option('--cpfile', help=('Checkpoint file from the previous iteration. Must be in ASN.1 Binary'
+parser.add_option('--cpfile', type=str, help=('Checkpoint file from the previous iteration. Must be in ASN.1 Binary'
                   'Format.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
@@ -231,8 +232,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -680,13 +680,13 @@ elif options.email and not options.jobid:
     
 
     if not options.gapopen:
-        params['gapopen'] = '11'
+        params['gapopen'] = 11
     if options.gapopen:
         params['gapopen'] = options.gapopen
     
 
     if not options.gapext:
-        params['gapext'] = '1'
+        params['gapext'] = 1
     if options.gapext:
         params['gapext'] = options.gapext
     
@@ -710,13 +710,13 @@ elif options.email and not options.jobid:
     
 
     if not options.scores:
-        params['scores'] = '500'
+        params['scores'] = 500
     if options.scores:
         params['scores'] = options.scores
     
 
     if not options.alignments:
-        params['alignments'] = '500'
+        params['alignments'] = 500
     if options.alignments:
         params['alignments'] = options.alignments
     

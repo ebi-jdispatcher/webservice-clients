@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_isochore'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,11 +71,11 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--sequence', help=('The sequence to be analysed can be entered directly into this form.'
+parser.add_option('--sequence', type=str, help=('The sequence to be analysed can be entered directly into this form.'
                   'Sequences can be in GCG, FASTA, EMBL, GenBank, PIR, NBRF, or PHYLIP'
                   'format. Partially formatted sequences are not accepted.'))
-parser.add_option('--window', help=(''))
-parser.add_option('--shift', help=(''))
+parser.add_option('--window', type=int, help=(''))
+parser.add_option('--shift', type=int, help=(''))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -168,8 +169,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/saps'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,13 +71,13 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--sequence', help=('One or more sequences to be analysed can be entered directly into this'
+parser.add_option('--sequence', type=str, help=('One or more sequences to be analysed can be entered directly into this'
                   'form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only), GenBank,'
                   'PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format.'
                   'Partially formatted sequences are not accepted.'))
-parser.add_option('--outputtype', help=('Output type'))
-parser.add_option('--species', help=('Uses the specified species table for quantile comparisons'))
-parser.add_option('--positiveresidues', help=('By default, SAPS treats only lysine (K) and arginine (R) as positively'
+parser.add_option('--outputtype', type=str, help=('Output type'))
+parser.add_option('--species', type=str, help=('Uses the specified species table for quantile comparisons'))
+parser.add_option('--positiveresidues', type=str, help=('By default, SAPS treats only lysine (K) and arginine (R) as positively'
                   'charged residues. Alternatively, Histidine (H) can also be treated as'
                   'positively charged in all parts of the program involving the charge'
                   'alphabet.'))
@@ -173,8 +174,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

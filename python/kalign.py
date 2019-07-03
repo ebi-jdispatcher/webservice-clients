@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/kalign'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,17 +71,17 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', help=('Indicates if the sequences to align are protein or nucleotide'
+parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
                   '(DNA/RNA).'))
-parser.add_option('--format', help=('Format for generated multiple sequence alignment.'))
-parser.add_option('--gapopen', help=('The penalty for opening/closing a gap. Half the value will be'
+parser.add_option('--format', type=str, help=('Format for generated multiple sequence alignment.'))
+parser.add_option('--gapopen', type=str, help=('The penalty for opening/closing a gap. Half the value will be'
                   'subtracted from the alignment score when opening, and half when'
                   'closing a gap.'))
-parser.add_option('--gapext', help=('Penalty for extending a gap'))
-parser.add_option('--termgap', help=('Penalty to extend gaps from the N/C terminal of protein or 5/3'
+parser.add_option('--gapext', type=str, help=('Penalty for extending a gap'))
+parser.add_option('--termgap', type=str, help=('Penalty to extend gaps from the N/C terminal of protein or 5/3'
                   'terminal of nucleotide sequences'))
-parser.add_option('--bonus', help=('A bonus score that is added to each pair of aligned residues'))
-parser.add_option('--sequence', help=('Three or more sequences to be aligned can be entered directly into'
+parser.add_option('--bonus', type=str, help=('A bonus score that is added to each pair of aligned residues'))
+parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
                   'this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only),'
                   'GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only)'
                   'format. Partially formatted sequences are not accepted. Adding a'
@@ -182,8 +183,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

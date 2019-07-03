@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mview'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,26 +71,26 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', help=('Indicates if the sequences to align are protein or nucleotide'
+parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
                   '(DNA/RNA).'))
-parser.add_option('--informat', help=('Format of the input sequence similarity search result or multiple'
+parser.add_option('--informat', type=str, help=('Format of the input sequence similarity search result or multiple'
                   'sequence alignment to be processed.'))
-parser.add_option('--outputformat', help=('Output format for the alignment.'))
-parser.add_option('--htmlmarkup', help=('Amount of HTML markup to be used in the result.'))
+parser.add_option('--outputformat', type=str, help=('Output format for the alignment.'))
+parser.add_option('--htmlmarkup', type=str, help=('Amount of HTML markup to be used in the result.'))
 parser.add_option('--css', action='store_true', help=('Use Cascading Style Sheets'))
-parser.add_option('--pcid', help=('Compute percent identities with respect to'))
+parser.add_option('--pcid', type=str, help=('Compute percent identities with respect to'))
 parser.add_option('--alignment', action='store_true', help=('Show or hide the aligned sequences.'))
 parser.add_option('--ruler', action='store_true', help=('Show or hide the ruler showing the sequence coordinates.'))
-parser.add_option('--width', help=('Width of output alignment.'))
-parser.add_option('--coloring', help=('Basic style of coloring'))
-parser.add_option('--colormap', help=('Color map'))
-parser.add_option('--groupmap', help=('Group map'))
+parser.add_option('--width', type=int, help=('Width of output alignment.'))
+parser.add_option('--coloring', type=str, help=('Basic style of coloring'))
+parser.add_option('--colormap', type=str, help=('Color map'))
+parser.add_option('--groupmap', type=str, help=('Group map'))
 parser.add_option('--consensus', action='store_true', help=('Show or hide consensus sequence derived from the alignment.'))
-parser.add_option('--concoloring', help=('Basic style of consensus coloring'))
-parser.add_option('--concolormap', help=('Consensus color map'))
-parser.add_option('--congroupmap', help=('Consensus group map'))
+parser.add_option('--concoloring', type=str, help=('Basic style of consensus coloring'))
+parser.add_option('--concolormap', type=str, help=('Consensus color map'))
+parser.add_option('--congroupmap', type=str, help=('Consensus group map'))
 parser.add_option('--congaps', action='store_true', help=('Count gaps during consensus compuatations'))
-parser.add_option('--sequence', help=('Sequence similarity search result (e.g. BLAST or FASTA search report)'
+parser.add_option('--sequence', type=str, help=('Sequence similarity search result (e.g. BLAST or FASTA search report)'
                   'or a multiple sequence alignment.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
@@ -184,8 +185,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -596,7 +596,7 @@ elif options.email and not options.jobid:
     
 
     if not options.width:
-        params['width'] = '80'
+        params['width'] = 80
     if options.width:
         params['width'] = options.width
     

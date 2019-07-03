@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_seqret'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,17 +71,17 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', help=('Indicates if the query sequence is protein, DNA or RNA.'))
-parser.add_option('--inputformat', help=('Input format name'))
-parser.add_option('--outputformat', help=('Output format name.'))
+parser.add_option('--stype', type=str, help=('Indicates if the query sequence is protein, DNA or RNA.'))
+parser.add_option('--inputformat', type=str, help=('Input format name'))
+parser.add_option('--outputformat', type=str, help=('Output format name.'))
 parser.add_option('--feature', action='store_true', help=('Use feature information'))
 parser.add_option('--firstonly', action='store_true', help=('Read one sequence and stop'))
 parser.add_option('--reverse', action='store_true', help=('Reverse-complement of input DNA sequences'))
-parser.add_option('--outputcase', help=('Change alphabet case for output sequences.'))
-parser.add_option('--seqrange', help=('Specify a range or section of the input sequence to use in the search.'
+parser.add_option('--outputcase', type=str, help=('Change alphabet case for output sequences.'))
+parser.add_option('--seqrange', type=str, help=('Specify a range or section of the input sequence to use in the search.'
                   'Example: Specifying 34-89 in an input sequence of total length 100,'
                   'will tell EMBOSS seqret to only use residues 34 to 89, inclusive.'))
-parser.add_option('--sequence', help=('One or more sequences to be translated can be entered directly into'
+parser.add_option('--sequence', type=str, help=('One or more sequences to be translated can be entered directly into'
                   'this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only),'
                   'GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only)'
                   'format. Partially formatted sequences are not accepted. Adding a'
@@ -181,8 +182,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

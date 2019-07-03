@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mafft'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,19 +71,19 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--format', help=('Format for generated multiple sequence alignment.'))
-parser.add_option('--matrix', help=('Protein comparison matrix to be used when adding sequences to the'
+parser.add_option('--format', type=str, help=('Format for generated multiple sequence alignment.'))
+parser.add_option('--matrix', type=str, help=('Protein comparison matrix to be used when adding sequences to the'
                   'alignment.'))
-parser.add_option('--gapopen', help=('Penalty for first base/residue in a gap.'))
-parser.add_option('--gapext', help=('Penalty for each additional base/residue in a gap.'))
-parser.add_option('--order', help=('The order in which the sequences appear in the final alignment'))
-parser.add_option('--nbtree', help=('Tree Rebuilding Number'))
+parser.add_option('--gapopen', type=str, help=('Penalty for first base/residue in a gap.'))
+parser.add_option('--gapext', type=str, help=('Penalty for each additional base/residue in a gap.'))
+parser.add_option('--order', type=str, help=('The order in which the sequences appear in the final alignment'))
+parser.add_option('--nbtree', type=int, help=('Tree Rebuilding Number'))
 parser.add_option('--treeout', action='store_true', help=('Generate guide tree file'))
-parser.add_option('--maxiterate', help=('Maximum number of iterations to perform when refining the alignment'))
-parser.add_option('--ffts', help=('Perform fast fourier transform'))
-parser.add_option('--stype', help=('Indicates if the sequences to align are protein or nucleotide'
+parser.add_option('--maxiterate', type=int, help=('Maximum number of iterations to perform when refining the alignment'))
+parser.add_option('--ffts', type=str, help=('Perform fast fourier transform'))
+parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
                   '(DNA/RNA).'))
-parser.add_option('--sequence', help=('Three or more sequences to be aligned can be entered directly into'
+parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
                   'this form. Sequences can be in GCG, FASTA, EMBL (Nucleotide only),'
                   'GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only)'
                   'format. Partially formatted sequences are not accepted. Adding a'
@@ -184,8 +185,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -585,7 +585,7 @@ elif options.email and not options.jobid:
     
 
     if not options.nbtree:
-        params['nbtree'] = '2'
+        params['nbtree'] = 2
     if options.nbtree:
         params['nbtree'] = options.nbtree
     
@@ -597,7 +597,7 @@ elif options.email and not options.jobid:
     
 
     if not options.maxiterate:
-        params['maxiterate'] = '2'
+        params['maxiterate'] = 2
     if options.maxiterate:
         params['maxiterate'] = options.maxiterate
     

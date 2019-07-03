@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/fasta'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,32 +71,32 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--program', help=('The FASTA program to be used for the Sequence Similarity Search'))
-parser.add_option('--stype', help=('Indicates if the query sequence is protein, DNA or RNA. Used to force'
+parser.add_option('--program', type=str, help=('The FASTA program to be used for the Sequence Similarity Search'))
+parser.add_option('--stype', type=str, help=('Indicates if the query sequence is protein, DNA or RNA. Used to force'
                   'FASTA to interpret the input sequence as specified type of sequence'
                   '(via. the -p, -n or -U options), this prevents issues when using'
                   'nucleotide sequences that contain many ambiguous residues.'))
-parser.add_option('--matrix', help=('(Protein searches) The substitution matrix used for scoring alignments'
+parser.add_option('--matrix', type=str, help=('(Protein searches) The substitution matrix used for scoring alignments'
                   'when searching the database. Target identity is the average alignment'
                   'identity the matrix would produce in the absence of homology and can'
                   'be used to compare different matrix types. Alignment boundaries are'
                   'more accurate when the alignment identity matches the target identity'
                   'percentage.'))
-parser.add_option('--match_scores', help=('(Nucleotide searches) The match score is the bonus to the alignment'
+parser.add_option('--match_scores', type=str, help=('(Nucleotide searches) The match score is the bonus to the alignment'
                   'score when matching the same base. The mismatch is the penalty when'
                   'failing to match.'))
-parser.add_option('--gapopen', help=('Score for the first residue in a gap.'))
-parser.add_option('--gapext', help=('Score for each additional residue in a gap.'))
+parser.add_option('--gapopen', type=int, help=('Score for the first residue in a gap.'))
+parser.add_option('--gapext', type=int, help=('Score for each additional residue in a gap.'))
 parser.add_option('--hsps', action='store_true', help=('Turn on/off the display of all significant alignments between query'
                   'and library sequence.'))
-parser.add_option('--expupperlim', help=('Limits the number of scores and alignments reported based on the'
+parser.add_option('--expupperlim', type=str, help=('Limits the number of scores and alignments reported based on the'
                   'expectation value. This is the maximum number of times the match is'
                   'expected to occur by chance.'))
-parser.add_option('--explowlim', help=('Limit the number of scores and alignments reported based on the'
+parser.add_option('--explowlim', type=str, help=('Limit the number of scores and alignments reported based on the'
                   'expectation value. This is the minimum number of times the match is'
                   'expected to occur by chance. This allows closely related matches to be'
                   'excluded from the result in favor of more distant relationships.'))
-parser.add_option('--strand', help=('For nucleotide sequences specify the sequence strand to be used for'
+parser.add_option('--strand', type=str, help=('For nucleotide sequences specify the sequence strand to be used for'
                   'the search. By default both upper (provided) and lower (reverse'
                   'complement of provided) strands are used, for single stranded'
                   'sequences searching with only the upper or lower strand may provide'
@@ -103,10 +104,10 @@ parser.add_option('--strand', help=('For nucleotide sequences specify the sequen
 parser.add_option('--hist', action='store_true', help=('Turn on/off the histogram in the FASTA result. The histogram gives a'
                   'qualitative view of how well the statistical theory fits the'
                   'similarity scores calculated by the program.'))
-parser.add_option('--scores', help=('Maximum number of match score summaries reported in the result output.'))
-parser.add_option('--alignments', help=('Maximum number of match alignments reported in the result output.'))
-parser.add_option('--scoreformat', help=('Different score report formats.'))
-parser.add_option('--stats', help=('The statistical routines assume that the library contains a large'
+parser.add_option('--scores', type=int, help=('Maximum number of match score summaries reported in the result output.'))
+parser.add_option('--alignments', type=int, help=('Maximum number of match alignments reported in the result output.'))
+parser.add_option('--scoreformat', type=str, help=('Different score report formats.'))
+parser.add_option('--stats', type=str, help=('The statistical routines assume that the library contains a large'
                   'sample of unrelated sequences. Options to select what method to use'
                   'include regression, maximum likelihood estimates, shuffles, or'
                   'combinations of these.'))
@@ -117,29 +118,29 @@ parser.add_option('--annotfeats', action='store_true', help=('Turn on/off annota
                   'has been enabled, select sequences of interest and click to Show'
                   'Alignments. This option also enables a new result tab (Domain'
                   'Diagrams) that highlights domain regions.'))
-parser.add_option('--annotsym', help=('Specify the annotation symbols.'))
-parser.add_option('--dbrange', help=('Specify the sizes of the sequences in a database to search against.'
+parser.add_option('--annotsym', type=str, help=('Specify the annotation symbols.'))
+parser.add_option('--dbrange', type=str, help=('Specify the sizes of the sequences in a database to search against.'
                   'For example: 100-250 will search all sequences in a database with'
                   'length between 100 and 250 residues, inclusive.'))
-parser.add_option('--seqrange', help=('Specify a range or section of the input sequence to use in the search.'
+parser.add_option('--seqrange', type=str, help=('Specify a range or section of the input sequence to use in the search.'
                   'Example: Specifying 34-89 in an input sequence of total length 100,'
                   'will tell FASTA to only use residues 34 to 89, inclusive.'))
-parser.add_option('--filter', help=('Filter regions of low sequence complexity. This can avoid issues with'
+parser.add_option('--filter', type=str, help=('Filter regions of low sequence complexity. This can avoid issues with'
                   'low complexity sequences where matches are found due to composition'
                   'rather then meaningful sequence similarity. However in some cases'
                   'filtering also masks regions of interest and so should be used with'
                   'caution.'))
-parser.add_option('--transltable', help=('Query Genetic code to use in translation'))
-parser.add_option('--sequence', help=('The query sequence can be entered directly into this form. The'
+parser.add_option('--transltable', type=int, help=('Query Genetic code to use in translation'))
+parser.add_option('--sequence', type=str, help=('The query sequence can be entered directly into this form. The'
                   'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
                   'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
                   'partially formatted sequence is not accepted. Adding a return to the'
                   'end of the sequence may help certain applications understand the'
                   'input. Note that directly using data from word processors may yield'
                   'unpredictable results as hidden/control characters may be present.'))
-parser.add_option('--database', help=('The databases to run the sequence similarity search against. Multiple'
+parser.add_option('--database', type=str, help=('The databases to run the sequence similarity search against. Multiple'
                   'databases can be used at the same time'))
-parser.add_option('--ktup', help=('FASTA uses a rapid word-based lookup strategy to speed the initial'
+parser.add_option('--ktup', type=int, help=('FASTA uses a rapid word-based lookup strategy to speed the initial'
                   'phase of the similarity search. The KTUP is used to control the'
                   'sensitivity of the search. Lower values lead to more sensitive, but'
                   'slower searches.'))
@@ -250,8 +251,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -763,13 +763,13 @@ elif options.email and not options.jobid:
     
 
     if not options.scores:
-        params['scores'] = '50'
+        params['scores'] = 50
     if options.scores:
         params['scores'] = options.scores
     
 
     if not options.alignments:
-        params['alignments'] = '50'
+        params['alignments'] = 50
     if options.alignments:
         params['alignments'] = options.alignments
     
@@ -811,7 +811,7 @@ elif options.email and not options.jobid:
     
 
     if not options.transltable:
-        params['transltable'] = '1'
+        params['transltable'] = 1
     if options.transltable:
         params['transltable'] = options.transltable
     

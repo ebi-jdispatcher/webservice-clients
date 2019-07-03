@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/simple_phylogeny'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,7 +71,7 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--tree', help=('Determines the outputs that the Simple Phylogeny tool produces.'))
+parser.add_option('--tree', type=str, help=('Determines the outputs that the Simple Phylogeny tool produces.'))
 parser.add_option('--kimura', action='store_true', help=('Controls whether Simple Phylogeny attempts to correct for multiple'
                   'substitutions at the same site. This is recommended to be set on for'
                   'more divergent sequences and has the effect of stretching branch'
@@ -79,9 +80,9 @@ parser.add_option('--kimura', action='store_true', help=('Controls whether Simpl
 parser.add_option('--tossgaps', action='store_true', help=('With this option enabled columns where any of the sequences in the'
                   'input have a gap will be excluded, forcing the alignment to use only'
                   'positions where information can be included from all sequences.'))
-parser.add_option('--clustering', help=('Clustering Methods'))
+parser.add_option('--clustering', type=str, help=('Clustering Methods'))
 parser.add_option('--pim', action='store_true', help=('Output the percentage identity matrix'))
-parser.add_option('--sequence', help=('Phylogeny using an alignment directly entered into the input box in a'
+parser.add_option('--sequence', type=str, help=('Phylogeny using an alignment directly entered into the input box in a'
                   'supported format. Alignment formats supported include Clustal, FASTA'
                   'and MSF. Partially formatted or unaligned sequences are not accepted.'
                   'Adding a return to the end of the sequence may help the Simple'
@@ -182,8 +183,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/clustalo'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -79,17 +80,17 @@ parser.add_option('--mbed', action='store_true', help=('This option uses a sampl
                   'generation of the guide tree, especially when the number of sequences'
                   'is large.'))
 parser.add_option('--mbediteration', action='store_true', help=('Use mBed-like clustering during subsequent iterations.'))
-parser.add_option('--iterations', help=('Number of (combined guide-tree/HMM) iterations.'))
-parser.add_option('--gtiterations', help=('Having set the number of combined iterations, this parameter can be'
+parser.add_option('--iterations', type=int, help=('Number of (combined guide-tree/HMM) iterations.'))
+parser.add_option('--gtiterations', type=int, help=('Having set the number of combined iterations, this parameter can be'
                   'changed to limit the number of guide tree iterations within the'
                   'combined iterations.'))
-parser.add_option('--hmmiterations', help=('Having set the number of combined iterations, this parameter can be'
+parser.add_option('--hmmiterations', type=int, help=('Having set the number of combined iterations, this parameter can be'
                   'changed to limit the number of HMM iterations within the combined'
                   'iterations.'))
-parser.add_option('--outfmt', help=('Format for generated multiple sequence alignment.'))
-parser.add_option('--order', help=('The order in which the sequences appear in the final alignment'))
-parser.add_option('--stype', help=('Defines the type of the sequences to be aligned'))
-parser.add_option('--sequence', help=('Three or more sequences to be aligned can be entered directly into'
+parser.add_option('--outfmt', type=str, help=('Format for generated multiple sequence alignment.'))
+parser.add_option('--order', type=str, help=('The order in which the sequences appear in the final alignment'))
+parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned'))
+parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
                   'this box. Sequences can be in GCG, FASTA, EMBL (Nucleotide only),'
                   'GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only)'
                   'format. Partially formatted sequences are not accepted. Adding a'
@@ -191,8 +192,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
@@ -600,19 +600,19 @@ elif options.email and not options.jobid:
     
 
     if not options.iterations:
-        params['iterations'] = '0'
+        params['iterations'] = 0
     if options.iterations:
         params['iterations'] = options.iterations
     
 
     if not options.gtiterations:
-        params['gtiterations'] = '-1'
+        params['gtiterations'] = -1
     if options.gtiterations:
         params['gtiterations'] = options.gtiterations
     
 
     if not options.hmmiterations:
-        params['hmmiterations'] = '-1'
+        params['hmmiterations'] = -1
     if options.hmmiterations:
         params['hmmiterations'] = options.hmmiterations
     

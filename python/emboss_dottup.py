@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_dottup'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,8 +71,8 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', help=('Defines the type of the sequences to be aligned'))
-parser.add_option('--asequence', help=('A free text (raw) list of sequences is simply a block of characters'
+parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned'))
+parser.add_option('--asequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
                   'representing several DNA/RNA or Protein sequences. A sequence can be'
                   'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
                   'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
@@ -79,7 +80,7 @@ parser.add_option('--asequence', help=('A free text (raw) list of sequences is s
                   'may help certain applications understand the input. Note that directly'
                   'using data from word processors may yield unpredictable results as'
                   'hidden/control characters may be present.'))
-parser.add_option('--bsequence', help=('A free text (raw) list of sequences is simply a block of characters'
+parser.add_option('--bsequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
                   'representing several DNA/RNA or Protein sequences. A sequence can be'
                   'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
                   'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
@@ -87,7 +88,7 @@ parser.add_option('--bsequence', help=('A free text (raw) list of sequences is s
                   'may help certain applications understand the input. Note that directly'
                   'using data from word processors may yield unpredictable results as'
                   'hidden/control characters may be present.'))
-parser.add_option('--wordsize', help=('Word size'))
+parser.add_option('--wordsize', type=int, help=('Word size'))
 parser.add_option('--boxit', action='store_true', help=('Draw a box around dotplot.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
@@ -182,8 +183,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

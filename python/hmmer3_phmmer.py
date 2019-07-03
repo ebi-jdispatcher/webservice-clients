@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,31 +71,31 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--incE', help=('Significance E-values[Sequence]'))
-parser.add_option('--incdomE', help=('Significance E-values[Hit]'))
-parser.add_option('--E', help=('Report E-values[Sequence]'))
-parser.add_option('--domE', help=('Report E-values[Hit]'))
-parser.add_option('--incT', help=('Significance bit scores[Sequence]'))
-parser.add_option('--incdomT', help=('Significance bit scores[Hit]'))
-parser.add_option('--T', help=('Report bit scores[Sequence]'))
-parser.add_option('--domT', help=('Report bit scores[Hit]'))
-parser.add_option('--popen', help=('Gap Penalties[open]'))
-parser.add_option('--pextend', help=('Gap Penalties[extend]'))
-parser.add_option('--mx', help=('Gap Penalties[Substitution scoring matrix]'))
+parser.add_option('--incE', type=str, help=('Significance E-values[Sequence]'))
+parser.add_option('--incdomE', type=str, help=('Significance E-values[Hit]'))
+parser.add_option('--E', type=str, help=('Report E-values[Sequence]'))
+parser.add_option('--domE', type=str, help=('Report E-values[Hit]'))
+parser.add_option('--incT', type=str, help=('Significance bit scores[Sequence]'))
+parser.add_option('--incdomT', type=str, help=('Significance bit scores[Hit]'))
+parser.add_option('--T', type=str, help=('Report bit scores[Sequence]'))
+parser.add_option('--domT', type=str, help=('Report bit scores[Hit]'))
+parser.add_option('--popen', type=str, help=('Gap Penalties[open]'))
+parser.add_option('--pextend', type=str, help=('Gap Penalties[extend]'))
+parser.add_option('--mx', type=str, help=('Gap Penalties[Substitution scoring matrix]'))
 parser.add_option('--nobias', action='store_true', help=('Filters'))
 parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
                   'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
-parser.add_option('--database', help=('Sequence Database'))
-parser.add_option('--evalue', help=('Expectation value cut-off for reporting target profiles in the per-'
+parser.add_option('--database', type=str, help=('Sequence Database'))
+parser.add_option('--evalue', type=str, help=('Expectation value cut-off for reporting target profiles in the per-'
                   'target output.'))
-parser.add_option('--sequence', help=('The input sequence can be entered directly into this form. The'
+parser.add_option('--sequence', type=str, help=('The input sequence can be entered directly into this form. The'
                   'sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A'
                   'partially formatted sequence is not accepted. Adding a return to the'
                   'end of the sequence may help certain applications understand the'
                   'input. Note that directly using data from word processors may yield'
                   'unpredictable results as hidden/control characters may be present.'))
-parser.add_option('--nhits', help=('Number of hits to be displayed.'))
+parser.add_option('--nhits', type=int, help=('Number of hits to be displayed.'))
 # General options
 parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
 parser.add_option('--email', help='E-mail address.')
@@ -202,8 +203,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

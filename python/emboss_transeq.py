@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,18 +71,18 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--frame', help=('The frames to be translated. The order of the frames follows the'
+parser.add_option('--frame', type=str, help=('The frames to be translated. The order of the frames follows the'
                   'Staden convention: Frame -1 is the reverse-complement of the sequence'
                   'having the same codon phase as frame 1. Frame -2 is the same phase as'
                   'frame 2. Frame -3 is the same phase as frame 3.'))
-parser.add_option('--codontable', help=('Which genetic code table to use. These are kept synchronised with'
+parser.add_option('--codontable', type=str, help=('Which genetic code table to use. These are kept synchronised with'
                   'those maintained at the NCBIs Taxonomy Browser.'))
-parser.add_option('--regions', help=('Which regions of the users DNA molecule are to be translated.'))
+parser.add_option('--regions', type=str, help=('Which regions of the users DNA molecule are to be translated.'))
 parser.add_option('--trim', action='store_true', help=('Remove * and X (stop and ambiguity) symbols from the end of the'
                   'translation.'))
 parser.add_option('--reverse', action='store_true', help=('Choose this option if you wish to reverse and complement your input'
                   'sequence before frame translation.'))
-parser.add_option('--sequence', help=('Any input formats accepted by EMBOSS can be used, the full list of'
+parser.add_option('--sequence', type=str, help=('Any input formats accepted by EMBOSS can be used, the full list of'
                   'sequence formats accepted as input by EMBOSS tools can be accessed via'
                   'the link below. Word processor files may yield unpredictable results'
                   'as hidden/control characters may be present in the files. It is best'
@@ -180,8 +181,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 

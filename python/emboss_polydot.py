@@ -32,6 +32,7 @@ from __future__ import print_function
 import os
 import sys
 import time
+import requests
 import platform
 from xmltramp2 import xmltramp
 from optparse import OptionParser
@@ -55,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_polydot'
-version = u'2019-01-29 14:22'
+version = u'2019-07-03 12:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -70,11 +71,11 @@ numOpts = len(sys.argv)
 parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', help=('Defines the type of the sequences to be aligned'))
-parser.add_option('--sequence', help=('Two or more aligned sequences are required. There is currently a'
+parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned'))
+parser.add_option('--sequence', type=str, help=('Two or more aligned sequences are required. There is currently a'
                   'sequence input limit of 500 sequences and 1MB of data.'))
-parser.add_option('--wordsize', help=('Word size.'))
-parser.add_option('--gap', help=('This specifies the size of the gap that is used to separate the'
+parser.add_option('--wordsize', type=int, help=('Word size'))
+parser.add_option('--gap', type=int, help=('This specifies the size of the gap that is used to separate the'
                   'individual dotplots in the display. The size is measured in residues,'
                   'as displayed in the output.'))
 parser.add_option('--boxit', action='store_true', help=('Draw a box around dotplot.'))
@@ -171,8 +172,7 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        print(xmltramp.parse(unicode(ex.read(), u'utf-8'))[0][0])
-        quit()
+        result = requests.get(url).content
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
