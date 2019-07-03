@@ -62,7 +62,7 @@ source ./env/bin/activate
 
 Install dependencies with:
 ```bash
-pip install --upgrade xmltramp2,requests
+pip install --upgrade pip xmltramp2 requests
 ```
 
 An example test for Clustal Omega Python client:
