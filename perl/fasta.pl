@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/fasta';
-my $version = '2019-01-17 15:15';
+my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -295,7 +295,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        # die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -1002,11 +1002,11 @@ sub load_params {
     }
 
     if (!$params{'scores'}) {
-        $params{'scores'} = '50'
+        $params{'scores'} = 50
     }
 
     if (!$params{'alignments'}) {
-        $params{'alignments'} = '50'
+        $params{'alignments'} = 50
     }
 
     if (!$params{'scoreformat'}) {
@@ -1026,7 +1026,7 @@ sub load_params {
     }
 
     if (!$params{'transltable'}) {
-        $params{'transltable'} = '1'
+        $params{'transltable'} = 1
     }
 
     print_debug_message('load_params', 'End', 1);
@@ -1129,7 +1129,7 @@ sub get_results {
             @multResultTypes = split(',', $params{'outformat'});
         }
         else {
-            @multResultTypes[0] = $params{'outformat'};
+            $multResultTypes[0] = $params{'outformat'};
         }
         # check if the provided formats are recognised
         foreach my $inputType (@multResultTypes) {

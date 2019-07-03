@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psiblast';
-my $version = '2019-01-17 15:15';
+my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -290,7 +290,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        # die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -989,11 +989,11 @@ sub load_params {
     }
 
     if (!$params{'gapopen'}) {
-        $params{'gapopen'} = '11'
+        $params{'gapopen'} = 11
     }
 
     if (!$params{'gapext'}) {
-        $params{'gapext'} = '1'
+        $params{'gapext'} = 1
     }
 
     if (!$params{'expthr'}) {
@@ -1005,23 +1005,23 @@ sub load_params {
     }
 
     if (!$params{'scores'}) {
-        $params{'scores'} = '500'
+        $params{'scores'} = 500
     }
 
     if (!$params{'alignments'}) {
-        $params{'alignments'} = '500'
+        $params{'alignments'} = 500
     }
 
     if (!$params{'alignView'}) {
-        $params{'alignView'} = '0'
+        $params{'alignView'} = 0
     }
 
     if (!$params{'dropoff'}) {
-        $params{'dropoff'} = '15'
+        $params{'dropoff'} = 15
     }
 
     if (!$params{'finaldropoff'}) {
-        $params{'finaldropoff'} = '25'
+        $params{'finaldropoff'} = 25
     }
 
     if (!$params{'filter'}) {
@@ -1132,7 +1132,7 @@ sub get_results {
             @multResultTypes = split(',', $params{'outformat'});
         }
         else {
-            @multResultTypes[0] = $params{'outformat'};
+            $multResultTypes[0] = $params{'outformat'};
         }
         # check if the provided formats are recognised
         foreach my $inputType (@multResultTypes) {

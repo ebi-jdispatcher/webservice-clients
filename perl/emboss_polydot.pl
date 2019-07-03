@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/emboss_polydot';
-my $version = '2019-01-17 15:15';
+my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -86,7 +86,7 @@ GetOptions(
     # Tool specific options
     'stype=s'         => \$params{'stype'},          # Defines the type of the sequences to be aligned
     'sequence=s'      => \$params{'sequence'},       # Two or more aligned sequences are required. There is currently a sequence input limit of 500 sequences and 1MB of data.
-    'wordsize=i'      => \$params{'wordsize'},       # Word size.
+    'wordsize=i'      => \$params{'wordsize'},       # Word size
     'gap=i'           => \$params{'gap'},            # This specifies the size of the gap that is used to separate the individual dotplots in the display. The size is measured in residues, as displayed in the output.
     'boxit'           => \$params{'boxit'},          # Draw a box around dotplot.
     # Generic options
@@ -272,7 +272,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        # die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -839,7 +839,7 @@ sub get_results {
             @multResultTypes = split(',', $params{'outformat'});
         }
         else {
-            @multResultTypes[0] = $params{'outformat'};
+            $multResultTypes[0] = $params{'outformat'};
         }
         # check if the provided formats are recognised
         foreach my $inputType (@multResultTypes) {

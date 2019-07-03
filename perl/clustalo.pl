@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/clustalo';
-my $version = '2019-01-17 15:15';
+my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -279,7 +279,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        # die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -772,15 +772,15 @@ sub load_params {
     }
 
     if (!$params{'iterations'}) {
-        $params{'iterations'} = '0'
+        $params{'iterations'} = 0
     }
 
     if (!$params{'gtiterations'}) {
-        $params{'gtiterations'} = '-1'
+        $params{'gtiterations'} = -1
     }
 
     if (!$params{'hmmiterations'}) {
-        $params{'hmmiterations'} = '-1'
+        $params{'hmmiterations'} = -1
     }
 
     if (!$params{'outfmt'}) {
@@ -882,7 +882,7 @@ sub get_results {
             @multResultTypes = split(',', $params{'outformat'});
         }
         else {
-            @multResultTypes[0] = $params{'outformat'};
+            $multResultTypes[0] = $params{'outformat'};
         }
         # check if the provided formats are recognised
         foreach my $inputType (@multResultTypes) {

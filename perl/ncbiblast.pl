@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
-my $version = '2019-01-17 15:15';
+my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -97,6 +97,7 @@ GetOptions(
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
     'gapalign'        => \$params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
+    'wordsize=i'      => \$params{'wordsize'},       # Word size for wordfinder algorithm
     'compstats=s'     => \$params{'compstats'},      # Use composition-based statistics.
     'align=i'         => \$params{'align'},          # Formating for the alignments
     'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
@@ -290,7 +291,7 @@ sub rest_error() {
         elsif ($contentdata =~ m/<description>([^<]+)<\/description>/) {
             $error_message = $1;
         }
-        die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
+        # die 'http status: ' . $response->code . ' ' . $response->message . '  ' . $error_message;
     }
     print_debug_message('rest_error', 'End', 21);
 }
@@ -1007,21 +1008,21 @@ sub load_params {
     }
     if ($params{'stype'} eq 'nucleotide') {
         if (!$params{'matrix'}) {
-            $params{'matrix'} = 'BLOSUM62'
+            $params{'matrix'} = 'NONE'
         }
     }
     if ($params{'stype'} eq 'vector') {
         if (!$params{'matrix'}) {
-            $params{'matrix'} = 'BLOSUM62'
+            $params{'matrix'} = 'NONE'
         }
     }
 
     if (!$params{'alignments'}) {
-        $params{'alignments'} = '50'
+        $params{'alignments'} = 50
     }
 
     if (!$params{'scores'}) {
-        $params{'scores'} = '50'
+        $params{'scores'} = 50
     }
 
     if (!$params{'exp'}) {
@@ -1029,7 +1030,7 @@ sub load_params {
     }
 
     if (!$params{'dropoff'}) {
-        $params{'dropoff'} = '0'
+        $params{'dropoff'} = 0
     }
 
     if ($params{'stype'} eq 'nucleotide') {
@@ -1044,11 +1045,11 @@ sub load_params {
     }
 
     if (!$params{'gapopen'}) {
-        $params{'gapopen'} = '-1'
+        $params{'gapopen'} = -1
     }
 
     if (!$params{'gapext'}) {
-        $params{'gapext'} = '-1'
+        $params{'gapext'} = -1
     }
 
     if ($params{'stype'} eq 'protein') {
@@ -1076,11 +1077,11 @@ sub load_params {
     }
 
     if (!$params{'align'}) {
-        $params{'align'} = '0'
+        $params{'align'} = 0
     }
 
     if (!$params{'transltable'}) {
-        $params{'transltable'} = '1'
+        $params{'transltable'} = 1
     }
 
     print_debug_message('load_params', 'End', 1);
@@ -1183,7 +1184,7 @@ sub get_results {
             @multResultTypes = split(',', $params{'outformat'});
         }
         else {
-            @multResultTypes[0] = $params{'outformat'};
+            $multResultTypes[0] = $params{'outformat'};
         }
         # check if the provided formats are recognised
         foreach my $inputType (@multResultTypes) {
@@ -1369,6 +1370,7 @@ Sequence similarity search with NCBI Blast.
                         gaps. Otherwise, if it is set to false, it will report only
                         individual HSP where two sequence match each other, and thus
                         will not produce alignments with gaps.
+  --wordsize            Word size for wordfinder algorithm.
   --compstats           Use composition-based statistics.
   --align               Formating for the alignments.
   --transltable         Query Genetic code to use in translation.
