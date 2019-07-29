@@ -63,6 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/fasta';
+#my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/fasta';
 my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
@@ -80,7 +81,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -106,7 +107,8 @@ GetOptions(
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    #'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+	'database=s%'	  => \@database,
     'ktup=i'          => \$params{'ktup'},           # FASTA uses a rapid word-based lookup strategy to speed the initial phase of the similarity search. The KTUP is used to control the sensitivity of the search. Lower values lead to more sensitive, but slower searches.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -136,6 +138,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
