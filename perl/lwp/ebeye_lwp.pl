@@ -56,7 +56,7 @@ limitations under the License.
 
 =head1 VERSION
 
-$Id: fastm_lwp.pl 2702 2014-01-16 13:50:03Z hpm $
+$Id$
 
 =cut
 
@@ -103,12 +103,17 @@ GetOptions(
     'maxqueryterm=s' => \$params{'maxqueryterm'}, # maximum number of query terms that will be included in any generated query
     'excludes=s'     => \$params{'excludes'},     # Terms to be excluded
     'excludesets=s'  => \$params{'excludesets'},  # stop word sets to be excluded
-
+    'via=s'          => \$params{'via'},          # domain ids associated with finding cross-references
+    'tooloutputformat=s'   => \$params{'tooloutputformat'},    # Sequence Tool output format configured in the system
+    'jobresultsstart=s'    => \$params{'jobresultsstart'},     # Sequence Tool results reading start index
+    'jobresultssize=s'     => \$params{'jobresultssize'},      # Sequence Tool results reading size
+    'jobresultsmapfield=s' => \$params{'jobresultsmapfield'},  # Sequence Tool results domain field to map on
+    'valuemappers=s'       => \$params{'valuemappers'},        # Comma separated list of "value mappers" to use on the sequence tool results
 
     'quiet'          => \$params{'quiet'},      # Decrease output level
     'verbose'        => \$params{'verbose'},    # Increase output level
     'debugLevel=i'   => \$params{'debugLevel'}, # Debug output level
-    'baseUrl=s'      => \$baseUrl,              # Base URL for service.
+    'baseUrl=s'      => \$baseUrl              # Base URL for service.
 );
 if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
@@ -246,6 +251,24 @@ elsif ($method eq 'getExtendedMoreLikeThis') {
     }
 }
 
+# Get rawdata
+elsif ($method eq 'getRawdata') {
+    if (scalar(@ARGV) < 2) {
+        print STDERR '[main()] ', 'domain and entryid should be given.', "\n";
+    }
+    else {
+        &print_get_rawdata(@ARGV);
+    }
+}
+
+elsif ($method eq 'getFacetedResultsFromSequenceAnalysisResults') {
+    if (scalar(@ARGV) < 4) {
+        print STDERR '[main()] ', 'domain, toolid, jobid and fields should be given.', "\n";
+    }
+    else {
+        &print_get_facet_results_from_seq_analysis_results(@ARGV);
+    }
+}
 
 # Get suggestions
 elsif ($method eq 'getAutoComplete') {
@@ -522,6 +545,25 @@ sub print_get_faceted_results {
     print_debug_message('print_get_faceted_results', 'End', 1);
 }
 
+
+=head2
+
+Print search results with facets + sequence analysis results
+
+  &print_get_faceted_results_seq_analysis_results($domainid, $toolid, $jobid, $fields, $query, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort, $facetcount, $facetfields, $facets, $facetsdepth, $tooloutputformat, $jobresultsstart, $jobresultssize, $jobresultsmapfield, $valuemappers);
+
+=cut
+
+sub print_get_facet_results_from_seq_analysis_results {
+    print_debug_message('print_get_facet_results_from_seq_analysis_results', 'Begin', 1);
+    my ($param_list_xml) = &rest_get_faceted_results_seq_analysis_results(@_);
+    &_print_entries($param_list_xml->{'entries'}->{'entry'});
+    &_print_facets($param_list_xml->{'facets'}->{'facet'});
+    print_debug_message('print_get_facet_results_from_seq_analysis_results', 'End', 1);
+}
+
+
+
 sub _print_facets {
     my $facets = shift;
 
@@ -694,6 +736,20 @@ sub _print_suggestions {
 }
 
 
+=head2
+Print rawdata
+
+  &print_get_rawdata($domainid, $entry);
+
+=cut
+
+sub print_get_rawdata {
+    print_debug_message('print_get_rawdata', 'Begin', 1);
+    my ($param_output) = &rest_get_rawdata(@_);
+    print $param_output . "\n";
+    print_debug_message('print_get_rawdata', 'End', 1);
+}
+
 
 =head2 rest_get_domain_hierarchy()
 
@@ -810,6 +866,46 @@ sub rest_get_faceted_results {
     return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue' ]);
 }
 
+
+=head2 rest_get_faceted_results_seq_analysis_results()
+
+Get search results with facets
+
+  my ($param_list_xml) = &rest_get_faceted_results_seq_analysis_results($domainid, $toolid, $jobid, $fields, $query, $size, $start, $fieldurl, $viewurl, $sortfield, $order, $sort, $facetcount, $facetfields, $facets, $facetsdepth, $tooloutputformat, $jobresultsstart, $jobresultssize, $jobresultsmapfield, $valuemappers);
+
+=cut
+
+sub rest_get_faceted_results_seq_analysis_results{
+    print_debug_message('rest_get_faceted_results_seq_analysis_results', 'Begin', 1);
+    my $domainid = shift;
+    my $toolid = shift;
+    my $jobid = shift;
+    my $fields = shift;
+
+    my $query = $params{'query'} ? $params{'query'} : "";
+    my $size = $params{'size'} ? $params{'size'} : "";
+    my $start = $params{'start'} ? $params{'start'} : "";
+    my $fieldurl = $params{'fieldurl'} ? $params{'fieldurl'} : "";
+    my $viewurl = $params{'viewurl'} ? $params{'viewurl'} : "";
+    my $sortfield = $params{'sortfield'} ? $params{'sortfield'} : "";
+    my $order = $params{'order'} ? $params{'order'} : "";
+    my $sort = $params{'sort'} ? $params{'sort'} : "";
+    my $facetcount = $params{'facetcount'} ? $params{'facetcount'} : "10";
+    my $facetfields = $params{'facetfields'} ? $params{'facetfields'} : "";
+    my $facets = $params{'facets'} ? $params{'facets'} : "";
+    my $facetsdepth = $params{'facetsdepth'} ? $params{'facetsdepth'} : "";
+    my $tooloutputformat = $params{'tooloutputformat'} ? $params{'tooloutputformat'} : "";
+    my $jobresultsstart = $params{'jobresultsstart'} ? $params{'jobresultsstart'} : "";
+    my $jobresultssize = $params{'jobresultssize'} ? $params{'jobresultssize'} : "";
+    my $jobresultsmapfield = $params{'jobresultsmapfield'} ? $params{'jobresultsmapfield'} : "";
+    my $valuemappers = $params{'valuemappers'} ? $params{'valuemappers'} : "";
+
+    my $url = $baseUrl . "/" . $domainid . "/seqtoolresults?toolid=" . $toolid . "&jobid=" . $jobid . "&query=" . $query . "&fields=" . $fields . "&size=" . $size . "&start=" . $start . "&viewurl=" . $viewurl . "&fieldurl=" . $fieldurl . "&sortfield=" . $sortfield . "&order=" . $order . "&sort=" . $sort . "&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" . $facets . "&facetsdepth=" . $facetsdepth . "&tooloutputformat=" . $tooloutputformat . "&jobresultsstart=" . $jobresultsstart . "&jobresultssize=" . $jobresultssize . "&jobresultsmapfield=" . $jobresultsmapfield . "&valuemappers=" . $valuemappers;
+    my $param_list_xml_str = &rest_request($url);
+    print_debug_message('rest_get_faceted_results_seq_analysis_results', 'End', 1);
+    return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'entry', 'value', 'field', 'fieldURL', 'viewURL', 'facet', 'facetValue' ]);
+}
+
 =head2 rest_get_entries()
 
 Get entries
@@ -893,8 +989,9 @@ sub rest_get_referenced_entries {
     my $facetcount = $params{'facetcount'} ? $params{'facetcount'} : "10";
     my $facetfields = $params{'facetfields'} ? $params{'facetfields'} : "";
     my $facets = $params{'facets'} ? $params{'facets'} : "";
+    my $via = $params{'via'} ? $params{'via'} : "";
 
-    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryids . "/xref/" . $referencedDomainId . "?fields=" . $fields . "&start=" . $start . "&size=" . $size . "&fieldurl=" . $fieldurl . "&viewurl=" . $viewurl . "&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" . $facets;
+    my $url = $baseUrl . "/" . $domainid . "/entry/" . $entryids . "/xref/" . $referencedDomainId . "?fields=" . $fields . "&start=" . $start . "&size=" . $size . "&fieldurl=" . $fieldurl . "&viewurl=" . $viewurl . "&facetcount=" . $facetcount . "&facetfields=" . $facetfields . "&facets=" . $facets . "&via=" . $via;
     my $param_list_xml_str = &rest_request($url);
 
     print_debug_message('rest_get_referenced_entries', 'End', 1);
@@ -1010,6 +1107,27 @@ sub rest_get_auto_complete {
     return XMLin($param_list_xml_str, KeyAttr => [], ForceArray => [ 'suggetion' ]);
 }
 
+=head2 rest_get_rawdata()
+
+Get rawdata of a given entry
+
+  my(@suggestion_list) = &rest_get_rawdata($domainid, $entryid);
+
+=cut
+
+sub rest_get_rawdata {
+    print_debug_message('rest_get_rawdata', 'Begin', 1);
+    my $domainid = shift;
+    my $entryid = shift;
+
+    my $url = $baseUrl . "/" . $domainid . "/rawdata/" . $entryid;
+
+    my $param_output = &rest_request($url);
+    print_debug_message('rest_get_rawdata', 'End', 1);
+
+    return $param_output;
+}
+
 
 ### Service actions and utility functions ###
 
@@ -1091,6 +1209,12 @@ getExtendedMoreLikeThis <domain> <entryid> <targetDomain> <fields> [OPTIONS: --s
 getAutoComplete <domain> <term>
   Returns suggested words from a given term.
 
+getFacetedResultsFromSequenceAnalysisResults <domain> <toolid> <jobid> <fields> <query>? [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth | --tooloutputformat | --jobresultsstart | --jobresultssize | --jobresultsmapfield ]
+  Executes a query aginst sequence analysis result and returns a list of results including facets
+
+getRawdata <domain> <entryid>
+  Returns raw data of a given entry.
+
 Options:
   --size=SIZE           number of entries to retrieve
   --start=START         index of the first entry in results
@@ -1120,6 +1244,19 @@ Options:
                         terms to be excluded
   --excludesets=EXCLUDESETS
                         stop word sets to be excluded
+  --via=VIA
+                        domain ids associated with finding cross-references
+  --tooloutputformat=TOOLOUTPUTFORMAT
+                        Sequence Tool output format configured in the system
+  --jobresultsstart=JOSTRESULTSTART
+                        Sequence Tool results reading start index
+  --jobresultssize=JOBRESULTSIZE
+                        Sequence Tool results reading size
+  --jobresultsmapfield=jobresultsmapfield
+                        Sequence Tool results domain field to map on
+  --valuemappers=VALUEMAPPERS
+                        Comma separated list of "value mappers" to use on the sequence tool results
+
 
   --version             show program's version number and exit
   -h, --help            show this help message and exit
@@ -1131,7 +1268,7 @@ Options:
 
 Support/Feedback:
 
-  http://www.ebi.ac.uk/support/
+  https://www.ebi.ac.uk/support/
 EOF
 }
 

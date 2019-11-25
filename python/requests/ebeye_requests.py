@@ -53,16 +53,22 @@ def getUserAgent():
 
 
 # Wrapper for a REST (HTTP GET) request
-def restRequest(url):
+def restRequest(url, isJson=True):
     printDebugMessage('restRequest', 'Begin', 11)
     printDebugMessage('restRequest', 'url: ' + url, 11)
 
     user_agent = getUserAgent()
-    http_headers = {
-        'User-Agent': user_agent,
-        'Accept-Encoding': 'gzip',
-        'Accept': 'application/json'
-    }
+    if isJson: 
+        http_headers = {
+            'User-Agent': user_agent,
+            'Accept-Encoding': 'gzip',
+            'Accept': 'application/json'
+        }
+    else:
+        http_headers = {
+            'User-Agent': user_agent,
+            'Accept-Encoding': 'gzip'
+        }
 
     result = requests.get(url, headers=http_headers)
     result.raise_for_status()
@@ -253,6 +259,28 @@ def getFacetedResults(domain, query, fields, size='', start='', fieldurl='',
     printFacets(jsonRes['facets'])
     printDebugMessage('getFacetedResults', 'End', 1)
 
+# Get search results with facets from sequence analysis results
+def getFacetedResultsFromSequenceAnalysisResults(domain, toolid, jobid, fields, query='', size='', start='', fieldurl='',
+                    viewurl='', sortfield='', order='', sort='', facetcount='10',
+                    facetfields='', facets='', facetsdepth='',
+                    tooloutputformat='', jobresultsstart='', jobresultssize='', jobresultsmapfield=''):
+    printDebugMessage('getFacetedResultsFromSequenceAnalysisResults', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '/seqtoolresults?jobid=' + jobid + '&toolid=' + toolid + \
+                 '&query=' + query + '&fields=' + fields + \
+                 '&size=' + size + '&start=' + start + '&fieldurl=' + fieldurl + \
+                 '&viewurl=' + viewurl + '&sortfield=' + sortfield + '&order=' + order + \
+                 '&sort=' + sort + '&facetcount=' + facetcount + \
+                 '&facetfields=' + facetfields + '&facets=' + facets + \
+                 '&facetsdepth=' + facetsdepth + '&tooloutputformat=' + tooloutputformat + \
+                 '&jobresultsstart=' + jobresultsstart + '&jobresultssize=' + jobresultssize + \
+                 '&jobresultsmapfield=' + jobresultsmapfield
+
+    printDebugMessage('getFacetedResultsFromSequenceAnalysisResults', requestUrl, 2)
+    jsonRes = restRequest(requestUrl).json()
+    printEntries(jsonRes['entries'])
+    print('')
+    printFacets(jsonRes['facets'])
+    printDebugMessage('getFacetedResultsFromSequenceAnalysisResults', 'End', 1)
 
 # Get entry details
 def getEntries(domain, entryids, fields, fieldurl='', viewurl=''):
@@ -263,7 +291,6 @@ def getEntries(domain, entryids, fields, fieldurl='', viewurl=''):
     jsonRes = restRequest(requestUrl).json()
     printEntries(jsonRes['entries'])
     printDebugMessage('getEntries', 'End', 1)
-
 
 # Get domain ids referenced in a domain
 def getDomainsReferencedInDomain(domain):
@@ -283,19 +310,19 @@ def getDomainsReferencedInEntry(domain, entryid):
     printDebugMessage('getDomainsReferencedInEntry', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     for domain in jsonRes['domains']:
-        print(domain['id'] + ': ' + str(domain['referenceEntryCount']) )
+        print(domain['id'] + ': ' + str(domain['referenceEntryCount']))
     printDebugMessage('getDomainsReferencedInEntry', 'End', 1)
 
 
 # Get cross-references
 def getReferencedEntries(domain, entryids, referenceddomain, fields, size='',
                          start='', fieldurl='', viewurl='', facetcount='',
-                         facetfields='', facets=''):
+                         facetfields='', facets='', via=''):
     printDebugMessage('getReferencedEntries', 'Begin', 1)
     requestUrl = baseUrl + '/' + domain + '/entry/' + entryids + '/xref/' + referenceddomain + \
                  '?fields=' + fields + '&size=' + size + '&start=' + start + \
                  '&fieldurl=' + fieldurl + '&viewurl=' + viewurl + '&facetcount=' + facetcount + \
-                 '&facetfields=' + facetfields + '&facets=' + facets
+                 '&facetfields=' + facetfields + '&facets=' + facets + '&via=' + via
     printDebugMessage('getReferencedEntries', requestUrl, 2)
     jsonRes = restRequest(requestUrl).json()
     for entry in jsonRes['entries']:
@@ -356,7 +383,6 @@ def getAutoComplete(domain, term):
     printSuggestions(jsonRes['suggestions'])
     printDebugMessage('getAutoComplete', 'End', 1)
 
-
 def printSuggestions(suggestions):
     printDebugMessage('printSuggestions', 'Begin', 1)
     for suggetion in suggestions:
@@ -364,6 +390,20 @@ def printSuggestions(suggestions):
     print('')
     printDebugMessage('printSuggestions', 'End', 1)
 
+# Get rawdata
+def getRawdata(domain, entryid):
+    printDebugMessage('getRawdata', 'Begin', 1)
+    requestUrl = baseUrl + '/' + domain + '/rawdata/' + entryid
+    printDebugMessage('getRawdata', requestUrl, 2)
+    res = restRequest(requestUrl, False)
+    printRawdata(res.text)
+    printDebugMessage('getRawdata', 'End', 1)
+
+def printRawdata(rawdata):
+    printDebugMessage('printRawdata', 'Begin', 1)
+    print(rawdata)
+    print('')
+    printDebugMessage('printRawdata', 'End', 1)
 
 def main():
     """
@@ -397,6 +437,13 @@ def main():
                       help='maximum number of query terms that will be included in any generated query')
     parser.add_option('--excludes', help='terms to be excluded')
     parser.add_option('--excludesets', help='stop word sets to be excluded')
+    parser.add_option('--via', help='domain ids associated with finding cross-references')
+
+    parser.add_option('--tooloutputformat', help='Sequence Tool output format configured in the system')
+    parser.add_option('--jobresultsstart', help='Sequence Tool results reading start index')
+    parser.add_option('--jobresultssize', help='Sequence Tool results reading size')
+    parser.add_option('--jobresultsmapfield', help='Sequence Tool results domain field to map on')
+    parser.add_option('--valuemappers', help='Comma separated list of "value mappers" to use on the sequence tool results')
 
     parser.add_option('--quiet', action='store_true', help='decrease output level')
     parser.add_option('--verbose', action='store_true', help='increase output level')
@@ -504,8 +551,9 @@ def main():
             facetcount = options.facetcount if options.facetcount else ''
             facetfields = options.facetfields if options.facetfields else ''
             facets = options.facets if options.facets else ''
+            via = options.via if options.via else ''
             getReferencedEntries(args[1], args[2], args[3], args[4], size, start,
-                                 fieldurl, viewurl, facetcount, facetfields, facets)
+                                 fieldurl, viewurl, facetcount, facetfields, facets, via)
     # Get top terms
     elif args[0] == 'getTopTerms':
         if len(args) < 3:
@@ -548,7 +596,7 @@ def main():
             maxqueryterm = options.maxqueryterm if options.maxqueryterm else ''
             excludes = options.excludes if options.excludes else ''
             excludesets = options.excludesets if options.excludesets else ''
-            getMoreLikeThis(args[1], args[2], args[3], args[4], size, start,
+            getMoreLikeThis(args[1], args[2], args[3], args[4], query, size, start,
                             fieldurl, viewurl, mltfields, mintermfreq,
                             mindocfreq, maxqueryterm, excludes, excludesets)
 
@@ -557,6 +605,40 @@ def main():
             print('domain and term should be given.')
         else:
             getAutoComplete(args[1], args[2])
+
+    elif args[0] == 'getRawdata':
+        if len(args) < 3:
+            print('domain and entryid should be given.')
+        else:
+            getRawdata(args[1], args[2])
+
+    # Get search results with facets from sequence analysis results
+    elif args[0] == 'getFacetedResultsFromSequenceAnalysisResults':
+        if len(args) < 5:
+            print('domain, toolid, jobid and fields should be given.')
+        else:
+            query = args[5] if len(args) == 6 else ''
+            size = options.size if options.size else ''
+            start = options.start if options.start else ''
+            fieldurl = options.fieldurl if options.fieldurl else ''
+            viewurl = options.viewurl if options.viewurl else ''
+            sortfield = options.sortfield if options.sortfield else ''
+            order = options.order if options.order else ''
+            sort = options.sort if options.sort else ''
+            facetcount = options.facetcount if options.facetcount else ''
+            facetfields = options.facetfields if options.facetfields else ''
+            facets = options.facets if options.facets else ''
+            facetsdepth = options.facetsdepth if options.facetsdepth else ''
+            tooloutputformat = options.tooloutputformat if options.tooloutputformat else ''
+            jobresultsstart = options.jobresultsstart if options.jobresultsstart else ''
+            jobresultssize = options.jobresultssize if options.jobresultssize else ''
+            jobresultsmapfield = options.jobresultsmapfield if options.jobresultsmapfield else ''
+            getFacetedResultsFromSequenceAnalysisResults(args[1], args[2], args[3], args[4], query,
+                              size, start, fieldurl, viewurl, sortfield, order, sort,
+                              facetcount, facetfields, facets, facetsdepth,
+                              tooloutputformat, jobresultsstart, jobresultssize,
+                              jobresultsmapfield)
+
     # Unknown argument combination, display usage
     else:
         print('Error: unrecognised argument combination')
@@ -586,17 +668,19 @@ if __name__ == "__main__":
 
       %prog getDomainsReferencedInDomain <domain>
       %prog getDomainsReferencedInEntry  <domain> <entryid>
-      %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets]
+      %prog getReferencedEntries         <domain> <entryids> <referencedDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --facetcount | --facetfields | --facets | --via ]
 
       %prog getTopTerms       <domain> <field> [OPTIONS: --size | --excludes | --excludesets]
 
       %prog getAutoComplete   <domain> <term>
 
       %prog getMoreLikeThis   <domain> <entryid> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
-      %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]"""
+      %prog getExtendedMoreLikeThis   <domain> <entryid> <targetDomain> <fields> [OPTIONS: --size | --start | --fieldurl | --viewurl | --mltfields | --mintermfreq | --mindocfreq | --maxqueryterm | --excludes | --excludesets]
 
+      %prog getFacetedResultsFromSequenceAnalysisResults <domain> <toolid> <jobid> <fields> <query>? [OPTIONS: --size | --start | --fieldurl | --viewurl | --sortfield | --order | --sort | --facetcount | --facetfields | --facets | --facetsdepth | --tooloutputformat | --jobresultsstart | --jobresultssize | --jobresultsmapfield ]
+
+      %prog getRawdata        <domain> <entryid> """
     description = ("Search at EMBL-EBI in All results using the EBI search engine."
                    " For more information on EBI Search refer to https://www.ebi.ac.uk/ebisearch/")
 
-    #main(baseUrl, outputLevel, debugLevel, usage)
     main()
