@@ -1,4 +1,4 @@
-# EBI Search REST Webservice client Sample [![java](https://img.shields.io/badge/java-1.8-blue.svg?style=flat)]()
+# EBI Search REST Webservice client Sample [![java](https://img.shields.io/badge/java-1.11-blue.svg?style=flat)]()
 
 A sample client written in java Java.
 
