@@ -844,7 +844,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-            &get_results($jobid, $seq_id);
+			# Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1025,7 +1026,7 @@ sub load_params {
     }
 
     if (!$params{'filter'}) {
-        $params{'filter'} = 'F'
+        $params{'filter'} = 'no'
     }
 
     if (!$params{'umode'}) {
@@ -1113,7 +1114,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            $params{'outfile'} = $jobid;
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }
