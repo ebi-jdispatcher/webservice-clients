@@ -30,6 +30,7 @@ RUN apt-get -y upgrade \
   && apt-get install -y perl libcrypt-ssleay-perl python3-pip default-jdk
 
 # Perl Dependencies
+RUN cpanm --force XML::Parser
 RUN curl -L https://cpanmin.us | perl - App::cpanminus \
  && cpanm Bundle::LWP REST::Client XML::Simple YAML::Syck
 
