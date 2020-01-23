@@ -844,8 +844,7 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-			# Duplicated getting results.
-            #&get_results($jobid, $seq_id);
+			#&get_results($jobid, $seq_id);#Duplicated overwritten resutls
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1114,7 +1113,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            #$params{'outfile'} = $jobid;
+            #$params{'outfile'} = $jobid;#Avoiding overwritten when multifasta
             $output_basename = $jobid;
         }
     }
