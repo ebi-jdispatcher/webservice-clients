@@ -62,7 +62,7 @@ use Data::Dumper;
 use Time::HiRes qw(usleep);
 
 # Base URL for service
-my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
+my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
 my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
@@ -445,6 +445,12 @@ Check the status of a job.
 sub rest_get_status {
     print_debug_message('rest_get_status', 'Begin', 1);
     my $job_id = shift;
+	
+	# job_id is not valid
+	if (length($job_id) > 100) {
+		exit(0);
+	}
+
     print_debug_message('rest_get_status', 'jobid: ' . $job_id, 2);
     my $status_str = 'UNKNOWN';
     my $url = $baseUrl . '/status/' . $job_id;
@@ -691,46 +697,46 @@ sub submit_job {
     # Set input seqdb ; ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
     my $param_seqdb = $params{'database'};
 
-    if ($param_seqdb eq 'ensemblgenomes') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'ensemblgenomes') {
         $db_index = "1";
     }
-    if ($param_seqdb eq 'uniprotkb') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'uniprotkb') {
         $db_index = "2";
     }
-    if ($param_seqdb eq 'rp75') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp75') {
         $db_index = "3";
     }
-    if ($param_seqdb eq 'uniprotrefprot') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'uniprotrefprot') {
         $db_index = "4";
     }
-    if ($param_seqdb eq 'rp55') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp55') {
         $db_index = "5";
     }
-    if ($param_seqdb eq 'rp35') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp35') {
         $db_index = "6";
     }
-    if ($param_seqdb eq 'rp15') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp15') {
         $db_index = "7";
     }
-    if ($param_seqdb eq 'ensembl') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'ensembl') {
         $db_index = "8";
     }
-    if ($param_seqdb eq 'merops') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'merops') {
         $db_index = "9";
     }
-    if ($param_seqdb eq 'qfo') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'qfo') {
         $db_index = "10";
     }
-    if ($param_seqdb eq 'swissprot') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'swissprot') {
         $db_index = "11";
     }
-    if ($param_seqdb eq 'pdb') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'pdb') {
         $db_index = "12";
     }
-    if ($param_seqdb eq 'chembl') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'chembl') {
         $db_index = "13";
     }
-    if ($param_seqdb eq 'meropsscan') {
+    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'meropsscan') {
         $db_index = "14";
     }
 

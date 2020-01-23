@@ -63,10 +63,11 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
+#my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
 my $version = '2019-07-03 16:26';
 
 # Set interval for checking status
-my $checkInterval = 3;
+my $checkInterval = 1;
 
 # Set maximum number of 'ERROR' status calls to call job failed.
 my $maxErrorStatusCount = 3;
@@ -129,6 +130,7 @@ if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
 
+
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
     1);
@@ -147,6 +149,8 @@ if ($params{'help'} || $numOpts == 0) {
     &usage();
     exit(0);
 }
+
+
 
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
@@ -443,6 +447,10 @@ Check the status of a job.
 sub rest_get_status {
     print_debug_message('rest_get_status', 'Begin', 1);
     my $job_id = shift;
+	# job_id is not valid
+	if (length($job_id) > 100) {
+		exit(0);
+	}
     print_debug_message('rest_get_status', 'jobid: ' . $job_id, 2);
     my $status_str = 'UNKNOWN';
     my $url = $baseUrl . '/status/' . $job_id;
@@ -468,7 +476,9 @@ sub rest_get_result_types {
     my $url = $baseUrl . '/resulttypes/' . $job_id;
     my $result_type_list_xml_str = &rest_request($url);
     my $result_type_list_xml = XMLin($result_type_list_xml_str);
-    (@resultTypes) = @{$result_type_list_xml->{'type'}};
+    if (defined($result_type_list_xml->{'type'})) {
+		(@resultTypes) = @{$result_type_list_xml->{'type'}};
+	}
     print_debug_message('rest_get_result_types',
         scalar(@resultTypes) . ' result types', 2);
     print_debug_message('rest_get_result_types', 'End', 1);
@@ -688,24 +698,25 @@ sub submit_job {
 
     # Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
     my $param_hmmdb = $params{'database'};
-    if ($param_hmmdb eq 'treefam') {
+
+    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'treefam') {
         $db_index = "2";
     }
-    if ($param_hmmdb eq 'gene3d') {
+    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'gene3d') {
         $db_index = "3";
     }
-    if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam') {
+    if (defined($params{'param_hmmdb'}) && ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam')) {
         $params{'database'} = 'pfam';
         $db_index = "4";
     }
-    if ($param_hmmdb eq 'superfamily') {
+    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'superfamily') {
         $db_index = "5";
     }
-    if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
+    if (defined($params{'param_hmmdb'}) && ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam')) {
         $params{'database'} = 'tigrfam';
         $db_index = "6";
     }
-    if ($param_hmmdb eq 'pirsf') {
+    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'pirsf') {
         $db_index = "7";
     }
 
@@ -1019,7 +1030,7 @@ sub load_params {
     }
 
     if ($params{'compressedout'}) {
-        $params{'compressedout'} = 'true';
+        $params{'compressedout'} = 'false';
     }
     else {
         $params{'compressedout'} = 'false';
@@ -1052,6 +1063,7 @@ sub client_poll {
         || ($status eq 'ERROR' && $errorCount < 2)) {
         $status = rest_get_status($jobid);
         print STDERR "$status\n" if ($outputLevel > 0);
+
         if ($status eq 'ERROR') {
             $errorCount++;
         }
@@ -1063,7 +1075,7 @@ sub client_poll {
             || $status eq 'ERROR') {
 
             # Wait before polling again.
-            usleep($checkInterval);
+            sleep($checkInterval);
         }
     }
     print_debug_message('client_poll', 'End', 1);
@@ -1110,7 +1122,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            $params{'outfile'} = $jobid;
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }
