@@ -4,8 +4,9 @@ This repository provides a collection of Sample Web Service Clients to consume
 EBI's Job Dispatcher Web Service tools APIs. If you are looking after EBI Search REST clients check the following
 repository: https://github.com/ebi-wp/EBISearch-webservice-clients
 
-*Note:* A number of "older" REST and SOAP clients in a range of programming languages are now [deprecated](deprecated)
-but still available for those who might be interested. In addition to Perl, Python and Java, clients are available
+*Note:* A number of "older" REST and SOAP clients in a range of programming languages are now deprecated
+but [still available](https://github.com/ebi-wp/webservice-clients/tree/deprecated) for those who might be interested.
+In addition to Perl, Python and Java, clients are available
 in C#, Visual Basic .NET, Ruby and PHP, using a variety of different REST/SOAP libraries.
 
 ## Sample Clients
