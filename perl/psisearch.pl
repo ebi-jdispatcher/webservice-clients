@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psisearch';
-my $version = '2019-07-03 16:26';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -98,7 +98,7 @@ GetOptions(
     'hist'            => \$params{'hist'},           # Turn on/off the histogram in the PSI-Search result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
     'annotfeats'      => \$params{'annotfeats'},     # Turn on/off annotation features. Annotation features shows features from UniProtKB, such as variants, active sites, phospho-sites and binding sites that have been found in the aligned region of the database hit. To see the annotation features in the results after this has been enabled, select sequences of interest and click to 'Show' Alignments. This option also enables a new result tab (Domain Diagrams) that highlights domain regions.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
+    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
     'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-Search iteration.
     'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers from the hits of the previous iteration to use to construct the search PSSM for this iteration.
     'bdrfile=f'       => \$params{'bdrfile'},        # Boundary file containing boundary information for pre-selected sequences.Used for hardmask to clean HOEs.
@@ -131,6 +131,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -844,7 +845,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-            #&get_results($jobid, $seq_id);#Duplicated overwritten resutls
+            # Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1117,7 +1119,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            #$params{'outfile'} = $jobid;#Avoiding overwritten when multifasta
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }

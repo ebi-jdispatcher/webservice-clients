@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psiblast';
-my $version = '2019-07-03 16:26';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -97,11 +97,10 @@ GetOptions(
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
     'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-BLAST iteration.
     'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers of the hits from the previous iteration to use to construct the search PSSM for this iteration.
     'cpfile=f'        => \$params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.
-    'umode=s'         => \$params{'umode'},          # Usage mode for PHI-BLAST functionality
     'patfile=f'       => \$params{'patfile'},        # Pattern file for PHI-BLAST functionality. This file needs to be in the style of a prosite entry file, with at least an ID line, PA line and optional HI line.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -131,6 +130,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -844,7 +844,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-			#&get_results($jobid, $seq_id);#Duplicated overwritten resutls
+            # Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1028,10 +1029,6 @@ sub load_params {
         $params{'filter'} = 'no'
     }
 
-    if (!$params{'umode'}) {
-        $params{'umode'} = 'blastpgp'
-    }
-
     print_debug_message('load_params', 'End', 1);
 }
 
@@ -1113,7 +1110,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            #$params{'outfile'} = $jobid;#Avoiding overwritten when multifasta
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }
@@ -1314,7 +1311,6 @@ Sequence similarity search with PSI-Blast.
                         to use to construct the search PSSM for this iteration.
   --cpfile              Checkpoint file from the previous iteration. Must be in
                         ASN.1 Binary Format.
-  --umode               Usage mode for PHI-BLAST functionality.
   --patfile             Pattern file for PHI-BLAST functionality. This file needs to
                         be in the style of a prosite entry file, with at least an ID
                         line, PA line and optional HI line.

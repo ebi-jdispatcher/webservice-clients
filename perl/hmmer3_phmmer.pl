@@ -62,8 +62,8 @@ use Data::Dumper;
 use Time::HiRes qw(usleep);
 
 # Base URL for service
-my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
-my $version = '2019-07-03 16:26';
+my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -98,7 +98,7 @@ GetOptions(
     'nobias'          => \$params{'nobias'},         # Filters
     'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
-    'database=s'      => \$params{'database'},       # Sequence Database
+    'database=s'      => \@database,                 # Sequence Database Selection
     'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
     'nhits=i'         => \$params{'nhits'},          # Number of hits to be displayed.
@@ -130,6 +130,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -445,12 +446,6 @@ Check the status of a job.
 sub rest_get_status {
     print_debug_message('rest_get_status', 'Begin', 1);
     my $job_id = shift;
-	
-	# job_id is not valid
-	if (length($job_id) > 100) {
-		exit(0);
-	}
-
     print_debug_message('rest_get_status', 'jobid: ' . $job_id, 2);
     my $status_str = 'UNKNOWN';
     my $url = $baseUrl . '/status/' . $job_id;
@@ -697,46 +692,46 @@ sub submit_job {
     # Set input seqdb ; ensemblgenomes,uniprotkb,uniprotrefprot,rp15,rp35,rp55,rp75,ensembl,merops,qfo,swissprot,pdb,meropsscan
     my $param_seqdb = $params{'database'};
 
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'ensemblgenomes') {
+    if ($param_seqdb eq 'ensemblgenomes') {
         $db_index = "1";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'uniprotkb') {
+    if ($param_seqdb eq 'uniprotkb') {
         $db_index = "2";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp75') {
+    if ($param_seqdb eq 'rp75') {
         $db_index = "3";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'uniprotrefprot') {
+    if ($param_seqdb eq 'uniprotrefprot') {
         $db_index = "4";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp55') {
+    if ($param_seqdb eq 'rp55') {
         $db_index = "5";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp35') {
+    if ($param_seqdb eq 'rp35') {
         $db_index = "6";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'rp15') {
+    if ($param_seqdb eq 'rp15') {
         $db_index = "7";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'ensembl') {
+    if ($param_seqdb eq 'ensembl') {
         $db_index = "8";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'merops') {
+    if ($param_seqdb eq 'merops') {
         $db_index = "9";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'qfo') {
+    if ($param_seqdb eq 'qfo') {
         $db_index = "10";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'swissprot') {
+    if ($param_seqdb eq 'swissprot') {
         $db_index = "11";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'pdb') {
+    if ($param_seqdb eq 'pdb') {
         $db_index = "12";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'chembl') {
+    if ($param_seqdb eq 'chembl') {
         $db_index = "13";
     }
-    if (defined($params{'param_seqdb'}) && $param_seqdb eq 'meropsscan') {
+    if ($param_seqdb eq 'meropsscan') {
         $db_index = "14";
     }
 
@@ -897,7 +892,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-            &get_results($jobid, $seq_id);
+            # Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1137,7 +1133,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            $params{'outfile'} = $jobid;
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }
@@ -1289,7 +1285,7 @@ Protein function analysis with HMMER 3 phmmer.
 
 [Required (for job submission)]
   --email               E-mail address.
-  --database            Sequence Database.
+  --database            Sequence Database Selection.
   --sequence            The input sequence can be entered directly into this form.
                         The sequence can be be in FASTA or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.

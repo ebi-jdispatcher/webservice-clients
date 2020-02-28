@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psisearch2';
-my $version = '2019-07-03 16:26';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -104,7 +104,7 @@ GetOptions(
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'hist'            => \$params{'hist'},           # Turn on/off the histogram in the PSI-Search result. The histogram gives a qualitative view of how well the statistical theory fits the similarity scores calculated by the program.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
+    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be selected at the same time.
     'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-Search iteration.
     'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers from the hits of the previous iteration to use to construct the search PSSM for this iteration.
     'bdrfile=f'       => \$params{'bdrfile'},        # Boundary file containing boundary information for pre-selected sequences.Used for maskging to clean HOEs.
@@ -123,6 +123,10 @@ GetOptions(
     'status'          => \$params{'status'},         # Get status
     'params'          => \$params{'params'},         # List input parameters
     'paramDetail=s'   => \$params{'paramDetail'},    # Get details for parameter
+    'multifasta'      => \$params{'multifasta'},     # Multiple fasta input
+    'useSeqId'        => \$params{'useSeqId'},       # Seq Id file name
+    'maxJobs=i'       => \$params{'maxJobs'},        # Max. parallel jobs
+
     'verbose'         => \$params{'verbose'},        # Increase output level
     'version'         => \$params{'version'},        # Prints out the version of the Client and exit.
     'quiet'           => \$params{'quiet'},          # Decrease output level
@@ -133,6 +137,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -908,7 +913,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            $params{'outfile'} = $jobid;
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }

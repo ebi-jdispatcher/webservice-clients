@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/fastm';
-my $version = '2019-07-03 16:26';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -103,7 +103,7 @@ GetOptions(
     'dbrange=s'       => \$params{'dbrange'},        # Specify the sizes of the sequences in a database to search against. For example: 100-250 will search all sequences in a database with length between 100 and 250 residues, inclusive.
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'sequence=s'      => \$params{'sequence'},       # The input set of peptide or nucleotide sequence fragments are described using a modified fasta sequence format. This comprises a fasta header line with an identifier for the set of sequences and optionally a description, followed by the individual sequences each starting on a newline and separated with commas. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
     'ktup=i'          => \$params{'ktup'},           # FASTA uses a rapid word-based lookup strategy to speed the initial phase of the similarity search. The KTUP is used to control the sensitivity of the search. Lower values lead to more sensitive, but slower searches.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -133,6 +133,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -846,7 +847,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-            #&get_results($jobid, $seq_id);#Duplicated results
+            # Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1099,7 +1101,7 @@ sub get_results {
     # Use JobId if output file name is not defined
     else {
         unless (defined($params{'outfile'})) {
-            #$params{'outfile'} = $jobid;#Avoiding overwritten when multifasta
+            #$params{'outfile'} = $jobid;
             $output_basename = $jobid;
         }
     }

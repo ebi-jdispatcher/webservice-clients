@@ -63,11 +63,10 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
-#my $baseUrl = 'http://wwwdev.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
-my $version = '2019-07-03 16:26';
+my $version = '2020-02-28 14:43';
 
 # Set interval for checking status
-my $checkInterval = 1;
+my $checkInterval = 3;
 
 # Set maximum number of 'ERROR' status calls to call job failed.
 my $maxErrorStatusCount = 3;
@@ -81,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-
+my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -95,10 +94,10 @@ GetOptions(
     'domT=s'          => \$params{'domT'},           # Report bit scores[Hit]
     'cut_ga'          => \$params{'cut_ga'},         # Use the gathering threshold.
     'nobias'          => \$params{'nobias'},         # Filters
-    'hmmdbparam=s'    => \$params{'hmmdbparam'},     # hmmdbparam
+    'hmmdbparam=s'    => \$params{'hmmdbparam'},     # The port number for the HMMER Demons
     'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
-    'database=s'      => \$params{'database'},       # HMM Database
+    'database=s'      => \@database,                 # HMM Database for HMMER hmmscan
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
     'nhits=i'         => \$params{'nhits'},          # Number of hits to be displayed.
     # Generic options
@@ -129,7 +128,7 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
-
+$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -149,8 +148,6 @@ if ($params{'help'} || $numOpts == 0) {
     &usage();
     exit(0);
 }
-
-
 
 # Debug mode: show the base URL
 &print_debug_message('MAIN', 'baseUrl: ' . $baseUrl, 1);
@@ -447,10 +444,6 @@ Check the status of a job.
 sub rest_get_status {
     print_debug_message('rest_get_status', 'Begin', 1);
     my $job_id = shift;
-	# job_id is not valid
-	if (length($job_id) > 100) {
-		exit(0);
-	}
     print_debug_message('rest_get_status', 'jobid: ' . $job_id, 2);
     my $status_str = 'UNKNOWN';
     my $url = $baseUrl . '/status/' . $job_id;
@@ -476,9 +469,7 @@ sub rest_get_result_types {
     my $url = $baseUrl . '/resulttypes/' . $job_id;
     my $result_type_list_xml_str = &rest_request($url);
     my $result_type_list_xml = XMLin($result_type_list_xml_str);
-    if (defined($result_type_list_xml->{'type'})) {
-		(@resultTypes) = @{$result_type_list_xml->{'type'}};
-	}
+    (@resultTypes) = @{$result_type_list_xml->{'type'}};
     print_debug_message('rest_get_result_types',
         scalar(@resultTypes) . ' result types', 2);
     print_debug_message('rest_get_result_types', 'End', 1);
@@ -698,25 +689,24 @@ sub submit_job {
 
     # Set input hmmdb ;gene3d, pfam, tigrfam, superfamily, pirsf
     my $param_hmmdb = $params{'database'};
-
-    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'treefam') {
+    if ($param_hmmdb eq 'treefam') {
         $db_index = "2";
     }
-    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'gene3d') {
+    if ($param_hmmdb eq 'gene3d') {
         $db_index = "3";
     }
-    if (defined($params{'param_hmmdb'}) && ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam')) {
+    if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam') {
         $params{'database'} = 'pfam';
         $db_index = "4";
     }
-    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'superfamily') {
+    if ($param_hmmdb eq 'superfamily') {
         $db_index = "5";
     }
-    if (defined($params{'param_hmmdb'}) && ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam')) {
+    if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
         $params{'database'} = 'tigrfam';
         $db_index = "6";
     }
-    if (defined($params{'param_hmmdb'}) && $param_hmmdb eq 'pirsf') {
+    if ($param_hmmdb eq 'pirsf') {
         $db_index = "7";
     }
 
@@ -877,7 +867,8 @@ sub _job_list_poll {
                 print STDERR
                     "Warning: job $jobid failed for sequence $job_number: $seq_id\n";
             }
-            &get_results($jobid, $seq_id);
+            # Duplicated getting results.
+            #&get_results($jobid, $seq_id);
             splice(@$jobid_list, $jobNum, 1);
         }
         else {
@@ -1030,7 +1021,7 @@ sub load_params {
     }
 
     if ($params{'compressedout'}) {
-        $params{'compressedout'} = 'false';
+        $params{'compressedout'} = 'true';
     }
     else {
         $params{'compressedout'} = 'false';
@@ -1063,7 +1054,6 @@ sub client_poll {
         || ($status eq 'ERROR' && $errorCount < 2)) {
         $status = rest_get_status($jobid);
         print STDERR "$status\n" if ($outputLevel > 0);
-
         if ($status eq 'ERROR') {
             $errorCount++;
         }
@@ -1075,7 +1065,7 @@ sub client_poll {
             || $status eq 'ERROR') {
 
             # Wait before polling again.
-            sleep($checkInterval);
+            usleep($checkInterval);
         }
     }
     print_debug_message('client_poll', 'End', 1);
@@ -1274,7 +1264,7 @@ Protein function analysis with HMMER 3 hmmscan.
 
 [Required (for job submission)]
   --email               E-mail address.
-  --database            HMM Database.
+  --database            HMM Database for HMMER hmmscan.
   --sequence            The input sequence can be entered directly into this form.
                         The sequence can be be in FASTA or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.
@@ -1294,7 +1284,7 @@ Protein function analysis with HMMER 3 hmmscan.
   --domT                Report bit scores[Hit].
   --cut_ga              Use the gathering threshold.
   --nobias              Filters.
-  --hmmdbparam          hmmdbparam.
+  --hmmdbparam          The port number for the HMMER Demons.
   --compressedout       By default it runs hmm2c plus post-processing (default
                         output), whereas with compressedout, it gets compressed
                         output only.
