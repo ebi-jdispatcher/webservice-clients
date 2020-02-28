@@ -40,17 +40,10 @@ RUN ln -s /usr/bin/pip3 /usr/bin/pip \
 
 # Copying clients
 RUN mkdir -p /dist
-COPY python/*.py /dist/
-COPY perl/*.pl /dist/
-COPY java/*.jar /dist/
-
-# Adding EBI Search clients
-COPY python/requests/ebeye_requests.py /dist/ebisearch.py
-COPY perl/lwp/ebeye_lwp.pl /dist/ebisearch.pl
-COPY deprecated/java/jar/jaxrs-client-*-jar-with-dependencies.jar /dist/ebisearch.jar
-COPY deprecated/java/jar/jaxrs-client-*-dependencies-libs.zip /dist/ebiws-lib.zip
 WORKDIR /dist
-RUN unzip ebiws-lib.zip
+COPY python/*.py ./
+COPY perl/*.pl ./
+COPY java/*.jar ./
 RUN chmod +x *.py *.pl *.jar
 
 ENV PATH="/dist:${PATH}"
