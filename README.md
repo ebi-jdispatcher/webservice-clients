@@ -72,10 +72,10 @@ An example test for Clustal Omega Python client:
 python clustalo.py --email <your@email.com> --sequence sp:wap_rat,sp:wap_mouse,sp:wap_pig
 ```
 
-### Java clients [![java](https://img.shields.io/badge/java-1.8-blue.svg?style=flat)]()
+### Java clients [![java](https://img.shields.io/badge/java-openJDK8-blue.svg?style=flat)]()
 
-In order to run Java clients, Java (tested version 1.8.0_161") as well as ant (tested version 1.10.5),
-needs to installed. *Note Java 9 and above are currently not supported.* Additional instructions on how to install Java and its dependencies are [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
+In order to run Java clients, OpenJDK 8 (tested version 1.8.0_161") as well as ant (tested version 1.10.5),
+needs to installed. *Note OpenJDK 9 and above are currently not supported.* Additional instructions on how to install Java and its dependencies are [provided here](https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Environment+setup+for+REST+Web+Services).
 
 The clients are provided here as self-contained JAR files. (The source code is available in the [webservice-clients-generator repository](https://github.com/ebi-wp/webservice-clients-generator)) To run them on all platforms, an example for the Clustal Omega Java client is:
 
