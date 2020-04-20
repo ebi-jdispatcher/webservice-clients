@@ -80,7 +80,7 @@ my %params = (
     'debugLevel' => 0,
     'maxJobs'    => 1
 );
-my @database;
+
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
@@ -97,7 +97,7 @@ GetOptions(
     'hmmdbparam=s'    => \$params{'hmmdbparam'},     # The port number for the HMMER Demons
     'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
-    'database=s'      => \@database,                 # HMM Database for HMMER hmmscan
+    'database=s'      => \$params{'database'},       # HMM Database for HMMER hmmscan
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
     'nhits=i'         => \$params{'nhits'},          # Number of hits to be displayed.
     # Generic options
@@ -128,7 +128,6 @@ if ($params{'verbose'}) {$outputLevel++}
 if ($params{'quiet'}) {$outputLevel--}
 if ($params{'pollFreq'}) {$checkInterval = $params{'pollFreq'} * 1000 * 1000}
 if ($params{'baseUrl'}) {$baseUrl = $params{'baseUrl'}}
-$params{"database"} = [@database];
 
 # Debug mode: LWP version
 &print_debug_message('MAIN', 'LWP::VERSION: ' . $LWP::VERSION,
@@ -691,23 +690,34 @@ sub submit_job {
     my $param_hmmdb = $params{'database'};
     if ($param_hmmdb eq 'treefam') {
         $db_index = "2";
+        $params{'hmmdbparam'} = '56371';
     }
     if ($param_hmmdb eq 'gene3d') {
         $db_index = "3";
+        $params{'hmmdbparam'} = '53371';
     }
     if ($param_hmmdb eq 'pfam' || $param_hmmdb eq 'Pfam') {
         $params{'database'} = 'pfam';
         $db_index = "4";
+        $params{'hmmdbparam'} = '51371';
+    }
+    if ($param_hmmdb eq 'pfama' || $param_hmmdb eq 'Pfama') {
+        $params{'database'} = 'pfama';
+        $db_index = "4";
+        $params{'hmmdbparam'} = '57371';
     }
     if ($param_hmmdb eq 'superfamily') {
         $db_index = "5";
+        $params{'hmmdbparam'} = '55371';
     }
     if ($param_hmmdb eq 'tigrfam' || $param_hmmdb eq 'Tigrfam') {
         $params{'database'} = 'tigrfam';
         $db_index = "6";
+        $params{'hmmdbparam'} = '52371';
     }
     if ($param_hmmdb eq 'pirsf') {
         $db_index = "7";
+        $params{'hmmdbparam'} = '54371';
     }
 
     # Load parameters
@@ -1017,7 +1027,7 @@ sub load_params {
     }
 
     if (!$params{'hmmdbparam'}) {
-        $params{'hmmdbparam'} = '52371'
+        $params{'hmmdbparam'} = '51371'
     }
 
     if ($params{'compressedout'}) {
