@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2018 EMBL - European Bioinformatics Institute
+Copyright 2012-2021 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
-my $version = '2020-02-28 14:43';
+my $version = '2021-04-08 10:44';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -92,6 +92,7 @@ GetOptions(
     'exp=s'           => \$params{'exp'},            # Limits the number of scores and alignments reported based on the expectation value. This is the maximum number of times the match is expected to occur by chance.
     'dropoff=i'       => \$params{'dropoff'},        # The amount a score can drop before gapped extension of word hits is halted
     'match_scores=s'  => \$params{'match_scores'},   # (Nucleotide searches) The match score is the bonus to the alignment score when matching the same base. The mismatch is the penalty when failing to match.
+    'hsps=i'          => \$params{'hsps'},           # Maximum number of HSPs (alignments) to keep for any single query-subject pair.
     'gapopen=i'       => \$params{'gapopen'},        # Penalty taken away from the score when a gap is created in sequence. Increasing the gap openning penalty will decrease the number of gaps in the final alignment.
     'gapext=i'        => \$params{'gapext'},         # Penalty taken away from the score for each base or residue in the gap. Increasing the gap extension penalty favors short gaps in the final alignment, conversly decreasing the gap extension penalty favors long gaps in the final alignment.
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
@@ -99,12 +100,13 @@ GetOptions(
     'gapalign'        => \$params{'gapalign'},       # This is a true/false setting that tells the program the perform optimised alignments within regions involving gaps. If set to true, the program will perform an alignment using gaps. Otherwise, if it is set to false, it will report only individual HSP where two sequence match each other, and thus will not produce alignments with gaps.
     'wordsize=i'      => \$params{'wordsize'},       # Word size for wordfinder algorithm
     'taxids=s'        => \$params{'taxids'},         # Specify one or more TaxIDs so that the BLAST search becomes taxonomically aware.
+    'negative_taxids=s'=> \$params{'negative_taxids'},# TaxIDs excluded from the BLAST search.
     'compstats=s'     => \$params{'compstats'},      # Use composition-based statistics.
     'align=i'         => \$params{'align'},          # Formating for the alignments
     'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
     'stype=s'         => \$params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \@database,                 # Database
+    'database=s'      => \$params{'database'},       # Database
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
@@ -1350,6 +1352,8 @@ Sequence similarity search with NCBI Blast.
   --match_scores        (Nucleotide searches) The match score is the bonus to the
                         alignment score when matching the same base. The mismatch is
                         the penalty when failing to match.
+  --hsps                Maximum number of HSPs (alignments) to keep for any single
+                        query-subject pair.
   --gapopen             Penalty taken away from the score when a gap is created in
                         sequence. Increasing the gap openning penalty will decrease
                         the number of gaps in the final alignment.
@@ -1376,6 +1380,7 @@ Sequence similarity search with NCBI Blast.
   --wordsize            Word size for wordfinder algorithm.
   --taxids              Specify one or more TaxIDs so that the BLAST search becomes
                         taxonomically aware.
+  --negative_taxids     TaxIDs excluded from the BLAST search.
   --compstats           Use composition-based statistics.
   --align               Formating for the alignments.
   --transltable         Query Genetic code to use in translation.

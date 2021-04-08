@@ -43,7 +43,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 LICENSE
 
-Copyright 2012-2018 EMBL - European Bioinformatics Institute
+Copyright 2012-2021 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

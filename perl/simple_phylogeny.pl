@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2018 EMBL - European Bioinformatics Institute
+Copyright 2012-2021 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/simple_phylogeny';
-my $version = '2020-02-28 14:43';
+my $version = '2021-04-08 10:44';
 
 # Set interval for checking status
 my $checkInterval = 3;

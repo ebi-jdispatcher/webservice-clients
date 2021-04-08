@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2018 EMBL - European Bioinformatics Institute
+# Copyright 2012-2021 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/fastm'
-version = u'2019-07-03 12:51'
+version = u'2021-04-08 10:44'
 
 # Set interval for checking status
 pollFreq = 3

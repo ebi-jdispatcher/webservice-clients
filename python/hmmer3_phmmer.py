@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2018 EMBL - European Bioinformatics Institute
+# Copyright 2012-2021 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer'
-version = u'2019-07-03 12:51'
+version = u'2021-04-08 10:44'
 
 # Set interval for checking status
 pollFreq = 3
@@ -86,7 +86,7 @@ parser.add_option('--nobias', action='store_true', help=('Filters'))
 parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
                   'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
-parser.add_option('--database', type=str, help=('Sequence Database'))
+parser.add_option('--database', type=str, help=('Sequence Database Selection'))
 parser.add_option('--evalue', type=str, help=('Expectation value cut-off for reporting target profiles in the per-'
                   'target output.'))
 parser.add_option('--sequence', type=str, help=('The input sequence can be entered directly into this form. The'
@@ -485,7 +485,7 @@ Protein function analysis with HMMER 3 phmmer.
 
 [Required (for job submission)]
   --email               E-mail address.
-  --database            Sequence Database.
+  --database            Sequence Database Selection.
   --sequence            The input sequence can be entered directly into this form.
                         The sequence can be be in FASTA or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.

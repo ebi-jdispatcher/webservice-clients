@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2018 EMBL - European Bioinformatics Institute
+# Copyright 2012-2021 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
-version = u'2019-07-03 12:51'
+version = u'2021-04-08 10:44'
 
 # Set interval for checking status
 pollFreq = 3
@@ -85,6 +85,8 @@ parser.add_option('--dropoff', type=int, help=('The amount a score can drop befo
 parser.add_option('--match_scores', type=str, help=('(Nucleotide searches) The match score is the bonus to the alignment'
                   'score when matching the same base. The mismatch is the penalty when'
                   'failing to match.'))
+parser.add_option('--hsps', type=int, help=('Maximum number of HSPs (alignments) to keep for any single query-'
+                  'subject pair.'))
 parser.add_option('--gapopen', type=int, help=('Penalty taken away from the score when a gap is created in sequence.'
                   'Increasing the gap openning penalty will decrease the number of gaps'
                   'in the final alignment.'))
@@ -106,6 +108,9 @@ parser.add_option('--gapalign', action='store_true', help=('This is a true/false
                   'set to false, it will report only individual HSP where two sequence'
                   'match each other, and thus will not produce alignments with gaps.'))
 parser.add_option('--wordsize', type=int, help=('Word size for wordfinder algorithm'))
+parser.add_option('--taxids', type=str, help=('Specify one or more TaxIDs so that the BLAST search becomes'
+                  'taxonomically aware.'))
+parser.add_option('--negative_taxids', type=str, help=('TaxIDs excluded from the BLAST search.'))
 parser.add_option('--compstats', type=str, help=('Use composition-based statistics.'))
 parser.add_option('--align', type=int, help=('Formating for the alignments'))
 parser.add_option('--transltable', type=int, help=('Query Genetic code to use in translation'))
@@ -537,6 +542,8 @@ Sequence similarity search with NCBI Blast.
   --match_scores        (Nucleotide searches) The match score is the bonus to the
                         alignment score when matching the same base. The mismatch is
                         the penalty when failing to match.
+  --hsps                Maximum number of HSPs (alignments) to keep for any single
+                        query-subject pair.
   --gapopen             Penalty taken away from the score when a gap is created in
                         sequence. Increasing the gap openning penalty will decrease
                         the number of gaps in the final alignment.
@@ -561,6 +568,9 @@ Sequence similarity search with NCBI Blast.
                         individual HSP where two sequence match each other, and thus
                         will not produce alignments with gaps.
   --wordsize            Word size for wordfinder algorithm.
+  --taxids              Specify one or more TaxIDs so that the BLAST search becomes
+                        taxonomically aware.
+  --negative_taxids     TaxIDs excluded from the BLAST search.
   --compstats           Use composition-based statistics.
   --align               Formating for the alignments.
   --transltable         Query Genetic code to use in translation.
@@ -725,6 +735,10 @@ elif options.email and not options.jobid:
         params['match_scores'] = options.match_scores
     
 
+    if options.hsps:
+        params['hsps'] = options.hsps
+    
+
     if not options.gapopen:
         params['gapopen'] = -1
     if options.gapopen:
@@ -762,6 +776,14 @@ elif options.email and not options.jobid:
 
     if options.wordsize:
         params['wordsize'] = options.wordsize
+    
+
+    if options.taxids:
+        params['taxids'] = options.taxids
+    
+
+    if options.negative_taxids:
+        params['negative_taxids'] = options.negative_taxids
     
 
     if not options.compstats:

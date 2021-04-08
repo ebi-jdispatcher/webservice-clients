@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2018 EMBL - European Bioinformatics Institute
+Copyright 2012-2021 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/fastm';
-my $version = '2020-02-28 14:43';
+my $version = '2021-04-08 10:44';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -103,7 +103,7 @@ GetOptions(
     'dbrange=s'       => \$params{'dbrange'},        # Specify the sizes of the sequences in a database to search against. For example: 100-250 will search all sequences in a database with length between 100 and 250 residues, inclusive.
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather then meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'sequence=s'      => \$params{'sequence'},       # The input set of peptide or nucleotide sequence fragments are described using a modified fasta sequence format. This comprises a fasta header line with an identifier for the set of sequences and optionally a description, followed by the individual sequences each starting on a newline and separated with commas. Partially formatted sequences are not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
     'ktup=i'          => \$params{'ktup'},           # FASTA uses a rapid word-based lookup strategy to speed the initial phase of the similarity search. The KTUP is used to control the sensitivity of the search. Lower values lead to more sensitive, but slower searches.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address

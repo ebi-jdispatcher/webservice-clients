@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2018 EMBL - European Bioinformatics Institute
+# Copyright 2012-2021 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/psiblast'
-version = u'2019-07-03 12:51'
+version = u'2021-04-08 10:44'
 
 # Set interval for checking status
 pollFreq = 3
@@ -112,7 +112,6 @@ parser.add_option('--selectedHits', type=str, help=('List of identifiers of the 
                   'construct the search PSSM for this iteration.'))
 parser.add_option('--cpfile', type=str, help=('Checkpoint file from the previous iteration. Must be in ASN.1 Binary'
                   'Format.'))
-parser.add_option('--umode', type=str, help=('Usage mode for PHI-BLAST functionality'))
 parser.add_option('--patfile', type=str, help=('Pattern file for PHI-BLAST functionality. This file needs to be in the'
                   'style of a prosite entry file, with at least an ID line, PA line and'
                   'optional HI line.'))
@@ -554,7 +553,6 @@ Sequence similarity search with PSI-Blast.
                         to use to construct the search PSSM for this iteration.
   --cpfile              Checkpoint file from the previous iteration. Must be in
                         ASN.1 Binary Format.
-  --umode               Usage mode for PHI-BLAST functionality.
   --patfile             Pattern file for PHI-BLAST functionality. This file needs to
                         be in the style of a prosite entry file, with at least an ID
                         line, PA line and optional HI line.
@@ -716,7 +714,7 @@ elif options.email and not options.jobid:
     
 
     if not options.filter:
-        params['filter'] = 'F'
+        params['filter'] = 'no'
     if options.filter:
         params['filter'] = options.filter
     
@@ -735,12 +733,6 @@ elif options.email and not options.jobid:
 
     if options.cpfile:
         params['cpfile'] = options.cpfile
-    
-
-    if not options.umode:
-        params['umode'] = 'blastpgp'
-    if options.umode:
-        params['umode'] = options.umode
     
 
     if options.patfile:
