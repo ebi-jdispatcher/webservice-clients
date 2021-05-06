@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psiblast';
-my $version = '2021-04-08 10:44';
+my $version = '2021-05-06 14:52';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -97,7 +97,7 @@ GetOptions(
     'filter=s'        => \$params{'filter'},         # Filter regions of low sequence complexity. This can avoid issues with low complexity sequences where matches are found due to composition rather than meaningful sequence similarity. However in some cases filtering also masks regions of interest and so should be used with caution.
     'seqrange=s'      => \$params{'seqrange'},       # Specify a range or section of the input sequence to use in the search. Example: Specifying '34-89' in an input sequence of total length 100, will tell BLAST to only use residues 34 to 89, inclusive.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
+    'database=s'      => \@database,                 # The databases to run the sequence similarity search against. Multiple databases can be used at the same time
     'previousjobid=s' => \$params{'previousjobid'},  # The job identifier for the previous PSI-BLAST iteration.
     'selectedHits=f'  => \$params{'selectedHits'},   # List of identifiers of the hits from the previous iteration to use to construct the search PSSM for this iteration.
     'cpfile=f'        => \$params{'cpfile'},         # Checkpoint file from the previous iteration. Must be in ASN.1 Binary Format.

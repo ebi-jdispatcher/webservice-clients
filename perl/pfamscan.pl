@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/pfamscan';
-my $version = '2021-04-08 10:44';
+my $version = '2021-05-06 14:52';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -84,7 +84,7 @@ my @database;
 # Default parameter values (should get these from the service)
 GetOptions(
     # Tool specific options
-    'database=s'      => \$params{'database'},       # The database(s) to search.
+    'database=s'      => \@database,                 # The database(s) to search.
     'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off.
     'asp'             => \$params{'asp'},            # Predict active site residues for Pfam-A matches.
     'format=s'        => \$params{'format'},         # Output format

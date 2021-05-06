@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast';
-my $version = '2021-04-08 10:44';
+my $version = '2021-05-06 14:52';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -106,7 +106,7 @@ GetOptions(
     'transltable=i'   => \$params{'transltable'},    # Query Genetic code to use in translation
     'stype=s'         => \$params{'stype'},          # Indicates if the sequence is protein or DNA/RNA.
     'sequence=s'      => \$params{'sequence'},       # The query sequence can be entered directly into this form. The sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
-    'database=s'      => \$params{'database'},       # Database
+    'database=s'      => \@database,                 # Database
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
     'title=s'         => \$params{'title'},          # Job title
