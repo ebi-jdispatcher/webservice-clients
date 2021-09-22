@@ -58,7 +58,7 @@ debugLevel = 0
 
 def print_usage():
     print("""\
-EMBL-EBI EMBOSS WSDbfetch Python Client:
+EMBL-EBI Dbfetch Python Client:
 
 Dbfetch service enables database entry retrieval given a set of entry
 identifiers, and a required data format.
