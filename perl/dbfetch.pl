@@ -81,7 +81,7 @@ use constant MAX_CHUNK_SIZE => 100;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
-my $version = '2019-01-17 15:15';
+my $version = '2021-09-22 14:15';
 
 # Output level
 my $outputLevel = 1;
@@ -763,7 +763,7 @@ Print program usage message.
 
 sub usage {
     print STDERR <<EOF;
-EMBL-EBI EMBOSS WSDbfetch Perl Client:
+EMBL-EBI Dbfetch Perl Client:
 
 Dbfetch service enables database entry retrieval given a set of entry
 identifiers, and a required data format.

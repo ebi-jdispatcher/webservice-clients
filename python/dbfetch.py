@@ -46,7 +46,7 @@ except ImportError:
 
 # Service base URL
 baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch'
-version = u'2019-01-17 15:15'
+version = u'2021-09-22 14:15'
 
 # Output level
 outputLevel = 1
@@ -58,7 +58,7 @@ debugLevel = 0
 
 def print_usage():
     print("""\
-EMBL-EBI EMBOSS WSDbfetch Python Client:
+EMBL-EBI Dbfetch Python Client:
 
 Dbfetch service enables database entry retrieval given a set of entry
 identifiers, and a required data format.
