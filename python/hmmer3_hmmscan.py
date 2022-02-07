@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan'
-version = u'2021-04-08 10:44'
+version = u'2022-02-07 13:42'
 
 # Set interval for checking status
 pollFreq = 3
@@ -80,7 +80,8 @@ parser.add_option('--incdomT', type=str, help=('Significance bit scores[Hit]'))
 parser.add_option('--T', type=str, help=('Report bit scores[Sequence]'))
 parser.add_option('--domT', type=str, help=('Report bit scores[Hit]'))
 parser.add_option('--cut_ga', action='store_true', help=('Use the gathering threshold.'))
-parser.add_option('--nobias', action='store_true', help=('Filters'))
+parser.add_option('--nobias', action='store_true', help=('The --nobias option turns off (bypasses) the biased composition filter'
+                  'which is on by default.'))
 parser.add_option('--hmmdbparam', type=str, help=('The port number for the HMMER Demons'))
 parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
                   'whereas with compressedout, it gets compressed output only.'))
@@ -501,7 +502,8 @@ Protein function analysis with HMMER 3 hmmscan.
   --T                   Report bit scores[Sequence].
   --domT                Report bit scores[Hit].
   --cut_ga              Use the gathering threshold.
-  --nobias              Filters.
+  --nobias              The '--nobias' option turns off (bypasses) the biased
+                        composition filter which is on by default.
   --hmmdbparam          The port number for the HMMER Demons.
   --compressedout       By default it runs hmm2c plus post-processing (default
                         output), whereas with compressedout, it gets compressed
@@ -644,7 +646,7 @@ elif options.email and not options.jobid:
     
 
     if not options.nobias:
-        params['nobias'] = 'true'
+        params['nobias'] = 'false'
     if options.nobias:
         params['nobias'] = options.nobias
     

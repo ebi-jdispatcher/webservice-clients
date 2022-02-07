@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
-my $version = '2021-05-06 14:52';
+my $version = '2022-02-07 13:42';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -93,7 +93,7 @@ GetOptions(
     'T=s'             => \$params{'T'},              # Report bit scores[Sequence]
     'domT=s'          => \$params{'domT'},           # Report bit scores[Hit]
     'cut_ga'          => \$params{'cut_ga'},         # Use the gathering threshold.
-    'nobias'          => \$params{'nobias'},         # Filters
+    'nobias'          => \$params{'nobias'},         # The '--nobias' option turns off (bypasses) the biased composition filter which is on by default.
     'hmmdbparam=s'    => \$params{'hmmdbparam'},     # The port number for the HMMER Demons
     'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
@@ -1024,7 +1024,7 @@ sub load_params {
     }
 
     if (!$params{'nobias'}) {
-        $params{'nobias'} = 'true'
+        $params{'nobias'} = 'false'
     }
 
     if (!$params{'hmmdbparam'}) {
@@ -1294,7 +1294,8 @@ Protein function analysis with HMMER 3 hmmscan.
   --T                   Report bit scores[Sequence].
   --domT                Report bit scores[Hit].
   --cut_ga              Use the gathering threshold.
-  --nobias              Filters.
+  --nobias              The '--nobias' option turns off (bypasses) the biased
+                        composition filter which is on by default.
   --hmmdbparam          The port number for the HMMER Demons.
   --compressedout       By default it runs hmm2c plus post-processing (default
                         output), whereas with compressedout, it gets compressed

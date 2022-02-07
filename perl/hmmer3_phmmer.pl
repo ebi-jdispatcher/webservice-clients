@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
-my $version = '2021-05-06 14:52';
+my $version = '2022-02-07 13:42';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -95,7 +95,7 @@ GetOptions(
     'popen=s'         => \$params{'popen'},          # Gap Penalties[open]
     'pextend=s'       => \$params{'pextend'},        # Gap Penalties[extend]
     'mx=s'            => \$params{'mx'},             # Gap Penalties[Substitution scoring matrix]
-    'nobias'          => \$params{'nobias'},         # Filters
+    'nobias'          => \$params{'nobias'},         # The '--nobias' option turns off (bypasses) the biased composition filter which is on by default.
     'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \@database,                 # Sequence Database Selection
@@ -1038,7 +1038,7 @@ sub load_params {
     }
 
     if (!$params{'nobias'}) {
-        $params{'nobias'} = 'true'
+        $params{'nobias'} = 'false'
     }
 
     if ($params{'compressedout'}) {
@@ -1306,7 +1306,8 @@ Protein function analysis with HMMER 3 phmmer.
   --popen               Gap Penalties[open].
   --pextend             Gap Penalties[extend].
   --mx                  Gap Penalties[Substitution scoring matrix].
-  --nobias              Filters.
+  --nobias              The '--nobias' option turns off (bypasses) the biased
+                        composition filter which is on by default.
   --compressedout       By default it runs hmm2c plus post-processing (default
                         output), whereas with compressedout, it gets compressed
                         output only.

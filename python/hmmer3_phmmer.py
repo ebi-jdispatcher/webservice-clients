@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer'
-version = u'2021-04-08 10:44'
+version = u'2022-02-07 13:42'
 
 # Set interval for checking status
 pollFreq = 3
@@ -82,7 +82,8 @@ parser.add_option('--domT', type=str, help=('Report bit scores[Hit]'))
 parser.add_option('--popen', type=str, help=('Gap Penalties[open]'))
 parser.add_option('--pextend', type=str, help=('Gap Penalties[extend]'))
 parser.add_option('--mx', type=str, help=('Gap Penalties[Substitution scoring matrix]'))
-parser.add_option('--nobias', action='store_true', help=('Filters'))
+parser.add_option('--nobias', action='store_true', help=('The --nobias option turns off (bypasses) the biased composition filter'
+                  'which is on by default.'))
 parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
                   'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
@@ -506,7 +507,8 @@ Protein function analysis with HMMER 3 phmmer.
   --popen               Gap Penalties[open].
   --pextend             Gap Penalties[extend].
   --mx                  Gap Penalties[Substitution scoring matrix].
-  --nobias              Filters.
+  --nobias              The '--nobias' option turns off (bypasses) the biased
+                        composition filter which is on by default.
   --compressedout       By default it runs hmm2c plus post-processing (default
                         output), whereas with compressedout, it gets compressed
                         output only.
@@ -658,7 +660,7 @@ elif options.email and not options.jobid:
     
 
     if not options.nobias:
-        params['nobias'] = 'true'
+        params['nobias'] = 'false'
     if options.nobias:
         params['nobias'] = options.nobias
     
