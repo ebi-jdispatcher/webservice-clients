@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2021 EMBL - European Bioinformatics Institute
+# Copyright 2012-2022 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_backtranseq'
-version = u'2021-04-08 10:44'
+version = u'2022-09-13 12:15'
 
 # Set interval for checking status
 pollFreq = 3

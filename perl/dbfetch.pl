@@ -43,7 +43,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/tutorials/perl>
 
 =head1 LICENSE
 
-Copyright 2012-2021 EMBL - European Bioinformatics Institute
+Copyright 2012-2022 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ use constant MAX_CHUNK_SIZE => 100;
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/dbfetch/dbfetch';
-my $version = '2021-09-22 14:15';
+my $version = '2022-09-13 12:15';
 
 # Output level
 my $outputLevel = 1;

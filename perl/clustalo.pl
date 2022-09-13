@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2021 EMBL - European Bioinformatics Institute
+Copyright 2012-2022 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/clustalo';
-my $version = '2021-04-08 10:44';
+my $version = '2022-09-13 12:15';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -85,6 +85,7 @@ my %params = (
 GetOptions(
     # Tool specific options
     'guidetreeout'    => \$params{'guidetreeout'},   # Output guide tree.
+    'addformats'      => \$params{'addformats'},     # Output additional output formats
     'dismatout'       => \$params{'dismatout'},      # Output distance matrix. This is only calculated if the mBed-like clustering guide tree is set to false.
     'dealign'         => \$params{'dealign'},        # Remove any existing alignment (gaps) from input sequences.
     'mbed'            => \$params{'mbed'},           # This option uses a sample of the input sequences and then represents all sequences as vectors to these sequences, enabling much more rapid generation of the guide tree, especially when the number of sequences is large.
@@ -756,8 +757,12 @@ sub load_params {
         $params{'guidetreeout'} = 'true'
     }
 
+    if (!$params{'addformats'}) {
+        $params{'addformats'} = 'false'
+    }
+
     if (!$params{'dismatout'}) {
-        $params{'dismatout'} = 'true'
+        $params{'dismatout'} = 'false'
     }
 
     if (!$params{'dealign'}) {
@@ -1030,6 +1035,7 @@ Multiple sequence alignment with Clustal Omega.
 
 [Optional]
   --guidetreeout        Output guide tree.
+  --addformats          Output additional output formats.
   --dismatout           Output distance matrix. This is only calculated if the mBed-
                         like clustering guide tree is set to false.
   --dealign             Remove any existing alignment (gaps) from input sequences.

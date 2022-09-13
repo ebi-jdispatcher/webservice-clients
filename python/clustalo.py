@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2021 EMBL - European Bioinformatics Institute
+# Copyright 2012-2022 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/clustalo'
-version = u'2021-04-08 10:44'
+version = u'2022-09-13 12:15'
 
 # Set interval for checking status
 pollFreq = 3
@@ -72,6 +72,7 @@ parser = OptionParser(add_help_option=False)
 
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--guidetreeout', action='store_true', help=('Output guide tree.'))
+parser.add_option('--addformats', action='store_true', help=('Output additional output formats'))
 parser.add_option('--dismatout', action='store_true', help=('Output distance matrix. This is only calculated if the mBed-like'
                   'clustering guide tree is set to false.'))
 parser.add_option('--dealign', action='store_true', help=('Remove any existing alignment (gaps) from input sequences.'))
@@ -454,6 +455,7 @@ Multiple sequence alignment with Clustal Omega.
 
 [Optional]
   --guidetreeout        Output guide tree.
+  --addformats          Output additional output formats.
   --dismatout           Output distance matrix. This is only calculated if the mBed-
                         like clustering guide tree is set to false.
   --dealign             Remove any existing alignment (gaps) from input sequences.
@@ -575,8 +577,14 @@ elif options.email and not options.jobid:
         params['guidetreeout'] = options.guidetreeout
     
 
+    if not options.addformats:
+        params['addformats'] = 'false'
+    if options.addformats:
+        params['addformats'] = options.addformats
+    
+
     if not options.dismatout:
-        params['dismatout'] = 'true'
+        params['dismatout'] = 'false'
     if options.dismatout:
         params['dismatout'] = options.dismatout
     

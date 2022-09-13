@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2021 EMBL - European Bioinformatics Institute
+Copyright 2012-2022 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -62,8 +62,8 @@ use Data::Dumper;
 use Time::HiRes qw(usleep);
 
 # Base URL for service
-my $baseUrl = 'https://wwwdev.ebi.ac.uk/Tools/services/rest/ssearch2seq';
-my $version = '2021-10-22 15:19';
+my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/ssearch2seq';
+my $version = '2022-09-13 12:15';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -1042,7 +1042,7 @@ Pairwise sequence alignment with ssearch2seq.
   --verbose             Increase output.
   --version             Prints out the version of the Client and exit.
   --baseUrl             Base URL. Defaults to:
-                        https://wwwdev.ebi.ac.uk/Tools/services/rest/ssearch2seq
+                        https://www.ebi.ac.uk/Tools/services/rest/ssearch2seq
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.

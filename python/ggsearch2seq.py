@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2021 EMBL - European Bioinformatics Institute
+# Copyright 2012-2022 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/ggsearch2seq'
-version = u'2021-10-22 15:19'
+version = u'2022-09-13 12:15'
 
 # Set interval for checking status
 pollFreq = 3
@@ -490,7 +490,7 @@ Pairwise sequence alignment with ggsearch2seq.
   --version             Prints out the version of the Client and exit.
   --quiet               Decrease output.
   --baseUrl             Base URL. Defaults to:
-                        https://wwwdev.ebi.ac.uk/Tools/services/rest/ggsearch2seq
+                        https://www.ebi.ac.uk/Tools/services/rest/ggsearch2seq
 
 Synchronous job:
   The results/errors are returned as soon as the job is finished.
@@ -571,39 +571,39 @@ elif options.email and not options.jobid:
 
     if options.matrix:
         params['matrix'] = options.matrix
-
+    
 
     if not options.match_scores:
         params['match_scores'] = 'none'
     if options.match_scores:
         params['match_scores'] = options.match_scores
-
+    
 
     if not options.gapopen:
         params['gapopen'] = -10
     if options.gapopen:
         params['gapopen'] = options.gapopen
-
+    
 
     if options.gapext:
         params['gapext'] = options.gapext
-
+    
 
     if not options.format:
         params['format'] = '0'
     if options.format:
         params['format'] = options.format
-
+    
 
     if options.seqrange:
         params['seqrange'] = options.seqrange
-
+    
 
     if not options.graphics:
         params['graphics'] = 'true'
     if options.graphics:
         params['graphics'] = options.graphics
-
+    
 
 
     # Submit the job
