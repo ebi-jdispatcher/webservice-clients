@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/fastm'
-version = u'2022-09-13 12:15'
+version = u'2023-03-22 10:54'
 
 # Set interval for checking status
 pollFreq = 3
@@ -438,12 +438,12 @@ def serviceGetResult(jobId, type_):
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage(u'clientPoll', u'Begin', 1)
-    result = u'PENDING'
-    while result == u'RUNNING' or result == u'PENDING':
+    result = u'QUEUED'
+    while result == u'RUNNING' or result == u'QUEUED':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
             print(result)
-        if result == u'RUNNING' or result == u'PENDING':
+        if result == u'RUNNING' or result == u'QUEUED':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
@@ -812,7 +812,7 @@ elif options.jobid and options.status:
 
 elif options.jobid and (options.resultTypes or options.polljob):
     status = serviceGetStatus(options.jobid)
-    if status == 'PENDING' or status == 'RUNNING':
+    if status == 'QUEUED' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)
         quit()

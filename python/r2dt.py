@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/r2dt'
-version = u'2022-09-13 12:15'
+version = u'2023-03-22 10:54'
 
 # Set interval for checking status
 pollFreq = 3
@@ -73,6 +73,9 @@ parser = OptionParser(add_help_option=False)
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--template_id', type=str, help=('If a Template ID is provided, then the classification step is skipped'
                   'and R2DT uses the specified template.'))
+parser.add_option('--constraint', action='store_true', help=('Fold insertions using RNAfold.'))
+parser.add_option('--fold_type', type=str, help=('Fold Type used when the constraint parameter (--constraint) is set to'
+                  'true.'))
 parser.add_option('--sequence', type=str, help=('One or more RNA sequences are required. There is currently a sequence'
                   'input limit of 10000 sequences and 1MB of data.'))
 # General options
@@ -333,12 +336,12 @@ def serviceGetResult(jobId, type_):
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage(u'clientPoll', u'Begin', 1)
-    result = u'PENDING'
-    while result == u'RUNNING' or result == u'PENDING':
+    result = u'QUEUED'
+    while result == u'RUNNING' or result == u'QUEUED':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
             print(result)
-        if result == u'RUNNING' or result == u'PENDING':
+        if result == u'RUNNING' or result == u'QUEUED':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
@@ -422,6 +425,9 @@ RNA analysis with R2DT.
 [Optional]
   --template_id         If a Template ID is provided, then the classification step
                         is skipped and R2DT uses the specified template.
+  --constraint          Fold insertions using RNAfold.
+  --fold_type           Fold Type used when the constraint parameter ('--
+                        constraint') is set to true.
 
 [General]
   -h, --help            Show this help message and exit.
@@ -521,6 +527,16 @@ elif options.email and not options.jobid:
         params['template_id'] = options.template_id
     
 
+    if not options.constraint:
+        params['constraint'] = 'false'
+    if options.constraint:
+        params['constraint'] = options.constraint
+    
+
+    if options.fold_type:
+        params['fold_type'] = options.fold_type
+    
+
 
     # Submit the job
     jobId = serviceRun(options.email, options.title, params)
@@ -543,7 +559,7 @@ elif options.jobid and options.status:
 
 elif options.jobid and (options.resultTypes or options.polljob):
     status = serviceGetStatus(options.jobid)
-    if status == 'PENDING' or status == 'RUNNING':
+    if status == 'QUEUED' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)
         quit()

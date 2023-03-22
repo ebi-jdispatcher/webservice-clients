@@ -56,7 +56,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/iprscan5'
-version = u'2022-09-13 12:15'
+version = u'2023-03-22 10:54'
 
 # Set interval for checking status
 pollFreq = 3
@@ -73,6 +73,8 @@ parser = OptionParser(add_help_option=False)
 # Tool specific options (Try to print all the commands automatically)
 parser.add_option('--goterms', action='store_true', help=('Switch on look-up of corresponding Gene Ontology annotations'))
 parser.add_option('--pathways', action='store_true', help=('Switch on look-up of corresponding pathway annotations'))
+parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
+                  '(DNA/RNA).'))
 parser.add_option('--appl', type=str, help=('A number of different protein sequence applications are launched.'
                   'These applications search against specific databases and have'
                   'preconfigured cut off thresholds.'))
@@ -388,12 +390,12 @@ def serviceGetResult(jobId, type_):
 # Client-side poll
 def clientPoll(jobId):
     printDebugMessage(u'clientPoll', u'Begin', 1)
-    result = u'PENDING'
-    while result == u'RUNNING' or result == u'PENDING':
+    result = u'QUEUED'
+    while result == u'RUNNING' or result == u'QUEUED':
         result = serviceGetStatus(jobId)
         if outputLevel > 0:
             print(result)
-        if result == u'RUNNING' or result == u'PENDING':
+        if result == u'RUNNING' or result == u'QUEUED':
             time.sleep(pollFreq)
     printDebugMessage(u'clientPoll', u'End', 1)
 
@@ -471,6 +473,8 @@ Protein function analysis with InterProScan 5.
 
 [Required (for job submission)]
   --email               E-mail address.
+  --stype               Indicates if the sequences to align are protein or
+                        nucleotide (DNA/RNA).
   --sequence            Your protein sequence can be entered directly into this form
                         in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.
@@ -579,6 +583,8 @@ elif options.email and not options.jobid:
                 params[u'bsequence'] = options.bsequence
 
     # Pass default values and fix bools (without default value)
+    if options.stype:
+        params['stype'] = options.stype
 
     if not options.goterms:
         params['goterms'] = 'true'
@@ -629,7 +635,7 @@ elif options.jobid and options.status:
 
 elif options.jobid and (options.resultTypes or options.polljob):
     status = serviceGetStatus(options.jobid)
-    if status == 'PENDING' or status == 'RUNNING':
+    if status == 'QUEUED' or status == 'RUNNING':
         print("Error: Job status is %s. "
               "To get result types the job must be finished." % status)
         quit()

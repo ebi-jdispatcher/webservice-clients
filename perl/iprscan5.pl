@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/iprscan5';
-my $version = '2022-09-13 12:15';
+my $version = '2023-03-22 10:54';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -86,6 +86,7 @@ GetOptions(
     # Tool specific options
     'goterms'         => \$params{'goterms'},        # Switch on look-up of corresponding Gene Ontology annotations
     'pathways'        => \$params{'pathways'},       # Switch on look-up of corresponding pathway annotations
+    'stype=s'         => \$params{'stype'},          # Indicates if the sequences to align are protein or nucleotide (DNA/RNA).
     'appl=s'          => \$params{'appl'},           # A number of different protein sequence applications are launched. These applications search against specific databases and have preconfigured cut off thresholds.
     'sequence=s'      => \$params{'sequence'},       # Your protein sequence can be entered directly into this form in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
     # Generic options
@@ -624,7 +625,7 @@ sub print_result_types {
         print STDERR 'Getting result types for job ', $jobid, "\n";
     }
     my $status = &rest_get_status($jobid);
-    if ($status eq 'PENDING' || $status eq 'RUNNING') {
+    if ($status eq 'QUEUED' || $status eq 'RUNNING') {
         print STDERR 'Error: Job status is ', $status,
             '. To get result types the job must be finished.', "\n";
     }
@@ -821,7 +822,7 @@ sub _job_list_poll {
         if (
             !(
                 $job_status eq 'RUNNING'
-                    || $job_status eq 'PENDING'
+                    || $job_status eq 'QUEUED'
                     || ($job_status eq 'ERROR'
                     && $error_count < $maxErrorStatusCount)
             )
@@ -993,12 +994,12 @@ Client-side job polling.
 sub client_poll {
     print_debug_message('client_poll', 'Begin', 1);
     my $jobid = shift;
-    my $status = 'PENDING';
+    my $status = 'QUEUED';
 
     # Check status and wait if not finished. Terminate if three attempts get "ERROR".
     my $errorCount = 0;
     while ($status eq 'RUNNING'
-        || $status eq 'PENDING'
+        || $status eq 'QUEUED'
         || ($status eq 'ERROR' && $errorCount < 2)) {
         $status = rest_get_status($jobid);
         print STDERR "$status\n" if ($outputLevel > 0);
@@ -1009,7 +1010,7 @@ sub client_poll {
             $errorCount--;
         }
         if ($status eq 'RUNNING'
-            || $status eq 'PENDING'
+            || $status eq 'QUEUED'
             || $status eq 'ERROR') {
 
             # Wait before polling again.
@@ -1212,6 +1213,8 @@ Protein function analysis with InterProScan 5.
 
 [Required (for job submission)]
   --email               E-mail address.
+  --stype               Indicates if the sequences to align are protein or
+                        nucleotide (DNA/RNA).
   --sequence            Your protein sequence can be entered directly into this form
                         in GCG, FASTA, EMBL, PIR, NBRF or UniProtKB/Swiss-Prot
                         format. A partially formatted sequence is not accepted.

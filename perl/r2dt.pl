@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/r2dt';
-my $version = '2022-09-13 12:15';
+my $version = '2023-03-22 10:54';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -85,6 +85,8 @@ my %params = (
 GetOptions(
     # Tool specific options
     'template_id=s'   => \$params{'template_id'},    # If a Template ID is provided, then the classification step is skipped and R2DT uses the specified template.
+    'constraint'      => \$params{'constraint'},     # Fold insertions using RNAfold.
+    'fold_type=s'     => \$params{'fold_type'},      # Fold Type used when the constraint parameter ('--constraint') is set to true.
     'sequence=s'      => \$params{'sequence'},       # One or more RNA sequences are required. There is currently a sequence input limit of 10000 sequences and 1MB of data.
     # Generic options
     'email=s'         => \$params{'email'},          # User e-mail address
@@ -618,7 +620,7 @@ sub print_result_types {
         print STDERR 'Getting result types for job ', $jobid, "\n";
     }
     my $status = &rest_get_status($jobid);
-    if ($status eq 'PENDING' || $status eq 'RUNNING') {
+    if ($status eq 'QUEUED' || $status eq 'RUNNING') {
         print STDERR 'Error: Job status is ', $status,
             '. To get result types the job must be finished.', "\n";
     }
@@ -742,6 +744,9 @@ sub load_params {
     print_debug_message('load_params', 'Begin', 1);
 
     # Pass default values and fix bools (without default value)
+    if (!$params{'constraint'}) {
+        $params{'constraint'} = 'false'
+    }
 
     print_debug_message('load_params', 'End', 1);
 }
@@ -757,12 +762,12 @@ Client-side job polling.
 sub client_poll {
     print_debug_message('client_poll', 'Begin', 1);
     my $jobid = shift;
-    my $status = 'PENDING';
+    my $status = 'QUEUED';
 
     # Check status and wait if not finished. Terminate if three attempts get "ERROR".
     my $errorCount = 0;
     while ($status eq 'RUNNING'
-        || $status eq 'PENDING'
+        || $status eq 'QUEUED'
         || ($status eq 'ERROR' && $errorCount < 2)) {
         $status = rest_get_status($jobid);
         print STDERR "$status\n" if ($outputLevel > 0);
@@ -773,7 +778,7 @@ sub client_poll {
             $errorCount--;
         }
         if ($status eq 'RUNNING'
-            || $status eq 'PENDING'
+            || $status eq 'QUEUED'
             || $status eq 'ERROR') {
 
             # Wait before polling again.
@@ -973,6 +978,9 @@ RNA analysis with R2DT.
 [Optional]
   --template_id         If a Template ID is provided, then the classification step
                         is skipped and R2DT uses the specified template.
+  --constraint          Fold insertions using RNAfold.
+  --fold_type           Fold Type used when the constraint parameter ('--
+                        constraint') is set to true.
 
 [General]
   -h, --help            Show this help message and exit.

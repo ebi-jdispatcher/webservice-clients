@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/psiblast';
-my $version = '2022-09-13 12:15';
+my $version = '2023-03-22 10:54';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -638,7 +638,7 @@ sub print_result_types {
         print STDERR 'Getting result types for job ', $jobid, "\n";
     }
     my $status = &rest_get_status($jobid);
-    if ($status eq 'PENDING' || $status eq 'RUNNING') {
+    if ($status eq 'QUEUED' || $status eq 'RUNNING') {
         print STDERR 'Error: Job status is ', $status,
             '. To get result types the job must be finished.', "\n";
     }
@@ -835,7 +835,7 @@ sub _job_list_poll {
         if (
             !(
                 $job_status eq 'RUNNING'
-                    || $job_status eq 'PENDING'
+                    || $job_status eq 'QUEUED'
                     || ($job_status eq 'ERROR'
                     && $error_count < $maxErrorStatusCount)
             )
@@ -1043,12 +1043,12 @@ Client-side job polling.
 sub client_poll {
     print_debug_message('client_poll', 'Begin', 1);
     my $jobid = shift;
-    my $status = 'PENDING';
+    my $status = 'QUEUED';
 
     # Check status and wait if not finished. Terminate if three attempts get "ERROR".
     my $errorCount = 0;
     while ($status eq 'RUNNING'
-        || $status eq 'PENDING'
+        || $status eq 'QUEUED'
         || ($status eq 'ERROR' && $errorCount < 2)) {
         $status = rest_get_status($jobid);
         print STDERR "$status\n" if ($outputLevel > 0);
@@ -1059,7 +1059,7 @@ sub client_poll {
             $errorCount--;
         }
         if ($status eq 'RUNNING'
-            || $status eq 'PENDING'
+            || $status eq 'QUEUED'
             || $status eq 'ERROR') {
 
             # Wait before polling again.
