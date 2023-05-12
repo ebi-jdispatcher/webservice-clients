@@ -48,86 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--frame', type=str, help=('The frames to be translated. The order of the frames follows the'
-                  'Staden convention: Frame -1 is the reverse-complement of the sequence'
-                  'having the same codon phase as frame 1. Frame -2 is the same phase as'
-                  'frame 2. Frame -3 is the same phase as frame 3.'))
-parser.add_option('--codontable', type=str, help=('Which genetic code table to use. These are kept synchronised with'
-                  'those maintained at the NCBIs Taxonomy Browser.'))
-parser.add_option('--regions', type=str, help=('Which regions of the users DNA molecule are to be translated.'))
-parser.add_option('--trim', action='store_true', help=('Remove * and X (stop and ambiguity) symbols from the end of the'
-                  'translation.'))
-parser.add_option('--reverse', action='store_true', help=('Choose this option if you wish to reverse and complement your input'
-                  'sequence before frame translation.'))
-parser.add_option('--sequence', type=str, help=('Any input formats accepted by EMBOSS can be used, the full list of'
-                  'sequence formats accepted as input by EMBOSS tools can be accessed via'
-                  'the link below. Word processor files may yield unpredictable results'
-                  'as hidden/control characters may be present in the files. It is best'
-                  'to save files with the Unix format option to avoid hidden Windows'
-                  'characters.'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -195,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -498,6 +423,86 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_transeq'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--frame', type=str, help=('The frames to be translated. The order of the frames follows the'
+                  'Staden convention: Frame -1 is the reverse-complement of the sequence'
+                  'having the same codon phase as frame 1. Frame -2 is the same phase as'
+                  'frame 2. Frame -3 is the same phase as frame 3.'))
+parser.add_option('--codontable', type=str, help=('Which genetic code table to use. These are kept synchronised with'
+                  'those maintained at the NCBIs Taxonomy Browser.'))
+parser.add_option('--regions', type=str, help=('Which regions of the users DNA molecule are to be translated.'))
+parser.add_option('--trim', action='store_true', help=('Remove * and X (stop and ambiguity) symbols from the end of the'
+                  'translation.'))
+parser.add_option('--reverse', action='store_true', help=('Choose this option if you wish to reverse and complement your input'
+                  'sequence before frame translation.'))
+parser.add_option('--sequence', type=str, help=('Any input formats accepted by EMBOSS can be used, the full list of'
+                  'sequence formats accepted as input by EMBOSS tools can be accessed via'
+                  'the link below. Word processor files may yield unpredictable results'
+                  'as hidden/control characters may be present in the files. It is best'
+                  'to save files with the Unix format option to avoid hidden Windows'
+                  'characters.'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 # No options... print help.
 if numOpts < 2:

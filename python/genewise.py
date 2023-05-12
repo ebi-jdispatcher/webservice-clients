@@ -48,130 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/genewise'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--para', action='store_true', help=('Show parameters in the output alignmment, as in genewise.'))
-parser.add_option('--pretty', action='store_true', help=('Show pretty ASCII alignment viewing, as in genewise.'))
-parser.add_option('--genes', action='store_true', help=('Show gene structure, as in genewise'))
-parser.add_option('--trans', action='store_true', help=('Show protein translation, breaking at frameshifts.'))
-parser.add_option('--cdna', action='store_true', help=('Show cDNA, as in genewise.'))
-parser.add_option('--embl', action='store_true', help=('EMBL feature table format with CDS key.'))
-parser.add_option('--ace', action='store_true', help=('Show Ace file gene structure, as in genewise.'))
-parser.add_option('--gff', action='store_true', help=('Show Gene Feature Format file, as in genewise.'))
-parser.add_option('--diana', action='store_true', help=('Show EMBL FT format suitable for diana.'))
-parser.add_option('--init', type=str, help=('Model in local/global mode. You should only put the model in global'
-                  'mode if you expect your protein homolog to have homology from start to'
-                  'end to the gene in the DNA sequence.'))
-parser.add_option('--splice', type=str, help=('Using splice model or GT/AG? Use the full blown model for splice'
-                  'sites, or a simplistic GT/AG. Generally if you are using a DNA'
-                  'sequence which is from human or worm, then leave this on. If you are'
-                  'using a very different (eg plant) species, switch it off.'))
-parser.add_option('--random', type=str, help=('The probability of the model has to compared to an alternative model'
-                  '(in fact to all alternative models which are possible) to allow proper'
-                  'Bayesian inference. This causes considerable difficulty in these'
-                  'algorithms because from a algorithmical point of view we would'
-                  'probably like to use an alternative model which is a single state,'
-                  'like the random model in profile-HMMs, where we can simply log-odd the'
-                  'scored model, whereas from a biological point of view we probably want'
-                  'to use a full gene predicting alternative model. In addition we need'
-                  'to account for the fact that the protein HMM or protein homolog'
-                  'probably does not extend over all the gene sequence, nor in fact does'
-                  'the gene have to be the only gene in the DNA sequence. This means that'
-                  'there are very good splice sites/poly-pyrimidine tracts outside of the'
-                  'matched alignment can severely de-rail the alignment.'))
-parser.add_option('--alg', type=str, help=('The solutions is different in the genewise21:93 compared to the'
-                  'genewise 6:23 algorithms. (1) In 6:23 we force the external match'
-                  'portions of the homology model to be identical to the alternative'
-                  'model, thus cancelling each other out. This is a pretty gross'
-                  'approximation and is sort of equivalent to the intron tieing. It makes'
-                  'things algorithmically easier... However this means a) 6:23 is nowhere'
-                  'near a probabilistic model and b) you really have to used a tied'
-                  'intron model in 6:23 otherwise very bad edge effects (final introns'
-                  'being ridiculously long) occur. (2) In 21:93 we have a full'
-                  'probabilistic model on each side of the homology segment. This is not'
-                  'reported in the -pretty output but you can see it in the -alb output'
-                  'if you like. Do not trust the gene model outside of the homology'
-                  'segment however. By having these external gene model parts we can use'
-                  'all the gene model features safe in the knowledge that if the homology'
-                  'segments do not justify the match then the external part of the model'
-                  'will soak up the additional intron/py-tract/splice site biases.'))
-parser.add_option('--asequence', type=str, help=('The protein sequence can be entered directly into this form. The'
-                  'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
-                  'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
-                  'partially formatted sequence is not accepted. Adding a return to the'
-                  'end of the sequence may help certain applications understand the'
-                  'input. Note that directly using data from word processors may yield'
-                  'unpredictable results as hidden/control characters may be present.'
-                  'There is a limit of 1MB for the sequence entry.'))
-parser.add_option('--bsequence', type=str, help=('The DNA sequence to be compared can be entered directly into the form.'
-                  'The sequence must be in a recognised format eg. GCG, FASTA, EMBL,'
-                  'GenBank. Partially formatted sequences are not accepted. Adding a'
-                  'return to the end of the sequence may help certain applications'
-                  'understand the input. Note that directly using data from word'
-                  'processors may yield unpredictable results as hidden/control'
-                  'characters may be present. There is a limit of 1MB for the sequence'
-                  'entry.'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -239,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -591,6 +472,130 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/genewise'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--para', action='store_true', help=('Show parameters in the output alignmment, as in genewise.'))
+parser.add_option('--pretty', action='store_true', help=('Show pretty ASCII alignment viewing, as in genewise.'))
+parser.add_option('--genes', action='store_true', help=('Show gene structure, as in genewise'))
+parser.add_option('--trans', action='store_true', help=('Show protein translation, breaking at frameshifts.'))
+parser.add_option('--cdna', action='store_true', help=('Show cDNA, as in genewise.'))
+parser.add_option('--embl', action='store_true', help=('EMBL feature table format with CDS key.'))
+parser.add_option('--ace', action='store_true', help=('Show Ace file gene structure, as in genewise.'))
+parser.add_option('--gff', action='store_true', help=('Show Gene Feature Format file, as in genewise.'))
+parser.add_option('--diana', action='store_true', help=('Show EMBL FT format suitable for diana.'))
+parser.add_option('--init', type=str, help=('Model in local/global mode. You should only put the model in global'
+                  'mode if you expect your protein homolog to have homology from start to'
+                  'end to the gene in the DNA sequence.'))
+parser.add_option('--splice', type=str, help=('Using splice model or GT/AG? Use the full blown model for splice'
+                  'sites, or a simplistic GT/AG. Generally if you are using a DNA'
+                  'sequence which is from human or worm, then leave this on. If you are'
+                  'using a very different (eg plant) species, switch it off.'))
+parser.add_option('--random', type=str, help=('The probability of the model has to compared to an alternative model'
+                  '(in fact to all alternative models which are possible) to allow proper'
+                  'Bayesian inference. This causes considerable difficulty in these'
+                  'algorithms because from a algorithmical point of view we would'
+                  'probably like to use an alternative model which is a single state,'
+                  'like the random model in profile-HMMs, where we can simply log-odd the'
+                  'scored model, whereas from a biological point of view we probably want'
+                  'to use a full gene predicting alternative model. In addition we need'
+                  'to account for the fact that the protein HMM or protein homolog'
+                  'probably does not extend over all the gene sequence, nor in fact does'
+                  'the gene have to be the only gene in the DNA sequence. This means that'
+                  'there are very good splice sites/poly-pyrimidine tracts outside of the'
+                  'matched alignment can severely de-rail the alignment.'))
+parser.add_option('--alg', type=str, help=('The solutions is different in the genewise21:93 compared to the'
+                  'genewise 6:23 algorithms. (1) In 6:23 we force the external match'
+                  'portions of the homology model to be identical to the alternative'
+                  'model, thus cancelling each other out. This is a pretty gross'
+                  'approximation and is sort of equivalent to the intron tieing. It makes'
+                  'things algorithmically easier... However this means a) 6:23 is nowhere'
+                  'near a probabilistic model and b) you really have to used a tied'
+                  'intron model in 6:23 otherwise very bad edge effects (final introns'
+                  'being ridiculously long) occur. (2) In 21:93 we have a full'
+                  'probabilistic model on each side of the homology segment. This is not'
+                  'reported in the -pretty output but you can see it in the -alb output'
+                  'if you like. Do not trust the gene model outside of the homology'
+                  'segment however. By having these external gene model parts we can use'
+                  'all the gene model features safe in the knowledge that if the homology'
+                  'segments do not justify the match then the external part of the model'
+                  'will soak up the additional intron/py-tract/splice site biases.'))
+parser.add_option('--asequence', type=str, help=('The protein sequence can be entered directly into this form. The'
+                  'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
+                  'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
+                  'partially formatted sequence is not accepted. Adding a return to the'
+                  'end of the sequence may help certain applications understand the'
+                  'input. Note that directly using data from word processors may yield'
+                  'unpredictable results as hidden/control characters may be present.'
+                  'There is a limit of 1MB for the sequence entry.'))
+parser.add_option('--bsequence', type=str, help=('The DNA sequence to be compared can be entered directly into the form.'
+                  'The sequence must be in a recognised format eg. GCG, FASTA, EMBL,'
+                  'GenBank. Partially formatted sequences are not accepted. Adding a'
+                  'return to the end of the sequence may help certain applications'
+                  'understand the input. Note that directly using data from word'
+                  'processors may yield unpredictable results as hidden/control'
+                  'characters may be present. There is a limit of 1MB for the sequence'
+                  'entry.'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 # No options... print help.
 if numOpts < 2:
