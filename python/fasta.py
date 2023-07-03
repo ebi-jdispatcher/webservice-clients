@@ -101,7 +101,8 @@ def restRequest(url):
         reqH.close()
     # Errors are indicated by HTTP status codes.
     except HTTPError as ex:
-        result = requests.get(url).content
+        resp = requests.get(url).content
+        result = unicode(resp, u'utf-8')
     printDebugMessage(u'restRequest', u'End', 11)
     return result
 
