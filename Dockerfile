@@ -1,15 +1,14 @@
 ################################################################################
 # Dockerfile
-# Software: EMBL-EBI Web Service Clients
-# Website:  https://github.com/ebi-wp/webservice-clients
+# Software: EMBL-EBI Job Dispatcher Web Service Clients
+# Website:  https://github.com/ebi-jdispatcher/webservice-clients
 # Build:    docker build -t webservice-clients:latest .
 # Run:      docker run --rm -it --entrypoint /bin/bash webservice-clients:latest
 ################################################################################
 
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 
-MAINTAINER EBI, Web Production Team, webprod <webprod@ebi.ac.uk>
-LABEL    base_image="ebi-wp:EMBL-EBI Web Service Clients" \
+LABEL base_image="ebi-wp:EMBL-EBI Job Dispatcher Web Service Clients" \
     software="ebi-webservice-clients" \
     container="ebiwp/webservice-clients" \
     about.summary="A collection of Web Service Clients to consume EBI's tools" \
