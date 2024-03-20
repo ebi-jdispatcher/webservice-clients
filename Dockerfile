@@ -29,7 +29,7 @@ ENV TZ=Europe/London \
 RUN apt-get update --fix-missing \
   && apt-get install -y build-essential curl unzip make gcc g++
 RUN apt-get -y upgrade \
-  && apt-get install -y perl libcrypt-ssleay-perl python3-pip default-jdk
+  && apt-get install -y perl libcrypt-ssleay-perl python3-pip openjdk-8-jdk
 
 # Perl Dependencies
 RUN apt-get install -y cpanminus \
