@@ -8,19 +8,19 @@
 
 FROM ubuntu:20.04
 
-LABEL base_image="ebi-wp:EMBL-EBI Job Dispatcher Web Service Clients" \
+LABEL base_image="EMBL-EBI Job Dispatcher Web Service Clients" \
     software="ebi-webservice-clients" \
     container="ebiwp/webservice-clients" \
-    about.summary="A collection of Web Service Clients to consume EBI's tools" \
-    about.home="https://www.ebi.ac.uk/services" \
-    about.documentation="https://www.ebi.ac.uk/Tools/webservices" \
+    about.summary="A collection of Web Service Clients to consume EBI's Job Dispatcher tools" \
+    about.home="https://www.ebi.ac.uk/jdispatcher" \
+    about.documentation="https://www.ebi.ac.uk/jdispatcher/docs" \
     software.version="1.0.0" \
     version="1" \
-    about.copyright="Copyright EMBL-EBI 2019" \
+    about.copyright="Copyright EMBL-EBI 2024" \
     about.license="Apache-2.0" \
     about.license_file="/usr/src/doc/LICENSE" \
     about.tags="ebi" \
-    extra.identifier.biotools="ebi_tools"
+    extra.identifier.biotools="jdispatcher"
 
 # Dependencies
 RUN apt-get update --fix-missing \
