@@ -48,124 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/prank'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
-                  'this form. The sequences must be in FASTA format. Partially formatted'
-                  'sequences are not accepted. Adding a return to the end of the sequence'
-                  'may help certain applications understand the input. Note that directly'
-                  'using data from word processors may yield unpredictable results as'
-                  'hidden/control characters may be present. There is a limit of 500'
-                  'sequences or 1MB of data.'))
-parser.add_option('--data_file', type=str, help=('A file containing valid sequences in FASTA format can be used as input'
-                  'for the sequence similarity search. Word processors files may yield'
-                  'unpredictable results as hidden/control characters may be present in'
-                  'the files. It is best to save files with the Unix format option to'
-                  'avoid hidden Windows characters.'))
-parser.add_option('--tree_file', type=str, help=('Tree file in Newick Binary Format.'))
-parser.add_option('--do_njtree', action='store_true', help=('compute guide tree from input alignment'))
-parser.add_option('--do_clustalw_tree', action='store_true', help=('compute guide tree using Clustalw2'))
-parser.add_option('--model_file', type=str, help=('Structure Model File.'))
-parser.add_option('--output_format', type=str, help=('Format for output alignment file'))
-parser.add_option('--trust_insertions', action='store_true', help=('Trust inferred insertions and do not allow their later matching'))
-parser.add_option('--show_insertions_with_dots', action='store_true', help=('Show gaps created by insertions as dots, deletions as dashes'))
-parser.add_option('--use_log_space', action='store_true', help=('Use log space for probabilities; slower but necessary for large'
-                  'numbers of sequences'))
-parser.add_option('--use_codon_model', action='store_true', help=('Use codon substutition model for alignment; requires DNA, multiples of'
-                  'three in length'))
-parser.add_option('--translate_DNA', action='store_true', help=('Translate DNA sequences to proteins and backtranslate results'))
-parser.add_option('--mt_translate_DNA', action='store_true', help=('Translate DNA sequences to mt proteins, align and backtranslate'
-                  'results'))
-parser.add_option('--gap_rate', type=str, help=('Gap Opening Rate'))
-parser.add_option('--gap_extension', type=str, help=('Gap Extension Probability'))
-parser.add_option('--tn93_kappa', type=str, help=('Parameter kappa for Tamura-Nei DNA substitution model'))
-parser.add_option('--tn93_rho', type=str, help=('Parameter rho for Tamura-Nei DNA substitution model'))
-parser.add_option('--guide_pairwise_distance', type=str, help=('Fixed pairwise distance used for generating scoring matrix in guide'
-                  'tree computation'))
-parser.add_option('--max_pairwise_distance', type=str, help=('Maximum pairwise distance allowed in progressive steps of multiple'
-                  'alignment; allows making matching more stringent or flexible'))
-parser.add_option('--branch_length_scaling', type=str, help=('Factor for scaling all branch lengths'))
-parser.add_option('--branch_length_fixed', type=str, help=('Fixed value for all branch lengths'))
-parser.add_option('--branch_length_maximum', type=str, help=('Upper limit for branch lengths'))
-parser.add_option('--use_real_branch_lengths', action='store_true', help=('Use real branch lengths; using this can be harmful as scoring matrices'
-                  'became flat for large distances; rather use max_pairwise_distance'))
-parser.add_option('--do_no_posterior', action='store_true', help=('Do not compute posterior probability; much faster if those not needed'))
-parser.add_option('--run_once', action='store_true', help=('Do not iterate alignment'))
-parser.add_option('--run_twice', action='store_true', help=('Iterate alignment'))
-parser.add_option('--penalise_terminal_gaps', action='store_true', help=('Penalise terminal gaps as any other gap'))
-parser.add_option('--do_posterior_only', action='store_true', help=('Compute posterior probabilities for given *aligned* sequences; may be'
-                  'unstable but useful'))
-parser.add_option('--use_chaos_anchors', action='store_true', help=('Use chaos anchors to massively speed up alignments; DNA only'))
-parser.add_option('--minimum_anchor_distance', type=int, help=('Minimum chaos anchor distance'))
-parser.add_option('--maximum_anchor_distance', type=int, help=('Maximum chaos anchor distance'))
-parser.add_option('--skip_anchor_distance', type=int, help=('Chaos anchor skip distance'))
-parser.add_option('--drop_anchor_distance', type=int, help=('Chaos anchor drop distance'))
-parser.add_option('--output_ancestors', action='store_true', help=('Output ancestral sequences and probability profiles; note additional'
-                  'files'))
-parser.add_option('--noise_level', type=int, help=('Noise level; progress and debugging information'))
-parser.add_option('--stay_quiet', action='store_true', help=('Stay quiet; disable all progress information'))
-parser.add_option('--random_seed', type=int, help=('Set seed for random number generator; not recommended'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -233,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -579,6 +466,124 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/prank'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--sequence', type=str, help=('Three or more sequences to be aligned can be entered directly into'
+                  'this form. The sequences must be in FASTA format. Partially formatted'
+                  'sequences are not accepted. Adding a return to the end of the sequence'
+                  'may help certain applications understand the input. Note that directly'
+                  'using data from word processors may yield unpredictable results as'
+                  'hidden/control characters may be present. There is a limit of 500'
+                  'sequences or 1MB of data.'))
+parser.add_option('--data_file', type=str, help=('A file containing valid sequences in FASTA format can be used as input'
+                  'for the sequence similarity search. Word processors files may yield'
+                  'unpredictable results as hidden/control characters may be present in'
+                  'the files. It is best to save files with the Unix format option to'
+                  'avoid hidden Windows characters.'))
+parser.add_option('--tree_file', type=str, help=('Tree file in Newick Binary Format.'))
+parser.add_option('--do_njtree', action='store_true', help=('compute guide tree from input alignment'))
+parser.add_option('--do_clustalw_tree', action='store_true', help=('compute guide tree using Clustalw2'))
+parser.add_option('--model_file', type=str, help=('Structure Model File.'))
+parser.add_option('--output_format', type=str, help=('Format for output alignment file'))
+parser.add_option('--trust_insertions', action='store_true', help=('Trust inferred insertions and do not allow their later matching'))
+parser.add_option('--show_insertions_with_dots', action='store_true', help=('Show gaps created by insertions as dots, deletions as dashes'))
+parser.add_option('--use_log_space', action='store_true', help=('Use log space for probabilities; slower but necessary for large'
+                  'numbers of sequences'))
+parser.add_option('--use_codon_model', action='store_true', help=('Use codon substutition model for alignment; requires DNA, multiples of'
+                  'three in length'))
+parser.add_option('--translate_DNA', action='store_true', help=('Translate DNA sequences to proteins and backtranslate results'))
+parser.add_option('--mt_translate_DNA', action='store_true', help=('Translate DNA sequences to mt proteins, align and backtranslate'
+                  'results'))
+parser.add_option('--gap_rate', type=str, help=('Gap Opening Rate'))
+parser.add_option('--gap_extension', type=str, help=('Gap Extension Probability'))
+parser.add_option('--tn93_kappa', type=str, help=('Parameter kappa for Tamura-Nei DNA substitution model'))
+parser.add_option('--tn93_rho', type=str, help=('Parameter rho for Tamura-Nei DNA substitution model'))
+parser.add_option('--guide_pairwise_distance', type=str, help=('Fixed pairwise distance used for generating scoring matrix in guide'
+                  'tree computation'))
+parser.add_option('--max_pairwise_distance', type=str, help=('Maximum pairwise distance allowed in progressive steps of multiple'
+                  'alignment; allows making matching more stringent or flexible'))
+parser.add_option('--branch_length_scaling', type=str, help=('Factor for scaling all branch lengths'))
+parser.add_option('--branch_length_fixed', type=str, help=('Fixed value for all branch lengths'))
+parser.add_option('--branch_length_maximum', type=str, help=('Upper limit for branch lengths'))
+parser.add_option('--use_real_branch_lengths', action='store_true', help=('Use real branch lengths; using this can be harmful as scoring matrices'
+                  'became flat for large distances; rather use max_pairwise_distance'))
+parser.add_option('--do_no_posterior', action='store_true', help=('Do not compute posterior probability; much faster if those not needed'))
+parser.add_option('--run_once', action='store_true', help=('Do not iterate alignment'))
+parser.add_option('--run_twice', action='store_true', help=('Iterate alignment'))
+parser.add_option('--penalise_terminal_gaps', action='store_true', help=('Penalise terminal gaps as any other gap'))
+parser.add_option('--do_posterior_only', action='store_true', help=('Compute posterior probabilities for given *aligned* sequences; may be'
+                  'unstable but useful'))
+parser.add_option('--use_chaos_anchors', action='store_true', help=('Use chaos anchors to massively speed up alignments; DNA only'))
+parser.add_option('--minimum_anchor_distance', type=int, help=('Minimum chaos anchor distance'))
+parser.add_option('--maximum_anchor_distance', type=int, help=('Maximum chaos anchor distance'))
+parser.add_option('--skip_anchor_distance', type=int, help=('Chaos anchor skip distance'))
+parser.add_option('--drop_anchor_distance', type=int, help=('Chaos anchor drop distance'))
+parser.add_option('--output_ancestors', action='store_true', help=('Output ancestral sequences and probability profiles; note additional'
+                  'files'))
+parser.add_option('--noise_level', type=int, help=('Noise level; progress and debugging information'))
+parser.add_option('--stay_quiet', action='store_true', help=('Stay quiet; disable all progress information'))
+parser.add_option('--random_seed', type=int, help=('Set seed for random number generator; not recommended'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 # No options... print help.
 if numOpts < 2:

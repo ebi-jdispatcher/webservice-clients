@@ -48,90 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mview'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
-                  '(DNA/RNA).'))
-parser.add_option('--informat', type=str, help=('Format of the input sequence similarity search result or multiple'
-                  'sequence alignment to be processed.'))
-parser.add_option('--outputformat', type=str, help=('Output format for the alignment.'))
-parser.add_option('--htmlmarkup', type=str, help=('Amount of HTML markup to be used in the result.'))
-parser.add_option('--css', action='store_true', help=('Use Cascading Style Sheets'))
-parser.add_option('--pcid', type=str, help=('Compute percent identities with respect to'))
-parser.add_option('--alignment', action='store_true', help=('Show or hide the aligned sequences.'))
-parser.add_option('--ruler', action='store_true', help=('Show or hide the ruler showing the sequence coordinates.'))
-parser.add_option('--width', type=int, help=('Width of output alignment.'))
-parser.add_option('--coloring', type=str, help=('Basic style of coloring'))
-parser.add_option('--colormap', type=str, help=('Color map'))
-parser.add_option('--groupmap', type=str, help=('Group map'))
-parser.add_option('--consensus', action='store_true', help=('Show or hide consensus sequence derived from the alignment.'))
-parser.add_option('--concoloring', type=str, help=('Basic style of consensus coloring'))
-parser.add_option('--concolormap', type=str, help=('Consensus color map'))
-parser.add_option('--congroupmap', type=str, help=('Consensus group map'))
-parser.add_option('--congaps', action='store_true', help=('Count gaps during consensus compuatations'))
-parser.add_option('--sequence', type=str, help=('Sequence similarity search result (e.g. BLAST or FASTA search report)'
-                  'or a multiple sequence alignment.'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -199,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -504,6 +425,90 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/mview'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--stype', type=str, help=('Indicates if the sequences to align are protein or nucleotide'
+                  '(DNA/RNA).'))
+parser.add_option('--informat', type=str, help=('Format of the input sequence similarity search result or multiple'
+                  'sequence alignment to be processed.'))
+parser.add_option('--outputformat', type=str, help=('Output format for the alignment.'))
+parser.add_option('--htmlmarkup', type=str, help=('Amount of HTML markup to be used in the result.'))
+parser.add_option('--css', action='store_true', help=('Use Cascading Style Sheets'))
+parser.add_option('--pcid', type=str, help=('Compute percent identities with respect to'))
+parser.add_option('--alignment', action='store_true', help=('Show or hide the aligned sequences.'))
+parser.add_option('--ruler', action='store_true', help=('Show or hide the ruler showing the sequence coordinates.'))
+parser.add_option('--width', type=int, help=('Width of output alignment.'))
+parser.add_option('--coloring', type=str, help=('Basic style of coloring'))
+parser.add_option('--colormap', type=str, help=('Color map'))
+parser.add_option('--groupmap', type=str, help=('Group map'))
+parser.add_option('--consensus', action='store_true', help=('Show or hide consensus sequence derived from the alignment.'))
+parser.add_option('--concoloring', type=str, help=('Basic style of consensus coloring'))
+parser.add_option('--concolormap', type=str, help=('Consensus color map'))
+parser.add_option('--congroupmap', type=str, help=('Consensus group map'))
+parser.add_option('--congaps', action='store_true', help=('Count gaps during consensus compuatations'))
+parser.add_option('--sequence', type=str, help=('Sequence similarity search result (e.g. BLAST or FASTA search report)'
+                  'or a multiple sequence alignment.'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 # No options... print help.
 if numOpts < 2:

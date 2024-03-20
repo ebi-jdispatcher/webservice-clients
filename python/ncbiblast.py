@@ -48,135 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--program', type=str, help=('The BLAST program to be used for the Sequence Similarity Search.'))
-parser.add_option('--task', type=str, help=('Task option (only selectable for blastn)'))
-parser.add_option('--matrix', type=str, help=('(Protein searches) The substitution matrix used for scoring alignments'
-                  'when searching the database.'))
-parser.add_option('--alignments', type=int, help=('Maximum number of match alignments reported in the result output.'))
-parser.add_option('--scores', type=int, help=('Maximum number of match score summaries reported in the result output.'))
-parser.add_option('--exp', type=str, help=('Limits the number of scores and alignments reported based on the'
-                  'expectation value. This is the maximum number of times the match is'
-                  'expected to occur by chance.'))
-parser.add_option('--dropoff', type=int, help=('The amount a score can drop before gapped extension of word hits is'
-                  'halted'))
-parser.add_option('--match_scores', type=str, help=('(Nucleotide searches) The match score is the bonus to the alignment'
-                  'score when matching the same base. The mismatch is the penalty when'
-                  'failing to match.'))
-parser.add_option('--hsps', type=int, help=('Maximum number of HSPs (alignments) to keep for any single query-'
-                  'subject pair.'))
-parser.add_option('--gapopen', type=int, help=('Penalty taken away from the score when a gap is created in sequence.'
-                  'Increasing the gap openning penalty will decrease the number of gaps'
-                  'in the final alignment.'))
-parser.add_option('--gapext', type=int, help=('Penalty taken away from the score for each base or residue in the gap.'
-                  'Increasing the gap extension penalty favors short gaps in the final'
-                  'alignment, conversly decreasing the gap extension penalty favors long'
-                  'gaps in the final alignment.'))
-parser.add_option('--filter', type=str, help=('Filter regions of low sequence complexity. This can avoid issues with'
-                  'low complexity sequences where matches are found due to composition'
-                  'rather than meaningful sequence similarity. However in some cases'
-                  'filtering also masks regions of interest and so should be used with'
-                  'caution.'))
-parser.add_option('--seqrange', type=str, help=('Specify a range or section of the input sequence to use in the search.'
-                  'Example: Specifying 34-89 in an input sequence of total length 100,'
-                  'will tell BLAST to only use residues 34 to 89, inclusive.'))
-parser.add_option('--gapalign', action='store_true', help=('This is a true/false setting that tells the program the perform'
-                  'optimised alignments within regions involving gaps. If set to true,'
-                  'the program will perform an alignment using gaps. Otherwise, if it is'
-                  'set to false, it will report only individual HSP where two sequence'
-                  'match each other, and thus will not produce alignments with gaps.'))
-parser.add_option('--wordsize', type=int, help=('Word size for wordfinder algorithm'))
-parser.add_option('--taxids', type=str, help=('Specify one or more TaxIDs so that the BLAST search becomes'
-                  'taxonomically aware.'))
-parser.add_option('--negative_taxids', type=str, help=('TaxIDs excluded from the BLAST search.'))
-parser.add_option('--compstats', type=str, help=('Use composition-based statistics.'))
-parser.add_option('--align', type=int, help=('Formating for the alignments'))
-parser.add_option('--transltable', type=int, help=('Query Genetic code to use in translation'))
-parser.add_option('--stype', type=str, help=('Indicates if the sequence is protein or DNA/RNA.'))
-parser.add_option('--sequence', type=str, help=('The query sequence can be entered directly into this form. The'
-                  'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
-                  'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
-                  'partially formatted sequence is not accepted. Adding a return to the'
-                  'end of the sequence may help certain applications understand the'
-                  'input. Note that directly using data from word processors may yield'
-                  'unpredictable results as hidden/control characters may be present.'))
-parser.add_option('--database', type=str, help=('Database'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--multifasta', action='store_true', help='Treat input as a set of fasta formatted sequences.')
-parser.add_option('--useSeqId', action='store_true', help='Use sequence identifiers for output filenames.'
-                                                          'Only available in multi-fasta and multi-identifier modes.')
-parser.add_option('--maxJobs', type='int', help='Maximum number of concurrent jobs. '
-                                                'Only available in multifasta or list file modes.')
-
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-if options.multifasta:
-    multifasta = options.multifasta
-
-if options.useSeqId:
-    useSeqId = options.useSeqId
-
-if options.maxJobs:
-    maxJobs = options.maxJobs
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -244,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -622,6 +498,135 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/ncbiblast'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--program', type=str, help=('The BLAST program to be used for the Sequence Similarity Search.'))
+parser.add_option('--task', type=str, help=('Task option (only selectable for blastn)'))
+parser.add_option('--matrix', type=str, help=('(Protein searches) The substitution matrix used for scoring alignments'
+                  'when searching the database.'))
+parser.add_option('--alignments', type=int, help=('Maximum number of match alignments reported in the result output.'))
+parser.add_option('--scores', type=int, help=('Maximum number of match score summaries reported in the result output.'))
+parser.add_option('--exp', type=str, help=('Limits the number of scores and alignments reported based on the'
+                  'expectation value. This is the maximum number of times the match is'
+                  'expected to occur by chance.'))
+parser.add_option('--dropoff', type=int, help=('The amount a score can drop before gapped extension of word hits is'
+                  'halted'))
+parser.add_option('--match_scores', type=str, help=('(Nucleotide searches) The match score is the bonus to the alignment'
+                  'score when matching the same base. The mismatch is the penalty when'
+                  'failing to match.'))
+parser.add_option('--hsps', type=int, help=('Maximum number of HSPs (alignments) to keep for any single query-'
+                  'subject pair.'))
+parser.add_option('--gapopen', type=int, help=('Penalty taken away from the score when a gap is created in sequence.'
+                  'Increasing the gap openning penalty will decrease the number of gaps'
+                  'in the final alignment.'))
+parser.add_option('--gapext', type=int, help=('Penalty taken away from the score for each base or residue in the gap.'
+                  'Increasing the gap extension penalty favors short gaps in the final'
+                  'alignment, conversly decreasing the gap extension penalty favors long'
+                  'gaps in the final alignment.'))
+parser.add_option('--filter', type=str, help=('Filter regions of low sequence complexity. This can avoid issues with'
+                  'low complexity sequences where matches are found due to composition'
+                  'rather than meaningful sequence similarity. However in some cases'
+                  'filtering also masks regions of interest and so should be used with'
+                  'caution.'))
+parser.add_option('--seqrange', type=str, help=('Specify a range or section of the input sequence to use in the search.'
+                  'Example: Specifying 34-89 in an input sequence of total length 100,'
+                  'will tell BLAST to only use residues 34 to 89, inclusive.'))
+parser.add_option('--gapalign', action='store_true', help=('This is a true/false setting that tells the program the perform'
+                  'optimised alignments within regions involving gaps. If set to true,'
+                  'the program will perform an alignment using gaps. Otherwise, if it is'
+                  'set to false, it will report only individual HSP where two sequence'
+                  'match each other, and thus will not produce alignments with gaps.'))
+parser.add_option('--wordsize', type=int, help=('Word size for wordfinder algorithm'))
+parser.add_option('--taxids', type=str, help=('Specify one or more TaxIDs so that the BLAST search becomes'
+                  'taxonomically aware.'))
+parser.add_option('--negative_taxids', type=str, help=('TaxIDs excluded from the BLAST search.'))
+parser.add_option('--compstats', type=str, help=('Use composition-based statistics.'))
+parser.add_option('--align', type=int, help=('Formating for the alignments'))
+parser.add_option('--transltable', type=int, help=('Query Genetic code to use in translation'))
+parser.add_option('--stype', type=str, help=('Indicates if the sequence is protein or DNA/RNA.'))
+parser.add_option('--sequence', type=str, help=('The query sequence can be entered directly into this form. The'
+                  'sequence can be in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR,'
+                  'NBRF, PHYLIP or UniProtKB/Swiss-Prot (Protein only) format. A'
+                  'partially formatted sequence is not accepted. Adding a return to the'
+                  'end of the sequence may help certain applications understand the'
+                  'input. Note that directly using data from word processors may yield'
+                  'unpredictable results as hidden/control characters may be present.'))
+parser.add_option('--database', type=str, help=('Database'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--multifasta', action='store_true', help='Treat input as a set of fasta formatted sequences.')
+parser.add_option('--useSeqId', action='store_true', help='Use sequence identifiers for output filenames.'
+                                                          'Only available in multi-fasta and multi-identifier modes.')
+parser.add_option('--maxJobs', type='int', help='Maximum number of concurrent jobs. '
+                                                'Only available in multifasta or list file modes.')
+
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
+if options.multifasta:
+    multifasta = options.multifasta
+
+if options.useSeqId:
+    useSeqId = options.useSeqId
+
+if options.maxJobs:
+    maxJobs = options.maxJobs
 
 # No options... print help.
 if numOpts < 2:

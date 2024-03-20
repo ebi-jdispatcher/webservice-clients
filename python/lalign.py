@@ -48,95 +48,6 @@ except ImportError:
     from urllib2 import urlopen, Request, HTTPError
     from urllib2 import __version__ as urllib_version
 
-# allow unicode(str) to be used in python 3
-try:
-    unicode('')
-except NameError:
-    unicode = str
-
-# Base URL for service
-baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/lalign'
-version = u'2023-03-22 10:54'
-
-# Set interval for checking status
-pollFreq = 3
-# Output level
-outputLevel = 1
-# Debug level
-debugLevel = 0
-# Number of option arguments.
-numOpts = len(sys.argv)
-
-# Process command-line options
-parser = OptionParser(add_help_option=False)
-
-# Tool specific options (Try to print all the commands automatically)
-parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned'))
-parser.add_option('--matrix', type=str, help=('Default substitution scoring matrices.'))
-parser.add_option('--match_scores', type=str, help=('Specify match/mismatch scores for DNA comparisons.'))
-parser.add_option('--gapopen', type=int, help=('Pairwise alignment score for the first residue in a gap.'))
-parser.add_option('--gapext', type=int, help=('Pairwise alignment score for each additional residue in a gap.'))
-parser.add_option('--expthr', type=str, help=('Limits the number of scores and alignments reported based on the'
-                  'expectation value. This is the maximum number of times the match is'
-                  'expected to occur by chance.'))
-parser.add_option('--format', type=str, help=('Pairwise sequences format'))
-parser.add_option('--graphics', action='store_true', help=('Generates a visual output'))
-parser.add_option('--asequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
-                  'representing several DNA/RNA or Protein sequences. A sequence can be'
-                  'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
-                  'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
-                  'sequences are not accepted. Adding a return to the end of the sequence'
-                  'may help certain applications understand the input. Note that directly'
-                  'using data from word processors may yield unpredictable results as'
-                  'hidden/control characters may be present.'))
-parser.add_option('--bsequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
-                  'representing several DNA/RNA or Protein sequences. A sequence can be'
-                  'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
-                  'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
-                  'sequences are not accepted. Adding a return to the end of the sequence'
-                  'may help certain applications understand the input. Note that directly'
-                  'using data from word processors may yield unpredictable results as'
-                  'hidden/control characters may be present.'))
-# General options
-parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
-parser.add_option('--email', help='E-mail address.')
-parser.add_option('--title', help='Job title.')
-parser.add_option('--outfile', help='File name for results.')
-parser.add_option('--outformat', help='Output format for results.')
-parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
-parser.add_option('--jobid', help='Job identifier.')
-parser.add_option('--polljob', action="store_true", help='Get job result.')
-parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
-parser.add_option('--status', action="store_true", help='Get job status.')
-parser.add_option('--resultTypes', action='store_true', help='Get result types.')
-parser.add_option('--params', action='store_true', help='List input parameters.')
-parser.add_option('--paramDetail', help='Get details for parameter.')
-parser.add_option('--quiet', action='store_true', help='Decrease output level.')
-parser.add_option('--verbose', action='store_true', help='Increase output level.')
-parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
-parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
-parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
-
-(options, args) = parser.parse_args()
-
-# Increase output level
-if options.verbose:
-    outputLevel += 1
-
-# Decrease output level
-if options.quiet:
-    outputLevel -= 1
-
-# Debug level
-if options.debugLevel:
-    debugLevel = options.debugLevel
-
-if options.pollFreq:
-    pollFreq = options.pollFreq
-
-if options.baseUrl:
-    baseUrl = options.baseUrl
-
 
 # Debug print
 def printDebugMessage(functionName, message, level):
@@ -204,6 +115,11 @@ def serviceGetParameters():
     doc = xmltramp.parse(xmlDoc)
     printDebugMessage(u'serviceGetParameters', u'End', 1)
     return doc[u'id':]
+
+# Get list of parameters for error handling
+def getListOfParameters():
+    printDebugMessage(u'getListOfParameters', u'Begin', 1)
+    return [str(x) for x in serviceGetParameters()]
 
 
 # Print list of parameters
@@ -519,6 +435,95 @@ Further information:
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
 
+
+# allow unicode(str) to be used in python 3
+try:
+    unicode('')
+except NameError:
+    unicode = str
+
+# Base URL for service
+baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/lalign'
+version = u'2023-05-12 14:28'
+
+# Set interval for checking status
+pollFreq = 3
+# Output level
+outputLevel = 1
+# Debug level
+debugLevel = 0
+# Number of option arguments.
+numOpts = len(sys.argv)
+
+# Process command-line options
+parser = OptionParser(add_help_option=False)
+
+# Tool specific options (Try to print all the commands automatically)
+parser.add_option('--stype', type=str, help=('Defines the type of the sequences to be aligned'))
+parser.add_option('--matrix', type=str, help=('Default substitution scoring matrices.'))
+parser.add_option('--match_scores', type=str, help=('Specify match/mismatch scores for DNA comparisons.'))
+parser.add_option('--gapopen', type=int, help=('Pairwise alignment score for the first residue in a gap.'))
+parser.add_option('--gapext', type=int, help=('Pairwise alignment score for each additional residue in a gap.'))
+parser.add_option('--expthr', type=str, help=('Limits the number of scores and alignments reported based on the'
+                  'expectation value. This is the maximum number of times the match is'
+                  'expected to occur by chance.'))
+parser.add_option('--format', type=str, help=('Pairwise sequences format'))
+parser.add_option('--graphics', action='store_true', help=('Generates a visual output'))
+parser.add_option('--asequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
+                  'representing several DNA/RNA or Protein sequences. A sequence can be'
+                  'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
+                  'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
+                  'sequences are not accepted. Adding a return to the end of the sequence'
+                  'may help certain applications understand the input. Note that directly'
+                  'using data from word processors may yield unpredictable results as'
+                  'hidden/control characters may be present.'))
+parser.add_option('--bsequence', type=str, help=('A free text (raw) list of sequences is simply a block of characters'
+                  'representing several DNA/RNA or Protein sequences. A sequence can be'
+                  'in GCG, FASTA, EMBL (Nucleotide only), GenBank, PIR, NBRF, PHYLIP or'
+                  'UniProtKB/Swiss-Prot (Protein only) format. Partially formatted'
+                  'sequences are not accepted. Adding a return to the end of the sequence'
+                  'may help certain applications understand the input. Note that directly'
+                  'using data from word processors may yield unpredictable results as'
+                  'hidden/control characters may be present.'))
+# General options
+parser.add_option('-h', '--help', action='store_true', help='Show this help message and exit.')
+parser.add_option('--email', help='E-mail address.')
+parser.add_option('--title', help='Job title.')
+parser.add_option('--outfile', help='File name for results.')
+parser.add_option('--outformat', help='Output format for results.')
+parser.add_option('--asyncjob', action='store_true', help='Asynchronous mode.')
+parser.add_option('--jobid', help='Job identifier.')
+parser.add_option('--polljob', action="store_true", help='Get job result.')
+parser.add_option('--pollFreq', type='int', default=3, help='Poll frequency in seconds (default 3s).')
+parser.add_option('--status', action="store_true", help='Get job status.')
+parser.add_option('--resultTypes', action='store_true', help='Get result types.')
+parser.add_option('--params', action='store_true', help='List input parameters.')
+parser.add_option('--paramDetail', help='Get details for parameter.', choices=getListOfParameters())
+parser.add_option('--quiet', action='store_true', help='Decrease output level.')
+parser.add_option('--verbose', action='store_true', help='Increase output level.')
+parser.add_option('--version', action='store_true', help='Prints out the version of the Client and exit.')
+parser.add_option('--debugLevel', type='int', default=debugLevel, help='Debugging level.')
+parser.add_option('--baseUrl', default=baseUrl, help='Base URL for service.')
+
+(options, args) = parser.parse_args()
+
+# Increase output level
+if options.verbose:
+    outputLevel += 1
+
+# Decrease output level
+if options.quiet:
+    outputLevel -= 1
+
+# Debug level
+if options.debugLevel:
+    debugLevel = options.debugLevel
+
+if options.pollFreq:
+    pollFreq = options.pollFreq
+
+if options.baseUrl:
+    baseUrl = options.baseUrl
 
 # No options... print help.
 if numOpts < 2:
