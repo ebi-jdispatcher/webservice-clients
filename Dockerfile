@@ -22,6 +22,9 @@ LABEL base_image="EMBL-EBI Job Dispatcher Web Service Clients" \
     about.tags="ebi" \
     extra.identifier.biotools="jdispatcher"
 
+ENV TZ=Europe/London \
+  DEBIAN_FRONTEND=noninteractive
+
 # Dependencies
 RUN apt-get update --fix-missing \
   && apt-get install -y build-essential curl unzip make gcc g++
