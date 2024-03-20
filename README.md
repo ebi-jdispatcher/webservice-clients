@@ -20,7 +20,7 @@ These clients are generated from the service (XML) description with
 * [Java](java)
 
 The RESTful API interface for the Job Dispatcher Web Services is available at
-[https://www.ebi.ac.uk/Tools/common/tools/help/](https://www.ebi.ac.uk/Tools/common/tools/help/)
+[https://www.ebi.ac.uk/jdispatcher/docs/webservices/#openapi](https://www.ebi.ac.uk/jdispatcher/docs/webservices/#openapi)
 
 ## Running the clients
 
@@ -120,7 +120,7 @@ docker pull biocontainers/ebi-webservice
 ## Contact and Support
 
 If you have any problems, suggestions or comments for our services please
-contact us via [EBI Support](https://www.ebi.ac.uk/support/index.php?query=WebServices).
+contact us via [EBI Support](https://www.ebi.ac.uk/about/contact/support/job-dispatcher-services).
 
 ## License
 The European Bioinformatics Institute - [EMBL-EBI](https://www.ebi.ac.uk/), is an Intergovernmental Organization which, as part of the European Molecular Biology Laboratory family, focuses on research and services in bioinformatics.  
