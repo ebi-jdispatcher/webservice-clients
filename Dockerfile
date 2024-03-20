@@ -36,8 +36,7 @@ RUN apt-get install -y cpanminus \
  && cpanm XML::Parser Bundle::LWP REST::Client XML::Simple YAML::Syck
 
 # Python Dependencies
-RUN ln -s /usr/bin/pip3 /usr/bin/pip \
- && ln -s /usr/bin/python3 /usr/bin/python \
+RUN ln -s /usr/bin/python3 /usr/bin/python \
  && pip install --upgrade pip xmltramp2 requests
 
 # Copying clients
