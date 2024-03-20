@@ -3,7 +3,7 @@
 
 ###############################################################################
 #
-# Copyright 2012-2022 EMBL - European Bioinformatics Institute
+# Copyright 2012-2024 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 # Python Client Automatically generated with:
-# https://github.com/ebi-wp/webservice-clients-generator
+# https://github.com/ebi-jdispatcher/webservice-clients-generator
 #
 # EMBOSS pepinfo (REST) web service Python client using xmltramp2.
 #
@@ -406,7 +406,7 @@ Retrieve job data:
 
 Further information:
   https://www.ebi.ac.uk/Tools/webservices and
-    https://github.com/ebi-wp/webservice-clients
+    https://github.com/ebi-jdispatcher/webservice-clients
 
 Support/Feedback:
   https://www.ebi.ac.uk/support/""")
@@ -420,7 +420,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/emboss_pepinfo'
-version = u'2023-05-12 14:28'
+version = u'2024-03-20 12:04'
 
 # Set interval for checking status
 pollFreq = 3

@@ -28,7 +28,7 @@ L<https://www.ebi.ac.uk/Tools/webservices/>
 
 =head1 LICENSE
 
-Copyright 2012-2022 EMBL - European Bioinformatics Institute
+Copyright 2012-2024 EMBL - European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Perl Client Automatically generated with:
-https://github.com/ebi-wp/webservice-clients-generator
+https://github.com/ebi-jdispatcher/webservice-clients-generator
 
 =cut
 
@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/infernal_cmscan';
-my $version = '2023-03-22 10:54';
+my $version = '2024-03-20 12:04';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -1024,7 +1024,7 @@ Retrieve job data:
 
 Further information:
   https://www.ebi.ac.uk/Tools/webservices and
-    https://github.com/ebi-wp/webservice-clients
+    https://github.com/ebi-jdispatcher/webservice-clients
 
 Support/Feedback:
   https://www.ebi.ac.uk/support/
