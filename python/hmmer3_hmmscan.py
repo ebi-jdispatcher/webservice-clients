@@ -409,10 +409,6 @@ Protein function analysis with HMMER 3 hmmscan.
   --cut_ga              Use the gathering threshold.
   --nobias              The '--nobias' option turns off (bypasses) the biased
                         composition filter which is on by default.
-  --hmmdbparam          The port number for the HMMER Demons.
-  --compressedout       By default it runs hmm2c plus post-processing (default
-                        output), whereas with compressedout, it gets compressed
-                        output only.
   --alignView           Output alignment in result.
   --nhits               Number of hits to be displayed.
 
@@ -472,7 +468,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan'
-version = u'2024-03-20 12:04'
+version = u'2024-07-11 07:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -498,9 +494,6 @@ parser.add_option('--domT', type=str, help=('Report bit scores[Hit]'))
 parser.add_option('--cut_ga', action='store_true', help=('Use the gathering threshold.'))
 parser.add_option('--nobias', action='store_true', help=('The --nobias option turns off (bypasses) the biased composition filter'
                   'which is on by default.'))
-parser.add_option('--hmmdbparam', type=str, help=('The port number for the HMMER Demons'))
-parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
-                  'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
 parser.add_option('--database', type=str, help=('HMM Database for HMMER hmmscan'))
 parser.add_option('--sequence', type=str, help=('The input sequence can be entered directly into this form. The'
@@ -654,18 +647,6 @@ elif options.email and not options.jobid:
         params['nobias'] = 'false'
     if options.nobias:
         params['nobias'] = options.nobias
-    
-
-    if not options.hmmdbparam:
-        params['hmmdbparam'] = '51371'
-    if options.hmmdbparam:
-        params['hmmdbparam'] = options.hmmdbparam
-    
-
-    if not options.compressedout:
-        params['compressedout'] = 'false'
-    if options.compressedout:
-        params['compressedout'] = options.compressedout
     
 
     if not options.alignView:

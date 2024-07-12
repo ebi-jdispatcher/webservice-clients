@@ -411,9 +411,6 @@ Protein function analysis with HMMER 3 phmmer.
   --mx                  Gap Penalties[Substitution scoring matrix].
   --nobias              The '--nobias' option turns off (bypasses) the biased
                         composition filter which is on by default.
-  --compressedout       By default it runs hmm2c plus post-processing (default
-                        output), whereas with compressedout, it gets compressed
-                        output only.
   --alignView           Output alignment in result.
   --evalue              Expectation value cut-off for reporting target profiles in
                         the per-target output.
@@ -475,7 +472,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer'
-version = u'2024-03-20 12:04'
+version = u'2024-07-11 07:51'
 
 # Set interval for checking status
 pollFreq = 3
@@ -503,8 +500,6 @@ parser.add_option('--pextend', type=str, help=('Gap Penalties[extend]'))
 parser.add_option('--mx', type=str, help=('Gap Penalties[Substitution scoring matrix]'))
 parser.add_option('--nobias', action='store_true', help=('The --nobias option turns off (bypasses) the biased composition filter'
                   'which is on by default.'))
-parser.add_option('--compressedout', action='store_true', help=('By default it runs hmm2c plus post-processing (default output),'
-                  'whereas with compressedout, it gets compressed output only.'))
 parser.add_option('--alignView', action='store_true', help=('Output alignment in result'))
 parser.add_option('--database', type=str, help=('Sequence Database Selection'))
 parser.add_option('--evalue', type=str, help=('Expectation value cut-off for reporting target profiles in the per-'
@@ -668,12 +663,6 @@ elif options.email and not options.jobid:
         params['nobias'] = 'false'
     if options.nobias:
         params['nobias'] = options.nobias
-    
-
-    if not options.compressedout:
-        params['compressedout'] = 'false'
-    if options.compressedout:
-        params['compressedout'] = options.compressedout
     
 
     if not options.alignView:
