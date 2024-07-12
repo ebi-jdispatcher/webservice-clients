@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_phmmer';
-my $version = '2024-03-20 12:04';
+my $version = '2024-07-12 11:05';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -96,7 +96,6 @@ GetOptions(
     'pextend=s'       => \$params{'pextend'},        # Gap Penalties[extend]
     'mx=s'            => \$params{'mx'},             # Gap Penalties[Substitution scoring matrix]
     'nobias'          => \$params{'nobias'},         # The '--nobias' option turns off (bypasses) the biased composition filter which is on by default.
-    'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \@database,                 # Sequence Database Selection
     'evalue=f'        => \$params{'evalue'},         # Expectation value cut-off for reporting target profiles in the per-target output.
@@ -1041,10 +1040,6 @@ sub load_params {
         $params{'nobias'} = 'false'
     }
 
-    if (!$params{'compressedout'}) {
-        $params{'compressedout'} = 'false'
-    }
-
     if (!$params{'alignView'}) {
         $params{'alignView'} = 'true'
     }
@@ -1305,9 +1300,6 @@ Protein function analysis with HMMER 3 phmmer.
   --mx                  Gap Penalties[Substitution scoring matrix].
   --nobias              The '--nobias' option turns off (bypasses) the biased
                         composition filter which is on by default.
-  --compressedout       By default it runs hmm2c plus post-processing (default
-                        output), whereas with compressedout, it gets compressed
-                        output only.
   --alignView           Output alignment in result.
   --evalue              Expectation value cut-off for reporting target profiles in
                         the per-target output.
