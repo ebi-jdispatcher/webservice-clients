@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/ggsearch2seq';
-my $version = '2024-03-20 12:04';
+my $version = '2024-07-12 11:05';
 
 # Set interval for checking status
 my $checkInterval = 3;
