@@ -455,7 +455,7 @@ except NameError:
 
 # Base URL for service
 baseUrl = u'https://www.ebi.ac.uk/Tools/services/rest/radar'
-version = u'2024-03-20 12:04'
+version = u'2024-07-11 07:51'
 
 # Set interval for checking status
 pollFreq = 3

@@ -63,7 +63,7 @@ use Time::HiRes qw(usleep);
 
 # Base URL for service
 my $baseUrl = 'https://www.ebi.ac.uk/Tools/services/rest/hmmer3_hmmscan';
-my $version = '2024-03-20 12:04';
+my $version = '2024-07-12 11:05';
 
 # Set interval for checking status
 my $checkInterval = 3;
@@ -94,8 +94,6 @@ GetOptions(
     'domT=s'          => \$params{'domT'},           # Report bit scores[Hit]
     'cut_ga'          => \$params{'cut_ga'},         # Use the gathering threshold.
     'nobias'          => \$params{'nobias'},         # The '--nobias' option turns off (bypasses) the biased composition filter which is on by default.
-    'hmmdbparam=s'    => \$params{'hmmdbparam'},     # The port number for the HMMER Demons
-    'compressedout'   => \$params{'compressedout'},  # By default it runs hmm2c plus post-processing (default output), whereas with compressedout, it gets compressed output only.
     'alignView'       => \$params{'alignView'},      # Output alignment in result
     'database=s'      => \@database,                 # HMM Database for HMMER hmmscan
     'sequence=s'      => \$params{'sequence'},       # The input sequence can be entered directly into this form. The sequence can be be in FASTA or UniProtKB/Swiss-Prot format. A partially formatted sequence is not accepted. Adding a return to the end of the sequence may help certain applications understand the input. Note that directly using data from word processors may yield unpredictable results as hidden/control characters may be present.
@@ -1027,14 +1025,6 @@ sub load_params {
         $params{'nobias'} = 'false'
     }
 
-    if (!$params{'hmmdbparam'}) {
-        $params{'hmmdbparam'} = '51371'
-    }
-
-    if (!$params{'compressedout'}) {
-        $params{'compressedout'} = 'false'
-    }
-
     if (!$params{'alignView'}) {
         $params{'alignView'} = 'true'
     }
@@ -1293,10 +1283,6 @@ Protein function analysis with HMMER 3 hmmscan.
   --cut_ga              Use the gathering threshold.
   --nobias              The '--nobias' option turns off (bypasses) the biased
                         composition filter which is on by default.
-  --hmmdbparam          The port number for the HMMER Demons.
-  --compressedout       By default it runs hmm2c plus post-processing (default
-                        output), whereas with compressedout, it gets compressed
-                        output only.
   --alignView           Output alignment in result.
   --nhits               Number of hits to be displayed.
 
